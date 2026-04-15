@@ -163,13 +163,14 @@ function renderMain(){const el=document.getElementById('mainContent');if(!search
 
 // ─── SINCRONIZACIÓN AUTOMÁTICA CON GOOGLE SHEETS ───────────────────────────
 // Reemplazá esta URL con la de tu Apps Script desplegado
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwiMprcvufEZrwWMxk6t1Rw4PrE7aF4R7vRummIQcTzHiYwIvMxmV8m7dpVZc3Pw7Sx/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyq2YpD6NMRMr9qPFHMlOQK6RNgrnbolYUu923FVP7cjqueKIZenchA36aT2GCug_ip/exec';
 
 function _norm(s){
   return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
 }
 function _precio(s){
-  const n=parseFloat((s||'').replace(/[^0-9,\.]/g,'').replace(',','.'));
+  const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');
+  const n=parseFloat(clean);
   return isNaN(n)?0:Math.round(n);
 }
 function _sim(a,b){
