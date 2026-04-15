@@ -205,8 +205,8 @@ function sincronizarDesdeSheets(){
     let ok=0,skip=0;
     filas.forEach(cols=>{
       if(cols.length<3)return;
-      const nombre=cols[0].replace(/^"|"$/g,'');
-      const p1=_precio(cols[1]),p2=_precio(cols[2]);
+      const nombre=cols[2].replace(/^"|"$/g,'');
+      const p1=_precio(cols[3]),p2=_precio(cols[4]);
       if(!nombre||!p1||!p2)return;
       let mejor=null,mejorSim=0;
       PRODS.forEach(prod=>{const s=_sim(nombre,prod[2]);if(s>mejorSim){mejorSim=s;mejor=prod;}});
