@@ -43,7 +43,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(min-width:1024px){.prod-grid{grid-template-columns:repeat(5,1fr)}}
 .pcard{background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid transparent;transition:all .2s;display:flex;flex-direction:column}
 .pcard:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:var(--azul-light)}
-.pcard-img{width:100%;height:120px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,var(--muted),var(--border))}
+.pcard-img{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;background:var(--muted);border-radius:8px 8px 0 0;overflow:hidden}
 .pcard-body{padding:10px;flex:1;display:flex;flex-direction:column}
 .pcard-name{font-weight:600;font-size:11.5px;line-height:1.3;margin-bottom:2px}
 .pcard-brand{font-size:10px;color:var(--muted-fg);margin-bottom:6px}
@@ -138,7 +138,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 </div>
 <script>
 
-const IMGS={nuez:'https://github.com/paladear/paladeartienda/blob/main/img/nuez.jpg',almendra:'🔶',caju:'🥜',mani:'🥜',mix:'🥣',pistacho:'💚',avellana:'🟤',granola:'🥣',avena:'🌾',quinoa:'🌾',copos:'🥣',chia:'⚫',girasol:'🌻',sesamo:'🫘',semillas_mix:'🌱',harina_almendra:'🔶',harina:'🌾',lentejas:'🫘',arroz:'🍚',garbanzos:'🫘',curcuma:'🟡',especias:'🌿',pimienta:'⚫',canela:'🟤',oregano:'🌿',sal:'🧂',arandanos:'🫐',banana:'🍌',ciruela:'🟣',pasas:'🍇',datil:'🟤',higos:'🟤',miel:'🍯',chocolate:'🍫',mermelada:'🍓',te_verde:'🍵',manzanilla:'🌼',cafe:'☕',mate:'🧉',hibiscus:'🌺',spirulina:'💊',magnesio:'💊',colageno:'✨',setas:'🍄',aceite_oliva:'🫒',aceite_coco:'🥥',vinagre:'🫙',fideos_arroz:'🍜',chips:'🥔',barra:'🍫',galleta:'🍪',tahine:'🫕',kimchi:'🥬',mantequilla_mani:'🥜',ghee:'🧈',mostaza:'🟡',leche_almendra:'🥛',kombucha:'🍶',cacao:'🍫',azucar:'🍬',coco_rallado:'🥥',aceitunas:'🫒',arandanos_cong:'🫐',frambuesas:'🍓',mango:'🥭',vino:'🍷',gin:'🍸',yoghurt:'🥛',tofu:'🧊',chucrut:'🥬',pepinillos:'🥒',tetera:'🫖',prensa:'☕',home:'🏠'};
+const IMGS={nuez:'🌰',almendra:'🔶',caju:'🥜',mani:'🥜',mix:'🥣',pistacho:'💚',avellana:'🟤',granola:'🥣',avena:'🌾',quinoa:'🌾',copos:'🥣',chia:'⚫',girasol:'🌻',sesamo:'🫘',semillas_mix:'🌱',harina_almendra:'🔶',harina:'🌾',lentejas:'🫘',arroz:'🍚',garbanzos:'🫘',curcuma:'🟡',especias:'🌿',pimienta:'⚫',canela:'🟤',oregano:'🌿',sal:'🧂',arandanos:'🫐',banana:'🍌',ciruela:'🟣',pasas:'🍇',datil:'🟤',higos:'🟤',miel:'🍯',chocolate:'🍫',mermelada:'🍓',te_verde:'🍵',manzanilla:'🌼',cafe:'☕',mate:'🧉',hibiscus:'🌺',spirulina:'💊',magnesio:'💊',colageno:'✨',setas:'🍄',aceite_oliva:'🫒',aceite_coco:'🥥',vinagre:'🫙',fideos_arroz:'🍜',chips:'🥔',barra:'🍫',galleta:'🍪',tahine:'🫕',kimchi:'🥬',mantequilla_mani:'🥜',ghee:'🧈',mostaza:'🟡',leche_almendra:'🥛',kombucha:'🍶',cacao:'🍫',azucar:'🍬',coco_rallado:'🥥',aceitunas:'🫒',arandanos_cong:'🫐',frambuesas:'🍓',mango:'🥭',vino:'🍷',gin:'🍸',yoghurt:'🥛',tofu:'🧊',chucrut:'🥬',pepinillos:'🥒',tetera:'🫖',prensa:'☕',home:'🏠'};
 // Mapa de rubros del Sheet a categorías de la web
 const RUBRO_MAP = {
   'ACEITES Y VINAGRES': {id:'aceites', n:'Aceites y Vinagres', ic:'🫙'},
@@ -204,7 +204,7 @@ let cart=[];let searchTerm='';
 function fmt(n){return n.toLocaleString('es-AR')}
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function renderCats(){let h='<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:12px;font-weight:700">Categorías</h1><div class="cat-grid">';CATS.forEach(c=>{h+=`<button class="cat-btn" onclick="openCat('${c.id}')"><span class="ic">${c.ic}</span><div class="nm">${c.n}</div></button>`});h+='</div>';return h}
-function renderCard(p,prefix){const opts=Object.keys(p[7]);if(!opts.length)return'';const id=prefix+'_'+p[0];let h=`<div class="pcard" id="${id}">`;h+=`<div class="pcard-img">${IMGS[p[6]]||'https://github.com/paladear/paladeartienda/blob/main/img/nuez.jpg'}</div>`;h+=`<div class="pcard-body">`;h+=`<div class="pcard-name">${p[2]}</div>`;h+=`<div class="pcard-brand">${p[3]}</div>`;h+=`<div class="opt-btns">`;opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});h+=`</div>`;h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div>`;h+=`<div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;h+=`</div></div>`;return h}
+function renderCard(p,prefix){const opts=Object.keys(p[7]);if(!opts.length)return'';const id=prefix+'_'+p[0];let h=`<div class="pcard" id="${id}">`;h+=p[6]&&p[6].startsWith('http')?`<div class="pcard-img" style="padding:0;overflow:hidden"><img src="${p[6]}" alt="${p[2]}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML='🌿'" loading="lazy"></div>`:`<div class="pcard-img">🌿</div>`;h+=`<div class="pcard-body">`;h+=`<div class="pcard-name">${p[2]}</div>`;h+=`<div class="pcard-brand">${p[3]}</div>`;h+=`<div class="opt-btns">`;opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});h+=`</div>`;h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div>`;h+=`<div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;h+=`</div></div>`;return h}
 function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));el.querySelector('.price-min').textContent='$'+fmt(p1);el.querySelector('.price-may').textContent='$'+fmt(p2);el.dataset.opt=opt}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
 function addToCart(pid,elId){const p=PRODS.find(x=>x[0]===pid);if(!p)return;const el=document.getElementById(elId);const opts=Object.keys(p[7]);const opt=el.dataset.opt||opts[0];const qty=parseInt(document.getElementById(elId+'_q').textContent);const key=pid+'-'+opt;const ex=cart.find(i=>i.key===key);if(ex)ex.c+=qty;else cart.push({key,pid,n:p[2],o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:p[4]});updateCartCount();const btn=document.getElementById(elId+'_ab');btn.classList.add('added');btn.innerHTML='✓ Agregado!';setTimeout(()=>{btn.classList.remove('added');btn.innerHTML='🛒 Agregar al pedido'},1400)}
@@ -239,11 +239,13 @@ function sincronizarDesdeSheets(){
     const prodsTemp=[];
     let pid=1;
 
-    filas.forEach(cols=>{
+    filas.forEach((cols,idx)=>{
+      if(idx===0)return; // saltar encabezado
       if(cols.length<6)return;
       const nombre=cols[2].replace(/^"|"$/g,'');
       const p1=_precio(cols[3]),p2=_precio(cols[4]);
       const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
+      const imgUrl=(cols[6]||'').replace(/^"|"$/g,'').trim();
       if(!nombre||!p1||!p2||!rubro)return;
 
       const cat=RUBRO_MAP[rubro];
@@ -264,7 +266,7 @@ function sincronizarDesdeSheets(){
         opts={'1 und':[p1,p2]};
       }
 
-      prodsTemp.push([pid++, cat.id, nombre, esGranel?'Granel':'Varios', esGranel?'kg':'und', false, 'default', opts]);
+      prodsTemp.push([pid++, cat.id, nombre, esGranel?'Granel':'Varios', esGranel?'kg':'und', false, imgUrl, opts]);
     });
 
     // Reconstruir CATS en orden del mapa
