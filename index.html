@@ -245,7 +245,9 @@ function sincronizarDesdeSheets(){
       const nombre=cols[2].replace(/^"|"$/g,'');
       const p1=_precio(cols[3]),p2=_precio(cols[4]);
       const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
-      const imgUrl=(cols[6]||'').replace(/^"|"$/g,'').trim();
+      const _rawImg=(cols[6]||'').replace(/^"|"$/g,'').trim();
+      const _driveMatch=_rawImg.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+      const imgUrl=_driveMatch?'https://lh3.googleusercontent.com/d/'+_driveMatch[1]:_rawImg;
       if(!nombre||!p1||!p2||!rubro)return;
 
       const cat=RUBRO_MAP[rubro];
