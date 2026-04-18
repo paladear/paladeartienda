@@ -349,8 +349,10 @@ const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos',ic:'🥜'},'DESHID
 let CATS=[],PRODS=[],cart=[],searchTerm='',activeCatId=null,miniCartTimer=null;
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyq2YpD6NMRMr9qPFHMlOQK6RNgrnbolYUu923FVP7cjqueKIZenchA36aT2GCug_ip/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
-function hideLoader(){const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>o.remove(),500)}}
-setTimeout(hideLoader,8000);
+let _loaderHidden=false;
+function hideLoader(){if(_loaderHidden)return;_loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
+// Timeout de seguridad: máximo 3.5s de espera
+setTimeout(hideLoader,3500);
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
@@ -481,7 +483,7 @@ function selectCat(catId,productId){
   const area=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
   if(isMobile)area.classList.remove('hidden');
   area.innerHTML=html;
-  // Si se pasó un producto específico, scrollear a él y resaltarlo; si no, al inicio del área
+  history.pushState({view:'cat',catId,productId},'');
   if(productId!=null){
     setTimeout(()=>{
       const card=document.getElementById(prefix+'_'+productId);
@@ -606,8 +608,21 @@ function miniQty(key,d){const it=cart.find(i=>i.key===key);if(!it)return;it.c=Ma
 function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();document.getElementById('miniCartPopup').classList.add('hidden')}
 function updateCartCount(){document.getElementById('cartCount').textContent=cart.reduce((a,i)=>a+i.c,0)}
 
-function openCart(){document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartPanel').classList.add('open');document.body.classList.add('cart-open');document.body.style.overflow='hidden';closeMiniCart();renderCart()}
-function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartPanel').classList.remove('open');document.body.classList.remove('cart-open');document.body.style.overflow=''}
+function openCart(){
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartPanel').classList.add('open');
+  document.body.classList.add('cart-open');
+  document.body.style.overflow='hidden';
+  closeMiniCart();
+  renderCart();
+  history.pushState({view:'cart'},'');
+}
+function closeCart(){
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartPanel').classList.remove('open');
+  document.body.classList.remove('cart-open');
+  document.body.style.overflow='';
+}
 
 function renderCart(){
   const body=document.getElementById('cartBody'),footer=document.getElementById('cartFooter');
@@ -907,6 +922,48 @@ function sincronizarDesdeSheets(){
   });
 }
 sincronizarDesdeSheets();
+
+// ── MANEJO DEL BOTÓN "ATRÁS" ──
+// Seed: estado inicial = home
+history.replaceState({view:'home'},'');
+
+window.addEventListener('popstate',function(e){
+  const st=e.state||{view:'home'};
+
+  // 1. Si el carrito está abierto → cerrarlo (no salir de la app)
+  const cartPanel=document.getElementById('cartPanel');
+  if(cartPanel&&cartPanel.classList.contains('open')){
+    closeCart();
+    // Volver a dejar un estado home en el historial para el próximo "atrás"
+    history.pushState({view:activeCatId?{view:'cat',catId:activeCatId}:'home'},'');
+    return;
+  }
+
+  // 2. Si hay un modal de info abierto → cerrarlo
+  const infoModal=document.getElementById('infoModal');
+  if(infoModal){infoModal.remove();history.pushState(st,'');return;}
+
+  // 3. Si estamos en una categoría → volver al inicio del catálogo
+  if(activeCatId){
+    volverInicio();
+    history.pushState({view:'home'},'');
+    return;
+  }
+
+  // 4. Estamos en home y el usuario presiona atrás:
+  // Preguntamos si quiere salir, advirtiéndole que perderá el carrito
+  const tieneItems=cart&&cart.length>0;
+  const msg=tieneItems
+    ? '¿Querés salir de Paladear?\n\nTenés productos en el carrito que se perderán si cerrás la aplicación.'
+    : '¿Querés salir de Paladear?';
+  if(confirm(msg)){
+    // El usuario confirma salir: dejamos que el navegador navegue hacia atrás normalmente
+    history.back();
+  } else {
+    // Quedarse: re-insertar el estado home para que el próximo "atrás" vuelva a pasar por aquí
+    history.pushState({view:'home'},'');
+  }
+});
 </script>
 </body>
 </html>
