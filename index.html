@@ -69,12 +69,7 @@ button{cursor:pointer;border:none;font-family:inherit}
   .carousel-wrap{overflow:visible}
   .carousel-track{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;overflow:visible;padding:0}
   .carousel-card{width:auto;max-width:none}
-  .carousel-btn{display:none}
 }
-.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(77,125,138,.5);color:#fff;border:none;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:background .2s;backdrop-filter:blur(2px)}
-.carousel-btn:hover{background:rgba(58,99,112,.8)}
-.carousel-btn.prev{left:4px}
-.carousel-btn.next{right:4px}
 
 /* ── MOBILE: chips horizontales de categorías ── */
 .cats-mobile-grid{display:flex;gap:8px;margin:0 -20px 20px;padding:4px 20px 10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
@@ -319,50 +314,91 @@ function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1);con
 function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
 
 /* ── CARRUSELES ── */
-function renderCarruseles(){
-  if(!PRODS.length){document.getElementById('desktopProdsArea').innerHTML='';return;}
-  const grupos=[
-    {titulo:'🥜 Frutos Secos & Cereales',ids:['frutos','cereales','semillas']},
-    {titulo:'🌿 Especias & Infusiones',ids:['especias','infusiones','deshidratados']},
-    {titulo:'🍯 Dulces & Repostería',ids:['dulces','reposteria','chocolates']},
-    {titulo:'🫘 Granos & Harinas',ids:['granos','harinas','sintacc']},
-    {titulo:'🥤 Bebidas & Vinos',ids:['bebidas','vinos','infusiones']},
-    {titulo:'🫒 Gourmet & Más',ids:['aceites','aceitunas','gourmet','encurtidos','mantecas','suplementos','snack','tomate','frio','congelados','home']},
-  ];
-  let html='';
-  grupos.forEach((g,gi)=>{
-    const prods=[];
-    g.ids.forEach(id=>{const cat=CATS.find(c=>c.id===id);if(cat)PRODS.filter(p=>p[1]===id).forEach(p=>prods.push(p))});
-    if(!prods.length)return;
-    const shuffled=prods.sort(()=>Math.random()-.5).slice(0,4);
-    const cid='car'+gi;
-    html+=`<div class="carousel-section">
-      <div class="carousel-title">${g.titulo}</div>
-      <div class="carousel-wrap">
-        <button class="carousel-btn prev" onclick="scrollCar('${cid}',-1)">‹</button>
-        <div class="carousel-track" id="${cid}">`;
-    shuffled.forEach(p=>{
-      const opts=Object.keys(p[7]);
-      const precio=opts.length?p[7][opts[0]][0]:0;
-      const hasSrc=p[6]&&p[6].startsWith('http');
-      const cat=CATS.find(c=>c.id===p[1]);
-      html+=`<div class="carousel-card" onclick="selectCat('${p[1]}')">
-        <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
-        <div class="carousel-card-body">
-          <div class="carousel-card-name">${p[2]}</div>
-          <div class="carousel-card-cat">${cat?cat.n:''}</div>
-          <div class="carousel-card-price">$${fmt(precio)}</div>
-        </div>
-      </div>`;
-    });
-    html+=`</div><button class="carousel-btn next" onclick="scrollCar('${cid}',1)">›</button></div></div>`;
-  });
-  document.getElementById('desktopProdsArea').innerHTML=html||'<div></div>';
-  // También para mobile (área inferior)
-  document.getElementById('mobileProdsArea').innerHTML=html||'<div></div>';
-  document.getElementById('mobileProdsArea').classList.remove('hidden');
+let _carRotationInterval=null;
+const _carState={}; // {cid:{prods:[...],cursor:0}}
+
+function _cardHTML(p){
+  const opts=Object.keys(p[7]);
+  const precio=opts.length?p[7][opts[0]][0]:0;
+  const hasSrc=p[6]&&p[6].startsWith('http');
+  const cat=CATS.find(c=>c.id===p[1]);
+  return `<div class="carousel-card" onclick="selectCat('${p[1]}')">
+    <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
+    <div class="carousel-card-body">
+      <div class="carousel-card-name">${p[2]}</div>
+      <div class="carousel-card-cat">${cat?cat.n:''}</div>
+      <div class="carousel-card-price">$${fmt(precio)}</div>
+    </div>
+  </div>`;
 }
-function scrollCar(id,dir){const t=document.getElementById(id);if(t)t.scrollBy({left:dir*(t.clientWidth*.8),behavior:'smooth'})}
+
+function renderCarruseles(){
+  // limpiar rotación previa si había
+  if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
+  for(const k in _carState)delete _carState[k];
+
+  if(!PRODS.length){
+    document.getElementById('desktopProdsArea').innerHTML='';
+    document.getElementById('mobileProdsArea').innerHTML='';
+    return;
+  }
+  const isMobile=window.innerWidth<768;
+  let htmlDesktop='',htmlMobile='';
+
+  CATS.forEach((cat,i)=>{
+    const prods=PRODS.filter(p=>p[1]===cat.id);
+    if(!prods.length)return;
+    const cid='car'+i;
+
+    // DESKTOP: guardar todos, mostrar solo 4 (barajados)
+    const shuffled=[...prods].sort(()=>Math.random()-.5);
+    _carState[cid]={prods:shuffled,cursor:0};
+    const visibles=shuffled.slice(0,4);
+    htmlDesktop+=`<div class="carousel-section">
+      <div class="carousel-title">${cat.n}</div>
+      <div class="carousel-wrap">
+        <div class="carousel-track" id="${cid}">${visibles.map(_cardHTML).join('')}</div>
+      </div>
+    </div>`;
+
+    // MOBILE: todos los productos del rubro en el track scrolleable
+    const cidM='carM'+i;
+    htmlMobile+=`<div class="carousel-section">
+      <div class="carousel-title">${cat.n}</div>
+      <div class="carousel-wrap">
+        <div class="carousel-track" id="${cidM}">${prods.map(_cardHTML).join('')}</div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('desktopProdsArea').innerHTML=htmlDesktop||'<div></div>';
+  document.getElementById('mobileProdsArea').innerHTML=htmlMobile||'<div></div>';
+  document.getElementById('mobileProdsArea').classList.remove('hidden');
+
+  // Auto-rotación en desktop cada 12s
+  if(!isMobile){_carRotationInterval=setInterval(rotarCarruseles,12000);}
+}
+
+function rotarCarruseles(){
+  // si el usuario navegó a una categoría, los carruseles ya no están
+  for(const cid in _carState){
+    const track=document.getElementById(cid);
+    if(!track)continue;
+    const st=_carState[cid];
+    if(st.prods.length<=4)continue; // no rotar si hay 4 o menos
+    st.cursor=(st.cursor+4)%st.prods.length;
+    // tomar 4 a partir del cursor (con wrap)
+    const nuevos=[];
+    for(let k=0;k<4;k++)nuevos.push(st.prods[(st.cursor+k)%st.prods.length]);
+    // fade out → cambiar → fade in
+    track.style.transition='opacity .4s ease';
+    track.style.opacity='0';
+    setTimeout(()=>{
+      track.innerHTML=nuevos.map(_cardHTML).join('');
+      track.style.opacity='1';
+    },400);
+  }
+}
 
 /* ── RENDER CATEGORÍAS ── */
 function renderCatsUI(){
@@ -374,6 +410,7 @@ function renderCatsUI(){
 
 /* ── SELECCIONAR CATEGORÍA ── */
 function selectCat(catId){
+  if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
   activeCatId=catId;
   renderCatsUI();
   const cat=CATS.find(c=>c.id===catId);
