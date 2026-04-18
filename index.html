@@ -849,7 +849,7 @@ function _calcPrecioOpc(opc,p1,p2,esKg){
 function _cargarInfo(){
   return new Promise(resolve=>{
     if(!INFO_CSV_URL||INFO_CSV_URL.indexOf('REEMPLAZAR')>=0){console.warn('ℹ️ Hoja Info no configurada aún');resolve({});return;}
-    fetch(INFO_CSV_URL+'&t='+Date.now()).then(r=>r.text()).then(csv=>{
+    fetch(INFO_CSV_URL+'&t='+Date.now()+'&v='+Math.random().toString(36).slice(2),{cache:'no-store'}).then(r=>r.text()).then(csv=>{
       const filas=_parseCSV(csv);
       const mapa={};
       filas.forEach((cols,idx)=>{
@@ -917,7 +917,7 @@ function sincronizarDesdeSheets(){
     };
     const s=document.createElement('script');
     s.onerror=()=>{console.warn('⚠️ Error cargando Sheet');renderCatsUI();renderCarruseles();hideLoader();};
-    s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now();
+    s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now()+'&v='+Math.random().toString(36).slice(2);
     document.head.appendChild(s);
   });
 }
