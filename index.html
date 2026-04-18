@@ -8,58 +8,75 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--azul:#4d7d8a;--azul-dark:#3a6370;--azul-light:#d4e5ea;--azul-mid:#6e9aa6;--bg:#ebeef1;--fg:#1a3740;--card:#fff;--border:#dde3e8;--muted:#e5e8ec;--muted-fg:#666;--destructive:#e8633a;--whatsapp:#25d366}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh}
+:root{--azul:#4d7d8a;--azul-dark:#3a6370;--azul-light:#d4e5ea;--azul-mid:#6e9aa6;--bg:#ebeef1;--fg:#1a3740;--card:#fff;--border:#dde3e8;--muted:#e5e8ec;--muted-fg:#555;--destructive:#e8633a;--whatsapp:#25d366}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
 h1,h2,h3,h4{font-family:'Playfair Display',serif}
 button{cursor:pointer;border:none;font-family:inherit}
 .header{background:var(--azul);position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:12px}
-.logo{width:58px;height:58px;border-radius:50%;object-fit:contain;background:#fff;padding:2px}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:12px}
+.logo{width:64px;height:64px;border-radius:50%;object-fit:contain;background:#fff;padding:2px}
 .badges{display:none;gap:6px;flex-wrap:wrap;justify-content:center;flex:1}
 @media(min-width:768px){.badges{display:flex}}
-.badge{font-size:11px;padding:4px 10px;border-radius:999px;font-weight:700}
+.badge{font-size:13px;padding:5px 12px;border-radius:999px;font-weight:700}
 .badge-w{background:#fff;color:var(--azul-dark)}
 .badge-t{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);font-weight:500}
-.cart-btn{background:#fff;color:var(--azul-dark);padding:8px 14px;border-radius:24px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .2s}
+.cart-btn{background:#fff;color:var(--azul-dark);padding:10px 18px;border-radius:24px;font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;white-space:nowrap;transition:all .2s}
 .cart-btn:hover{background:var(--azul-light);transform:scale(1.03)}
-.cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:20px;height:20px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.banner{background:var(--azul-dark);text-align:center;padding:6px 16px;font-size:11px;font-weight:500;color:rgba(255,255,255,.9)}
+.cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:26px;height:26px;font-size:13px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.9)}
 .banner b{color:#fff}
-.search-wrap{position:relative;margin-bottom:16px}
-.search-input{width:100%;background:var(--card);border:2px solid var(--border);border-radius:24px;padding:10px 44px 10px 16px;font-size:14px;color:var(--fg);outline:none;transition:border .2s;font-family:inherit}
+.search-wrap{position:relative;margin-bottom:20px}
+.search-input{width:100%;background:var(--card);border:2.5px solid var(--border);border-radius:28px;padding:14px 52px 14px 20px;font-size:17px;color:var(--fg);outline:none;transition:border .2s;font-family:inherit}
 .search-input:focus{border-color:var(--azul)}
-.search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted-fg)}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
-@media(min-width:640px){.cat-grid{grid-template-columns:repeat(6,1fr)}}
-@media(min-width:768px){.cat-grid{grid-template-columns:repeat(8,1fr)}}
-@media(min-width:1024px){.cat-grid{grid-template-columns:repeat(12,1fr)}}
-.cat-btn{background:var(--card);border-radius:12px;padding:10px;text-align:center;border:2px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .2s}
-.cat-btn:hover{border-color:var(--azul-mid);transform:translateY(-2px)}
-.cat-btn .ic{font-size:20px;display:block;margin-bottom:4px}
-.cat-btn .nm{font-size:10px;font-weight:600;color:var(--azul-dark);line-height:1.2}
-.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:640px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:768px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
-@media(min-width:1024px){.prod-grid{grid-template-columns:repeat(5,1fr)}}
-.pcard{background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid transparent;transition:all .2s;display:flex;flex-direction:column}
-.pcard:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:var(--azul-light)}
-.pcard-img{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:48px;background:#fff;border-radius:8px 8px 0 0;overflow:hidden;border-bottom:1px solid var(--border)}
-.pcard-body{padding:10px;flex:1;display:flex;flex-direction:column}
-.pcard-name{font-weight:600;font-size:11.5px;line-height:1.3;margin-bottom:2px}
-.pcard-brand{font-size:10px;color:var(--muted-fg);margin-bottom:6px}
-.opt-btns{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
-.opt-btn{border-radius:6px;padding:2px 6px;font-size:10px;font-weight:600;transition:all .2s;background:var(--muted);color:var(--azul-dark);border:1px solid transparent}
+.search-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted-fg);font-size:20px}
+
+/* ── CATEGORÍAS: lista ancha en desktop, grilla en mobile ── */
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:28px}
+@media(min-width:480px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:768px){.cat-grid{grid-template-columns:1fr;gap:8px}}
+.cat-btn{background:var(--card);border-radius:14px;padding:14px 20px;text-align:left;border:2.5px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,.08);transition:all .2s;display:flex;align-items:center;gap:14px}
+@media(max-width:767px){.cat-btn{flex-direction:column;align-items:center;text-align:center;padding:14px 8px;gap:6px}}
+.cat-btn:hover{border-color:var(--azul);background:var(--azul-light);transform:translateX(4px)}
+@media(max-width:767px){.cat-btn:hover{transform:translateY(-2px)}}
+.cat-btn .ic{font-size:30px;flex-shrink:0;line-height:1}
+.cat-btn .nm{font-size:16px;font-weight:700;color:var(--azul-dark);line-height:1.3}
+@media(max-width:767px){.cat-btn .nm{font-size:13px}}
+
+/* ── LAYOUT en desktop: categorías a la izquierda, productos a la derecha ── */
+.main-layout{display:block}
+@media(min-width:768px){
+  .main-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+  .cats-sidebar{position:sticky;top:90px;max-height:calc(100vh - 110px);overflow-y:auto;padding-right:4px}
+  .cats-sidebar h1{font-size:20px;color:var(--azul-dark);margin-bottom:12px;font-weight:700}
+  .search-full{grid-column:1/-1}
+}
+@media(max-width:767px){.cats-sidebar h1{font-size:20px;color:var(--azul-dark);margin-bottom:12px;font-weight:700}}
+
+.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(min-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1200px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
+.pcard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border:2px solid transparent;transition:all .2s;display:flex;flex-direction:column}
+.pcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.12);border-color:var(--azul-mid)}
+.pcard-img{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:56px;background:#fff;border-radius:12px 12px 0 0;overflow:hidden;border-bottom:1px solid var(--border);cursor:zoom-in;position:relative}
+.pcard-img img{transition:transform .2s}
+.pcard-img:hover img{transform:scale(1.04)}
+.pcard-body{padding:14px;flex:1;display:flex;flex-direction:column}
+.pcard-name{font-weight:700;font-size:14px;line-height:1.35;margin-bottom:4px}
+.pcard-brand{font-size:12px;color:var(--muted-fg);margin-bottom:8px}
+.opt-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.opt-btn{border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;transition:all .2s;background:var(--muted);color:var(--azul-dark);border:2px solid transparent}
 .opt-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
 .opt-btn:hover:not(.active){border-color:var(--azul-mid)}
-.prices{display:flex;gap:6px;align-items:end;flex-wrap:wrap;margin-bottom:8px}
-.price-label{font-size:9px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px}
-.price-min{font-size:13px;font-weight:700}
-.price-may{font-size:11px;font-weight:700;color:var(--azul-dark);background:var(--azul-light);padding:2px 6px;border-radius:8px}
-.qty-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.qty-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--azul);background:transparent;color:var(--azul);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.prices{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
+.price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.price-min{font-size:16px;font-weight:800}
+.price-may{font-size:14px;font-weight:800;color:var(--azul-dark);background:var(--azul-light);padding:3px 9px;border-radius:8px}
+.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.qty-btn{width:38px;height:38px;border-radius:50%;border:2px solid var(--azul);background:transparent;color:var(--azul);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .qty-btn:hover{background:var(--azul);color:#fff}
-.qty-val{font-size:14px;font-weight:700;min-width:22px;text-align:center}
-.add-btn{width:100%;border-radius:8px;padding:8px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;background:var(--azul);color:#fff;margin-top:auto}
+.qty-val{font-size:18px;font-weight:800;min-width:28px;text-align:center}
+.add-btn{width:100%;border-radius:10px;padding:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;background:var(--azul);color:#fff;margin-top:auto}
 .add-btn:hover{background:var(--azul-dark)}
 .add-btn:active{transform:scale(.97)}
 .add-btn.added{background:#16a34a}
@@ -67,38 +84,44 @@ button{cursor:pointer;border:none;font-family:inherit}
 .modal-bg{position:absolute;inset:0;background:rgba(26,55,64,.5);animation:fadeIn .2s}
 .modal-content{position:relative;z-index:10;display:flex;flex-direction:column;max-height:90vh;margin-top:auto;width:100%;max-width:1200px;margin-left:auto;margin-right:auto;background:var(--card);border-radius:16px 16px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.2);overflow:hidden;animation:fadeIn .2s}
 @media(min-width:640px){.modal-content{margin-top:64px;border-radius:16px}}
-.modal-header{background:var(--azul);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-header h2{font-size:20px;font-weight:700}
-.close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.modal-header{background:var(--azul);color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-header h2{font-size:22px;font-weight:700}
+.close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .close-btn:hover{background:rgba(255,255,255,.35)}
-.modal-body{flex:1;overflow-y:auto;padding:16px}
+.modal-body{flex:1;overflow-y:auto;padding:18px}
 .cart-overlay{position:fixed;inset:0;background:rgba(26,55,64,.5);z-index:500;display:none}
 .cart-overlay.open{display:block}
-.cart-panel{position:fixed;right:0;top:0;bottom:0;width:370px;max-width:100vw;background:var(--card);z-index:501;display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,.2);transition:transform .3s ease-out;transform:translateX(100%)}
+.cart-panel{position:fixed;right:0;top:0;bottom:0;width:400px;max-width:100vw;background:var(--card);z-index:501;display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,.2);transition:transform .3s ease-out;transform:translateX(100%)}
 .cart-panel.open{transform:translateX(0)}
-.cart-header{background:var(--azul);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.cart-header h2{font-size:18px;font-weight:700}
-.cart-body{flex:1;overflow-y:auto;padding:14px}
-.cart-empty{text-align:center;padding:40px 0;color:var(--muted-fg)}
-.cart-empty .big{font-size:36px;display:block;margin-bottom:10px;opacity:.3}
-.cart-item{display:flex;align-items:start;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
-.cart-item-name{flex:1;font-size:12px;font-weight:600;line-height:1.3}
-.cart-item-opt{font-size:10px;color:var(--muted-fg);font-weight:400;display:block}
-.cart-item-price{font-size:12px;font-weight:700;min-width:72px;text-align:right;white-space:nowrap}
-.cart-item-del{background:transparent;color:rgba(0,0,0,.25);font-size:16px;padding:0 4px;transition:color .2s}
+.cart-header{background:var(--azul);color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.cart-header h2{font-size:20px;font-weight:700}
+.cart-body{flex:1;overflow-y:auto;padding:16px}
+.cart-empty{text-align:center;padding:48px 0;color:var(--muted-fg)}
+.cart-empty .big{font-size:48px;display:block;margin-bottom:12px;opacity:.3}
+.cart-empty div{font-size:16px}
+.cart-item{display:flex;align-items:start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.cart-item-name{flex:1;font-size:15px;font-weight:700;line-height:1.3}
+.cart-item-opt{font-size:13px;color:var(--muted-fg);font-weight:400;display:block}
+.cart-item-price{font-size:15px;font-weight:700;min-width:80px;text-align:right;white-space:nowrap}
+.cart-item-del{background:transparent;color:rgba(0,0,0,.3);font-size:20px;padding:0 6px;transition:color .2s}
 .cart-item-del:hover{color:var(--destructive)}
-.cart-footer{padding:14px;border-top:2px solid var(--border);flex-shrink:0}
-.may-badge{border-radius:8px;padding:10px;margin-bottom:12px;font-size:11px;font-weight:500;text-align:center}
+.cart-footer{padding:16px;border-top:2px solid var(--border);flex-shrink:0}
+.may-badge{border-radius:10px;padding:12px;margin-bottom:14px;font-size:14px;font-weight:600;text-align:center}
 .may-active{background:var(--azul);color:#fff}
 .may-inactive{background:var(--azul-light);color:var(--azul-dark);border:1px solid rgba(77,125,138,.2)}
-.total-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.total-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted-fg)}
-.total-row.main{font-size:15px;font-weight:700;color:var(--fg);border-top:1.5px solid var(--border);padding-top:6px;margin-top:4px}
-.total-row.disc{color:var(--azul-dark);font-weight:600}
-.wa-btn{background:var(--whatsapp);color:#fff;border-radius:12px;padding:12px;font-weight:700;font-size:13px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.total-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.total-row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted-fg)}
+.total-row.main{font-size:18px;font-weight:800;color:var(--fg);border-top:2px solid var(--border);padding-top:8px;margin-top:4px}
+.total-row.disc{color:var(--azul-dark);font-weight:700}
+.wa-btn{background:var(--whatsapp);color:#fff;border-radius:12px;padding:15px;font-weight:800;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s}
 .wa-btn:hover{filter:brightness(1.1);transform:scale(1.02)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .hidden{display:none!important}
+
+/* ── ZOOM LIGHTBOX ── */
+#imgZoom{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:fadeIn .2s}
+#imgZoom img{max-width:92vw;max-height:88vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain}
+#imgZoom .zoom-close{position:absolute;top:18px;right:22px;color:#fff;font-size:38px;font-weight:700;line-height:1;cursor:pointer;background:rgba(0,0,0,.4);border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -203,8 +226,9 @@ function _aplicarPrecios(prod,p1,p2){
 let cart=[];let searchTerm='';
 function fmt(n){return n.toLocaleString('es-AR')}
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
-function renderCats(){let h='<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:12px;font-weight:700">Categorías</h1><div class="cat-grid">';CATS.forEach(c=>{h+=`<button class="cat-btn" onclick="openCat('${c.id}')"><span class="ic">${c.ic}</span><div class="nm">${c.n}</div></button>`});h+='</div>';return h}
-function renderCard(p,prefix){const opts=Object.keys(p[7]);if(!opts.length)return'';const id=prefix+'_'+p[0];let h=`<div class="pcard" id="${id}">`;h+=p[6]&&p[6].startsWith('http')?`<div class="pcard-img" style="padding:0;overflow:hidden"><img src="${p[6]}" alt="${p[2]}" style="width:100%;height:100%;object-fit:contain;padding:12px" onerror="this.parentNode.innerHTML='🌿'" loading="lazy"></div>`:`<div class="pcard-img">🌿</div>`;h+=`<div class="pcard-body">`;h+=`<div class="pcard-name">${p[2]}</div>`;h+=`<div class="pcard-brand">${p[3]}</div>`;h+=`<div class="opt-btns">`;opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});h+=`</div>`;h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div>`;h+=`<div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;h+=`</div></div>`;return h}
+function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=function(e){if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
+function renderCats(){let h='<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:14px;font-weight:700">Categorías</h1><div class="cat-grid">';CATS.forEach(c=>{h+=`<button class="cat-btn" onclick="openCat('${c.id}')"><span class="ic">${c.ic}</span><div class="nm">${c.n}</div></button>`});h+='</div>';return h}
+function renderCard(p,prefix){const opts=Object.keys(p[7]);if(!opts.length)return'';const id=prefix+'_'+p[0];const hasSrc=p[6]&&p[6].startsWith('http');let h=`<div class="pcard" id="${id}">`;h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}" style="${hasSrc?'cursor:zoom-in':'font-size:56px'}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" style="width:100%;height:100%;object-fit:contain;padding:12px" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</div>`;h+=`<div class="pcard-body">`;h+=`<div class="pcard-name">${p[2]}</div>`;h+=`<div class="pcard-brand">${p[3]}</div>`;h+=`<div class="opt-btns">`;opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});h+=`</div>`;h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div>`;h+=`<div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;h+=`</div></div>`;return h}
 function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));el.querySelector('.price-min').textContent='$'+fmt(p1);el.querySelector('.price-may').textContent='$'+fmt(p2);el.dataset.opt=opt}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
 function addToCart(pid,elId){const p=PRODS.find(x=>x[0]===pid);if(!p)return;const el=document.getElementById(elId);const opts=Object.keys(p[7]);const opt=el.dataset.opt||opts[0];const qty=parseInt(document.getElementById(elId+'_q').textContent);const key=pid+'-'+opt;const ex=cart.find(i=>i.key===key);if(ex)ex.c+=qty;else cart.push({key,pid,n:p[2],o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:p[4]});updateCartCount();const btn=document.getElementById(elId+'_ab');btn.classList.add('added');btn.innerHTML='✓ Agregado!';setTimeout(()=>{btn.classList.remove('added');btn.innerHTML='🛒 Agregar al pedido'},1400)}
@@ -215,10 +239,29 @@ function renderCart(){const body=document.getElementById('cartBody');const foote
 function cartQty(key,d){const it=cart.find(i=>i.key===key);if(!it)return;it.c=Math.max(1,it.c+d);updateCartCount();renderCart()}
 function cartDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();renderCart()}
 function pedirWA(){const totalMin=cart.reduce((a,i)=>a+i.l1*i.c,0);const esMay=totalMin>=80000;let msg='🛒 *Pedido - Mercado de Paladear Sabores*\n\n';let tot=0;cart.forEach(it=>{const p=esMay?it.l2:it.l1;const s=p*it.c;tot+=s;const qLabel=it.unidad==='kg'?calcWeight(it.o,it.c):(it.c>1?it.o+' x'+it.c:it.o);msg+=`• ${it.n} (${qLabel}) — $${fmt(s)}\n`});msg+=`\n*TOTAL: $${fmt(tot)}*`;if(esMay)msg+='\n_(Lista Mayorista aplicada)_';msg+='\n\n_Pedido realizado desde el catálogo online_';window.open('https://wa.me/5492616512823?text='+encodeURIComponent(msg),'_blank')}
-function openCat(catId){const cat=CATS.find(c=>c.id===catId);if(!cat)return;const prods=PRODS.filter(p=>p[1]===catId);document.getElementById('modalTitle').innerHTML=cat.ic+' '+cat.n;let h='';if(!prods.length)h='<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:14px">No se encontraron productos 🔍</div>';else{h='<div class="prod-grid">';prods.forEach(p=>{h+=renderCard(p,'m')});h+='</div>'}document.getElementById('modalBody').innerHTML=h;document.getElementById('catModal').classList.remove('hidden');document.body.style.overflow='hidden'}
+function openCat(catId){const cat=CATS.find(c=>c.id===catId);if(!cat)return;const prods=PRODS.filter(p=>p[1]===catId);
+  // On desktop with sidebar visible, show in prods area
+  const prodsArea=document.getElementById('prodsArea');
+  if(prodsArea){
+    let h=`<h2 style="font-size:20px;color:var(--azul-dark);margin-bottom:14px;font-weight:700">${cat.ic} ${cat.n}</h2>`;
+    if(!prods.length)h+='<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
+    else{h+='<div class="prod-grid">';prods.forEach(p=>{h+=renderCard(p,'c')});h+='</div>'}
+    prodsArea.innerHTML=h;
+    prodsArea.scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  // Mobile: modal
+  document.getElementById('modalTitle').innerHTML=cat.ic+' '+cat.n;
+  let h='';if(!prods.length)h='<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';else{h='<div class="prod-grid">';prods.forEach(p=>{h+=renderCard(p,'m')});h+='</div>'}
+  document.getElementById('modalBody').innerHTML=h;document.getElementById('catModal').classList.remove('hidden');document.body.style.overflow='hidden'}
 function closeModal(){document.getElementById('catModal').classList.add('hidden');document.body.style.overflow=''}
-function onSearch(val){searchTerm=val.trim().toLowerCase();renderMain()}
-function renderMain(){const el=document.getElementById('mainContent');if(!searchTerm){el.innerHTML=renderCats();return}const results=PRODS.filter(p=>p[2].toLowerCase().includes(searchTerm)||p[3].toLowerCase().includes(searchTerm));let h=`<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:12px;font-weight:700">Resultados para "${searchTerm}"</h1>`;if(!results.length)h+='<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:14px">No se encontraron productos 🔍</div>';else{h+='<div class="prod-grid">';results.forEach(p=>{h+=renderCard(p,'s')});h+='</div>'}el.innerHTML=h}
+function _fuzzyMatch(query,text){
+  const qNorm=_norm(query).split(' ').filter(w=>w.length>1);
+  const tNorm=_norm(text);
+  return qNorm.every(w=>tNorm.includes(w));
+}
+function onSearch(val){searchTerm=val.trim();renderMain()}
+function renderMain(){const el=document.getElementById('mainContent');if(!searchTerm){el.innerHTML='<div class="main-layout"><div class="cats-sidebar">'+renderCats()+'</div><div class="prods-area" id="prodsArea"><div style="text-align:center;padding:60px 0;color:var(--muted-fg)"><div style="font-size:48px;margin-bottom:12px">👆</div><div style="font-size:18px;font-weight:600">Elegí una categoría para ver los productos</div></div></div></div>';return}const results=PRODS.filter(p=>_fuzzyMatch(searchTerm,p[2])||_fuzzyMatch(searchTerm,p[3]));let h=`<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:14px;font-weight:700">Resultados para "${searchTerm}"</h1>`;if(!results.length)h+='<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';else{h+='<div class="prod-grid">';results.forEach(p=>{h+=renderCard(p,'s')});h+='</div>'}el.innerHTML=h}
 renderMain();
 
 function sincronizarDesdeSheets(){
@@ -313,7 +356,7 @@ sincronizarDesdeSheets();
 
 <div id="chat-box">
   <div id="chat-header">
-    <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px">🌿</div>
+    <img src="https://lh3.googleusercontent.com/d/17cOrkaOXcnAUR8gADmaRbMaBTOtO382q" style="width:32px;height:32px;border-radius:50%;object-fit:cover;background:#fff" onerror="this.outerHTML='<span style=&quot;font-size:18px&quot;>🌿</span>'">
     <div>
       <div>Asistente Paladear</div>
       <div style="font-size:11px;font-weight:400;opacity:.85">Te ayudo con tu pedido</div>
@@ -328,7 +371,7 @@ sincronizarDesdeSheets();
 </div>
 
 <script>
-const CHAT_SYSTEM = `Sos el asistente virtual de Paladear Mercado de Sabores, una tienda de productos naturales, frutos secos, especias, infusiones, suplementos y más ubicada en Mendoza, Argentina.
+const CHAT_SYSTEM_UNUSED = `unused, una tienda de productos naturales, frutos secos, especias, infusiones, suplementos y más ubicada en Mendoza, Argentina.
 
 INFORMACIÓN DE LA TIENDA:
 - Dirección: Pueyrredón 588 esquina Paso de los Andes, Mendoza. Ver mapa: https://maps.app.goo.gl/5TtZMgtvq5XfycqG8
@@ -427,43 +470,145 @@ function addUserMsg(text) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-async function sendChat() {
+function responderChat(texto) {
+  const t = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+  // UBICACIÓN Y HORARIOS
+  if (/donde|ubicacion|direccion|local|lugar|mapa|como llegar/.test(t))
+    return 'Estamos en Pueyrredón 588 esquina Paso de los Andes, Mendoza 📍\nHorario: Lunes a sábado de 10:00 a 20:00 hs corrido.\nVer mapa: https://maps.app.goo.gl/5TtZMgtvq5XfycqG8';
+
+  if (/horario|cuando|abierto|abren|cierran|atienden/.test(t))
+    return 'Atendemos de lunes a sábado de 10:00 a 20:00 hs corrido 🕐';
+
+  // ENVÍOS
+  if (/envio|envios|delivery|domicilio|llegan|mandan|despachan|uber/.test(t))
+    return 'Hacemos envíos al Gran Mendoza: Ciudad, Godoy Cruz, Guaymallén, y partes de Maipú, Luján de Cuyo y Las Heras 🚚\n\n• Envío GRATIS en compras mayores a $40.000\n• Compras menores: costo según Uber Envíos\n• Fuera del Gran Mendoza: envío por transporte a cargo del cliente';
+
+  // PAGOS
+  if (/pago|pagar|transferencia|efectivo|tarjeta|mercado pago|modo|como pago/.test(t))
+    return 'Métodos de pago 💳\n\n• En el local: efectivo (5% descuento), tarjetas débito/crédito, Mercado Pago, MODO\n• Para envíos: transferencia bancaria (pedinos el ALIAS) o link de Mercado Pago';
+
+  // DESCUENTO EFECTIVO
+  if (/descuento|oferta|efectivo/.test(t))
+    return '¡Sí! Pagando en efectivo en el local tenés un 5% de descuento 💸';
+
+  // MAYORISTA / LISTAS
+  if (/mayorista|lista 2|lista dos|precio mayor|descuento mayor/.test(t))
+    return 'Tenemos dos listas de precios 🏷️\n\n• Lista 1: precios minoristas\n• Lista 2: precios mayoristas (se activa cuando tu compra supera los $80.000 en Lista 1)\n\nNo hay mínimo de compra para empezar a pedir.';
+
+  if (/minorista|lista 1|lista uno/.test(t))
+    return 'La Lista 1 tiene los precios minoristas. Si tu compra supera $80.000, se activa automáticamente la Lista 2 con precios mayoristas 🏷️';
+
+  // PRECIOS
+  if (/precio|cuanto sale|cuanto cuesta|cuanto vale|precios/.test(t))
+    return 'Los precios que ves en el catálogo son por kilogramo. Podés pedir la cantidad que quieras, ¡sin mínimos! 📦\n\nSi tu compra supera $80.000 se activa automáticamente la Lista Mayorista con mejores precios.';
+
+  // STOCK / DISPONIBILIDAD
+  if (/stock|disponible|disponibilidad|hay|tienen|queda/.test(t))
+    return 'La disponibilidad de stock puede variar. Te recomendamos consultar por WhatsApp antes de armar tu pedido para confirmar que los productos que querés están disponibles 📱\nWhatsApp: 261 651 2823';
+
+  // CÓMO COMPRAR / PEDIDO
+  if (/como compro|como pido|como hago|como funciona|como se hace|como hacer|pasos|pedido/.test(t))
+    return 'Para hacer tu pedido es muy fácil 😊\n\n1. Navegá el catálogo y elegí tus productos\n2. Seleccioná la cantidad y tocá "Agregar al pedido"\n3. Cuando termines, abrí el carrito y tocá "Pedir por WhatsApp"\n4. Se abre WhatsApp con tu pedido armado\n5. Esperá que te confirmemos el stock y el presupuesto final\n6. Confirmá el pedido e informanos el método de pago\n7. ¡Lo recibís en casa o lo retirás en el local!';
+
+  // WHATSAPP / CONTACTO
+  if (/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
+    return 'Podés contactarnos por WhatsApp al 261 651 2823 📱\nAtendemos de lunes a sábado de 10:00 a 20:00 hs.';
+
+  // MIX FRUTOS SECOS
+  if (/mix tradicional/.test(t))
+    return 'Mix Tradicional 🥜\nContenido: nueces, almendras, pasas rubias, pasas morochas y maní.';
+
+  if (/mix tropical/.test(t))
+    return 'Mix Tropical 🌴\nContenido: nuez, almendras, castañas, pasas morochas y rubias, fruta glaseada y chips de banana.';
+
+  if (/mix patagonico|mix patagónico/.test(t))
+    return 'Mix Patagónico 🏔️\nContenido: nuez, almendras, castañas, pasas morochas, arándanos, frutilla glaseada y coco en escamas.';
+
+  if (/mix sin pasas|sin pasas premium/.test(t))
+    return 'Mix Sin Pasas Premium ✨\nContenido: nuez mariposa extra light, almendras nonpareil, castañas y maní tostado.';
+
+  if (/mix salado/.test(t))
+    return 'Mix Salado 🧂\nContenido: maní, pasas de uva rubia, castañas de cajú y almendras. Ideal para picadas.';
+
+  if (/mix cervecero/.test(t))
+    return 'Mix Cervecero 🍺\nContenido: frutos secos variados, ideal para acompañar bebidas.';
+
+  if (/mix/.test(t))
+    return 'Tenemos varios mixes de frutos secos 🥜\n\n• Mix Tradicional: nueces, almendras, pasas y maní\n• Mix Tropical: nuez, castañas, fruta glaseada y chips de banana\n• Mix Patagónico: nuez, almendras, arándanos y coco\n• Mix Sin Pasas Premium: nuez extra light, almendras y castañas\n• Mix Salado: maní, cajú, almendras (ideal para picadas)\n• Mix Cervecero: frutos secos para acompañar bebidas\n\n¿Querés saber el contenido de alguno en particular?';
+
+  // GRANOLAS
+  if (/granola berries|granola mix berries/.test(t))
+    return 'Granola Mix Berries 🫐\nIngredientes: avena arrollada gruesa, pepitas de girasol, pasas de uva, jarabe de maíz, copos de maíz, arándanos deshidratados, almendras y nueces.';
+
+  if (/granola energeti|granola energético/.test(t))
+    return 'Granola Mix Energético ⚡\nIngredientes: avena arrollada gruesa, pepitas de girasol, maní tostado, jarabe de maíz, pasas de uva, copos de maíz, almendras y nueces.';
+
+  if (/granola tropical/.test(t))
+    return 'Granola Mix Tropical 🌺\nIngredientes: avena arrollada gruesa, pepitas de girasol, pasas de uva, jarabe de maíz, copos de maíz, almendras, chips de banana, papaya y manzana deshidratada.';
+
+  if (/granola tradicional/.test(t))
+    return 'Granola Tradicional 🌾\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, pasas de uva, coco rallado, vainillín, azúcar rubia orgánica y miel.';
+
+  if (/granola sin pasas/.test(t))
+    return 'Granola Mix Sin Pasas 🌾\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, coco rallado, vainillín, azúcar rubia orgánica y miel.';
+
+  if (/granola.*choco|granola.*chocolate/.test(t))
+    return 'Granola con Chips de Chocolate 🍫\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, pasas de uva, chips de chocolate, coco rallado, vainillín, azúcar rubia orgánica y miel.';
+
+  if (/granola/.test(t))
+    return 'Tenemos varias granolas 🥣\n\n• Mix Berries: con arándanos, almendras y nueces\n• Mix Energético: con maní tostado\n• Mix Tropical: con chips de banana y papaya\n• Tradicional: con miel y coco\n• Mix Sin Pasas: sin pasas de uva\n• Con Chips de Chocolate: con chips de chocolate\n\n¿Querés los ingredientes de alguna en particular?';
+
+  // NUECES Y ALMENDRAS
+  if (/nuez|nueces/.test(t))
+    return 'Trabajamos con nuez variedad Chandler del Valle de Uco 🌰\nLas presentamos como: nuez mariposa extra light, light, ámbar y negras. Pueden variar un poco en color y tamaño.';
+
+  if (/almendra|almendras/.test(t))
+    return 'Tenemos almendras Nonpareil (Mendoza y Chile) y Guara (Mendoza) 🌰\nAmbas son de excelente calidad y sabor exquisito.';
+
+  // MIEL
+  if (/miel/.test(t))
+    return 'Contamos con miel de tres productores mendocinos, cada uno con características únicas 🍯\n\nContanos tus preferencias (sabor suave, fuerte, floral) y te recomendamos la ideal para vos.';
+
+  // CELÍACOS / SIN TACC
+  if (/celiaco|celiaca|celíaco|celíaca|sin tacc|gluten|tacc/.test(t))
+    return 'Tenemos una sección especial Sin TACC con productos aptos para celíacos 🌱\nPodés encontrarla en el catálogo. También tenemos varios productos a granel que son naturalmente sin gluten. Si tenés dudas sobre un producto específico, consultanos por WhatsApp.';
+
+  // VEGANO
+  if (/vegano|vegana|veganism|plant based/.test(t))
+    return 'Muchos de nuestros productos son aptos para veganos: semillas, frutos secos, harinas, legumbres, especias y más 🌱\nSi querés saber si un producto específico es vegano, consultanos por WhatsApp al 261 651 2823.';
+
+  // RETIRO EN LOCAL
+  if (/retiro|retirar|buscar|paso a buscar/.test(t))
+    return 'Podés retirar tu pedido en el local sin problema 🏠\nEstamos en Pueyrredón 588, Mendoza.\nHorario: lunes a sábado de 10:00 a 20:00 hs.';
+
+  // SALUDO
+  if (/^(hola|buen|buenas|saludos|hey|hi|buendia|buenos dias|buenas tardes|buenas noches)/.test(t))
+    return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar? Puedo contarte sobre productos, envíos, métodos de pago, horarios o cómo hacer tu pedido.';
+
+  // GRACIAS
+  if (/gracias|muchas gracias|genial|perfecto|excelente|ok gracias/.test(t))
+    return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos por WhatsApp al 261 651 2823.';
+
+  // DEFAULT
+  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos directamente por WhatsApp al 261 651 2823 y el equipo de Paladear te va a ayudar enseguida.\n\nTambién puedo contarte sobre:\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Ingredientes de mixes y granolas\n• Horarios y ubicación';
+}
+
+function sendChat() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
-
   addUserMsg(text);
-  chatHistory.push({role: 'user', content: text});
-
   const typing = addBotMsg('...');
   typing.classList.add('typing');
-
-  try {
-    const messages = chatHistory.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{text: m.content}]
-    }));
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAwe6VMteIZRrSYPmGly-0sKOpIC28ICyg', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        system_instruction: {parts: [{text: CHAT_SYSTEM}]},
-        contents: messages
-      })
-    });
-    const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lo siento, no pude procesar tu consulta. Contactanos por WhatsApp al 261 651 2823.';
+  setTimeout(() => {
+    const reply = responderChat(text);
+    typing.style.whiteSpace = 'pre-wrap';
     typing.textContent = reply;
     typing.classList.remove('typing');
-    chatHistory.push({role: 'assistant', content: reply});
-    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-  } catch(e) {
-    typing.textContent = 'Hubo un error de conexión. Por favor contactanos por WhatsApp al 261 651 2823 📱';
-    typing.classList.remove('typing');
-  }
-
-  document.getElementById('chat-msgs').scrollTop = 9999;
+    document.getElementById('chat-msgs').scrollTop = 9999;
+  }, 400);
 }
 </script>
 <!-- ═══════════════════════════════════════════════ -->
