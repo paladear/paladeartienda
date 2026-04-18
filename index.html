@@ -86,7 +86,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .main-layout{display:block}
 @media(min-width:768px){
   .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
-  .cats-sidebar{position:sticky;top:120px;max-height:calc(100vh - 140px);overflow-y:auto;padding-right:4px}
+  .cats-sidebar{position:sticky;top:120px;padding-right:4px}
   .cats-sidebar h1{font-size:21px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;font-family:"Playfair Display",serif}
 }
 .cats-sidebar{display:none}
@@ -310,7 +310,22 @@ setTimeout(hideLoader,8000);
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
-function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1);const tn=_norm(t);return qn.every(w=>tn.includes(w))}
+const _STOPWORDS=new Set(['DE','DEL','LA','EL','LOS','LAS','UN','UNA','Y','O','CON','EN','X','POR']);
+function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));const tn=_norm(t);if(!qn.length)return false;return qn.some(w=>tn.includes(w))}
+function _matchScore(q,t){
+  const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));
+  const tn=_norm(t);
+  if(!qn.length)return 0;
+  let score=0;
+  qn.forEach(w=>{
+    if(tn.includes(' '+w+' ')||tn.startsWith(w+' ')||tn.endsWith(' '+w)||tn===w)score+=10; // palabra completa
+    else if(tn.includes(w))score+=5; // palabra como subcadena
+  });
+  // bonus si coinciden TODAS las palabras
+  const allMatch=qn.every(w=>tn.includes(w));
+  if(allMatch)score+=20;
+  return score;
+}
 function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
 
 /* ── CARRUSELES ── */
@@ -531,7 +546,9 @@ function pedirWA(){
 function onSearch(val){
   searchTerm=val.trim();
   if(!searchTerm){if(activeCatId)selectCat(activeCatId);else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden')}return}
-  const results=PRODS.filter(p=>_fuzzyMatch(searchTerm,p[2])||_fuzzyMatch(searchTerm,p[3]));
+  // calcular score combinado de nombre (peso alto) + opción (peso bajo)
+  const scored=PRODS.map(p=>({p,score:_matchScore(searchTerm,p[2])*2+_matchScore(searchTerm,p[3])})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+  const results=scored.map(x=>x.p);
   let h=`<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:14px;font-weight:700">Resultados para "${searchTerm}"</h1>`;
   if(!results.length)h+='<div style="text-align:center;padding:44px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   else{h+='<div class="prod-grid">';results.forEach(p=>{h+=renderCard(p,'s')});h+='</div>'}
