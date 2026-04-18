@@ -292,7 +292,7 @@ function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
 function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1);const tn=_norm(t);return qn.every(w=>tn.includes(w))}
-function zoomImg(el){const src=el.dataset.src||'';\if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
+function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
 
 /* ── CARRUSELES ── */
 function renderCarruseles(){
