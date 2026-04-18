@@ -194,6 +194,10 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cart-panel.open{transform:translateX(0)}
 .cart-header{background:var(--azul);color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .cart-header h2{font-size:20px;font-weight:700}
+.cart-header-actions{display:flex;align-items:center;gap:10px}
+.cart-chat-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;width:38px;height:38px;border-radius:50%;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
+.cart-chat-btn:hover,.cart-chat-btn:active{background:rgba(255,255,255,.3);transform:scale(1.08)}
+body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .cart-body{flex:1;overflow-y:auto;padding:16px}
 .cart-empty{text-align:center;padding:48px 0;color:var(--muted-fg)}
 .cart-empty .big{font-size:44px;display:block;margin-bottom:12px;opacity:.3}
@@ -319,7 +323,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel">
-  <div class="cart-header"><h2>🛒 Tu pedido</h2><button class="close-btn" onclick="closeCart()">×</button></div>
+  <div class="cart-header"><h2>🛒 Tu pedido</h2><div class="cart-header-actions"><button class="cart-chat-btn" onclick="toggleChat()" title="Consultar" aria-label="Consultar">💬</button><button class="close-btn" onclick="closeCart()" aria-label="Cerrar">×</button></div></div>
   <div class="cart-body" id="cartBody"></div>
   <div class="cart-footer hidden" id="cartFooter"></div>
 </div>
@@ -602,8 +606,8 @@ function miniQty(key,d){const it=cart.find(i=>i.key===key);if(!it)return;it.c=Ma
 function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();document.getElementById('miniCartPopup').classList.add('hidden')}
 function updateCartCount(){document.getElementById('cartCount').textContent=cart.reduce((a,i)=>a+i.c,0)}
 
-function openCart(){document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartPanel').classList.add('open');document.body.style.overflow='hidden';closeMiniCart();renderCart()}
-function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartPanel').classList.remove('open');document.body.style.overflow=''}
+function openCart(){document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartPanel').classList.add('open');document.body.classList.add('cart-open');document.body.style.overflow='hidden';closeMiniCart();renderCart()}
+function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartPanel').classList.remove('open');document.body.classList.remove('cart-open');document.body.style.overflow=''}
 
 function renderCart(){
   const body=document.getElementById('cartBody'),footer=document.getElementById('cartFooter');
