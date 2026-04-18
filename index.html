@@ -4,18 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paladear - Mercado de Sabores</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--azul:#4d7d8a;--azul-dark:#3a6370;--azul-light:#d4e5ea;--azul-mid:#6e9aa6;--bg:#ebeef1;--fg:#1a3740;--card:#fff;--border:#dde3e8;--muted:#e5e8ec;--muted-fg:#444;--destructive:#e8633a;--whatsapp:#25d366}
 html,body{overflow-x:hidden;max-width:100%}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
+
+/* ── SPINNER DE CARGA ── */
+#loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease}
+#loadingOverlay.hidden{opacity:0;pointer-events:none}
+.spinner{width:64px;height:64px;border:5px solid var(--azul-light);border-top-color:var(--azul);border-radius:50%;animation:spin 1s linear infinite}
+.loading-text{font-family:'Fraunces',serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px}
+@keyframes spin{to{transform:rotate(360deg)}}
 h1,h2,h3,h4{font-family:'Playfair Display',serif}
 button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── HEADER ── */
 .header{background:var(--azul);position:sticky;top:0;z-index:300;box-shadow:0 3px 16px rgba(0,0,0,.2)}
-.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;padding:8px 20px;gap:14px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:8px 20px;gap:14px}
 @media(max-width:767px){.header-inner{padding:8px 10px;gap:8px}}
 .logo-wrap{flex-shrink:0}
 .logo{width:100px;height:100px;border-radius:50%;object-fit:contain;background:#fff;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
@@ -49,9 +56,9 @@ button{cursor:pointer;border:none;font-family:inherit}
 .carousel-wrap{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 40px,#000 calc(100% - 40px),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 40px,#000 calc(100% - 40px),transparent 100%)}
 .carousel-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 20px 6px}
 .carousel-track::-webkit-scrollbar{display:none}
-.carousel-card{flex-shrink:0;width:200px;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);border:2px solid transparent;transition:all .22s;cursor:pointer;scroll-snap-align:start}
+.carousel-card{flex-shrink:0;width:170px;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);border:2px solid transparent;transition:all .22s;cursor:pointer;scroll-snap-align:start}
 .carousel-card:hover{border-color:var(--azul-mid);transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
-.carousel-card-img{width:100%;height:150px;display:flex;align-items:center;justify-content:center;font-size:50px;background:#f8fafb;border-bottom:1px solid var(--border)}
+.carousel-card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#f8fafb;border-bottom:1px solid var(--border)}
 .carousel-card-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .carousel-card-body{padding:10px 12px}
 .carousel-card-name{font-size:13px;font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:4px}
@@ -66,10 +73,9 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cats-mobile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
 @media(min-width:480px){.cats-mobile-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:768px){.cats-mobile-grid{display:none}}
-.cat-mobile-btn{background:var(--card);border-radius:14px;padding:12px 6px;text-align:center;border:2px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,.08);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:5px}
-.cat-mobile-btn:hover,.cat-mobile-btn.active{border-color:var(--azul);background:var(--azul-light)}
-.cat-mobile-btn .ic{font-size:24px;line-height:1}
-.cat-mobile-btn .nm{font-size:11px;font-weight:700;color:var(--azul-dark);line-height:1.2}
+.cat-mobile-btn{background:var(--azul);border-radius:14px;padding:16px 8px;text-align:center;border:2px solid transparent;box-shadow:0 2px 8px rgba(77,125,138,.25);transition:all .2s;display:flex;align-items:center;justify-content:center;min-height:60px}
+.cat-mobile-btn:hover,.cat-mobile-btn.active{background:var(--azul-dark);transform:translateY(-2px);box-shadow:0 4px 14px rgba(77,125,138,.4)}
+.cat-mobile-btn .nm{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:#fff;line-height:1.15;letter-spacing:.3px}
 .mobile-prods-area{display:block}
 @media(min-width:768px){.mobile-prods-area{display:none}}
 
@@ -82,10 +88,9 @@ button{cursor:pointer;border:none;font-family:inherit}
 }
 .cats-sidebar{display:none}
 @media(min-width:768px){.cats-sidebar{display:block}}
-.cat-list-btn{width:100%;background:transparent;border-radius:10px;padding:11px 14px;text-align:left;border:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--azul-dark);margin-bottom:3px}
-.cat-list-btn:hover,.cat-list-btn.active{border-color:var(--azul);background:var(--azul-light)}
-.cat-list-btn .ic{font-size:20px;flex-shrink:0}
-.cat-list-btn .nm{font-size:14px;font-weight:700;color:var(--azul-dark)}
+.cat-list-btn{width:100%;background:var(--azul);border-radius:10px;padding:12px 16px;text-align:left;border:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:10px;margin-bottom:6px;box-shadow:0 2px 6px rgba(77,125,138,.2)}
+.cat-list-btn:hover,.cat-list-btn.active{background:var(--azul-dark);transform:translateX(3px);box-shadow:0 3px 10px rgba(77,125,138,.35)}
+.cat-list-btn .nm{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.3px}
 
 /* ── PRODUCTOS ── */
 .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
@@ -204,6 +209,11 @@ button{cursor:pointer;border:none;font-family:inherit}
 </head>
 <body>
 
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Cargando Paladear...</div>
+</div>
+
 <header class="header">
 <div class="header-inner">
   <div class="logo-wrap">
@@ -232,7 +242,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 </header>
 <div class="banner">🏷️ <b>Lista Mayorista</b> activa comprando más de <b>$80.000</b> — precios en azul son Lista Mayorista</div>
 
-<div style="max-width:1280px;margin:0 auto;padding:18px 20px">
+<div style="max-width:1100px;margin:0 auto;padding:18px 20px">
   <div class="search-wrap">
     <input class="search-input" type="text" placeholder="Buscar productos..." oninput="onSearch(this.value)" id="searchInput">
     <span class="search-icon">🔍</span>
@@ -292,6 +302,8 @@ const RUBRO_MAP={'ACEITES Y VINAGRES':{id:'aceites',n:'Aceites y Vinagres',ic:'�
 let CATS=[],PRODS=[],cart=[],searchTerm='',activeCatId=null,miniCartTimer=null;
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyq2YpD6NMRMr9qPFHMlOQK6RNgrnbolYUu923FVP7cjqueKIZenchA36aT2GCug_ip/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
+function hideLoader(){const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>o.remove(),500)}}
+setTimeout(hideLoader,8000);
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
@@ -314,7 +326,7 @@ function renderCarruseles(){
     const prods=[];
     g.ids.forEach(id=>{const cat=CATS.find(c=>c.id===id);if(cat)PRODS.filter(p=>p[1]===id).forEach(p=>prods.push(p))});
     if(!prods.length)return;
-    const shuffled=prods.sort(()=>Math.random()-.5).slice(0,4);
+    const shuffled=prods.sort(()=>Math.random()-.5).slice(0,12);
     const cid='car'+gi;
     html+=`<div class="carousel-section">
       <div class="carousel-title">${g.titulo}</div>
@@ -342,14 +354,14 @@ function renderCarruseles(){
   document.getElementById('mobileProdsArea').innerHTML=html||'<div></div>';
   document.getElementById('mobileProdsArea').classList.remove('hidden');
 }
-function scrollCar(id,dir){const t=document.getElementById(id);if(t)t.scrollBy({left:dir*440,behavior:'smooth'})}
+function scrollCar(id,dir){const t=document.getElementById(id);if(t)t.scrollBy({left:dir*(t.clientWidth*.8),behavior:'smooth'})}
 
 /* ── RENDER CATEGORÍAS ── */
 function renderCatsUI(){
   const mg=document.getElementById('catsMobileGrid');
-  mg.innerHTML=CATS.map(c=>`<button class="cat-mobile-btn${activeCatId===c.id?' active':''}" onclick="selectCat('${c.id}')"><span class="ic">${c.ic}</span><div class="nm">${c.n}</div></button>`).join('');
+  mg.innerHTML=CATS.map(c=>`<button class="cat-mobile-btn${activeCatId===c.id?' active':''}" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
   const sl=document.getElementById('catsSidebarList');
-  sl.innerHTML=CATS.map(c=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" onclick="selectCat('${c.id}')"><span class="ic">${c.ic}</span><div class="nm">${c.n}</div></button>`).join('');
+  sl.innerHTML=CATS.map(c=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
 }
 
 /* ── SELECCIONAR CATEGORÍA ── */
@@ -618,9 +630,10 @@ function sincronizarDesdeSheets(){
     console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
     renderCatsUI();
     renderCarruseles();
+    hideLoader();
   };
   const s=document.createElement('script');
-  s.onerror=()=>{console.warn('⚠️ Error cargando Sheet');renderCatsUI();renderCarruseles();};
+  s.onerror=()=>{console.warn('⚠️ Error cargando Sheet');renderCatsUI();renderCarruseles();hideLoader();};
   s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now();
   document.head.appendChild(s);
 }
