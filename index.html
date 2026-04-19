@@ -531,16 +531,11 @@ function _acumLabel(p){
   const cartAcum=cart.filter(i=>i.pid===p[0]);
   if(!cartAcum.length)return'';
   if(p[4]==='kg'){
-    let totalG=0;
-    cartAcum.forEach(i=>{
-      const mkg=i.o.match(/^(\d[\d,.]*)\s*kg$/i);
-      const mg=i.o.match(/^(\d+)\s*g$/i);
-      if(mkg)totalG+=parseFloat(mkg[1].replace(',','.'))*1000*i.c;
-      else if(mg)totalG+=parseInt(mg[1])*i.c;
-    });
-    return totalG>=1000?(totalG/1000)%1===0?(totalG/1000)+' kg':(totalG/1000).toFixed(1)+' kg':totalG+' g';
+    // nuevo modelo: item unificado con totalG
+    const totalG=cartAcum.reduce((a,i)=>a+(i.totalG||0),0);
+    return _gLabel(totalG);
   } else {
-    return cartAcum.reduce((a,i)=>a+i.c,0)+' und';
+    return cartAcum.reduce((a,i)=>a+(i.c||0),0)+' und';
   }
 }
 function renderCard(p,prefix){
@@ -593,6 +588,21 @@ function showInfo(pid){
   document.body.appendChild(m);
 }
 
+// Convierte una opción (ej "500g","1 kg","250g") a gramos
+function _optToG(opt){
+  const mkg=opt.match(/^(\d[\d,.]*)\s*kg$/i);if(mkg)return parseFloat(mkg[1].replace(',','.'))*1000;
+  const mg=opt.match(/^(\d+)\s*g$/i);if(mg)return parseInt(mg[1]);
+  return 0; // unidades: no es kg
+}
+// Dado un item unificado (gramos totales), elige el precio unitario x kg más apropiado
+function _precioXG(p,totalG,nivel){
+  // nivel: 0=minorista 1=mayorista
+  const opts=_sortOpts(Object.keys(p[7])); // ordenado de mayor a menor
+  // buscar la opción de 1 kg como referencia base
+  const ref=opts.find(o=>_optToG(o)===1000)||opts[0];
+  const precioKg=p[7][ref][nivel]; // precio por kg
+  return precioKg; // devuelve precio por kg; el total = precioKg * totalG/1000
+}
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
   const el=document.getElementById(elId);
@@ -602,10 +612,34 @@ function addToCart(pid,elId){
   const sabSelect=document.getElementById(elId+'_sab');
   const sabor=sabSelect?sabSelect.value:(sabores&&sabores.length?sabores[0]:'');
   const qty=parseInt(document.getElementById(elId+'_q').textContent);
-  const key=pid+'-'+opt+(sabor?'-'+sabor:'');
   const nombreConSabor=sabor?p[2]+' ('+sabor+')':p[2];
-  const ex=cart.find(i=>i.key===key);
-  if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:p[4],sabor});
+
+  if(p[4]==='kg'){
+    // Productos a granel: unificar en un solo item por pid+sabor, sumar en gramos
+    const addedG=_optToG(opt)*qty;
+    const key=pid+(sabor?'-'+sabor:'');
+    const ex=cart.find(i=>i.key===key);
+    if(ex){
+      ex.totalG=(ex.totalG||0)+addedG;
+    } else {
+      // buscar precio de referencia por kg (opción 1kg, o la más grande disponible)
+      const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
+      cart.push({key,pid,n:nombreConSabor,o:refOpt,totalG:addedG,unidad:'kg',sabor,
+        l1:p[7][refOpt][0],l2:p[7][refOpt][1]});
+    }
+    // recalcular precios desde precio/kg
+    const it=cart.find(i=>i.key===key);
+    const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
+    it.l1=p[7][refOpt][0];it.l2=p[7][refOpt][1];
+    // c = "cantidad" en gramos para compatibilidad con totales: usamos fracción de kg
+    // pero lo mostramos distinto; guardamos totalG y calculamos precio aparte
+  } else {
+    // Unidades: comportamiento original, key por pid+opt+sabor
+    const key=pid+'-'+opt+(sabor?'-'+sabor:'');
+    const ex=cart.find(i=>i.key===key);
+    if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:'und',sabor});
+  }
+
   document.getElementById(elId+'_q').textContent='1';
   delete el.dataset.opt;delete el.dataset.sabor;
   el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
@@ -624,18 +658,22 @@ function addToCart(pid,elId){
   const btn=document.getElementById(elId+'_ab');
   btn.classList.add('added');btn.innerHTML='✓ Agregado!';
   setTimeout(()=>{btn.classList.remove('added');btn.innerHTML='🛒 Agregar al pedido'},1400);
-  showMiniCart(key);
+  // key para mini cart: para kg usar la key unificada
+  const miniKey=p[4]==='kg'?(pid+(sabor?'-'+sabor:'')):pid+'-'+opt+(sabor?'-'+sabor:'');
+  showMiniCart(miniKey);
 }
 
 function showMiniCart(lastKey){
   const popup=document.getElementById('miniCartPopup');
   const it=cart.find(i=>i.key===lastKey);
   if(!it){popup.classList.add('hidden');return;}
-  const totalMin=cart.reduce((a,i)=>a+i.l1*i.c,0);
+  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
   const falta=Math.max(0,80000-totalMin);
   const pct=Math.min(100,(totalMin/80000)*100);
-  const qLabel=it.unidad==='kg'?calcWeight(it.o,it.c):(it.c>1?it.o+' x'+it.c:it.o);
-  popup.innerHTML=`<div class="mini-cart-header"><span>✅ Agregado al carrito</span><button class="mini-cart-del" onclick="closeMiniCart()">×</button></div><div class="mini-cart-item"><div class="mini-cart-name">${it.n}<span class="mini-cart-opt">${qLabel}</span></div><div class="mini-cart-controls"><button class="mini-qty-btn" onclick="miniQty('${it.key}',-1)">−</button><span class="mini-qty-val">${it.c}</span><button class="mini-qty-btn" onclick="miniQty('${it.key}',1)">+</button></div><div class="mini-cart-price">$${fmt(it.l1*it.c)}</div><button class="mini-cart-del" onclick="miniDel('${it.key}')">×</button></div>${falta>0?`<div class="mini-cart-progress">Agregá $${fmt(falta)} más para mayorista<div class="mini-cart-progress-bar"><div class="mini-cart-progress-fill" style="width:${pct}%"></div></div></div>`:`<div class="mini-cart-progress" style="color:var(--azul)">✨ ¡Lista Mayorista activada!</div>`}<button class="mini-go-cart-btn" onclick="closeMiniCart();openCart()">🛒 Ver carrito →</button>`;
+  const qLabel=it.unidad==='kg'?_gLabel(it.totalG||0):(it.c>1?it.o+' x'+it.c:it.o);
+  const sMin=_itemMin(it);
+  const cDisp=it.unidad==='kg'?_gLabel(it.totalG||0):it.c;
+  popup.innerHTML=`<div class="mini-cart-header"><span>✅ Agregado al carrito</span><button class="mini-cart-del" onclick="closeMiniCart()">×</button></div><div class="mini-cart-item"><div class="mini-cart-name">${it.n}<span class="mini-cart-opt">${qLabel}</span></div><div class="mini-cart-controls"><button class="mini-qty-btn" onclick="miniQty('${it.key}',-1)">−</button><span class="mini-qty-val">${cDisp}</span><button class="mini-qty-btn" onclick="miniQty('${it.key}',1)">+</button></div><div class="mini-cart-price">$${fmt(sMin)}</div><button class="mini-cart-del" onclick="miniDel('${it.key}')">×</button></div>${falta>0?`<div class="mini-cart-progress">Agregá $${fmt(falta)} más para mayorista<div class="mini-cart-progress-bar"><div class="mini-cart-progress-fill" style="width:${pct}%"></div></div></div>`:`<div class="mini-cart-progress" style="color:var(--azul)">✨ ¡Lista Mayorista activada!</div>`}<button class="mini-go-cart-btn" onclick="closeMiniCart();openCart()">🛒 Ver carrito →</button>`;
   popup.classList.remove('hidden');
   if(miniCartTimer)clearTimeout(miniCartTimer);
   miniCartTimer=setTimeout(()=>popup.classList.add('hidden'),5000);
@@ -644,9 +682,14 @@ function showMiniCart(lastKey){
   popup.ontouchstart=()=>{if(miniCartTimer)clearTimeout(miniCartTimer)};
 }
 function closeMiniCart(){document.getElementById('miniCartPopup').classList.add('hidden');if(miniCartTimer)clearTimeout(miniCartTimer)}
-function miniQty(key,d){const it=cart.find(i=>i.key===key);if(!it)return;it.c=Math.max(1,it.c+d);updateCartCount();showMiniCart(key)}
+function miniQty(key,d){
+  const it=cart.find(i=>i.key===key);if(!it)return;
+  if(it.unidad==='kg'){it.totalG=Math.max(250,(it.totalG||0)+d*250);}
+  else{it.c=Math.max(1,(it.c||1)+d);}
+  updateCartCount();showMiniCart(key);
+}
 function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();document.getElementById('miniCartPopup').classList.add('hidden')}
-function updateCartCount(){document.getElementById('cartCount').textContent=cart.reduce((a,i)=>a+i.c,0)}
+function updateCartCount(){document.getElementById('cartCount').textContent=cart.length}
 
 function openCart(){
   document.getElementById('cartOverlay').classList.add('open');
@@ -664,25 +707,50 @@ function closeCart(){
   document.body.style.overflow='';
 }
 
+// Formatea gramos: 1500g → "1.5 kg", 500 → "500 g"
+function _gLabel(g){return g>=1000?(g/1000)%1===0?(g/1000)+' kg':(g/1000).toFixed(2).replace(/\.?0+$/,'')+' kg':g+' g'}
+// Precio total de un item (maneja kg unificados y unidades)
+function _itemMin(it){return it.unidad==='kg'?Math.round(it.l1*(it.totalG/1000)):it.l1*it.c}
+function _itemMay(it){return it.unidad==='kg'?Math.round(it.l2*(it.totalG/1000)):it.l2*it.c}
+// Cantidad a mostrar (stepper del carrito): para kg en gramos +250g/-250g, para und en unidades
+function _itemCount(it){return it.unidad==='kg'?_gLabel(it.totalG):it.c}
 function renderCart(){
   const body=document.getElementById('cartBody'),footer=document.getElementById('cartFooter');
   if(!cart.length){body.innerHTML='<div class="cart-empty"><span class="big">🛒</span><div style="font-size:16px;font-weight:600;margin-bottom:6px">Tu carrito está vacío</div><div style="font-size:14px;color:var(--muted-fg)">Agregá productos para armar tu pedido</div></div>';footer.classList.add('hidden');return}
   let h='';
-  cart.forEach(it=>{const sMin=it.l1*it.c;const qLabel=it.unidad==='kg'?calcWeight(it.o,it.c):(it.c>1?it.o+' x'+it.c:it.o);h+=`<div class="cart-item"><div class="cart-item-name">${it.n}<span class="cart-item-opt">${qLabel}</span></div><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:13px;font-weight:700;min-width:22px;text-align:center">${it.c}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div><div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')">×</button></div>`});
+  cart.forEach(it=>{
+    const sMin=_itemMin(it);
+    const qLabel=_itemCount(it);
+    // Para kg: botones suman/restan 250g; para und suman/restan 1
+    const stepDisp=it.unidad==='kg'?'250g':'1';
+    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}<span class="cart-item-opt">${qLabel} · $${fmt(it.l1)}/kg</span></div><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div><div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')">×</button></div>`;
+  });
   body.innerHTML=h;
-  const totalMin=cart.reduce((a,i)=>a+i.l1*i.c,0),totalMay=cart.reduce((a,i)=>a+i.l2*i.c,0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
+  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),totalMay=cart.reduce((a,i)=>a+_itemMay(i),0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
   let fh=esMay?`<div class="may-badge may-active">✅ ¡Lista Mayorista activada!<div style="font-size:17px;font-weight:800;margin-top:3px">Ahorrás $${fmt(ahorro)}</div></div>`:`<div class="may-badge may-inactive">🏷️ Agregá $${fmt(Math.max(0,80000-totalMin))} más para Lista Mayorista</div>`;
   fh+=`<div class="total-rows"><div class="total-row"><span>Subtotal Minorista</span><span>$${fmt(totalMin)}</span></div>${esMay?`<div class="total-row disc"><span>Descuento mayorista</span><span>−$${fmt(ahorro)}</span></div>`:''}<div class="total-row main"><span>Total a pagar</span><span>$${fmt(totalFinal)}</span></div></div>`;
   fh+='<button class="wa-btn" onclick="pedirWA()">💬 Pedir por WhatsApp</button>';
   footer.innerHTML=fh;footer.classList.remove('hidden');
 }
-function cartQty(key,d){const it=cart.find(i=>i.key===key);if(!it)return;it.c=Math.max(1,it.c+d);updateCartCount();renderCart()}
+function cartQty(key,d){
+  const it=cart.find(i=>i.key===key);if(!it)return;
+  if(it.unidad==='kg'){
+    it.totalG=Math.max(250,(it.totalG||0)+d*250);
+  } else {
+    it.c=Math.max(1,(it.c||1)+d);
+  }
+  updateCartCount();renderCart();
+}
 function cartDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();renderCart()}
 function pedirWA(){
-  const totalMin=cart.reduce((a,i)=>a+i.l1*i.c,0),esMay=totalMin>=80000;
+  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),esMay=totalMin>=80000;
   let msg='🛒 *Pedido - Paladear Mercado de Sabores*\n\n',tot=0;
-  cart.forEach(it=>{const p=esMay?it.l2:it.l1,s=p*it.c;tot+=s;const q=it.unidad==='kg'?calcWeight(it.o,it.c):(it.c>1?it.o+' x'+it.c:it.o);msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`});
-  msg+=`\n*TOTAL: $${fmt(tot)}*${esMay?'\n_(Lista Mayorista aplicada)_':''}\ n\n_Pedido realizado desde el catálogo online_`;
+  cart.forEach(it=>{
+    const s=esMay?_itemMay(it):_itemMin(it);tot+=s;
+    const q=it.unidad==='kg'?_gLabel(it.totalG):(it.c>1?it.o+' x'+it.c:it.o);
+    msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
+  });
+  msg+=`\n*TOTAL: $${fmt(tot)}*${esMay?'\n_(Lista Mayorista aplicada)_':''}\n\n_Pedido realizado desde el catálogo online_`;
   window.open('https://wa.me/5492616512823?text='+encodeURIComponent(msg),'_blank');
 }
 
