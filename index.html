@@ -606,7 +606,7 @@ function addToCart(pid,elId){
   const nombreConSabor=sabor?p[2]+' ('+sabor+')':p[2];
   const ex=cart.find(i=>i.key===key);
   if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:p[4],sabor});
-  // no resetear qty — mantener el stepper
+  document.getElementById(elId+'_q').textContent='1';
   delete el.dataset.opt;delete el.dataset.sabor;
   el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   if(sabSelect)sabSelect.selectedIndex=0;
