@@ -163,6 +163,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .add-btn:hover{background:var(--azul-dark)}
 .add-btn:active{transform:scale(.97)}
 .add-btn.added{background:#16a34a}
+.acum-badge{font-size:12px;color:var(--azul-dark);font-weight:700;background:var(--azul-light);padding:3px 9px;border-radius:8px;margin-left:6px;border:1px solid rgba(77,125,138,.25);white-space:nowrap}
 
 /* ── BOTÓN VOLVER ── */
 .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--azul);color:var(--azul-dark);padding:10px 18px;border-radius:24px;font-size:15px;font-weight:700;margin-bottom:18px;transition:all .2s;cursor:pointer}
@@ -186,6 +187,8 @@ button{cursor:pointer;border:none;font-family:inherit}
 .mini-cart-progress{margin-top:9px;font-size:12px;color:var(--azul-dark);font-weight:600;text-align:center}
 .mini-cart-progress-bar{height:5px;background:var(--muted);border-radius:5px;margin-top:5px;overflow:hidden}
 .mini-cart-progress-fill{height:100%;background:var(--azul);border-radius:5px;transition:width .4s ease}
+.mini-go-cart-btn{width:100%;margin-top:10px;background:var(--azul);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.mini-go-cart-btn:hover{background:var(--azul-dark)}
 
 /* ── CARRITO PANEL ── */
 .cart-overlay{position:fixed;inset:0;background:rgba(26,55,64,.5);z-index:500;display:none}
@@ -378,8 +381,17 @@ function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=docum
 let _carRotationInterval=null;
 const _carState={}; // {cid:{prods:[...],cursor:0}}
 
+function _sortOpts(opts){
+  // kg first: order by weight descending (1kg > 500g > 100g > und)
+  function _optWeight(o){
+    const mkg=o.match(/^(\d[\d,.]*)\s*kg$/i);if(mkg)return parseFloat(mkg[1].replace(',','.'))*1000;
+    const mg=o.match(/^(\d+)\s*g$/i);if(mg)return parseInt(mg[1]);
+    return -1; // unidades al final
+  }
+  return [...opts].sort((a,b)=>_optWeight(b)-_optWeight(a));
+}
 function _cardHTML(p){
-  const opts=Object.keys(p[7]);
+  const opts=_sortOpts(Object.keys(p[7]));
   const precio=opts.length?p[7][opts[0]][0]:0;
   const hasSrc=p[6]&&p[6].startsWith('http');
   const cat=CATS.find(c=>c.id===p[1]);
@@ -515,12 +527,29 @@ function renderProdsHTML(cat,prods,prefix){
   return h;
 }
 
+function _acumLabel(p){
+  const cartAcum=cart.filter(i=>i.pid===p[0]);
+  if(!cartAcum.length)return'';
+  if(p[4]==='kg'){
+    let totalG=0;
+    cartAcum.forEach(i=>{
+      const mkg=i.o.match(/^(\d[\d,.]*)\s*kg$/i);
+      const mg=i.o.match(/^(\d+)\s*g$/i);
+      if(mkg)totalG+=parseFloat(mkg[1].replace(',','.'))*1000*i.c;
+      else if(mg)totalG+=parseInt(mg[1])*i.c;
+    });
+    return totalG>=1000?(totalG/1000)%1===0?(totalG/1000)+' kg':(totalG/1000).toFixed(1)+' kg':totalG+' g';
+  } else {
+    return cartAcum.reduce((a,i)=>a+i.c,0)+' und';
+  }
+}
 function renderCard(p,prefix){
-  const opts=Object.keys(p[7]);if(!opts.length)return'';
+  const opts=_sortOpts(Object.keys(p[7]));if(!opts.length)return'';
   const id=prefix+'_'+p[0];
   const hasSrc=p[6]&&p[6].startsWith('http');
   const infoText=p[8]||'';
   const sabores=p[9]||null;
+  const acumLbl=_acumLabel(p);
   let h=`<div class="pcard" id="${id}">`;
   h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</div>`;
   h+=`<div class="pcard-body">`;
@@ -537,7 +566,8 @@ function renderCard(p,prefix){
     h+='</select></div>';
   }
   h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div><div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
-  h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;
+  const acumInfo=acumLbl?`<span class="acum-badge">🛒 ${acumLbl}</span>`:'';
+  h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button>${acumInfo}</div>`;
   h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button></div></div>`;
   return h;
 }
@@ -566,7 +596,7 @@ function showInfo(pid){
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
   const el=document.getElementById(elId);
-  const opts=Object.keys(p[7]);
+  const opts=_sortOpts(Object.keys(p[7]));
   const opt=el.dataset.opt||opts[0];
   const sabores=p[9];
   const sabSelect=document.getElementById(elId+'_sab');
@@ -576,10 +606,20 @@ function addToCart(pid,elId){
   const nombreConSabor=sabor?p[2]+' ('+sabor+')':p[2];
   const ex=cart.find(i=>i.key===key);
   if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:p[4],sabor});
-  document.getElementById(elId+'_q').textContent='1';
+  // no resetear qty — mantener el stepper
   delete el.dataset.opt;delete el.dataset.sabor;
   el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   if(sabSelect)sabSelect.selectedIndex=0;
+  // actualizar badge acumulado en la tarjeta
+  const qRowEl=el.querySelector('.qty-row');
+  if(qRowEl){
+    let badge=qRowEl.querySelector('.acum-badge');
+    const lbl=_acumLabel(p);
+    if(lbl){
+      if(!badge){badge=document.createElement('span');badge.className='acum-badge';qRowEl.appendChild(badge);}
+      badge.textContent='🛒 '+lbl;
+    }
+  }
   updateCartCount();
   const btn=document.getElementById(elId+'_ab');
   btn.classList.add('added');btn.innerHTML='✓ Agregado!';
@@ -595,7 +635,7 @@ function showMiniCart(lastKey){
   const falta=Math.max(0,80000-totalMin);
   const pct=Math.min(100,(totalMin/80000)*100);
   const qLabel=it.unidad==='kg'?calcWeight(it.o,it.c):(it.c>1?it.o+' x'+it.c:it.o);
-  popup.innerHTML=`<div class="mini-cart-header"><span>✅ Agregado al carrito</span><button class="mini-cart-del" onclick="closeMiniCart()">×</button></div><div class="mini-cart-item"><div class="mini-cart-name">${it.n}<span class="mini-cart-opt">${qLabel}</span></div><div class="mini-cart-controls"><button class="mini-qty-btn" onclick="miniQty('${it.key}',-1)">−</button><span class="mini-qty-val">${it.c}</span><button class="mini-qty-btn" onclick="miniQty('${it.key}',1)">+</button></div><div class="mini-cart-price">$${fmt(it.l1*it.c)}</div><button class="mini-cart-del" onclick="miniDel('${it.key}')">×</button></div>${falta>0?`<div class="mini-cart-progress">Agregá $${fmt(falta)} más para mayorista<div class="mini-cart-progress-bar"><div class="mini-cart-progress-fill" style="width:${pct}%"></div></div></div>`:`<div class="mini-cart-progress" style="color:var(--azul)">✨ ¡Lista Mayorista activada!</div>`}`;
+  popup.innerHTML=`<div class="mini-cart-header"><span>✅ Agregado al carrito</span><button class="mini-cart-del" onclick="closeMiniCart()">×</button></div><div class="mini-cart-item"><div class="mini-cart-name">${it.n}<span class="mini-cart-opt">${qLabel}</span></div><div class="mini-cart-controls"><button class="mini-qty-btn" onclick="miniQty('${it.key}',-1)">−</button><span class="mini-qty-val">${it.c}</span><button class="mini-qty-btn" onclick="miniQty('${it.key}',1)">+</button></div><div class="mini-cart-price">$${fmt(it.l1*it.c)}</div><button class="mini-cart-del" onclick="miniDel('${it.key}')">×</button></div>${falta>0?`<div class="mini-cart-progress">Agregá $${fmt(falta)} más para mayorista<div class="mini-cart-progress-bar"><div class="mini-cart-progress-fill" style="width:${pct}%"></div></div></div>`:`<div class="mini-cart-progress" style="color:var(--azul)">✨ ¡Lista Mayorista activada!</div>`}<button class="mini-go-cart-btn" onclick="closeMiniCart();openCart()">🛒 Ver carrito →</button>`;
   popup.classList.remove('hidden');
   if(miniCartTimer)clearTimeout(miniCartTimer);
   miniCartTimer=setTimeout(()=>popup.classList.add('hidden'),5000);
