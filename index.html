@@ -795,6 +795,8 @@ function renderProdsHTML(cat,prods,prefix){
   return h;
 }
 
+const TRASH_SVG='<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+const EDIT_SVG='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 function _acumLabel(p){
   const cartAcum=cart.filter(i=>i.pid===p[0]);
   if(!cartAcum.length)return'';
@@ -1013,14 +1015,32 @@ function renderCart(){
 }
 function cartQty(key,d){
   const it=cart.find(i=>i.key===key);if(!it)return;
-  if(it.unidad==='kg'){
-    it.totalG=Math.max(250,(it.totalG||0)+d*250);
-  } else {
-    it.c=Math.max(1,(it.c||1)+d);
-  }
+  if(it.unidad==='kg'){it.totalG=Math.max(250,(it.totalG||0)+d*250);}
+  else{it.c=Math.max(1,(it.c||1)+d);}
   updateCartCount();renderCart();
+  // re-render product card to update badge
+  if(it.pid&&it.pid>0){
+    const p=PRODS.find(x=>x[0]===it.pid);
+    if(p){['mb','dt'].forEach(prefix=>{const cardEl=document.getElementById(prefix+'_'+it.pid);if(cardEl){const tmp=document.createElement('div');tmp.innerHTML=renderCard(p,prefix);cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);}});}
+  }
 }
-function cartDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();renderCart()}
+function cartDel(key){
+  const it=cart.find(i=>i.key===key);
+  const pid=it?it.pid:null;
+  cart=cart.filter(i=>i.key!==key);
+  updateCartCount();
+  renderCart();
+  // re-render the product card if visible so badge and buttons disappear
+  if(pid&&pid>0){
+    const p=PRODS.find(x=>x[0]===pid);
+    if(p){
+      ['mb','dt'].forEach(prefix=>{
+        const cardEl=document.getElementById(prefix+'_'+pid);
+        if(cardEl){const tmp=document.createElement('div');tmp.innerHTML=renderCard(p,prefix);cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);}
+      });
+    }
+  }
+}
 function pedirWA(){
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),esMay=totalMin>=80000;
   let msg='🛒 *Pedido - Paladear Mercado de Sabores*\n\n',tot=0;
