@@ -208,7 +208,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .cart-item-name{flex:1;font-size:14px;font-weight:700;line-height:1.3}
 .cart-item-opt{font-size:12px;color:var(--muted-fg);font-weight:400;display:block}
 .cart-item-price{font-size:14px;font-weight:700;min-width:78px;text-align:right;white-space:nowrap}
-.cart-item-del{background:transparent;color:rgba(0,0,0,.25);font-size:20px;padding:0 5px;transition:color .2s;cursor:pointer}
+.cart-item-del{background:transparent;color:rgba(0,0,0,.25);padding:0 5px;transition:color .2s;cursor:pointer;display:flex;align-items:center;border:none}
 .cart-item-del:hover{color:var(--destructive)}
 .cart-footer{padding:16px;border-top:2px solid var(--border);flex-shrink:0}
 .may-badge{border-radius:10px;padding:12px;margin-bottom:14px;font-size:14px;font-weight:600;text-align:center}
@@ -220,7 +220,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .total-row.disc{color:var(--azul-dark);font-weight:700}
 .wa-btn{background:var(--whatsapp);color:#fff;border-radius:12px;padding:15px;font-weight:800;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;cursor:pointer}
 .wa-btn:hover{filter:brightness(1.08);transform:scale(1.02)}
-.close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s;cursor:pointer}
+.close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s;cursor:pointer}
 .close-btn:hover{background:rgba(255,255,255,.35)}
 
 /* ── MODAL MOBILE ── */
@@ -255,6 +255,67 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 #chat-input{flex:1;border:1.5px solid var(--border);border-radius:20px;padding:9px 14px;font-size:14px;outline:none;font-family:inherit;resize:none;height:38px;line-height:20px}
 #chat-input:focus{border-color:var(--azul)}
 #chat-send{background:var(--azul);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── MIX BANNER ── */
+.mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:22px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35)}
+.mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(77,125,138,.45)}
+.mix-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.mix-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
+.mix-banner-btn{background:#fff;color:var(--azul-dark);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
+.mix-banner-btn:hover{background:var(--azul-light)}
+/* ── MIX MODAL ── */
+.mix-modal{position:fixed;inset:0;z-index:800;display:flex;flex-direction:column}
+.mix-modal.hidden{display:none}
+.mix-modal-bg{position:absolute;inset:0;background:rgba(26,55,64,.55);animation:fadeIn .2s}
+.mix-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:820px;max-height:92vh;background:var(--card);border-radius:18px 18px 18px 18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+@media(max-width:767px){.mix-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
+.mix-modal-header{background:var(--azul);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mix-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.mix-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.mix-modal-close:hover{background:rgba(255,255,255,.35)}
+.mix-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
+/* ── MIX INTERIOR ── */
+.mix-sizes{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.mix-size-btn{flex:1;min-width:90px;padding:12px 10px;border-radius:12px;border:2px solid var(--border);background:var(--card);cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;color:var(--muted-fg)}
+.mix-size-btn:hover{border-color:var(--azul-mid);color:var(--azul-dark)}
+.mix-size-btn.sel{border-color:var(--azul);background:var(--azul-light);color:var(--azul-dark)}
+.mix-size-btn strong{display:block;font-size:17px;font-weight:800;color:inherit}
+.mix-size-btn span{font-size:12px;opacity:.8}
+.mix-step-label{font-size:12px;font-weight:700;color:var(--azul-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.mix-layout{display:grid;grid-template-columns:1fr 240px;gap:16px}
+@media(max-width:600px){.mix-layout{grid-template-columns:1fr}}
+.mix-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.mix-cat-tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.mix-cat-tab{flex-shrink:0;padding:9px 14px;font-size:13px;cursor:pointer;border:none;border-bottom:2.5px solid transparent;color:var(--muted-fg);background:none;font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s}
+.mix-cat-tab.active{color:var(--azul-dark);border-bottom-color:var(--azul)}
+.mix-prod-list{max-height:280px;overflow-y:auto}
+.mix-prod-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border)}
+.mix-prod-row:last-child{border-bottom:none}
+.mix-prod-name{flex:1;font-size:13px;font-weight:600;color:var(--fg)}
+.mix-prod-price{font-size:12px;color:var(--muted-fg);margin-right:6px;white-space:nowrap}
+.mix-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--azul-dark);text-align:center;outline:none;background:var(--card)}
+.mix-prod-input:focus{border-color:var(--azul)}
+.mix-prod-input.over{border-color:#e8633a;color:#e8633a}
+.mix-sum-panel{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;align-self:start;position:sticky;top:0}
+.mix-sum-head{background:var(--azul-light);padding:10px 14px;font-size:13px;font-weight:700;color:var(--azul-dark)}
+.mix-fill-wrap{padding:12px 14px 10px}
+.mix-fill-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;font-weight:700}
+.mix-fill-bar{height:10px;background:var(--muted);border-radius:6px;overflow:hidden}
+.mix-fill-fill{height:100%;border-radius:6px;transition:width .3s,background .3s}
+.mix-fill-hint{font-size:12px;text-align:center;margin-top:5px;font-weight:600}
+.mix-ing-list{padding:0 14px 10px;max-height:200px;overflow-y:auto}
+.mix-ing-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.mix-ing-row:last-child{border-bottom:none}
+.mix-ing-name{font-weight:600;color:var(--fg);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:6px}
+.mix-ing-detail{color:var(--muted-fg);white-space:nowrap}
+.mix-sum-footer{padding:12px 14px;border-top:1px solid var(--border)}
+.mix-total-row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px}
+.mix-total-row span:first-child{color:var(--muted-fg)}
+.mix-total-row.main{font-size:16px;font-weight:800;color:var(--fg);border-top:2px solid var(--border);padding-top:8px;margin-bottom:0}
+.mix-total-row.main span:first-child{color:var(--fg)}
+.mix-add-btn{width:100%;margin-top:10px;background:var(--azul);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.mix-add-btn:hover{background:var(--azul-dark)}
+.mix-add-btn:disabled{background:var(--muted);color:var(--muted-fg);cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -297,6 +358,40 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <span class="search-icon">🔍</span>
   </div>
 
+
+<!-- ── MIX BANNER ── -->
+<div class="mix-banner" onclick="openMix()">
+  <svg id="mixIconSvg" width="64" height="64" viewBox="0 0 40 40" style="flex-shrink:0" role="img" aria-label="Ícono mix">
+    <g id="mi1" style="opacity:0">
+      <ellipse cx="15" cy="6" rx="4" ry="3.5" fill="#e8c488"/>
+      <path d="M15,3 Q17,4.5 15,9" fill="none" stroke="#c49850" stroke-width="0.9"/>
+    </g>
+    <g id="mi2" style="opacity:0">
+      <ellipse cx="23" cy="6" rx="2.8" ry="3.8" fill="#eedfc4" transform="rotate(-15,23,6)"/>
+    </g>
+    <g id="mi3" style="opacity:0">
+      <circle cx="19" cy="5" r="2" fill="#e07860"/>
+    </g>
+    <path id="mixBag" d="M10,16 Q7,16 7,21 L9,35 Q9,37 11,37 L29,37 Q31,37 31,35 L33,21 Q33,16 30,16 Z" fill="#7bbf8e"/>
+    <path d="M16,16 Q16,10 20,10 Q24,10 24,16" fill="none" stroke="#7bbf8e" stroke-width="2.5" stroke-linecap="round"/>
+    <g id="mi_in1" style="opacity:0">
+      <ellipse cx="16" cy="26" rx="4.5" ry="4" fill="#e8c488"/>
+      <path d="M16,22.5 Q18.5,24 16,30" fill="none" stroke="#c49850" stroke-width="1"/>
+    </g>
+    <g id="mi_in2" style="opacity:0">
+      <ellipse cx="24" cy="28" rx="3" ry="4.2" fill="#eedfc4" transform="rotate(-15,24,28)"/>
+    </g>
+    <g id="mi_in3" style="opacity:0">
+      <circle cx="19" cy="32" r="2.2" fill="#e07860"/>
+    </g>
+  </svg>
+  <div class="mix-banner-text" style="flex:1">
+    <h3>Armá tu mix personalizado</h3>
+    <p>Elegí tus frutos secos, semillas y deshidratados en el bolsón que quieras</p>
+  </div>
+  <button class="mix-banner-btn" onclick="openMix()">Armar mix →</button>
+</div>
+
   <!-- MÓVIL: grilla de categorías -->
   <div class="cats-mobile-grid" id="catsMobileGrid"></div>
   <!-- MÓVIL: productos -->
@@ -326,7 +421,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel">
-  <div class="cart-header"><h2>🛒 Tu pedido</h2><div class="cart-header-actions"><button class="cart-chat-btn" onclick="toggleChat()" title="Consultar" aria-label="Consultar">💬</button><button class="close-btn" onclick="closeCart()" aria-label="Cerrar">×</button></div></div>
+  <div class="cart-header"><h2>🛒 Tu pedido</h2><div class="cart-header-actions"><button class="cart-chat-btn" onclick="toggleChat()" title="Consultar" aria-label="Consultar">💬</button><button class="close-btn" onclick="closeCart()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
   <div class="cart-body" id="cartBody"></div>
   <div class="cart-footer hidden" id="cartFooter"></div>
 </div>
@@ -723,7 +818,7 @@ function renderCart(){
     const qLabel=_itemCount(it);
     // Para kg: botones suman/restan 250g; para und suman/restan 1
     const stepDisp=it.unidad==='kg'?'250g':'1';
-    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}<span class="cart-item-opt">${qLabel} · $${fmt(it.l1)}/kg</span></div><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div><div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')">×</button></div>`;
+    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}<span class="cart-item-opt">${qLabel} · $${fmt(it.l1)}/kg</span></div><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div><div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>`;
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),totalMay=cart.reduce((a,i)=>a+_itemMay(i),0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
@@ -1085,6 +1180,235 @@ window.addEventListener('popstate',function(e){
     history.pushState({view:'home'},'');
   }
 });
+
+/* ── MIX BUILDER ── */
+const MIX_SIZES=[{g:500,lbl:'500 g'},{g:1000,lbl:'1 kg'},{g:2000,lbl:'2 kg'},{g:5000,lbl:'5 kg'}];
+let mixSelSize=null,mixActiveCat=null,mixIngreds={};
+
+function openMix(){
+  document.getElementById('mixModal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  mixRenderSizes();
+  if(!mixActiveCat&&PRODS.length){
+    const granel=PRODS.filter(p=>p[4]==='kg');
+    const cats=new Set(granel.map(p=>p[1]));
+    const order=['frutos','semillas','deshidratados','cereales','granos','harinas'];
+    mixActiveCat=order.find(c=>cats.has(c))||[...cats][0]||null;
+  }
+  mixRenderCatTabs();mixRenderProdList();
+}
+function closeMix(){document.getElementById('mixModal').classList.add('hidden');document.body.style.overflow='';}
+
+function mixRenderSizes(){
+  document.getElementById('mixSizes').innerHTML=MIX_SIZES.map(s=>
+    `<button class="mix-size-btn${mixSelSize&&mixSelSize.g===s.g?' sel':''}" onclick="mixPickSize(${s.g})">
+      <strong>${s.lbl}</strong><span>bolsón</span>
+    </button>`
+  ).join('');
+}
+
+function mixPickSize(g){
+  mixSelSize=MIX_SIZES.find(s=>s.g===g);
+  mixIngreds={};
+  document.getElementById('mixBuilderArea').style.display='block';
+  mixRenderSizes();mixRenderProdList();mixRenderSummary();
+}
+
+function mixGranelCats(){
+  const granelProds=PRODS.filter(p=>p[4]==='kg');
+  const allowedCatIds=['frutos','semillas','deshidratados','cereales','granos','especias','infusiones'];
+  const catIds=[...new Set(granelProds.map(p=>p[1]))].filter(id=>allowedCatIds.includes(id));
+  return CATS.filter(c=>catIds.includes(c.id));
+}
+
+function mixRenderCatTabs(){
+  const cats=mixGranelCats();
+  if(!mixActiveCat&&cats.length)mixActiveCat=cats[0].id;
+  document.getElementById('mixCatTabs').innerHTML=cats.map(c=>
+    `<button class="mix-cat-tab${mixActiveCat===c.id?' active':''}" onclick="mixSetCat('${c.id}')">${c.n}</button>`
+  ).join('');
+}
+
+function mixSetCat(id){mixActiveCat=id;mixRenderCatTabs();mixRenderProdList();}
+
+function mixRenderProdList(){
+  if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';return;}
+  const prods=PRODS.filter(p=>p[1]===mixActiveCat&&p[4]==='kg');
+  const usedG=Object.values(mixIngreds).reduce((a,v)=>a+v,0);
+  const remG=mixSelSize.g-usedG;
+  document.getElementById('mixProdList').innerHTML=prods.map(p=>{
+    const opts=Object.keys(p[7]);
+    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
+    const pxkg=p[7][refOpt][0];
+    const cur=mixIngreds[p[0]]||0;
+    const isOver=usedG>mixSelSize.g;
+    return`<div class="mix-prod-row">
+      <div class="mix-prod-name">${p[2]}</div>
+      <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
+      <input class="mix-prod-input${isOver?' over':''}" type="number" min="0" max="${mixSelSize.g}" step="1"
+        placeholder="0 g" value="${cur||''}"
+        onchange="mixSetGrams(${p[0]},this.value,${pxkg})"
+        oninput="mixSetGrams(${p[0]},this.value,${pxkg})">
+    </div>`;
+  }).join('');
+  if(!prods.length)document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
+}
+
+function mixSetGrams(pid,val,pxkg){
+  const g=parseInt(val)||0;
+  if(g<=0)delete mixIngreds[pid];else mixIngreds[pid]={g,pxkg};
+  mixRenderSummary();
+  // revalidate input colors
+  const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
+  document.querySelectorAll('.mix-prod-input').forEach(inp=>{
+    inp.classList.toggle('over',usedG>mixSelSize.g);
+  });
+}
+
+function mixGLabel(g){return g>=1000?(g%1000===0?(g/1000)+' kg':(g/1000).toFixed(1)+' kg'):g+' g'}
+
+function mixRenderSummary(){
+  if(!mixSelSize)return;
+  const ings=Object.entries(mixIngreds).filter(([,v])=>v&&v.g>0);
+  const usedG=ings.reduce((a,[,v])=>a+v.g,0);
+  const pct=Math.min(100,(usedG/mixSelSize.g)*100);
+  const full=usedG===mixSelSize.g;
+  const over=usedG>mixSelSize.g;
+  const fillColor=over?'#e8633a':full?'#16a34a':'var(--azul)';
+  document.getElementById('mixFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
+  document.getElementById('mixFillLbl').textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);
+  document.getElementById('mixSumHead').textContent='Tu bolsón de '+mixGLabel(mixSelSize.g);
+  const hint=document.getElementById('mixFillHint');
+  const rem=mixSelSize.g-usedG;
+  if(over){hint.textContent='⚠ Excedés por '+mixGLabel(usedG-mixSelSize.g);hint.style.color='#e8633a';}
+  else if(full){hint.textContent='✓ Bolsón completo';hint.style.color='#16a34a';}
+  else{hint.textContent='Faltan '+mixGLabel(rem);hint.style.color='var(--muted-fg)';}
+
+  // ingredient list
+  const ingEl=document.getElementById('mixIngList');
+  if(!ings.length){ingEl.innerHTML='<div style="padding:10px 0;font-size:13px;color:var(--muted-fg);text-align:center">Aún vacío</div>';
+  }else{
+    ingEl.innerHTML=ings.map(([pid,v])=>{
+      const p=PRODS.find(x=>x[0]===+pid);
+      const sub=Math.round(v.pxkg*(v.g/1000));
+      return`<div class="mix-ing-row"><span class="mix-ing-name">${p?p[2]:'?'}</span><span class="mix-ing-detail">${mixGLabel(v.g)} · $${fmt(sub)}</span></div>`;
+    }).join('');
+  }
+  const total=ings.reduce((a,[,v])=>a+Math.round(v.pxkg*(v.g/1000)),0);
+  document.getElementById('mixIngCount').textContent=ings.length;
+  document.getElementById('mixTotal').textContent='$'+fmt(total);
+  const btn=document.getElementById('mixAddBtn');
+  if(full&&ings.length>0){btn.disabled=false;btn.textContent='🛒 Agregar mix al carrito';}
+  else if(over){btn.disabled=true;btn.textContent='Excedés el peso del bolsón';}
+  else{btn.disabled=true;btn.textContent=ings.length?'Faltan '+mixGLabel(rem):'Agregá ingredientes';}
+}
+
+function mixAgregarAlCarrito(){
+  if(!mixSelSize)return;
+  const ings=Object.entries(mixIngreds).filter(([,v])=>v&&v.g>0);
+  const usedG=ings.reduce((a,[,v])=>a+v.g,0);
+  if(usedG!==mixSelSize.g)return;
+  // Agregar cada ingrediente como item kg unificado al carrito
+  ings.forEach(([pid,v])=>{
+    const p=PRODS.find(x=>x[0]===+pid);if(!p)return;
+    const opts=_sortOpts(Object.keys(p[7]));
+    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
+    const key=p[0]+'';
+    const ex=cart.find(i=>i.key===key);
+    const nombre=p[2]+' (Mix)';
+    if(ex){ex.totalG=(ex.totalG||0)+v.g;}
+    else cart.push({key,pid:p[0],n:nombre,o:refOpt,totalG:v.g,unidad:'kg',sabor:'',l1:p[7][refOpt][0],l2:p[7][refOpt][1]});
+  });
+  updateCartCount();
+  closeMix();
+  mixIngreds={};mixSelSize=null;
+  // show success
+  const fab=document.getElementById('cart-fab');
+  if(fab){fab.style.transform='scale(1.25)';setTimeout(()=>{fab.style.transform='';},400);}
+  openCart();
+}
+
+
+/* ── MIX ICON ANIMATION ── */
+function _mixIconLoop(){
+  const ids=['mi1','mi2','mi3','mi_in1','mi_in2','mi_in3'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.transition='none';
+    el.style.opacity='0';
+    el.style.transform='translateY(0px)';
+  });
+  function drop(ingId,inId,delay,dy){
+    setTimeout(()=>{
+      const el=document.getElementById(ingId);if(!el)return;
+      el.style.opacity='1';
+      el.style.transition='transform 0.35s cubic-bezier(.4,0,.6,1)';
+      el.style.transform='translateY('+dy+'px)';
+    },delay);
+    setTimeout(()=>{
+      const el=document.getElementById(ingId);if(el)el.style.opacity='0';
+      const el2=document.getElementById(inId);if(el2)el2.style.opacity='1';
+    },delay+370);
+  }
+  drop('mi1','mi_in1',200,20);
+  drop('mi2','mi_in2',900,22);
+  drop('mi3','mi_in3',1600,26);
+  setTimeout(()=>{
+    const bag=document.getElementById('mixBag');
+    if(!bag)return;
+    bag.style.transition='transform .15s ease-out';
+    bag.style.transformOrigin='20px 37px';
+    bag.style.transform='scaleY(1.05)';
+    setTimeout(()=>{bag.style.transform='scaleY(1)';},150);
+  },2050);
+}
+(function startMixAnim(){
+  const el=document.getElementById('mixIconSvg');
+  if(!el){setTimeout(startMixAnim,300);return;}
+  _mixIconLoop();
+  setInterval(_mixIconLoop,3800);
+})();
+
 </script>
+
+<!-- ── MIX MODAL ── -->
+<div class="mix-modal hidden" id="mixModal">
+  <div class="mix-modal-bg" onclick="closeMix()"></div>
+  <div class="mix-modal-box">
+    <div class="mix-modal-header">
+      <h2>Armá tu mix</h2>
+      <button class="mix-modal-close" onclick="closeMix()"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    </div>
+    <div class="mix-modal-body">
+      <div class="mix-step-label">1 — Elegí el tamaño del bolsón</div>
+      <div class="mix-sizes" id="mixSizes"></div>
+      <div id="mixBuilderArea" style="display:none">
+        <div class="mix-step-label">2 — Agregá ingredientes (ingresá los gramos que querés de cada uno)</div>
+        <div class="mix-layout">
+          <div class="mix-prod-panel">
+            <div class="mix-cat-tabs" id="mixCatTabs"></div>
+            <div class="mix-prod-list" id="mixProdList"></div>
+          </div>
+          <div class="mix-sum-panel">
+            <div class="mix-sum-head" id="mixSumHead">Tu bolsón</div>
+            <div class="mix-fill-wrap">
+              <div class="mix-fill-label"><span>Llenado</span><span id="mixFillLbl">0 g</span></div>
+              <div class="mix-fill-bar"><div class="mix-fill-fill" id="mixFillFill" style="width:0%;background:var(--azul)"></div></div>
+              <div class="mix-fill-hint" id="mixFillHint" style="color:var(--muted-fg)">Agregá ingredientes</div>
+            </div>
+            <div class="mix-ing-list" id="mixIngList"></div>
+            <div class="mix-sum-footer">
+              <div class="mix-total-row"><span>Ingredientes</span><span id="mixIngCount">0</span></div>
+              <div class="mix-total-row main"><span>Total estimado</span><span id="mixTotal">$0</span></div>
+              <button class="mix-add-btn" id="mixAddBtn" onclick="mixAgregarAlCarrito()" disabled>Completá el bolsón primero</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
