@@ -303,8 +303,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 }
 /* Mobile: carousel */
 @media(max-width:599px){
-  .banners-track{display:flex;transition:transform .4s ease;will-change:transform}
-  .banner-slide{flex:0 0 100%;min-width:0}
+  .banners-track{display:flex;transition:transform .4s ease;will-change:transform;align-items:stretch}
+  .banner-slide{flex:0 0 100%;min-width:0;display:flex;flex-direction:column}
+  .banner-slide .mix-banner,.banner-slide .granola-banner{flex:1;min-height:100px;align-items:center}
   .banners-dots{display:flex;justify-content:center;gap:8px;margin-top:10px}
 }
 .bdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s}
@@ -333,6 +334,16 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
 /* ── GRANOLA CAT TABS con scroll y hint ── */
+.ing-quicknav{background:var(--azul-light);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px}
+.ing-quicknav-title{font-weight:700;color:var(--azul-dark);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.ing-qn-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(77,125,138,.15)}
+.ing-qn-row:last-child{border-bottom:none}
+.ing-qn-name{flex:1;font-weight:600;color:var(--fg);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ing-qn-g{font-size:12px;color:var(--muted-fg);white-space:nowrap;margin-right:4px}
+.ing-qn-btn{background:var(--azul);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.ing-qn-btn:hover{background:var(--azul-dark)}
+.granola-ing-qn-btn{background:#b87040;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.granola-ing-qn-btn:hover{background:#7a4f2a}
 .granola-cats-wrap{position:relative;margin-bottom:16px}
 .granola-cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch}
 .granola-cat-tabs::-webkit-scrollbar{display:none}
@@ -369,6 +380,21 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-add-btn{width:100%;margin-top:10px;background:#b87040;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
 .granola-add-btn:hover{background:#7a4f2a}
 .granola-add-btn:disabled{background:var(--muted);color:var(--muted-fg);cursor:not-allowed}
+
+
+/* ── MAYORISTA CONFETTI ── */
+.may-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:9999;background:#fff;border-radius:20px;padding:22px 32px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.25);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;min-width:240px}
+.may-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+.may-toast.hide{transform:translate(-50%,-50%) scale(.85);opacity:0}
+.may-toast-icon{font-size:38px;display:block;margin-bottom:8px}
+.may-toast-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--azul-dark);margin-bottom:4px}
+.may-toast-sub{font-size:14px;color:var(--muted-fg)}
+.confetti-piece{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:9998;animation:confettiFall linear forwards}
+@keyframes confettiFall{
+  0%{opacity:1;transform:translateY(0) rotate(0deg)}
+  80%{opacity:1}
+  100%{opacity:0;transform:translateY(var(--fall)) rotate(var(--rot))}
+}
 
 /* ── MIX BANNER ── */
 .mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35);flex-wrap:wrap}
@@ -922,7 +948,14 @@ function miniQty(key,d){
   updateCartCount();showMiniCart(key);
 }
 function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();document.getElementById('miniCartPopup').classList.add('hidden')}
-function updateCartCount(){document.getElementById('cartCount').textContent=cart.length}
+let _wasMay=false;
+function updateCartCount(){
+  document.getElementById('cartCount').textContent=cart.length;
+  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
+  const isMay=totalMin>=80000;
+  if(isMay&&!_wasMay)_triggerMayoristaConfetti();
+  _wasMay=isMay;
+}
 
 function openCart(){
   document.getElementById('cartOverlay').classList.add('open');
@@ -1330,7 +1363,7 @@ window.addEventListener('popstate',function(e){
 
 /* ── MIX BUILDER ── */
 const MIX_SIZES=[{g:500,lbl:'500 g'},{g:1000,lbl:'1 kg'},{g:2000,lbl:'2 kg'},{g:5000,lbl:'5 kg'}];
-let mixSelSize=null,mixActiveCat=null,mixIngreds={},mixCounter=0;
+let mixSelSize=null,mixActiveCat=null,mixIngreds={},mixCounter=0,mixEditKey=null,mixEditLabel=null,granolaEditKey=null,granolaEditLabel=null;
 
 function openMix(){
   document.getElementById('mixModal').classList.remove('hidden');
@@ -1387,8 +1420,24 @@ function mixRenderCatTabs(){
 
 function mixSetCat(id){mixActiveCat=id;mixRenderCatTabs();mixRenderProdList();}
 
+function _mixQuickNav(){
+  const ings=Object.entries(mixIngreds).filter(([,v])=>v&&v.g>0);
+  const el=document.getElementById('mixQuickNav');
+  if(!el)return;
+  if(!ings.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML='<div class="ing-quicknav-title">Tus ingredientes actuales</div>'+
+    ings.map(([pid,v])=>{
+      const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
+      return`<div class="ing-qn-row">
+        <span class="ing-qn-name">${p[2]}</span>
+        <span class="ing-qn-g">${_gLabel(v.g)}</span>
+        <button class="ing-qn-btn" onclick="mixSetCat('${p[1]}');setTimeout(()=>{const inp=document.querySelector('.mix-prod-input[oninput*=\'mixSetGrams(${p[0]},\']');if(inp){inp.scrollIntoView({behavior:'smooth',block:'center'});inp.focus();}},80)">Ver</button>
+      </div>`;
+    }).join('');
+}
 function mixRenderProdList(){
-  if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';return;}
+  if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';_mixQuickNav();return;}
   const prods=mixGranelProds().filter(p=>p[1]===mixActiveCat);
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+v,0);
   const remG=mixSelSize.g-usedG;
@@ -1409,6 +1458,7 @@ function mixRenderProdList(){
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
+  _mixQuickNav();
 }
 
 function mixRemoveProd(pid){delete mixIngreds[pid];mixRenderProdList();mixRenderSummary();}
@@ -1421,7 +1471,7 @@ function mixSetGrams(pid,val,pxkg){
     let g=Math.max(100,Math.round(raw/100)*100);
     mixIngreds[pid]={g,pxkg};
   }
-  mixRenderSummary();
+  mixRenderSummary();_mixQuickNav();
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.querySelectorAll('.mix-prod-input').forEach(inp=>{
     inp.classList.toggle('over',usedG>mixSelSize.g);
@@ -1461,7 +1511,10 @@ function mixRenderSummary(){
   document.getElementById('mixIngCount').textContent=ings.length;
   document.getElementById('mixTotal').textContent='$'+fmt(total);
   const btn=document.getElementById('mixAddBtn');
-  if(full&&ings.length>0){btn.disabled=false;btn.textContent='🛒 Agregar mix al carrito';}
+  if(full&&ings.length>0){
+    btn.disabled=false;btn.textContent='🛒 Agregar mix al carrito';
+    if(window.innerWidth<768)setTimeout(()=>btn.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  }
   else if(over){btn.disabled=true;btn.textContent='Excedés el peso del bolsón';}
   else{btn.disabled=true;btn.textContent=ings.length?'Faltan '+mixGLabel(rem):'Agregá ingredientes';}
 }
@@ -1472,9 +1525,9 @@ function mixAgregarAlCarrito(){
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   if(usedG!==mixSelSize.g)return;
   // Cada mix es un item único en el carrito identificado por un número correlativo
-  mixCounter++;
-  const mixId='mix'+mixCounter;
-  const mixLabel='Mix #'+mixCounter+' ('+_gLabel(mixSelSize.g)+')';
+  let mixId,mixLabel;
+  if(mixEditKey){mixId=mixEditKey;mixLabel=mixEditLabel;mixEditKey=null;mixEditLabel=null;}
+  else{mixCounter++;mixId='mix'+mixCounter;mixLabel='Mix #'+mixCounter+' ('+_gLabel(mixSelSize.g)+')';}
   // Construir detalle de ingredientes
   const ingDetails=ings.map(([pid,v])=>{
     const p=PRODS.find(x=>x[0]===+pid);
@@ -1632,8 +1685,25 @@ function granolaRenderCatTabs(){
 }
 function granolaSetCat(id){granolaActiveCat=id;granolaRenderCatTabs();granolaRenderProdList();}
 
+function _granolaQuickNav(){
+  const ings=Object.entries(granolaIngreds).filter(([,v])=>v&&v.g>0);
+  const el=document.getElementById('granolaQuickNav');
+  if(!el)return;
+  if(!ings.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML='<div class="ing-quicknav-title">Tus ingredientes actuales</div>'+
+    ings.map(([pid,v])=>{
+      const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
+      const grp=_granolaGroup(p[1]);
+      return`<div class="ing-qn-row">
+        <span class="ing-qn-name">${p[2]}</span>
+        <span class="ing-qn-g">${_gLabel(v.g)}</span>
+        <button class="granola-ing-qn-btn" onclick="granolaSetCat('${grp}');setTimeout(()=>{const inp=document.querySelector('.granola-prod-input[oninput*=\'granolaSetGrams(${p[0]},\']');if(inp){inp.scrollIntoView({behavior:'smooth',block:'center'});inp.focus();}},80)">Ver</button>
+      </div>`;
+    }).join('');
+}
 function granolaRenderProdList(){
-  if(!granolaSelSize){document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';return;}
+  if(!granolaSelSize){document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';_granolaQuickNav();return;}
   const group=GRANOLA_GROUPS.find(g=>g.id===granolaActiveCat);
   const prods=granolaGranelProds().filter(p=>group?
     (group.cats?group.cats.includes(p[1]):_granolaGroup(p[1])==='otros')
@@ -1656,13 +1726,14 @@ function granolaRenderProdList(){
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
+  _granolaQuickNav();
 }
 
 function granolaSetGrams(pid,val,pxkg){
   let raw=parseInt(val)||0;
   if(raw<=0){delete granolaIngreds[pid];}
   else{let g=Math.max(100,Math.round(raw/100)*100);granolaIngreds[pid]={g,pxkg};}
-  granolaRenderSummary();
+  granolaRenderSummary();_granolaQuickNav();
   const usedG=Object.values(granolaIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.querySelectorAll('.granola-prod-input').forEach(inp=>{inp.classList.toggle('over',usedG>granolaSelSize.g);});
 }
@@ -1689,7 +1760,10 @@ function granolaRenderSummary(){
   document.getElementById('granolaIngCount').textContent=ings.length;
   document.getElementById('granolaTotal').textContent='$'+fmt(total);
   const btn=document.getElementById('granolaAddBtn');
-  if(full&&ings.length>0){btn.disabled=false;btn.textContent='Agregar granola al carrito';}
+  if(full&&ings.length>0){
+    btn.disabled=false;btn.textContent='Agregar granola al carrito';
+    if(window.innerWidth<768)setTimeout(()=>btn.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  }
   else if(over){btn.disabled=true;btn.textContent='Excedés el peso del bolsón';}
   else{btn.disabled=true;btn.textContent=ings.length?'Faltan '+_gLabel(rem):'Agregá ingredientes';}
 }
@@ -1699,9 +1773,9 @@ function granolaAgregarAlCarrito(){
   const ings=Object.entries(granolaIngreds).filter(([,v])=>v&&v.g>0);
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   if(usedG!==granolaSelSize.g)return;
-  granolaCounter++;
-  const granolaId='granola'+granolaCounter;
-  const granolaLabel='Granola #'+granolaCounter+' ('+_gLabel(granolaSelSize.g)+')';
+  let granolaId,granolaLabel;
+  if(granolaEditKey){granolaId=granolaEditKey;granolaLabel=granolaEditLabel;granolaEditKey=null;granolaEditLabel=null;}
+  else{granolaCounter++;granolaId='granola'+granolaCounter;granolaLabel='Granola #'+granolaCounter+' ('+_gLabel(granolaSelSize.g)+')';}
   const ingDetails=ings.map(([pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);return p?p[2]+' '+_gLabel(v.g):'?';}).join(', ');
   const totalL1=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;const opts=_sortOpts(Object.keys(p[7]));const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];return a+Math.round(p[7][refOpt][0]*(v.g/1000));},0);
   const totalL2=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;const opts=_sortOpts(Object.keys(p[7]));const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];return a+Math.round(p[7][refOpt][1]*(v.g/1000));},0);
@@ -1717,7 +1791,9 @@ function editBuilder(key){
   const it=cart.find(i=>i.key===key);if(!it)return;
   closeCart();
   const isGranola=key.startsWith('granola');
-  // remove from cart so user rebuilds it
+  // remove from cart, will be re-added with SAME key to preserve number
+  const origKey=key;
+  const origLabel=it.n; // preserve "Mix #3 (1 kg)" label
   cart=cart.filter(i=>i.key!==key);
   updateCartCount();
   if(isGranola){
@@ -1730,6 +1806,7 @@ function editBuilder(key){
       const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
       granolaIngreds[pid]={g,pxkg:p[7][refOpt][0]};
     });
+    granolaEditKey=origKey;granolaEditLabel=origLabel;
     openGranola();
     setTimeout(()=>{
       document.getElementById('granolaBuilderArea').style.display='block';
@@ -1745,11 +1822,47 @@ function editBuilder(key){
       const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
       mixIngreds[pid]={g,pxkg:p[7][refOpt][0]};
     });
+    mixEditKey=origKey;mixEditLabel=origLabel;
     openMix();
     setTimeout(()=>{
       document.getElementById('mixBuilderArea').style.display='block';
       mixRenderSizes();mixRenderCatTabs();mixRenderProdList();mixRenderSummary();
     },80);
+  }
+}
+
+
+/* ── MAYORISTA CONFETTI ── */
+function _triggerMayoristaConfetti(){
+  // Toast
+  let toast=document.getElementById('mayToast');
+  if(!toast){
+    toast=document.createElement('div');
+    toast.id='mayToast';
+    toast.className='may-toast';
+    toast.innerHTML='<span class="may-toast-icon">🏷️</span><div class="may-toast-title">¡Lista Mayorista activada!</div><div class="may-toast-sub">Ya tenés precios mayoristas en todo tu pedido</div>';
+    document.body.appendChild(toast);
+  }
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+  setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.classList.remove('show','hide'),350);},3200);
+
+  // Confetti
+  const colors=['#4d7d8a','#e8c488','#e07860','#7bbf8e','#eedfc4','#c0604a','#b87040','#f5d9a0','#5a8f6a','#d4b896'];
+  const count=90;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      const x=Math.random()*100;
+      const dur=0.9+Math.random()*1.4;
+      const fall=(320+Math.random()*260)+'px';
+      const rot=(Math.random()*720-360)+'deg';
+      const size=(6+Math.random()*7)+'px';
+      el.style.cssText=`left:${x}vw;top:-12px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${size};height:${size};animation-duration:${dur}s;animation-delay:${Math.random()*0.6}s;--fall:${fall};--rot:${rot};border-radius:${Math.random()>0.5?'50%':'2px'}`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),(dur+0.8)*1000);
+    },i*18);
   }
 }
 
@@ -1769,9 +1882,12 @@ function editBuilder(key){
       <div id="mixBuilderArea" style="display:none">
         <div class="mix-step-label">2 — Agregá ingredientes (ingresá los gramos que querés de cada uno)</div>
         <div class="mix-layout">
-          <div class="mix-prod-panel">
-            <div class="mix-cat-tabs" id="mixCatTabs"></div>
-            <div class="mix-prod-list" id="mixProdList"></div>
+          <div>
+            <div class="ing-quicknav" id="mixQuickNav" style="display:none"></div>
+            <div class="mix-prod-panel">
+              <div class="mix-cat-tabs" id="mixCatTabs"></div>
+              <div class="mix-prod-list" id="mixProdList"></div>
+            </div>
           </div>
           <div class="mix-sum-panel">
             <div class="mix-sum-head" id="mixSumHead">Tu bolsón</div>
@@ -1809,6 +1925,7 @@ function editBuilder(key){
         <div class="mix-step-label" style="margin-bottom:10px">2 — Elegí tus ingredientes (ingresá los gramos)</div>
         <div class="granola-layout">
           <div>
+            <div class="ing-quicknav" id="granolaQuickNav" style="display:none"></div>
             <div class="granola-cats-wrap">
               <div class="granola-cat-tabs" id="granolaCatTabs"></div>
               <div class="granola-scroll-hint"></div>
