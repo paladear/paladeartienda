@@ -40,6 +40,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* Botón flotante del carrito */
 #cart-fab{position:fixed;bottom:94px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:#fff;color:var(--azul-dark);border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.25);transition:transform .2s;display:flex;align-items:center;justify-content:center}
 #cart-fab:hover{transform:scale(1.1)}
+@media(max-width:767px){body.builder-open #cart-fab,body.builder-open #chat-fab{display:none!important}}
 #cart-fab .cart-count{position:absolute;top:-4px;right:-4px;background:var(--destructive);color:#fff;border-radius:50%;min-width:22px;height:22px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 6px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 @media(max-width:767px){#cart-fab{bottom:88px;right:18px;width:52px;height:52px;font-size:24px}#chat-fab{right:18px}}
 .cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:24px;height:24px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
@@ -1333,6 +1334,7 @@ let mixSelSize=null,mixActiveCat=null,mixIngreds={},mixCounter=0;
 function openMix(){
   document.getElementById('mixModal').classList.remove('hidden');
   document.body.style.overflow='hidden';
+  document.body.classList.add('builder-open');
   mixRenderSizes();
   if(!mixActiveCat&&PRODS.length){
     const granel=PRODS.filter(p=>p[4]==='kg');
@@ -1342,7 +1344,7 @@ function openMix(){
   }
   mixRenderCatTabs();mixRenderProdList();
 }
-function closeMix(){document.getElementById('mixModal').classList.add('hidden');document.body.style.overflow='';}
+function closeMix(){document.getElementById('mixModal').classList.add('hidden');document.body.style.overflow='';document.body.classList.remove('builder-open');}
 
 function mixRenderSizes(){
   document.getElementById('mixSizes').innerHTML=MIX_SIZES.map(s=>
@@ -1561,6 +1563,7 @@ let granolaSelSize=null,granolaActiveCat=null,granolaIngreds={},granolaCounter=0
 function openGranola(){
   document.getElementById('granolaModal').classList.remove('hidden');
   document.body.style.overflow='hidden';
+  document.body.classList.add('builder-open');
   granolaRenderSizes();
   if(!granolaActiveCat&&PRODS.length){
     const granel=PRODS.filter(p=>p[4]==='kg');
@@ -1569,7 +1572,7 @@ function openGranola(){
   }
   granolaRenderCatTabs();granolaRenderProdList();
 }
-function closeGranola(){document.getElementById('granolaModal').classList.add('hidden');document.body.style.overflow='';}
+function closeGranola(){document.getElementById('granolaModal').classList.add('hidden');document.body.style.overflow='';document.body.classList.remove('builder-open');}
 
 function granolaRenderSizes(){
   document.getElementById('granolaSizes').innerHTML=GRANOLA_SIZES.map(s=>
@@ -1584,22 +1587,39 @@ function granolaPickSize(g){
 }
 
 function granolaGranelProds(){return PRODS.filter(p=>p[4]==='kg'&&p[10]===true);}
-function granolaGranelCats(){
-  const catIds=[...new Set(granolaGranelProds().map(p=>p[1]))];
-  return CATS.filter(c=>catIds.includes(c.id));
+// Grupos fijos de granola: cereales | frutos secos | otros
+const GRANOLA_GROUPS=[
+  {id:'cereales', lbl:'Cereales', cats:['cereales','granos','harinas','semillas']},
+  {id:'frutos',   lbl:'Frutos secos', cats:['frutos','deshidratados']},
+  {id:'otros',    lbl:'Otros', cats:null}, // null = todo lo que no esté en los anteriores
+];
+function _granolaGroup(catId){
+  for(const g of GRANOLA_GROUPS){
+    if(g.cats&&g.cats.includes(catId))return g.id;
+  }
+  return 'otros';
 }
 function granolaRenderCatTabs(){
-  const cats=granolaGranelCats();
-  if(!granolaActiveCat&&cats.length)granolaActiveCat=cats[0].id;
-  document.getElementById('granolaCatTabs').innerHTML=cats.map(c=>
-    `<button class="granola-cat-tab${granolaActiveCat===c.id?' active':''}" onclick="granolaSetCat('${c.id}')">${c.n}</button>`
+  if(!granolaActiveCat)granolaActiveCat='cereales';
+  // solo mostrar grupos que tengan productos disponibles
+  const availCats=new Set(granolaGranelProds().map(p=>p[1]));
+  const availGroups=GRANOLA_GROUPS.filter(g=>{
+    if(g.cats)return g.cats.some(c=>availCats.has(c));
+    // otros: hay algún cat que no esté en ningún grupo fijo
+    return [...availCats].some(c=>_granolaGroup(c)==='otros');
+  });
+  document.getElementById('granolaCatTabs').innerHTML=availGroups.map(g=>
+    `<button class="granola-cat-tab${granolaActiveCat===g.id?' active':''}" onclick="granolaSetCat('${g.id}')">${g.lbl}</button>`
   ).join('');
 }
 function granolaSetCat(id){granolaActiveCat=id;granolaRenderCatTabs();granolaRenderProdList();}
 
 function granolaRenderProdList(){
   if(!granolaSelSize){document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';return;}
-  const prods=granolaGranelProds().filter(p=>p[1]===granolaActiveCat);
+  const group=GRANOLA_GROUPS.find(g=>g.id===granolaActiveCat);
+  const prods=granolaGranelProds().filter(p=>group?
+    (group.cats?group.cats.includes(p[1]):_granolaGroup(p[1])==='otros')
+    :false);
   const usedG=Object.values(granolaIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.getElementById('granolaProdList').innerHTML=prods.map(p=>{
     const opts=_sortOpts(Object.keys(p[7]));
