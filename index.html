@@ -163,6 +163,11 @@ button{cursor:pointer;border:none;font-family:inherit}
 .add-btn{width:100%;border-radius:10px;padding:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;background:var(--azul);color:#fff;margin-top:auto}
 .add-btn:hover{background:var(--azul-dark)}
 .add-btn:active{transform:scale(.97)}
+.card-cart-actions{display:flex;gap:6px;margin-top:6px;align-items:center}
+.card-del-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:transparent;border:1.5px solid var(--border);color:rgba(0,0,0,.3);cursor:pointer;transition:all .2s;flex-shrink:0}
+.card-del-btn:hover{border-color:#e8633a;color:#e8633a;background:#fff5f3}
+.card-edit-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;height:34px;border-radius:8px;background:var(--azul-light);border:1.5px solid var(--azul-mid);color:var(--azul-dark);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.card-edit-btn:hover{background:var(--azul);color:#fff}
 .add-btn.added{background:#16a34a}
 .acum-badge{font-size:12px;color:var(--azul-dark);font-weight:700;background:var(--azul-light);padding:3px 9px;border-radius:8px;margin-left:6px;border:1px solid rgba(77,125,138,.25);white-space:nowrap}
 
@@ -386,17 +391,19 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .may-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:9999;background:#fff;border-radius:20px;padding:28px 20px 24px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;width:300px;max-width:90vw}
 .may-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 .may-toast.hide{transform:translate(-50%,-50%) scale(.85);opacity:0}
-.may-toast-row{display:flex;align-items:flex-end;justify-content:center;gap:10px}
+
 .may-cone{width:54px;height:54px;flex-shrink:0;overflow:visible;position:relative;z-index:1}
 .may-cone svg{overflow:visible;width:54px;height:54px}
-.may-toast-title{position:relative;z-index:2}
-.may-toast-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center}
-.may-cone-left svg{transform:rotate(-30deg);transform-origin:52px 52px}
-.may-cone-right svg{transform:rotate(30deg);transform-origin:12px 52px}
-@keyframes shakeL{0%,100%{transform:rotate(-30deg)}25%{transform:rotate(-46deg)}50%{transform:rotate(-22deg)}75%{transform:rotate(-40deg)}}
-@keyframes shakeR{0%,100%{transform:rotate(30deg)}25%{transform:rotate(46deg)}50%{transform:rotate(22deg)}75%{transform:rotate(40deg)}}
-.may-cone-left.shake svg{animation:shakeL .65s ease-out}
-.may-cone-right.shake svg{animation:shakeR .65s ease-out}
+.may-toast-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center;position:relative;z-index:2}
+.may-toast-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.may-cone-left{margin-left:-8px}
+.may-cone-right{margin-right:-8px}
+.may-cone-left svg{transform:rotate(-28deg);transform-origin:center bottom}
+.may-cone-right svg{transform:rotate(28deg);transform-origin:center bottom}
+@keyframes shakeL{0%,100%{transform:rotate(-28deg)}30%{transform:rotate(-42deg)}60%{transform:rotate(-20deg)}80%{transform:rotate(-32deg)}}
+@keyframes shakeR{0%,100%{transform:rotate(28deg)}30%{transform:rotate(36deg)}60%{transform:rotate(22deg)}80%{transform:rotate(30deg)}}
+.may-cone-left.shake svg{animation:shakeL .7s ease-out}
+.may-cone-right.shake svg{animation:shakeR .7s ease-out}
 
 /* ── MIX BANNER ── */
 .mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35);flex-wrap:wrap}
@@ -583,7 +590,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   </div>
 </div>
 
-<div class="mini-cart-popup hidden" id="miniCartPopup"></div>
+
 
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel">
@@ -824,10 +831,33 @@ function renderCard(p,prefix){
   h+=`<div class="prices"><div><span class="price-label">Minorista</span><div class="price-min">$${fmt(p[7][opts[0]][0])}</div></div><div><span class="price-label">Mayorista</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
   const acumInfo=acumLbl?`<span class="acum-badge">🛒 ${acumLbl}</span>`:'';
   h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button>${acumInfo}</div>`;
-  h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button></div></div>`;
+  h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;
+  // Trash + edit buttons — only shown when item is in cart
+  const cartItem=cart.find(i=>i.pid===p[0]);
+  if(cartItem){
+    h+=`<div class="card-cart-actions">
+      <button class="card-del-btn" onclick="cardDelProduct(${p[0]})" title="Quitar del carrito">${TRASH_SVG}</button>
+      <button class="card-edit-btn" onclick="openCart()" title="Editar en carrito">${EDIT_SVG} Ver en carrito</button>
+    </div>`;
+  }
+  h+=`</div></div>`;
   return h;
 }
 
+function cardDelProduct(pid){
+  cart=cart.filter(i=>i.pid!==pid);
+  updateCartCount();
+  // re-render the card to hide buttons
+  const p=PRODS.find(x=>x[0]===pid);if(!p)return;
+  const prefix=window.innerWidth<768?'mb':'dt';
+  const cardEl=document.getElementById(prefix+'_'+pid);
+  if(cardEl){
+    const newHtml=renderCard(p,prefix);
+    const tmp=document.createElement('div');
+    tmp.innerHTML=newHtml;
+    cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+  }
+}
 function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));el.querySelector('.price-min').textContent='$'+fmt(p1);el.querySelector('.price-may').textContent='$'+fmt(p2);el.dataset.opt=opt}
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
@@ -905,15 +935,18 @@ function addToCart(pid,elId){
   delete el.dataset.opt;delete el.dataset.sabor;
   el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   if(sabSelect)sabSelect.selectedIndex=0;
-  // actualizar badge acumulado en la tarjeta
-  const qRowEl=el.querySelector('.qty-row');
-  if(qRowEl){
-    let badge=qRowEl.querySelector('.acum-badge');
-    const lbl=_acumLabel(p);
-    if(lbl){
-      if(!badge){badge=document.createElement('span');badge.className='acum-badge';qRowEl.appendChild(badge);}
-      badge.textContent='🛒 '+lbl;
-    }
+  // re-render card to show/update badge and cart action buttons
+  const prefix=window.innerWidth<768?'mb':'dt';
+  const cardEl=document.getElementById(prefix+'_'+p[0]);
+  if(cardEl){
+    const newHtml=renderCard(p,prefix);
+    const tmp=document.createElement('div');
+    tmp.innerHTML=newHtml;
+    cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+    // re-grab btn reference after re-render for the added animation
+    const newBtn=document.getElementById(prefix+'_'+p[0]+'_ab');
+    if(newBtn){newBtn.classList.add('added');newBtn.innerHTML='✓ Agregado!';setTimeout(()=>{newBtn.classList.remove('added');newBtn.innerHTML='🛒 Agregar al pedido'},1400);}
+    return; // skip old btn animation below
   }
   updateCartCount();
   const btn=document.getElementById(elId+'_ab');
@@ -924,25 +957,8 @@ function addToCart(pid,elId){
   showMiniCart(miniKey);
 }
 
-function showMiniCart(lastKey){
-  const popup=document.getElementById('miniCartPopup');
-  const it=cart.find(i=>i.key===lastKey);
-  if(!it){popup.classList.add('hidden');return;}
-  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
-  const falta=Math.max(0,80000-totalMin);
-  const pct=Math.min(100,(totalMin/80000)*100);
-  const qLabel=it.unidad==='kg'?_gLabel(it.totalG||0):(it.c>1?it.o+' x'+it.c:it.o);
-  const sMin=_itemMin(it);
-  const cDisp=it.unidad==='kg'?_gLabel(it.totalG||0):it.c;
-  popup.innerHTML=`<div class="mini-cart-header"><span>✅ Agregado al carrito</span><button class="mini-cart-del" onclick="closeMiniCart()">×</button></div><div class="mini-cart-item"><div class="mini-cart-name">${it.n}<span class="mini-cart-opt">${qLabel}</span></div><div class="mini-cart-controls"><button class="mini-qty-btn" onclick="miniQty('${it.key}',-1)">−</button><span class="mini-qty-val">${cDisp}</span><button class="mini-qty-btn" onclick="miniQty('${it.key}',1)">+</button></div><div class="mini-cart-price">$${fmt(sMin)}</div><button class="mini-cart-del" onclick="miniDel('${it.key}')">×</button></div>${falta>0?`<div class="mini-cart-progress">Agregá $${fmt(falta)} más para mayorista<div class="mini-cart-progress-bar"><div class="mini-cart-progress-fill" style="width:${pct}%"></div></div></div>`:`<div class="mini-cart-progress" style="color:var(--azul)">✨ ¡Lista Mayorista activada!</div>`}<button class="mini-go-cart-btn" onclick="closeMiniCart();openCart()">🛒 Ver carrito →</button>`;
-  popup.classList.remove('hidden');
-  if(miniCartTimer)clearTimeout(miniCartTimer);
-  miniCartTimer=setTimeout(()=>popup.classList.add('hidden'),5000);
-  popup.onmouseenter=()=>{if(miniCartTimer)clearTimeout(miniCartTimer)};
-  popup.onmouseleave=()=>{miniCartTimer=setTimeout(()=>popup.classList.add('hidden'),5000)};
-  popup.ontouchstart=()=>{if(miniCartTimer)clearTimeout(miniCartTimer)};
-}
-function closeMiniCart(){document.getElementById('miniCartPopup').classList.add('hidden');if(miniCartTimer)clearTimeout(miniCartTimer)}
+function showMiniCart(lastKey){}
+function closeMiniCart(){}
 function miniQty(key,d){
   const it=cart.find(i=>i.key===key);if(!it)return;
   if(it.unidad==='kg'){it.totalG=Math.max(250,(it.totalG||0)+d*250);}
