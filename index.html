@@ -383,18 +383,19 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 
 /* ── MAYORISTA CONFETTI ── */
-.may-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:9999;background:#fff;border-radius:20px;padding:22px 32px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.25);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;min-width:240px}
+.may-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:9999;background:#fff;border-radius:20px;padding:28px 20px 24px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;width:300px;max-width:90vw}
 .may-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 .may-toast.hide{transform:translate(-50%,-50%) scale(.85);opacity:0}
-.may-toast-icon{font-size:38px;display:block;margin-bottom:8px}
-.may-toast-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--azul-dark);margin-bottom:4px}
-.may-toast-sub{font-size:14px;color:var(--muted-fg)}
-.confetti-piece{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:9998;animation:confettiFall linear forwards}
-@keyframes confettiFall{
-  0%{opacity:1;transform:translateY(0) rotate(0deg)}
-  80%{opacity:1}
-  100%{opacity:0;transform:translateY(var(--fall)) rotate(var(--rot))}
-}
+.may-toast-row{display:flex;align-items:flex-end;justify-content:center;gap:10px}
+.may-cone{width:64px;height:64px;flex-shrink:0;overflow:visible}
+.may-cone svg{overflow:visible;width:64px;height:64px}
+.may-toast-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.25;text-transform:uppercase;letter-spacing:1px;flex:1;padding:0 4px}
+.may-cone-left svg{transform:rotate(-30deg);transform-origin:52px 52px}
+.may-cone-right svg{transform:rotate(30deg);transform-origin:12px 52px}
+@keyframes shakeL{0%,100%{transform:rotate(-30deg)}25%{transform:rotate(-46deg)}50%{transform:rotate(-22deg)}75%{transform:rotate(-40deg)}}
+@keyframes shakeR{0%,100%{transform:rotate(30deg)}25%{transform:rotate(46deg)}50%{transform:rotate(22deg)}75%{transform:rotate(40deg)}}
+.may-cone-left.shake svg{animation:shakeL .65s ease-out}
+.may-cone-right.shake svg{animation:shakeR .65s ease-out}
 
 /* ── MIX BANNER ── */
 .mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35);flex-wrap:wrap}
