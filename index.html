@@ -257,7 +257,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 #chat-send{background:var(--azul);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ── MIX BANNER ── */
-.mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:22px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35)}
+.mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35);flex-wrap:wrap}
+@media(max-width:480px){.mix-banner{padding:16px}.mix-banner svg{width:44px;height:44px}.mix-banner-text h3{font-size:17px}.mix-banner-btn{width:100%;text-align:center}}
 .mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(77,125,138,.45)}
 .mix-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .mix-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
@@ -805,8 +806,8 @@ function closeCart(){
 // Formatea gramos: 1500g → "1.5 kg", 500 → "500 g"
 function _gLabel(g){return g>=1000?(g/1000)%1===0?(g/1000)+' kg':(g/1000).toFixed(2).replace(/\.?0+$/,'')+' kg':g+' g'}
 // Precio total de un item (maneja kg unificados y unidades)
-function _itemMin(it){return it.unidad==='kg'?Math.round(it.l1*(it.totalG/1000)):it.l1*it.c}
-function _itemMay(it){return it.unidad==='kg'?Math.round(it.l2*(it.totalG/1000)):it.l2*it.c}
+function _itemMin(it){if(it.unidad==='mix')return it.l1;if(it.unidad==='kg')return Math.round(it.l1*(it.totalG/1000));return it.l1*it.c}
+function _itemMay(it){if(it.unidad==='mix')return it.l2;if(it.unidad==='kg')return Math.round(it.l2*(it.totalG/1000));return it.l2*it.c}
 // Cantidad a mostrar (stepper del carrito): para kg en gramos +250g/-250g, para und en unidades
 function _itemCount(it){return it.unidad==='kg'?_gLabel(it.totalG):it.c}
 function renderCart(){
@@ -815,10 +816,16 @@ function renderCart(){
   let h='';
   cart.forEach(it=>{
     const sMin=_itemMin(it);
-    const qLabel=_itemCount(it);
-    // Para kg: botones suman/restan 250g; para und suman/restan 1
-    const stepDisp=it.unidad==='kg'?'250g':'1';
-    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}<span class="cart-item-opt">${qLabel} · $${fmt(it.l1)}/kg</span></div><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div><div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>`;
+    const isMix=it.unidad==='mix';
+    const qLabel=isMix?_gLabel(it.totalG):_itemCount(it);
+    const subLabel=isMix
+      ?`<span class="cart-item-opt" style="font-size:11px;line-height:1.4">${it.mixDetalle||''}</span>`
+      :`<span class="cart-item-opt">${qLabel} · $${fmt(it.l1)}/kg</span>`;
+    const controls=isMix
+      ?'' // mixes no se editan cantidad, solo se eliminan
+      :`<div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div>`;
+    const trashSvg='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}${subLabel}</div>${controls}<div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),totalMay=cart.reduce((a,i)=>a+_itemMay(i),0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
@@ -842,7 +849,7 @@ function pedirWA(){
   let msg='🛒 *Pedido - Paladear Mercado de Sabores*\n\n',tot=0;
   cart.forEach(it=>{
     const s=esMay?_itemMay(it):_itemMin(it);tot+=s;
-    const q=it.unidad==='kg'?_gLabel(it.totalG):(it.c>1?it.o+' x'+it.c:it.o);
+    const q=it.unidad==='mix'?_gLabel(it.totalG)+' — '+it.mixDetalle:it.unidad==='kg'?_gLabel(it.totalG):(it.c>1?it.o+' x'+it.c:it.o);
     msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
   });
   msg+=`\n*TOTAL: $${fmt(tot)}*${esMay?'\n_(Lista Mayorista aplicada)_':''}\n\n_Pedido realizado desde el catálogo online_`;
@@ -1063,8 +1070,9 @@ function _cargarInfo(){
         mapa[k]={
           cantidades:_parseCantidades((cols[1]||'').replace(/^"|"$/g,'').trim()),
           info:(cols[2]||'').replace(/^"|"$/g,'').trim(),
-          sabores:_parseCantidades((cols[3]||'').replace(/^"|"$/g,'').trim()), // mismo formato "x/y/z"
-          imagen:_driveToImg((cols[4]||'').replace(/^"|"$/g,'').trim())
+          sabores:_parseCantidades((cols[3]||'').replace(/^"|"$/g,'').trim()),
+          imagen:_driveToImg((cols[4]||'').replace(/^"|"$/g,'').trim()),
+          mix:/^si$/i.test((cols[5]||'').replace(/^"|"$/g,'').trim())
         };
       });
       console.log(`📘 Info: ${Object.keys(mapa).length} entradas cargadas`);
@@ -1109,7 +1117,7 @@ function sincronizarDesdeSheets(){
           opts={'1 und':[p1,p2]};
         }
         // Producto: [id, catId, nombre, subcat, unidad, destacado, imagen, opciones, info, sabores]
-        prodsTemp.push([pid++,cat.id,nombre,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores]);
+        const esMix=inf.mix===true;prodsTemp.push([pid++,cat.id,nombre,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix]);
       });
       CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
       PRODS=prodsTemp;
@@ -1183,7 +1191,7 @@ window.addEventListener('popstate',function(e){
 
 /* ── MIX BUILDER ── */
 const MIX_SIZES=[{g:500,lbl:'500 g'},{g:1000,lbl:'1 kg'},{g:2000,lbl:'2 kg'},{g:5000,lbl:'5 kg'}];
-let mixSelSize=null,mixActiveCat=null,mixIngreds={};
+let mixSelSize=null,mixActiveCat=null,mixIngreds={},mixCounter=0;
 
 function openMix(){
   document.getElementById('mixModal').classList.remove('hidden');
@@ -1214,10 +1222,9 @@ function mixPickSize(g){
   mixRenderSizes();mixRenderProdList();mixRenderSummary();
 }
 
+function mixGranelProds(){return PRODS.filter(p=>p[4]==='kg'&&p[10]===true);}
 function mixGranelCats(){
-  const granelProds=PRODS.filter(p=>p[4]==='kg');
-  const allowedCatIds=['frutos','semillas','deshidratados','cereales','granos','especias','infusiones'];
-  const catIds=[...new Set(granelProds.map(p=>p[1]))].filter(id=>allowedCatIds.includes(id));
+  const catIds=[...new Set(mixGranelProds().map(p=>p[1]))];
   return CATS.filter(c=>catIds.includes(c.id));
 }
 
@@ -1233,7 +1240,7 @@ function mixSetCat(id){mixActiveCat=id;mixRenderCatTabs();mixRenderProdList();}
 
 function mixRenderProdList(){
   if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';return;}
-  const prods=PRODS.filter(p=>p[1]===mixActiveCat&&p[4]==='kg');
+  const prods=mixGranelProds().filter(p=>p[1]===mixActiveCat);
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+v,0);
   const remG=mixSelSize.g-usedG;
   document.getElementById('mixProdList').innerHTML=prods.map(p=>{
@@ -1245,7 +1252,7 @@ function mixRenderProdList(){
     return`<div class="mix-prod-row">
       <div class="mix-prod-name">${p[2]}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
-      <input class="mix-prod-input${isOver?' over':''}" type="number" min="0" max="${mixSelSize.g}" step="1"
+      <input class="mix-prod-input${isOver?' over':''}" type="number" min="100" max="${mixSelSize.g}" step="100"
         placeholder="0 g" value="${cur||''}"
         onchange="mixSetGrams(${p[0]},this.value,${pxkg})"
         oninput="mixSetGrams(${p[0]},this.value,${pxkg})">
@@ -1255,10 +1262,14 @@ function mixRenderProdList(){
 }
 
 function mixSetGrams(pid,val,pxkg){
-  const g=parseInt(val)||0;
-  if(g<=0)delete mixIngreds[pid];else mixIngreds[pid]={g,pxkg};
+  let raw=parseInt(val)||0;
+  if(raw<=0){delete mixIngreds[pid];}
+  else{
+    // redondear al múltiplo de 100 más cercano, mínimo 100g
+    let g=Math.max(100,Math.round(raw/100)*100);
+    mixIngreds[pid]={g,pxkg};
+  }
   mixRenderSummary();
-  // revalidate input colors
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.querySelectorAll('.mix-prod-input').forEach(inp=>{
     inp.classList.toggle('over',usedG>mixSelSize.g);
@@ -1308,16 +1319,41 @@ function mixAgregarAlCarrito(){
   const ings=Object.entries(mixIngreds).filter(([,v])=>v&&v.g>0);
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   if(usedG!==mixSelSize.g)return;
-  // Agregar cada ingrediente como item kg unificado al carrito
-  ings.forEach(([pid,v])=>{
-    const p=PRODS.find(x=>x[0]===+pid);if(!p)return;
+  // Cada mix es un item único en el carrito identificado por un número correlativo
+  mixCounter++;
+  const mixId='mix'+mixCounter;
+  const mixLabel='Mix #'+mixCounter+' ('+_gLabel(mixSelSize.g)+')';
+  // Construir detalle de ingredientes
+  const ingDetails=ings.map(([pid,v])=>{
+    const p=PRODS.find(x=>x[0]===+pid);
+    return p?p[2]+' '+_gLabel(v.g):'?';
+  }).join(', ');
+  // Calcular precio total del mix (suma proporcional de cada ingrediente)
+  const totalL1=ings.reduce((a,[pid,v])=>{
+    const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
     const opts=_sortOpts(Object.keys(p[7]));
     const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    const key=p[0]+'';
-    const ex=cart.find(i=>i.key===key);
-    const nombre=p[2]+' (Mix)';
-    if(ex){ex.totalG=(ex.totalG||0)+v.g;}
-    else cart.push({key,pid:p[0],n:nombre,o:refOpt,totalG:v.g,unidad:'kg',sabor:'',l1:p[7][refOpt][0],l2:p[7][refOpt][1]});
+    return a+Math.round(p[7][refOpt][0]*(v.g/1000));
+  },0);
+  const totalL2=ings.reduce((a,[pid,v])=>{
+    const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
+    const opts=_sortOpts(Object.keys(p[7]));
+    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
+    return a+Math.round(p[7][refOpt][1]*(v.g/1000));
+  },0);
+  // Un solo item en el carrito representando el mix completo
+  cart.push({
+    key:mixId,
+    pid:-1,
+    n:mixLabel,
+    o:mixId,
+    totalG:mixSelSize.g,
+    unidad:'mix',
+    sabor:'',
+    l1:totalL1,
+    l2:totalL2,
+    mixDetalle:ingDetails,
+    mixIngreds:ings.map(([pid,v])=>({pid:+pid,g:v.g}))
   });
   updateCartCount();
   closeMix();
