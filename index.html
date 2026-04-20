@@ -103,11 +103,11 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(min-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:960px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1200px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
-.pcard{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.09);border:2px solid transparent;transition:all .2s;display:flex;flex-direction:column}
+.pcard{background:var(--card);border-radius:14px;overflow:visible;box-shadow:0 2px 10px rgba(0,0,0,.09);border:2px solid transparent;transition:all .2s;display:flex;flex-direction:column}
 .pcard.highlight-card{border-color:var(--azul);box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35);animation:pulseHighlight 2.2s ease-out}
 @keyframes pulseHighlight{0%{box-shadow:0 0 0 0 rgba(77,125,138,.55),0 6px 20px rgba(77,125,138,.4)}50%{box-shadow:0 0 0 10px rgba(77,125,138,0),0 6px 20px rgba(77,125,138,.35)}100%{box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35)}}
 .pcard:hover{box-shadow:0 6px 20px rgba(0,0,0,.13);border-color:var(--azul-mid)}
-.pcard-img{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#f8fafb;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden}
+.pcard-img{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#f8fafb;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
 .pcard-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .pcard-body{padding:14px;flex:1;display:flex;flex-direction:column}
 .pcard-name{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
@@ -849,16 +849,7 @@ function renderCard(p,prefix){
 function cardDelProduct(pid){
   cart=cart.filter(i=>i.pid!==pid);
   updateCartCount();
-  const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-  // re-render in both mobile and desktop (one of them will be in the DOM)
-  ['mb','dt'].forEach(prefix=>{
-    const cardEl=document.getElementById(prefix+'_'+pid);
-    if(cardEl){
-      const tmp=document.createElement('div');
-      tmp.innerHTML=renderCard(p,prefix);
-      cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
-    }
-  });
+  _reRenderCard(pid);
 }
 function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));el.querySelector('.price-min').textContent='$'+fmt(p1);el.querySelector('.price-may').textContent='$'+fmt(p2);el.dataset.opt=opt}
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
@@ -896,6 +887,17 @@ function _precioXG(p,totalG,nivel){
   const precioKg=p[7][ref][nivel]; // precio por kg
   return precioKg; // devuelve precio por kg; el total = precioKg * totalG/1000
 }
+function _reRenderCard(pid){
+  const p=PRODS.find(x=>x[0]===pid);if(!p)return;
+  ['mb','dt'].forEach(function(prefix){
+    const cardEl=document.getElementById(prefix+'_'+pid);
+    if(!cardEl)return;
+    const tmp=document.createElement('div');
+    tmp.innerHTML=renderCard(p,prefix);
+    cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+  });
+}
+
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
   const el=document.getElementById(elId);if(!el)return;
@@ -922,29 +924,20 @@ function addToCart(pid,elId){
     if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:'und',sabor});
   }
 
-  // reset stepper and selects on the original element (still in DOM at this point)
-  document.getElementById(elId+'_q').textContent='1';
-  delete el.dataset.opt;delete el.dataset.sabor;
-  el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-  if(sabSelect)sabSelect.selectedIndex=0;
-
-  // flash added button before re-render
-  const btn=document.getElementById(elId+'_ab');
-  if(btn){btn.classList.add('added');btn.innerHTML='✓ Agregado!';}
-
-  // update cart count
   updateCartCount();
 
-  // re-render card after short delay so user sees the "Agregado" flash first
-  setTimeout(()=>{
-    const prefix=window.innerWidth<768?'mb':'dt';
-    const cardEl=document.getElementById(prefix+'_'+p[0]);
-    if(cardEl){
-      const tmp=document.createElement('div');
-      tmp.innerHTML=renderCard(p,prefix);
-      cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+  // re-render card immediately to show badge + action buttons
+  _reRenderCard(pid);
+
+  // flash the new button briefly
+  setTimeout(function(){
+    const newBtn=document.getElementById(elId+'_ab');
+    if(newBtn){
+      newBtn.classList.add('added');
+      newBtn.innerHTML='✓ Agregado!';
+      setTimeout(function(){newBtn.classList.remove('added');newBtn.innerHTML='🛒 Agregar al pedido';},1400);
     }
-  },500);
+  },20);
 }
 
 function showMiniCart(lastKey){}
@@ -1018,11 +1011,7 @@ function cartQty(key,d){
   if(it.unidad==='kg'){it.totalG=Math.max(250,(it.totalG||0)+d*250);}
   else{it.c=Math.max(1,(it.c||1)+d);}
   updateCartCount();renderCart();
-  // re-render product card to update badge
-  if(it.pid&&it.pid>0){
-    const p=PRODS.find(x=>x[0]===it.pid);
-    if(p){['mb','dt'].forEach(prefix=>{const cardEl=document.getElementById(prefix+'_'+it.pid);if(cardEl){const tmp=document.createElement('div');tmp.innerHTML=renderCard(p,prefix);cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);}});}
-  }
+  if(it.pid&&it.pid>0)_reRenderCard(it.pid);
 }
 function cartDel(key){
   const it=cart.find(i=>i.key===key);
@@ -1030,16 +1019,7 @@ function cartDel(key){
   cart=cart.filter(i=>i.key!==key);
   updateCartCount();
   renderCart();
-  // re-render the product card if visible so badge and buttons disappear
-  if(pid&&pid>0){
-    const p=PRODS.find(x=>x[0]===pid);
-    if(p){
-      ['mb','dt'].forEach(prefix=>{
-        const cardEl=document.getElementById(prefix+'_'+pid);
-        if(cardEl){const tmp=document.createElement('div');tmp.innerHTML=renderCard(p,prefix);cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);}
-      });
-    }
-  }
+  if(pid&&pid>0)_reRenderCard(pid);
 }
 function pedirWA(){
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),esMay=totalMin>=80000;
