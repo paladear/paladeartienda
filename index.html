@@ -847,16 +847,16 @@ function renderCard(p,prefix){
 function cardDelProduct(pid){
   cart=cart.filter(i=>i.pid!==pid);
   updateCartCount();
-  // re-render the card to hide buttons
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-  const prefix=window.innerWidth<768?'mb':'dt';
-  const cardEl=document.getElementById(prefix+'_'+pid);
-  if(cardEl){
-    const newHtml=renderCard(p,prefix);
-    const tmp=document.createElement('div');
-    tmp.innerHTML=newHtml;
-    cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
-  }
+  // re-render in both mobile and desktop (one of them will be in the DOM)
+  ['mb','dt'].forEach(prefix=>{
+    const cardEl=document.getElementById(prefix+'_'+pid);
+    if(cardEl){
+      const tmp=document.createElement('div');
+      tmp.innerHTML=renderCard(p,prefix);
+      cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+    }
+  });
 }
 function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));el.querySelector('.price-min').textContent='$'+fmt(p1);el.querySelector('.price-may').textContent='$'+fmt(p2);el.dataset.opt=opt}
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
@@ -896,65 +896,53 @@ function _precioXG(p,totalG,nivel){
 }
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-  const el=document.getElementById(elId);
+  const el=document.getElementById(elId);if(!el)return;
   const opts=_sortOpts(Object.keys(p[7]));
   const opt=el.dataset.opt||opts[0];
   const sabores=p[9];
   const sabSelect=document.getElementById(elId+'_sab');
   const sabor=sabSelect?sabSelect.value:(sabores&&sabores.length?sabores[0]:'');
-  const qty=parseInt(document.getElementById(elId+'_q').textContent);
+  const qty=parseInt(document.getElementById(elId+'_q').textContent)||1;
   const nombreConSabor=sabor?p[2]+' ('+sabor+')':p[2];
 
   if(p[4]==='kg'){
-    // Productos a granel: unificar en un solo item por pid+sabor, sumar en gramos
     const addedG=_optToG(opt)*qty;
     const key=pid+(sabor?'-'+sabor:'');
     const ex=cart.find(i=>i.key===key);
-    if(ex){
-      ex.totalG=(ex.totalG||0)+addedG;
-    } else {
-      // buscar precio de referencia por kg (opción 1kg, o la más grande disponible)
-      const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
-      cart.push({key,pid,n:nombreConSabor,o:refOpt,totalG:addedG,unidad:'kg',sabor,
-        l1:p[7][refOpt][0],l2:p[7][refOpt][1]});
-    }
-    // recalcular precios desde precio/kg
-    const it=cart.find(i=>i.key===key);
     const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
+    if(ex){ex.totalG=(ex.totalG||0)+addedG;}
+    else cart.push({key,pid,n:nombreConSabor,o:refOpt,totalG:addedG,unidad:'kg',sabor,l1:p[7][refOpt][0],l2:p[7][refOpt][1]});
+    const it=cart.find(i=>i.key===key);
     it.l1=p[7][refOpt][0];it.l2=p[7][refOpt][1];
-    // c = "cantidad" en gramos para compatibilidad con totales: usamos fracción de kg
-    // pero lo mostramos distinto; guardamos totalG y calculamos precio aparte
   } else {
-    // Unidades: comportamiento original, key por pid+opt+sabor
     const key=pid+'-'+opt+(sabor?'-'+sabor:'');
     const ex=cart.find(i=>i.key===key);
     if(ex)ex.c+=qty;else cart.push({key,pid,n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:'und',sabor});
   }
 
+  // reset stepper and selects on the original element (still in DOM at this point)
   document.getElementById(elId+'_q').textContent='1';
   delete el.dataset.opt;delete el.dataset.sabor;
   el.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   if(sabSelect)sabSelect.selectedIndex=0;
-  // re-render card to show/update badge and cart action buttons
-  const prefix=window.innerWidth<768?'mb':'dt';
-  const cardEl=document.getElementById(prefix+'_'+p[0]);
-  if(cardEl){
-    const newHtml=renderCard(p,prefix);
-    const tmp=document.createElement('div');
-    tmp.innerHTML=newHtml;
-    cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
-    // re-grab btn reference after re-render for the added animation
-    const newBtn=document.getElementById(prefix+'_'+p[0]+'_ab');
-    if(newBtn){newBtn.classList.add('added');newBtn.innerHTML='✓ Agregado!';setTimeout(()=>{newBtn.classList.remove('added');newBtn.innerHTML='🛒 Agregar al pedido'},1400);}
-    return; // skip old btn animation below
-  }
-  updateCartCount();
+
+  // flash added button before re-render
   const btn=document.getElementById(elId+'_ab');
-  btn.classList.add('added');btn.innerHTML='✓ Agregado!';
-  setTimeout(()=>{btn.classList.remove('added');btn.innerHTML='🛒 Agregar al pedido'},1400);
-  // key para mini cart: para kg usar la key unificada
-  const miniKey=p[4]==='kg'?(pid+(sabor?'-'+sabor:'')):pid+'-'+opt+(sabor?'-'+sabor:'');
-  showMiniCart(miniKey);
+  if(btn){btn.classList.add('added');btn.innerHTML='✓ Agregado!';}
+
+  // update cart count
+  updateCartCount();
+
+  // re-render card after short delay so user sees the "Agregado" flash first
+  setTimeout(()=>{
+    const prefix=window.innerWidth<768?'mb':'dt';
+    const cardEl=document.getElementById(prefix+'_'+p[0]);
+    if(cardEl){
+      const tmp=document.createElement('div');
+      tmp.innerHTML=renderCard(p,prefix);
+      cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+    }
+  },500);
 }
 
 function showMiniCart(lastKey){}
@@ -965,7 +953,7 @@ function miniQty(key,d){
   else{it.c=Math.max(1,(it.c||1)+d);}
   updateCartCount();showMiniCart(key);
 }
-function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();document.getElementById('miniCartPopup').classList.add('hidden')}
+function miniDel(key){cart=cart.filter(i=>i.key!==key);updateCartCount();}
 let _wasMay=false;
 function updateCartCount(){
   document.getElementById('cartCount').textContent=cart.length;
