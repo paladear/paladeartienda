@@ -1344,7 +1344,15 @@ function openMix(){
   }
   mixRenderCatTabs();mixRenderProdList();
 }
-function closeMix(){document.getElementById('mixModal').classList.add('hidden');document.body.style.overflow='';document.body.classList.remove('builder-open');}
+function closeMix(){
+  document.getElementById('mixModal').classList.add('hidden');
+  document.body.style.overflow='';
+  document.body.classList.remove('builder-open');
+  // reset state so next open starts fresh
+  mixSelSize=null;mixIngreds={};mixActiveCat=null;
+  document.getElementById('mixBuilderArea').style.display='none';
+  mixRenderSizes();
+}
 
 function mixRenderSizes(){
   document.getElementById('mixSizes').innerHTML=MIX_SIZES.map(s=>
@@ -1496,9 +1504,8 @@ function mixAgregarAlCarrito(){
     mixIngreds:ings.map(([pid,v])=>({pid:+pid,g:v.g}))
   });
   updateCartCount();
-  closeMix();
   mixIngreds={};mixSelSize=null;
-  // show success
+  closeMix();
   const fab=document.getElementById('cart-fab');
   if(fab){fab.style.transform='scale(1.25)';setTimeout(()=>{fab.style.transform='';},400);}
   openCart();
@@ -1572,7 +1579,14 @@ function openGranola(){
   }
   granolaRenderCatTabs();granolaRenderProdList();
 }
-function closeGranola(){document.getElementById('granolaModal').classList.add('hidden');document.body.style.overflow='';document.body.classList.remove('builder-open');}
+function closeGranola(){
+  document.getElementById('granolaModal').classList.add('hidden');
+  document.body.style.overflow='';
+  document.body.classList.remove('builder-open');
+  granolaSelSize=null;granolaIngreds={};granolaActiveCat=null;
+  document.getElementById('granolaBuilderArea').style.display='none';
+  granolaRenderSizes();
+}
 
 function granolaRenderSizes(){
   document.getElementById('granolaSizes').innerHTML=GRANOLA_SIZES.map(s=>
@@ -1688,8 +1702,8 @@ function granolaAgregarAlCarrito(){
   const totalL2=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;const opts=_sortOpts(Object.keys(p[7]));const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];return a+Math.round(p[7][refOpt][1]*(v.g/1000));},0);
   cart.push({key:granolaId,pid:-2,n:granolaLabel,o:granolaId,totalG:granolaSelSize.g,unidad:'mix',sabor:'',l1:totalL1,l2:totalL2,mixDetalle:ingDetails,mixIngreds:ings.map(([pid,v])=>({pid:+pid,g:v.g}))});
   updateCartCount();
-  closeGranola();
   granolaIngreds={};granolaSelSize=null;
+  closeGranola();
   openCart();
 }
 
