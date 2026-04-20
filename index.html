@@ -173,56 +173,22 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 @media(max-width:767px){#mainContainer{padding:12px 12px}}
 @media(max-width:767px){
-  /* Grilla: 2 columnas con gap reducido */
-  .prod-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  /* Grilla: 1 columna en mobile */
+  .prod-grid{grid-template-columns:1fr;gap:10px}
 
-  /* Card: sin overflow visible para evitar que se salga del grid */
+  /* Card: sin overflow visible */
   .pcard{border-radius:12px;overflow:hidden}
 
-  /* Imagen más pequeña */
-  .pcard-img{height:120px;font-size:36px}
+  /* Imagen un poco más chica */
+  .pcard-img{height:160px;font-size:44px}
 
-  /* Body más compacto */
-  .pcard-body{padding:9px 10px}
+  /* Body levemente más compacto */
+  .pcard-body{padding:12px 14px}
 
-  /* Nombre más pequeño */
-  .pcard-name{font-size:12px;line-height:1.3;margin-bottom:2px}
-  .pcard-head{gap:4px;margin-bottom:1px}
-
-  /* Marca */
-  .pcard-brand{font-size:11px;margin-bottom:5px}
-
-  /* Botones de opción (tamaños) más chicos */
-  .opt-btns{gap:4px;margin-bottom:6px;flex-wrap:wrap}
-  .opt-btn{padding:3px 7px;font-size:11px;border-radius:6px;border-width:1.5px}
-
-  /* Precios en columna para aprovechar el ancho */
-  .prices{flex-direction:column;gap:3px;margin-bottom:7px;align-items:flex-start}
-  .price-label{font-size:10px;letter-spacing:0}
-  .price-min{font-size:14px}
-  .price-may{font-size:12px;padding:2px 7px;border-radius:6px}
-
-  /* Fila de cantidad compacta */
-  .qty-row{gap:6px;margin-bottom:7px}
-  .qty-btn{width:28px;height:28px;font-size:16px;border-width:1.5px}
-  .qty-val{font-size:14px;min-width:20px}
-  .acum-badge{font-size:10px;padding:2px 6px;margin-left:2px}
-
-  /* Botón agregar compacto */
-  .add-btn{padding:9px 6px;font-size:12px;gap:4px;border-radius:8px}
-
-  /* Acciones de carrito en card */
-  .card-cart-actions{gap:4px;margin-top:4px}
-  .card-del-btn{width:28px;height:28px;border-radius:6px}
-  .card-edit-btn{height:28px;font-size:11px;gap:3px;border-radius:6px}
-
-  /* Info btn más pequeño */
-  .info-btn{width:24px;height:24px;font-size:12px}
-
-  /* Selector de sabor */
-  .sabor-row{gap:5px;margin-bottom:7px}
-  .sabor-label{font-size:11px}
-  .sabor-select{font-size:11px;padding:4px 7px;min-width:80px}
+  /* Precios en fila normal — hay ancho suficiente */
+  .prices{flex-direction:row;gap:10px;margin-bottom:10px;align-items:flex-end}
+  .price-min{font-size:17px}
+  .price-may{font-size:14px}
 }
 
 /* ── BOTÓN VOLVER ── */
