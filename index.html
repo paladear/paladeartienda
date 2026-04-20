@@ -962,7 +962,8 @@ function renderCart(){
       ?'' // mixes no se editan cantidad, solo se eliminan
       :`<div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div>`;
     const trashSvg='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
-    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}${subLabel}</div>${controls}<div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
+    const editBtn=isMix?`<button onclick="editBuilder('${it.key}')" title="Editar" style="background:none;border:1.5px solid var(--azul);color:var(--azul-dark);border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:4px;white-space:nowrap">✏ Editar</button>`:'';
+    h+=`<div class="cart-item"><div class="cart-item-name">${it.n}${subLabel}</div>${controls}${editBtn}<div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),totalMay=cart.reduce((a,i)=>a+_itemMay(i),0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
@@ -1397,18 +1398,21 @@ function mixRenderProdList(){
     const pxkg=p[7][refOpt][0];
     const cur=mixIngreds[p[0]]||0;
     const isOver=usedG>mixSelSize.g;
+    const trashBtn=cur>0?`<button onclick="mixRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     return`<div class="mix-prod-row">
       <div class="mix-prod-name">${p[2]}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <input class="mix-prod-input${isOver?' over':''}" type="number" min="100" max="${mixSelSize.g}" step="100"
         placeholder="0 g" value="${cur||''}"
         onchange="mixSetGrams(${p[0]},this.value,${pxkg})"
-        oninput="mixSetGrams(${p[0]},this.value,${pxkg})">
+        oninput="mixSetGrams(${p[0]},this.value,${pxkg})">${trashBtn}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
 }
 
+function mixRemoveProd(pid){delete mixIngreds[pid];mixRenderProdList();mixRenderSummary();}
+function granolaRemoveProd(pid){delete granolaIngreds[pid];granolaRenderProdList();granolaRenderSummary();}
 function mixSetGrams(pid,val,pxkg){
   let raw=parseInt(val)||0;
   if(raw<=0){delete mixIngreds[pid];}
@@ -1641,13 +1645,14 @@ function granolaRenderProdList(){
     const pxkg=p[7][refOpt][0];
     const cur=granolaIngreds[p[0]]?granolaIngreds[p[0]].g:0;
     const isOver=usedG>granolaSelSize.g;
+    const gTrashBtn=cur>0?`<button onclick="granolaRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     return`<div class="granola-prod-row">
       <div class="granola-prod-name">${p[2]}</div>
       <div class="granola-prod-price">$${fmt(pxkg)}/kg</div>
       <input class="granola-prod-input${isOver?' over':''}" type="number" min="100" max="${granolaSelSize.g}" step="100"
         placeholder="0 g" value="${cur||''}"
         onchange="granolaSetGrams(${p[0]},this.value,${pxkg})"
-        oninput="granolaSetGrams(${p[0]},this.value,${pxkg})">
+        oninput="granolaSetGrams(${p[0]},this.value,${pxkg})">${gTrashBtn}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
@@ -1705,6 +1710,47 @@ function granolaAgregarAlCarrito(){
   granolaIngreds={};granolaSelSize=null;
   closeGranola();
   openCart();
+}
+
+
+function editBuilder(key){
+  const it=cart.find(i=>i.key===key);if(!it)return;
+  closeCart();
+  const isGranola=key.startsWith('granola');
+  // remove from cart so user rebuilds it
+  cart=cart.filter(i=>i.key!==key);
+  updateCartCount();
+  if(isGranola){
+    // pre-load granola state
+    granolaSelSize=GRANOLA_SIZES.find(s=>s.g===it.totalG)||GRANOLA_SIZES[1];
+    granolaIngreds={};
+    (it.mixIngreds||[]).forEach(({pid,g})=>{
+      const p=PRODS.find(x=>x[0]===pid);if(!p)return;
+      const opts=_sortOpts(Object.keys(p[7]));
+      const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
+      granolaIngreds[pid]={g,pxkg:p[7][refOpt][0]};
+    });
+    openGranola();
+    setTimeout(()=>{
+      document.getElementById('granolaBuilderArea').style.display='block';
+      granolaRenderSizes();granolaRenderCatTabs();granolaRenderProdList();granolaRenderSummary();
+    },80);
+  } else {
+    // pre-load mix state
+    mixSelSize=MIX_SIZES.find(s=>s.g===it.totalG)||MIX_SIZES[1];
+    mixIngreds={};
+    (it.mixIngreds||[]).forEach(({pid,g})=>{
+      const p=PRODS.find(x=>x[0]===pid);if(!p)return;
+      const opts=_sortOpts(Object.keys(p[7]));
+      const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
+      mixIngreds[pid]={g,pxkg:p[7][refOpt][0]};
+    });
+    openMix();
+    setTimeout(()=>{
+      document.getElementById('mixBuilderArea').style.display='block';
+      mixRenderSizes();mixRenderCatTabs();mixRenderProdList();mixRenderSummary();
+    },80);
+  }
 }
 
 </script>
