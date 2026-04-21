@@ -1487,6 +1487,7 @@ function _cargarInfo(){
         // clave por ID si existe, sino por nombre normalizado (retrocompatibilidad)
         const k=id||_norm(nombre);
         const entrada={
+          nombre:nombre,
           cantidades:_parseCantidades((cols[1]||'').replace(/^"|"$/g,'').trim()),
           info:(cols[2]||'').replace(/^"|"$/g,'').trim(),
           sabores:_parseCantidades((cols[3]||'').replace(/^"|"$/g,'').trim()),
@@ -1519,15 +1520,17 @@ function sincronizarDesdeSheets(){
         if(!nombre||!p1||!p2||!rubro)return;
         const cat=RUBRO_MAP[rubro];if(!cat)return;
         if(!catMap[cat.id])catMap[cat.id]=cat;
-        const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre);
-        const esEspecia=['especias','infusiones'].includes(cat.id);
-
         // buscar datos de Info: primero por ID, después por nombre (retrocompatibilidad)
         const inf=INFO[productId]||INFO[_norm(nombre)]||{};
-        // esKg: verdadero si el nombre lo indica O si las cantidades de Info tienen gramos/kg
+        // Nombre a mostrar: usar col A de Info si existe, sino el de Precios como fallback
+        const nombreFinal=inf.nombre||nombre;
+        // esKg: se determina por las cantidades definidas en Info (g/kg = granel, und = varios)
+        // Si no hay Info, fallback al nombre de Precios (retrocompatibilidad)
         const _infCants=inf.cantidades||[];
         const esKgInfo=_infCants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
-        const esKg=esKgNombre||esKgInfo;
+        const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre); // fallback si no hay Info
+        const esKg=_infCants.length?esKgInfo:esKgNombre;
+        const esEspecia=['especias','infusiones'].includes(cat.id);
         const imgUrl=inf.imagen||imgPrecios;
         const infoText=inf.info||'';
         const sabores=inf.sabores||null;
@@ -1545,7 +1548,7 @@ function sincronizarDesdeSheets(){
           opts={'1 und':[p1,p2]};
         }
         // Producto: [id, catId, nombre, subcat, unidad, destacado, imagen, opciones, info, sabores]
-        const esMix=inf.mix===true;const esGranola=inf.granola===true;prodsTemp.push([pid++,cat.id,nombre,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola]);
+        const esMix=inf.mix===true;const esGranola=inf.granola===true;prodsTemp.push([pid++,cat.id,nombreFinal,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola]);
       });
       CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
       PRODS=prodsTemp;
