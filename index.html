@@ -1307,7 +1307,14 @@ function sendQuickFaq(btn,msg){
   addUserMsg(msg);
   const typing=addBotMsg('...');
   typing.classList.add('typing');
-  setTimeout(()=>{const reply=responderChat(msg);typing.style.whiteSpace='pre-wrap';typing.textContent=reply;typing.classList.remove('typing');document.getElementById('chat-msgs').scrollTop=9999},420);
+  setTimeout(()=>{
+    const reply=responderChat(msg);
+    typing.style.whiteSpace='pre-wrap';
+    typing.textContent=reply;
+    typing.classList.remove('typing');
+    document.getElementById('chat-msgs').scrollTop=9999;
+    setTimeout(()=>_renderQuickFaqs(),200);
+  },420);
 }
 function toggleChat(){
   chatOpen=!chatOpen;
@@ -1347,11 +1354,11 @@ function responderChat(msg){
   if(/direccion|ubicacion|donde|local|tienda|lugar|mapa/.test(t))
     return 'Estamos en Pueyrredón 588, Ciudad de Mendoza 📍\n\nHorario: Lunes a Sábado de 10:00 a 20:00 hs.\nPodés encontrarnos en Google Maps como "Paladear Mercado de Sabores".';
   if(/mayorista|mayor|precio mayor|lista mayor|lista 2|80000|80\.000/.test(t))
-    return '🏷️ Lista Mayorista\n\nContamos con dos listas de precios:\n• Lista 1: precios minoristas\n• Lista 2: precios mayoristas\n\nPara acceder a la Lista 2, la compra debe superar los $80.000 en precios de Lista 1.\n\nCuando tu pedido supera ese monto, el precio mayorista se activa automáticamente.\nAceptamos todos los métodos de pago y no exigimos mínimos de compra.';
+    return '🏷️ Lista Mayorista\n\nContamos con dos listas de precios:\n• Lista 1: precios minoristas\n• Lista 2: precios mayoristas\n\nPara acceder a la Lista 2, la compra debe superar los $80.000 en precios de Lista 1.\n\nCuando tu pedido supera ese monto, el precio mayorista se activa automáticamente.\nAceptamos todos los métodos de pago.';
   if(/precio|cuanto.*cuesta|valor|kilo|kg|como.*se.*expresa/.test(t))
-    return '💰 Precios\n\nLos precios publicados son por kilogramo.\nPodés pedir la cantidad que quieras, ¡no exigimos mínimos!\n\nContamos con dos listas:\n• Lista 1 (minorista): precio estándar\n• Lista 2 (mayorista): se activa automáticamente en compras mayores a $80.000';
+    return '💰 Precios\n\nLos precios publicados son por kilogramo.\n\nContamos con dos listas:\n• Lista 1 (minorista): precio estándar\n• Lista 2 (mayorista): se activa automáticamente en compras mayores a $80.000\n\nEl precio en azul en cada producto es el precio mayorista.';
   if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso|paso a paso/.test(t))
-    return '📦 Cómo hacer tu pedido\n\n1. Detallá el nombre completo del producto\n2. Indicá la cantidad en gramos o unidades\n3. Aguardá el presupuesto del equipo Paladear\n4. Confirmá el pedido\n5. Informanos el método de pago\n6. Envianos tu domicilio de entrega\n7. ¡Recibilo y disfrutalo! 🎉';
+    return '📦 Cómo hacer tu pedido\n\n1. Navegá el catálogo y elegí tus productos\n2. Seleccioná la cantidad y tocá "Agregar al pedido"\n3. Abrí el carrito y revisá tu selección\n4. Tocá "Pedir por WhatsApp" para enviarnos tu pedido\n5. Confirmá el pedido con el equipo Paladear\n6. Informanos el método de pago\n7. ¡Lo recibís en casa o lo retirás en el local! 🎉';
   if(/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
     return 'Podés contactarnos por WhatsApp al 261 651 2823 📱\nAtendemos de lunes a sábado de 10:00 a 20:00 hs.';
   if(/mix tradicional/.test(t))
@@ -1412,7 +1419,14 @@ function sendChat(){
   addUserMsg(text);
   const typing=addBotMsg('...');
   typing.classList.add('typing');
-  setTimeout(()=>{const reply=responderChat(text);typing.style.whiteSpace='pre-wrap';typing.textContent=reply;typing.classList.remove('typing');document.getElementById('chat-msgs').scrollTop=9999},420);
+  setTimeout(()=>{
+    const reply=responderChat(text);
+    typing.style.whiteSpace='pre-wrap';
+    typing.textContent=reply;
+    typing.classList.remove('typing');
+    document.getElementById('chat-msgs').scrollTop=9999;
+    setTimeout(()=>_renderQuickFaqs(),200);
+  },420);
 }
 
 /* ── CARGA DESDE SHEETS ── */
