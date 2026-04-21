@@ -1299,7 +1299,7 @@ function _renderQuickFaqs(){
   wrap.innerHTML='<div class="chat-faq-title">Preguntas frecuentes:</div>'+
     QUICK_FAQS.map(f=>`<button class="chat-faq-btn" onclick="sendQuickFaq(this,'${f.msg.replace(/'/g,"\\'")}')">${f.label}</button>`).join('');
   d.appendChild(wrap);
-  d.scrollTop=9999;
+  // no scroll — el usuario se queda viendo la respuesta del bot
 }
 function sendQuickFaq(btn,msg){
   const wrap=btn.closest('.chat-quick-faqs');
