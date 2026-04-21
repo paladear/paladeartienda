@@ -61,7 +61,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .carousel-track::-webkit-scrollbar{display:none}
 .carousel-card{flex-shrink:0;width:160px;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);border:2px solid transparent;transition:all .22s;cursor:pointer;scroll-snap-align:start}
 .carousel-card:hover{border-color:var(--azul-mid);transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
-.carousel-card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#fff;border-bottom:1px solid var(--border)}
+.carousel-card-img{width:100%;height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#fff;border-bottom:1px solid var(--border)}
 .carousel-card-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .carousel-card-body{padding:10px 12px}
 .carousel-card-name{font-size:13px;font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:4px}
@@ -107,7 +107,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .pcard.highlight-card{border-color:var(--azul);box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35);animation:pulseHighlight 2.2s ease-out}
 @keyframes pulseHighlight{0%{box-shadow:0 0 0 0 rgba(77,125,138,.55),0 6px 20px rgba(77,125,138,.4)}50%{box-shadow:0 0 0 10px rgba(77,125,138,0),0 6px 20px rgba(77,125,138,.35)}100%{box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35)}}
 .pcard:hover{box-shadow:0 6px 20px rgba(0,0,0,.13);border-color:var(--azul-mid)}
-.pcard-img{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#fff;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
+.pcard-img{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#fff;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
 .pcard-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .pcard-body{padding:14px;flex:1;display:flex;flex-direction:column}
 .pcard-name{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
@@ -183,8 +183,8 @@ button{cursor:pointer;border:none;font-family:inherit}
   /* Card: sin overflow visible */
   .pcard{border-radius:12px;overflow:hidden}
 
-  /* Imagen un poco más chica */
-  .pcard-img{height:160px;font-size:44px}
+  /* Imagen un poco más grande en mobile */
+  .pcard-img{height:185px;font-size:44px}
 
   /* Body levemente más compacto */
   .pcard-body{padding:12px 14px}
@@ -1487,7 +1487,6 @@ function _cargarInfo(){
         // clave por ID si existe, sino por nombre normalizado (retrocompatibilidad)
         const k=id||_norm(nombre);
         const entrada={
-          nombre:(cols[0]||'').replace(/^"|"$/g,'').trim(), // col A — nombre del producto
           cantidades:_parseCantidades((cols[1]||'').replace(/^"|"$/g,'').trim()),
           info:(cols[2]||'').replace(/^"|"$/g,'').trim(),
           sabores:_parseCantidades((cols[3]||'').replace(/^"|"$/g,'').trim()),
@@ -1512,21 +1511,23 @@ function sincronizarDesdeSheets(){
       const catMap={},prodsTemp=[];let pid=1;
       filas.forEach((cols,idx)=>{
         if(idx===0||cols.length<6)return;
-        const nombrePrecios=cols[2].replace(/^"|"$/g,'').trim();
+        const nombre=cols[2].replace(/^"|"$/g,'');
         const p1=_precio(cols[3]),p2=_precio(cols[4]);
         const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
         const productId=(cols[6]||'').replace(/^"|"$/g,'').trim(); // ID en col G
         const imgPrecios=_driveToImg((cols[7]||'').replace(/^"|"$/g,'').trim()); // imagen en col H
-        if(!nombrePrecios||!p1||!p2||!rubro)return;
+        if(!nombre||!p1||!p2||!rubro)return;
         const cat=RUBRO_MAP[rubro];if(!cat)return;
         if(!catMap[cat.id])catMap[cat.id]=cat;
+        const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre);
+        const esEspecia=['especias','infusiones'].includes(cat.id);
 
         // buscar datos de Info: primero por ID, después por nombre (retrocompatibilidad)
-        const inf=INFO[productId]||INFO[_norm(nombrePrecios)]||{};
-        // nombre: usar el de Info (col A) si existe, sino el de Precios (col C)
-        const nombre=inf.nombre||nombrePrecios;
-        const esKg=/x kg|xkg|x 1 kg| kg/i.test(nombre);
-        const esEspecia=['especias','infusiones'].includes(cat.id);
+        const inf=INFO[productId]||INFO[_norm(nombre)]||{};
+        // esKg: verdadero si el nombre lo indica O si las cantidades de Info tienen gramos/kg
+        const _infCants=inf.cantidades||[];
+        const esKgInfo=_infCants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
+        const esKg=esKgNombre||esKgInfo;
         const imgUrl=inf.imagen||imgPrecios;
         const infoText=inf.info||'';
         const sabores=inf.sabores||null;
