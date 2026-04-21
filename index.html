@@ -61,7 +61,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .carousel-track::-webkit-scrollbar{display:none}
 .carousel-card{flex-shrink:0;width:160px;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);border:2px solid transparent;transition:all .22s;cursor:pointer;scroll-snap-align:start}
 .carousel-card:hover{border-color:var(--azul-mid);transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
-.carousel-card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#f8fafb;border-bottom:1px solid var(--border)}
+.carousel-card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#fff;border-bottom:1px solid var(--border)}
 .carousel-card-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .carousel-card-body{padding:10px 12px}
 .carousel-card-name{font-size:13px;font-weight:700;color:var(--fg);line-height:1.35;margin-bottom:4px}
@@ -107,7 +107,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .pcard.highlight-card{border-color:var(--azul);box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35);animation:pulseHighlight 2.2s ease-out}
 @keyframes pulseHighlight{0%{box-shadow:0 0 0 0 rgba(77,125,138,.55),0 6px 20px rgba(77,125,138,.4)}50%{box-shadow:0 0 0 10px rgba(77,125,138,0),0 6px 20px rgba(77,125,138,.35)}100%{box-shadow:0 0 0 3px rgba(77,125,138,.25),0 6px 20px rgba(77,125,138,.35)}}
 .pcard:hover{box-shadow:0 6px 20px rgba(0,0,0,.13);border-color:var(--azul-mid)}
-.pcard-img{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#f8fafb;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
+.pcard-img{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#fff;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
 .pcard-img img{width:100%;height:100%;object-fit:contain;padding:10px}
 .pcard-body{padding:14px;flex:1;display:flex;flex-direction:column}
 .pcard-name{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
@@ -149,13 +149,17 @@ button{cursor:pointer;border:none;font-family:inherit}
   .search-item-arrow{font-size:22px}
 }
 .opt-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chat-quick-faqs{padding:8px 4px;display:flex;flex-direction:column;gap:6px}
+.chat-faq-title{font-size:12px;font-weight:700;color:var(--azul-dark);margin-bottom:2px;opacity:.8}
+.chat-faq-btn{background:var(--azul-light);border:1.5px solid var(--azul-mid);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--azul-dark);cursor:pointer;text-align:left;transition:all .2s;font-family:inherit}
+.chat-faq-btn:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
 .opt-btn{border-radius:8px;padding:5px 11px;font-size:13px;font-weight:700;transition:all .2s;background:var(--muted);color:var(--azul-dark);border:2px solid transparent}
 .opt-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
 .opt-btn:hover:not(.active){border-color:var(--azul-mid)}
 .prices{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
 .price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
 .price-min{font-size:18px;font-weight:800}
-.price-may{font-size:15px;font-weight:800;color:var(--azul-dark);background:var(--azul-light);padding:3px 10px;border-radius:8px}
+.price-may{font-size:15px;font-weight:800;color:#1a4d5e;background:#9eccd8;padding:3px 10px;border-radius:8px}
 .qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .qty-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--azul);background:transparent;color:var(--azul);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .qty-btn:hover{background:var(--azul);color:#fff}
@@ -194,6 +198,22 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* ── BOTÓN VOLVER ── */
 .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--azul);color:var(--azul-dark);padding:10px 18px;border-radius:24px;font-size:15px;font-weight:700;margin-bottom:18px;transition:all .2s;cursor:pointer}
 .back-btn:hover{background:var(--azul);color:#fff}
+
+/* ── RESULTADOS BÚSQUEDA MOBILE ── */
+#searchResultsMobile{display:none;margin-top:0;margin-bottom:16px}
+#searchResultsMobile.active{display:block}
+@media(max-width:767px){
+  #searchResultsMobile.active{
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    z-index:290;
+    background:var(--bg);
+    overflow-y:auto;
+    padding:12px 12px 100px;
+    /* Empuja el contenido debajo del header sticky */
+    padding-top:calc(var(--header-h, 80px) + 56px + 12px);
+  }
+}
 
 /* ── BOTÓN VOLVER ARRIBA ── */
 #backToTop{position:fixed;bottom:162px;right:24px;z-index:999;width:42px;height:42px;border-radius:50%;background:rgba(77,125,138,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s,transform .2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
@@ -533,6 +553,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <input class="search-input" type="text" placeholder="Buscar productos..." oninput="onSearch(this.value)" id="searchInput">
     <span class="search-icon">🔍</span>
   </div>
+  <!-- Resultados de búsqueda en mobile: aparecen justo bajo el buscador -->
+  <div id="searchResultsMobile" class="hidden"></div>
 
 
 <!-- ── BANNERS CARRUSEL ── -->
@@ -554,7 +576,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
         </svg>
         <div class="mix-banner-text" style="flex:1">
           <h3>Armá tu mix personalizado</h3>
-          <p>Frutos secos y deshidratados en el bolsón que quieras</p>
+          <p>Frutos secos, semillas y deshidratados en el bolsón que quieras</p>
         </div>
         <button class="mix-banner-btn" onclick="openMix()">Armar mix →</button>
       </div>
@@ -1179,16 +1201,33 @@ function _doSearch(val){
   searchTerm=val.trim();
   const isMobile=window.innerWidth<768;
   const bannersWrap=document.getElementById('bannersTrackWrap');
+  const srMobile=document.getElementById('searchResultsMobile');
+
   if(!searchTerm){
+    // Limpiar resultados mobile
+    if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
     if(bannersWrap)bannersWrap.style.display='';
-    if(activeCatId)selectCat(activeCatId);else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden')}
+    if(activeCatId)selectCat(activeCatId);
+    else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden');}
     return;
   }
+
+  // Ocultar banners en mobile mientras se busca
   if(bannersWrap&&isMobile)bannersWrap.style.display='none';
-  // calcular score combinado de nombre (peso alto) + opción (peso bajo)
+
+  // Calcular score
   const scored=PRODS.map(p=>({p,score:_matchScore(searchTerm,p[2])*2+_matchScore(searchTerm,p[3])})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
   const results=scored.map(x=>x.p);
-  let h=`<h1 style="font-size:20px;color:var(--azul-dark);margin-bottom:14px;font-weight:700">Resultados para "${searchTerm}"</h1>`;
+
+  // Calcular el top del header para el padding del overlay mobile
+  if(isMobile&&srMobile){
+    const headerEl=document.querySelector('.header');
+    const bannerEl=document.querySelector('.banner');
+    const headerH=(headerEl?headerEl.offsetHeight:80)+(bannerEl?bannerEl.offsetHeight:36);
+    srMobile.style.paddingTop=(headerH+12)+'px';
+  }
+
+  let h=`<h1 style="font-size:18px;color:var(--azul-dark);margin-bottom:12px;font-weight:700">Resultados para "${searchTerm}"</h1>`;
   if(!results.length){
     h+='<div style="text-align:center;padding:44px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   } else {
@@ -1210,22 +1249,31 @@ function _doSearch(val){
     });
     h+='</div>';
   }
-  if(isMobile){
-    const mob=document.getElementById('mobileProdsArea');mob.innerHTML=h;mob.classList.remove('hidden');
+
+  if(isMobile&&srMobile){
+    srMobile.innerHTML=h;
+    srMobile.classList.remove('hidden');
+    srMobile.classList.add('active');
+    document.getElementById('mobileProdsArea').innerHTML='';
     document.getElementById('desktopProdsArea').innerHTML='';
-  }else{
+  } else {
     document.getElementById('desktopProdsArea').innerHTML=h;
     document.getElementById('mobileProdsArea').innerHTML='';
+    if(srMobile){srMobile.classList.remove('active');srMobile.innerHTML='';}
   }
 }
 
 // Al hacer click en un resultado del buscador, ir al rubro y scrollear al producto
 function irAProducto(pid){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-  // limpiar el buscador para que no vuelva a dispararse
   const inp=document.getElementById('searchInput');if(inp)inp.value='';
   searchTerm='';
   clearTimeout(_searchTimer);
+  // Cerrar overlay mobile de búsqueda
+  const srMobile=document.getElementById('searchResultsMobile');
+  if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
+  const bannersWrap=document.getElementById('bannersTrackWrap');
+  if(bannersWrap)bannersWrap.style.display='';
   selectCat(p[1],pid);
 }
 
@@ -1233,12 +1281,41 @@ function closeModal(){document.getElementById('catModal').classList.add('hidden'
 
 /* ── CHATBOT ── */
 let chatOpen=false;
+const QUICK_FAQS=[
+  {label:'🥜 Mixes de frutos secos',msg:'¿Qué mixes de frutos secos ofrecen?'},
+  {label:'🥣 Variedades de granola',msg:'¿Qué variedades de granola tienen?'},
+  {label:'🌰 Nueces y almendras',msg:'¿Cuáles son las variedades de nueces y almendras?'},
+  {label:'🍯 Tipos de miel',msg:'¿Qué tipos de miel venden?'},
+  {label:'💰 Cómo funcionan los precios',msg:'¿Cómo se expresan los precios?'},
+  {label:'🏷️ Lista mayorista',msg:'¿Cómo funciona la lista mayorista?'},
+  {label:'📦 Cómo hacer un pedido',msg:'¿Cómo hago mi pedido paso a paso?'},
+  {label:'🚚 Envíos a domicilio',msg:'¿Cómo funciona el envío a domicilio?'},
+  {label:'💳 Métodos de pago',msg:'¿Qué métodos de pago aceptan?'},
+];
+function _renderQuickFaqs(){
+  const d=document.getElementById('chat-msgs');
+  const wrap=document.createElement('div');
+  wrap.className='chat-quick-faqs';
+  wrap.innerHTML='<div class="chat-faq-title">Preguntas frecuentes:</div>'+
+    QUICK_FAQS.map(f=>`<button class="chat-faq-btn" onclick="sendQuickFaq(this,'${f.msg.replace(/'/g,"\\'")}')">${f.label}</button>`).join('');
+  d.appendChild(wrap);
+  d.scrollTop=9999;
+}
+function sendQuickFaq(btn,msg){
+  const wrap=btn.closest('.chat-quick-faqs');
+  if(wrap)wrap.remove();
+  addUserMsg(msg);
+  const typing=addBotMsg('...');
+  typing.classList.add('typing');
+  setTimeout(()=>{const reply=responderChat(msg);typing.style.whiteSpace='pre-wrap';typing.textContent=reply;typing.classList.remove('typing');document.getElementById('chat-msgs').scrollTop=9999},420);
+}
 function toggleChat(){
   chatOpen=!chatOpen;
   const box=document.getElementById('chat-box');
   box.classList.toggle('open',chatOpen);
   if(chatOpen&&!document.getElementById('chat-msgs').children.length){
-    addBotMsg('¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar? Puedo contarte sobre productos, envíos, métodos de pago, horarios o cómo hacer tu pedido.');
+    addBotMsg('¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar?');
+    _renderQuickFaqs();
   }
 }
 function addBotMsg(txt){
@@ -1262,53 +1339,57 @@ function addUserMsg(txt){
 function responderChat(msg){
   const t=msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if(/envio|enviar|delivery|despacho|mando|mandar|entrega|reparto/.test(t))
-    return 'Hacemos envíos a domicilio en Mendoza Capital y Gran Mendoza 🚚\n\nEnvío GRATIS en compras mayores a $40.000.\nPara zonas alejadas o pedidos grandes, consultanos por WhatsApp al 261 651 2823.\n\nTambién podés retirar en el local sin costo: Pueyrredón 588, Mendoza.';
-  if(/pago|abonar|pagar|transferencia|efectivo|tarjeta|mercado\ pago|mp|qr/.test(t))
-    return 'Aceptamos todos los medios de pago 💳\n\n• Efectivo (5% de descuento)\n• Transferencia bancaria\n• Mercado Pago (QR y link)\n• Tarjetas de débito y crédito\n\nEl descuento en efectivo se aplica sobre el total del pedido.';
+    return '🚚 Envíos a domicilio\n\nHacemos envíos en Mendoza Capital y Gran Mendoza.\n\n✅ ENVÍO GRATIS en compras mayores a $40.000 dentro de:\nCiudad, Godoy Cruz, Guaymallén, Las Heras, Luján de Cuyo o Maipú.\n\nSi tu compra es menor a ese monto, el envío se abona aparte.\n\nTambién podés retirar en el local sin costo:\nPueyrredón 588, Mendoza.';
+  if(/metodo.*pago|medio.*pago|como.*pagar|abonar|pagar|transferencia|efectivo|tarjeta|mercado.*pago|mp|qr/.test(t)||t==='¿qué métodos de pago aceptan?')
+    return '💳 Métodos de pago\n\n📍 En el local:\n• Efectivo (5% de descuento)\n• Tarjetas de crédito y débito\n• Mercado Pago o MODO\n\n🚚 Envíos a domicilio:\n• Transferencia bancaria (pedinos el ALIAS)\n• Tarjeta de crédito/débito via link de Mercado Pago\n\nEl descuento en efectivo se aplica sobre el total del pedido.';
   if(/horario|hora|abren|abrir|cuando|dias|abre|cierra/.test(t))
     return 'Nuestro horario es:\n\n🕙 Lunes a Sábado: 10:00 a 20:00 hs\n\nEstamos en Pueyrredón 588, Mendoza.\nTambién podés hacer tu pedido online las 24hs por este catálogo.';
   if(/direccion|ubicacion|donde|local|tienda|lugar|mapa/.test(t))
     return 'Estamos en Pueyrredón 588, Ciudad de Mendoza 📍\n\nHorario: Lunes a Sábado de 10:00 a 20:00 hs.\nPodés encontrarnos en Google Maps como "Paladear Mercado de Sabores".';
-  if(/mayorista|mayor|precio mayor|lista mayor|descuento/.test(t))
-    return '¡Tenemos Lista Mayorista! 🏷️\n\nCuando tu pedido supera los $80.000, se activa automáticamente el precio mayorista en todos los productos.\n\nLos precios en azul en el catálogo son los precios de Lista Mayorista. ¡Aprovechá!';
-  if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso/.test(t))
-    return 'Para hacer tu pedido es muy fácil 😊\n\n1. Navegá el catálogo y elegí tus productos\n2. Seleccioná la cantidad y tocá "Agregar al pedido"\n3. Cuando termines, abrí el carrito y tocá "Pedir por WhatsApp"\n4. Se abre WhatsApp con tu pedido armado\n5. Esperá que te confirmemos el stock y el presupuesto final\n6. Confirmá el pedido e informanos el método de pago\n7. ¡Lo recibís en casa o lo retirás en el local!';
+  if(/mayorista|mayor|precio mayor|lista mayor|lista 2|80000|80\.000/.test(t))
+    return '🏷️ Lista Mayorista\n\nContamos con dos listas de precios:\n• Lista 1: precios minoristas\n• Lista 2: precios mayoristas\n\nPara acceder a la Lista 2, la compra debe superar los $80.000 en precios de Lista 1.\n\nCuando tu pedido supera ese monto, el precio mayorista se activa automáticamente.\nAceptamos todos los métodos de pago y no exigimos mínimos de compra.';
+  if(/precio|cuanto.*cuesta|valor|kilo|kg|como.*se.*expresa/.test(t))
+    return '💰 Precios\n\nLos precios publicados son por kilogramo.\nPodés pedir la cantidad que quieras, ¡no exigimos mínimos!\n\nContamos con dos listas:\n• Lista 1 (minorista): precio estándar\n• Lista 2 (mayorista): se activa automáticamente en compras mayores a $80.000';
+  if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso|paso a paso/.test(t))
+    return '📦 Cómo hacer tu pedido\n\n1. Detallá el nombre completo del producto\n2. Indicá la cantidad en gramos o unidades\n3. Aguardá el presupuesto del equipo Paladear\n4. Confirmá el pedido\n5. Informanos el método de pago\n6. Envianos tu domicilio de entrega\n7. ¡Recibilo y disfrutalo! 🎉';
   if(/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
     return 'Podés contactarnos por WhatsApp al 261 651 2823 📱\nAtendemos de lunes a sábado de 10:00 a 20:00 hs.';
   if(/mix tradicional/.test(t))
-    return 'Mix Tradicional 🥜\nContenido: nueces, almendras, pasas rubias, pasas morochas y maní.';
+    return 'Mix Tradicional 🥜\nUn clásico que nunca falla.\nContenido: nueces, almendras, pasas rubias, pasas morochas y maní.';
   if(/mix tropical/.test(t))
-    return 'Mix Tropical 🌴\nContenido: nuez, almendras, castañas, pasas morochas y rubias, fruta glaseada y chips de banana.';
+    return 'Mix Tropical 🌴\nPara los que buscan un toque exótico.\nContenido: nuez, almendras, castañas, pasas morochas y rubias, fruta glaseada y chips de banana.';
   if(/mix patagonico|mix patagónico/.test(t))
-    return 'Mix Patagónico 🏔️\nContenido: nuez, almendras, castañas, pasas morochas, arándanos, frutilla glaseada y coco en escamas.';
+    return 'Mix Patagónico 🏔️\nIntenso y equilibrado.\nContenido: nuez, almendras, castañas, pasas morochas, arándanos, frutilla glaseada y coco en escamas.';
   if(/mix sin pasas|sin pasas premium/.test(t))
-    return 'Mix Sin Pasas Premium ✨\nContenido: nuez mariposa extra light, almendras nonpareil, castañas y maní tostado.';
+    return 'Mix Sin Pasas Premium ✨\nPuro sabor, sin pasas.\nContenido: nuez mariposa extra light, almendras nonpareil, castañas y maní tostado.';
   if(/mix salado/.test(t))
-    return 'Mix Salado 🧂\nContenido: maní, pasas de uva rubia, castañas de cajú y almendras. Ideal para picadas.';
+    return 'Mix Salado 🧂\nIdeal para picadas.\nContenido: maní, pasas de uva rubia, castañas de cajú, almendras.';
   if(/mix cervecero/.test(t))
     return 'Mix Cervecero 🍺\nContenido: frutos secos variados, ideal para acompañar bebidas.';
-  if(/mix/.test(t))
-    return 'Tenemos varios mixes de frutos secos 🥜\n\n• Mix Tradicional: nueces, almendras, pasas y maní\n• Mix Tropical: nuez, castañas, fruta glaseada y chips de banana\n• Mix Patagónico: nuez, almendras, arándanos y coco\n• Mix Sin Pasas Premium: nuez extra light, almendras y castañas\n• Mix Salado: maní, cajú, almendras (ideal para picadas)\n• Mix Cervecero: frutos secos para acompañar bebidas\n\n¿Querés saber el contenido de alguno en particular?';
-  if(/granola berries|granola mix berries/.test(t))
+  if(/que mixes|mixes de frutos|variedades.*mix/.test(t))
+    return '🥜 Mixes de frutos secos\n\n• Mix Tradicional: nueces, almendras, pasas rubias, pasas morochas y maní\n• Mix Tropical: nuez, castañas, fruta glaseada y chips de banana\n• Mix Patagónico: nuez, almendras, arándanos, frutilla glaseada y coco\n• Mix Sin Pasas Premium: nuez extra light, almendras nonpareil y castañas\n• Mix Salado: maní, cajú, almendras (ideal para picadas)\n\n¿Querés saber los ingredientes de alguno en particular?';
+  if(/granola.*berries|granola mix berries/.test(t))
     return 'Granola Mix Berries 🫐\nIngredientes: avena arrollada gruesa, pepitas de girasol, pasas de uva, jarabe de maíz, copos de maíz, arándanos deshidratados, almendras y nueces.';
-  if(/granola energeti|granola energético/.test(t))
+  if(/granola.*energeti|granola.*energético/.test(t))
     return 'Granola Mix Energético ⚡\nIngredientes: avena arrollada gruesa, pepitas de girasol, maní tostado, jarabe de maíz, pasas de uva, copos de maíz, almendras y nueces.';
-  if(/granola tropical/.test(t))
+  if(/granola.*tropical/.test(t))
     return 'Granola Mix Tropical 🌺\nIngredientes: avena arrollada gruesa, pepitas de girasol, pasas de uva, jarabe de maíz, copos de maíz, almendras, chips de banana, papaya y manzana deshidratada.';
   if(/granola tradicional/.test(t))
     return 'Granola Tradicional 🌾\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, pasas de uva, coco rallado, vainillín, azúcar rubia orgánica y miel.';
-  if(/granola sin pasas/.test(t))
+  if(/granola.*sin pasas/.test(t))
     return 'Granola Mix Sin Pasas 🌾\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, coco rallado, vainillín, azúcar rubia orgánica y miel.';
   if(/granola.*choco|granola.*chocolate/.test(t))
     return 'Granola con Chips de Chocolate 🍫\nIngredientes: avena, lino y girasol tostado, cereal de maíz sin azúcar, quínoa pop, pasas de uva, chips de chocolate, coco rallado, vainillín, azúcar rubia orgánica y miel.';
-  if(/granola/.test(t))
-    return 'Tenemos varias granolas 🥣\n\n• Mix Berries: con arándanos, almendras y nueces\n• Mix Energético: con maní tostado\n• Mix Tropical: con chips de banana y papaya\n• Tradicional: con miel y coco\n• Mix Sin Pasas: sin pasas de uva\n• Con Chips de Chocolate\n\n¿Querés los ingredientes de alguna en particular?';
-  if(/nuez|nueces/.test(t))
-    return 'Trabajamos con nuez variedad Chandler del Valle de Uco 🌰\nLas presentamos como: nuez mariposa extra light, light, ámbar y negras.';
+  if(/que granola|variedades.*granola|granola/.test(t))
+    return '🥣 Variedades de granola\n\n• Mix Berries: con arándanos, almendras y nueces\n• Mix Energético: con maní tostado\n• Mix Tropical: con chips de banana y papaya\n• Tradicional: con miel y coco\n• Mix Sin Pasas\n• Con Chips de Chocolate\n\n¿Querés los ingredientes de alguna en particular?';
+  if(/nuez|nueces|variedad.*nuez/.test(t))
+    return 'Trabajamos con nuez variedad Chandler del Valle de Uco 🌰\nLas presentamos como: nuez mariposa extra light, light, ámbar y negras.\n\nPueden variar en color y tamaño según temporada.';
   if(/almendra|almendras/.test(t))
     return 'Tenemos almendras Nonpareil (Mendoza y Chile) y Guara (Mendoza) 🌰\nAmbas son de excelente calidad y sabor exquisito.';
+  if(/nueces.*almendras|almendras.*nueces|variedades.*nueces/.test(t))
+    return '🌰 Nueces y Almendras\n\nNueces: Variedad Chandler del Valle de Uco.\nPresentaciones: mariposa extra light, light, ámbar y negras.\n\nAlmendras: Nonpareil (Mendoza y Chile) y Guara (Mendoza).\nAmbas de excelente calidad y sabor exquisito.';
   if(/miel/.test(t))
-    return 'Contamos con miel de tres productores mendocinos 🍯\nContanos tus preferencias (sabor suave, fuerte, floral) y te recomendamos la ideal.';
+    return 'Contamos con miel de tres productores mendocinos 🍯\nCada uno con características y bondades únicas.\n\nContanos tus preferencias (sabor suave, fuerte, floral) y te recomendamos la ideal para vos.';
   if(/celiaco|celiaca|celíaco|celíaca|sin tacc|gluten|tacc/.test(t))
     return 'Tenemos una sección especial Sin TACC 🌱\nPodés encontrarla en el catálogo. Si tenés dudas sobre un producto específico, consultanos por WhatsApp.';
   if(/vegano|vegana|plant based/.test(t))
@@ -1316,16 +1397,18 @@ function responderChat(msg){
   if(/retiro|retirar|buscar|paso a buscar/.test(t))
     return 'Podés retirar tu pedido en el local sin problema 🏠\nEstamos en Pueyrredón 588, Mendoza.\nHorario: lunes a sábado de 10:00 a 20:00 hs.';
   if(/^(hola|buen|buenas|saludos|hey|hi|buenos dias|buenas tardes|buenas noches)/.test(t))
-    return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar? Puedo contarte sobre productos, envíos, métodos de pago, horarios o cómo hacer tu pedido.';
+    return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar?';
   if(/gracias|muchas gracias|genial|perfecto|excelente|ok gracias/.test(t))
     return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos por WhatsApp al 261 651 2823.';
-  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos por WhatsApp al 261 651 2823 y el equipo de Paladear te va a ayudar enseguida.\n\nTambién puedo contarte sobre:\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Ingredientes de mixes y granolas\n• Horarios y ubicación';
+  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos por WhatsApp al 261 651 2823 y el equipo de Paladear te va a ayudar enseguida.\n\nTambién puedo contarte sobre:\n• Mixes de frutos secos y granolas\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Horarios y ubicación\n• Precios y lista mayorista';
 }
 function sendChat(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim();
   if(!text)return;
   input.value='';
+  // remove quick faqs if still visible
+  const qf=document.querySelector('.chat-quick-faqs');if(qf)qf.remove();
   addUserMsg(text);
   const typing=addBotMsg('...');
   typing.classList.add('typing');
@@ -1552,7 +1635,7 @@ function mixPickSize(g){
   mixRenderSizes();mixRenderProdList();mixRenderSummary();
 }
 
-const MIX_ALLOWED_CATS=['frutos','deshidratados'];
+const MIX_ALLOWED_CATS=['frutos','semillas','deshidratados'];
 function mixGranelProds(){return PRODS.filter(p=>p[4]==='kg'&&p[10]===true&&MIX_ALLOWED_CATS.includes(p[1]));}
 function mixGranelCats(){
   const catIds=[...new Set(mixGranelProds().map(p=>p[1]))];
