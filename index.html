@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2394,9 +2396,12 @@ function _triggerMayoristaConfetti(){
 
 
 // ── LISTA MAYORISTA ──
-// URLs de Google Sheets (mayorista)
-const MAY_PRECIOS_URL = 'https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec'; // usar mismo script con param
-const MAY_INFO_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub?gid=MAY_GID&single=true&output=csv';
+// ▼▼▼ CONFIGURACIÓN: reemplazá estos GIDs con los de tu Google Sheet ▼▼▼
+// Para obtenerlos: abrí el Sheet → hacé clic en la pestaña de cada hoja → fijate el gid=XXXXXXX en la URL
+const MAY_PRECIOS_GID = 'REEMPLAZAR_CON_GID_HOJA3'; // ← GID de la 3ra hoja (Precios Mayorista)
+const MAY_INFO_GID    = 'REEMPLAZAR_CON_GID_HOJA4'; // ← GID de la 4ta hoja (Info Mayorista)
+const SHEET_BASE_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub';
+// ▲▲▲ FIN CONFIGURACIÓN ▲▲▲
 // Número WhatsApp mayorista
 const WA_MAYORISTA = '5492615983065';
 const WA_MINORISTA = '5492616512823';
@@ -2439,90 +2444,98 @@ function switchTab(tab) {
 }
 window.switchTab = switchTab;
 
-// Cargar datos mayorista desde Google Sheets
+// Cargar datos mayorista desde Google Sheets (fetch directo al CSV publicado)
 function cargarMayorista() {
-  // Cargar hoja Info mayorista
+  // Verificar que los GIDs estén configurados
+  if (MAY_PRECIOS_GID.includes('REEMPLAZAR')) {
+    const area = document.getElementById('mayDesktopProdsArea');
+    const mob  = document.getElementById('mayMobileProdsArea');
+    const msg  = '<div style="padding:32px;text-align:center;color:var(--muted-fg);font-size:15px">⚙️ Configuración pendiente: reemplazá <b>MAY_PRECIOS_GID</b> en el código con el GID real de la hoja 3 del spreadsheet.</div>';
+    if (area) area.innerHTML = msg;
+    if (mob)  mob.innerHTML  = '';
+    console.warn('⚠️ MAY_PRECIOS_GID no configurado. Editá el archivo HTML y reemplazá el placeholder.');
+    return;
+  }
+
+  const preciosUrl = SHEET_BASE_URL + '?gid=' + MAY_PRECIOS_GID + '&single=true&output=csv';
+
   _cargarInfoMay().then(infoMay => {
-    window.recibirPreciosMay = function(csv) {
+    function _procesarCSVMayorista(csv) {
       const filas = _parseCSV(csv);
       const prodsTemp = [];
       let pid = 1000; // IDs mayoristas empiezan en 1000
       filas.forEach((cols, idx) => {
         if (idx === 0 || cols.length < 5) return;
-        const rubro = (cols[2] || '').replace(/^"|"$/g, '').trim().toUpperCase();
-        const artId = (cols[3] || '').replace(/^"|"$/g, '').trim();
+        const rubro  = (cols[2] || '').replace(/^"|"$/g, '').trim().toUpperCase();
+        const artId  = (cols[3] || '').replace(/^"|"$/g, '').trim();
         const nombre = (cols[4] || '').replace(/^"|"$/g, '').trim();
-        const precioStr = cols[5] || '';
-        const precio = _precio(precioStr);
+        const precio = _precio(cols[5] || '');
         if (!nombre || !precio || !rubro) return;
         const cat = RUBRO_MAP[rubro];
         if (!cat) return;
-        
-        // Obtener info del bulto
-        const inf = infoMay[artId] || infoMay[_norm(nombre)] || {};
-        const bulto = inf.bulto || 1;
-        const sabores = inf.sabores || null;
-        const imgUrl = inf.imagen || '';
-        
-        // Precio x bulto
-        const precioTotal = precio * bulto;
-        
+
+        const inf          = infoMay[artId] || infoMay[_norm(nombre)] || {};
+        const bulto        = inf.bulto  || 1;
+        const sabores      = inf.sabores || null;
+        const imgUrl       = inf.imagen  || '';
+        const precioTotal  = precio * bulto;
+
         const opts = {};
         opts['Caja x' + bulto] = [precioTotal, precioTotal];
-        
+
         prodsTemp.push([
           pid++, cat.id, nombre, rubro, 'und', false, imgUrl,
           opts, '', sabores, false, false,
-          { bulto, artId }  // índice 12: datos mayorista
+          { bulto, artId }
         ]);
-        
-        // Guardar en mapa de bultos
+
         MAY_BULTO_MAP[artId] = { bulto, nombre, sabores, imagen: imgUrl, precio };
         if (_norm(nombre) !== artId) MAY_BULTO_MAP[_norm(nombre)] = MAY_BULTO_MAP[artId];
       });
+
       PRODS_MAY = prodsTemp;
-      // Construir categorías únicas
       const catIds = [...new Set(PRODS_MAY.map(p => p[1]))];
       CATS_MAY = Object.values(RUBRO_MAP).filter(c => catIds.includes(c.id));
-      console.log('✅ Lista Mayorista: ' + PRODS_MAY.length + ' productos');
+      console.log('✅ Lista Mayorista: ' + PRODS_MAY.length + ' productos, ' + CATS_MAY.length + ' categorías');
       renderMayUI();
-    };
-    
-    // Intentar cargar con mismo Apps Script pero con param hoja=Mayorista
-    let _retriedMay = false;
-    function _cargarScriptMay() {
-      const s = document.createElement('script');
-      s.onerror = () => {
-        if (!_retriedMay) {
-          _retriedMay = true;
-          setTimeout(_cargarScriptMay, 3000);
-        } else {
-          console.warn('⚠️ Error cargando hoja Mayorista');
-          // Mostrar mensaje de error en la sección
-          const area = document.getElementById('mayDesktopProdsArea');
-          if (area) area.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted-fg)">No se pudo cargar la Lista Mayorista.<br>Por favor contactanos por WhatsApp.</div>';
-          const mob = document.getElementById('mayMobileProdsArea');
-          if (mob) mob.innerHTML = '';
-        }
-      };
-      s.src = APPS_SCRIPT_URL + '?callback=recibirPreciosMay&hoja=Mayorista&t=' + Date.now() + '&v=' + Math.random().toString(36).slice(2);
-      document.head.appendChild(s);
     }
-    _cargarScriptMay();
+
+    function _mostrarErrorMayorista() {
+      const area = document.getElementById('mayDesktopProdsArea');
+      const mob  = document.getElementById('mayMobileProdsArea');
+      if (area) area.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted-fg)">No se pudo cargar la Lista Mayorista.<br>Por favor contactanos por WhatsApp.</div>';
+      if (mob)  mob.innerHTML  = '';
+    }
+
+    // Fetch directo al CSV publicado (sin pasar por Apps Script)
+    fetch(preciosUrl + '&t=' + Date.now(), { cache: 'no-store' })
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(csv => _procesarCSVMayorista(csv))
+      .catch(err => {
+        console.warn('⚠️ Error cargando precios mayorista, reintentando...', err);
+        // Un reintento
+        setTimeout(() => {
+          fetch(preciosUrl + '&t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.text())
+            .then(csv => _procesarCSVMayorista(csv))
+            .catch(() => _mostrarErrorMayorista());
+        }, 3000);
+      });
   });
 }
 
 function _cargarInfoMay() {
   return new Promise(resolve => {
-    // Intentar cargar hoja info mayorista (con bultos, sabores, imágenes)
-    const gid = 'INFO_MAY_GID'; // placeholder - admin debe configurar
-    // Si no hay URL configurada, devolver vacío
-    const infoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub?gid=INFO_MAY_GID&single=true&output=csv';
-    if (infoUrl.indexOf('INFO_MAY_GID') >= 0) {
-      // No configurado aún - resolver vacío
+    // Si el GID de la hoja 4 no está configurado, resolver vacío (los productos cargan igual, sin info de bultos)
+    if (MAY_INFO_GID.includes('REEMPLAZAR')) {
+      console.warn('ℹ️ MAY_INFO_GID no configurado — se cargarán los productos sin datos de bulto/imagen.');
       resolve({});
       return;
     }
+    const infoUrl = SHEET_BASE_URL + '?gid=' + MAY_INFO_GID + '&single=true&output=csv';
     fetch(infoUrl + '&t=' + Date.now(), { cache: 'no-store' })
       .then(r => r.text())
       .then(csv => {
@@ -2593,7 +2606,7 @@ function renderMayCarrusel() {
   const mobile = document.getElementById('mayMobileProdsArea');
   
   if (!PRODS_MAY.length) {
-    const msg = '<div style="padding:48px;text-align:center;color:var(--muted-fg)">Cargando productos...</div>';
+    const msg = '<div style="padding:48px;text-align:center;color:var(--muted-fg);font-size:15px">🔄 Cargando productos mayoristas...</div>';
     if (desktop) desktop.innerHTML = msg;
     if (mobile) { mobile.innerHTML = msg; mobile.classList.remove('hidden'); }
     return;
