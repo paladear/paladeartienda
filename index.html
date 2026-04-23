@@ -1,4 +1,5 @@
 ---
+layout: null
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -297,6 +298,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 #imgZoom .zoom-close{position:absolute;top:18px;right:22px;color:#fff;font-size:38px;cursor:pointer;background:rgba(0,0,0,.4);border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .hidden{display:none!important}
+.desktop-only{display:block}
+.mobile-only{display:none}
+@media(max-width:767px){.desktop-only{display:none!important}.mobile-only{display:flex!important}}
 
 /* ── CHATBOT ── */
 #chat-fab{position:fixed;bottom:24px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28);transition:transform .2s}
@@ -661,8 +665,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   </div>
 </div>
 
-  <!-- Banner promo Lista Mayorista -->
-  <div class="mayorista-banner-promo" onclick="switchTab('mayorista')">
+  <!-- Banner promo Lista Mayorista — solo desktop -->
+  <div class="mayorista-banner-promo desktop-only" onclick="switchTab('mayorista')">
     <div class="may-promo-icon">📦</div>
     <div class="may-promo-text">
       <h3>¿Comprás en grandes volúmenes?</h3>
@@ -674,6 +678,15 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   <div class="cats-mobile-grid" id="catsMobileGrid"></div>
   <!-- MÓVIL: productos -->
   <div class="mobile-prods-area hidden" id="mobileProdsArea"></div>
+  <!-- Banner promo Lista Mayorista — solo mobile, va DESPUÉS de los productos -->
+  <div class="mayorista-banner-promo mobile-only" onclick="switchTab('mayorista')" style="margin-top:18px">
+    <div class="may-promo-icon">📦</div>
+    <div class="may-promo-text">
+      <h3>¿Comprás en grandes volúmenes?</h3>
+      <p>Accedé a nuestra <strong>Lista Mayorista</strong> — Mínimo $250.000</p>
+    </div>
+    <button class="may-nav-btn">Ver →</button>
+  </div>
 
   <!-- DESKTOP: sidebar + área -->
   <div class="main-layout">
@@ -1521,9 +1534,9 @@ function responderChat(msg){
   if(/direccion|ubicacion|donde|local|tienda|lugar|mapa/.test(t))
     return 'Estamos en Pueyrredón 588, Ciudad de Mendoza 📍\n\nHorario: Lunes a Sábado de 10:00 a 20:00 hs.\nPodés encontrarnos en Google Maps como "Paladear Mercado de Sabores".';
   if(/mayorista|mayor|precio mayor|lista mayor|lista 2|80000|80\.000/.test(t))
-    return '🏷️ Lista Mayorista\n\nContamos con dos listas de precios:\n• Lista 1: precios minoristas\n• Lista 2: precios mayoristas\n\nPara acceder a la Lista 2, la compra debe superar los $80.000 en precios de Lista 1.\n\nCuando tu pedido supera ese monto, el precio mayorista se activa automáticamente.\nAceptamos todos los métodos de pago.';
+    return '🏷️ Lista Mayorista\n\nContamos con una lista mayorista con precios especiales para compras en volumen.\n\nCompra mínima: $250.000. Los pedidos mayoristas se realizan por bulto cerrado.\n\nPodés acceder desde la pestaña "Lista Mayorista" en el catálogo.\nAceptamos todos los métodos de pago.';
   if(/precio|cuanto.*cuesta|valor|kilo|kg|como.*se.*expresa/.test(t))
-    return '💰 Precios\n\nLos precios publicados son por kilogramo.\n\nContamos con dos listas:\n• Lista 1 (minorista): precio estándar\n• Lista 2 (mayorista): se activa automáticamente en compras mayores a $80.000\n\nEl precio en azul en cada producto es el precio mayorista.';
+    return '💰 Precios\n\nLos precios de la Lista Minorista están publicados por kilogramo.\n\nTambién contamos con una Lista Mayorista con precios especiales para compras en volumen (mínimo $250.000), disponible desde la pestaña correspondiente en el catálogo.\n\nEl precio en azul en cada producto es el precio con descuento (compras minoristas mayores a $80.000).';
   if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso|paso a paso/.test(t))
     return '📦 Cómo hacer tu pedido\n\n1. Navegá el catálogo y elegí tus productos\n2. Seleccioná la cantidad y tocá "Agregar al pedido"\n3. Abrí el carrito y revisá tu selección\n4. Tocá "Pedir por WhatsApp" para enviarnos tu pedido\n5. Confirmá el pedido con el equipo Paladear\n6. Informanos el método de pago\n7. ¡Lo recibís en casa o lo retirás en el local! 🎉';
   if(/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
@@ -2309,7 +2322,7 @@ function _triggerMayoristaConfetti(){
     toast.innerHTML=
       '<div class="may-toast-row">'+
         _buildConeHTML('mayConL',false)+
-        '<div class="may-toast-title">\u00a1LISTA MAYORISTA<br>ACTIVADA!</div>'+
+        '<div class="may-toast-title">\u00a1DESCUENTO<br>ACTIVADO!</div>'+
         _buildConeHTML('mayConR',true)+
       '</div>';
     document.body.appendChild(toast);
