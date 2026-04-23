@@ -299,7 +299,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .hidden{display:none!important}
 .desktop-only{display:block}
-.mobile-only{display:none}
+.mobile-only{display:none!important}
 @media(max-width:767px){.desktop-only{display:none!important}.mobile-only{display:flex!important}}
 
 /* ── CHATBOT ── */
@@ -2689,7 +2689,18 @@ function selectMayCat(catId) {
   const desktop = document.getElementById('mayDesktopProdsArea');
   const mobile = document.getElementById('mayMobileProdsArea');
   if (desktop) desktop.innerHTML = h;
-  if (mobile) { mobile.innerHTML = h; mobile.classList.remove('hidden'); }
+  if (mobile) {
+    let hm = `<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat ? cat.ic + ' ' + cat.n : catId}</h2>`;
+    if (!prods.length) {
+      hm += '<div style="text-align:center;padding:48px;color:var(--muted-fg)">No hay productos en esta categoría</div>';
+    } else {
+      hm += '<div class="prod-grid">';
+      prods.forEach(p => { hm += renderCardMay(p, 'm'); });
+      hm += '</div>';
+    }
+    mobile.innerHTML = hm;
+    mobile.classList.remove('hidden');
+  }
   
   const mobileArea = document.getElementById('mayMobileProdsArea');
   if (isMobile && mobileArea) {
@@ -2698,14 +2709,14 @@ function selectMayCat(catId) {
 }
 window.selectMayCat = selectMayCat;
 
-function renderCardMay(p) {
+function renderCardMay(p, suffix) {
   const opts = Object.keys(p[7]);
   const precio = opts.length ? p[7][opts[0]][0] : 0;
   const hasSrc = p[6] && p[6].startsWith('http');
   const sabores = p[9];
   const bulto = p[12] ? p[12].bulto : 1;
   const bultoLabel = opts[0] || ('Bulto x' + bulto);
-  const id = 'may_' + p[0];
+  const id = 'may_' + p[0] + (suffix ? '_' + suffix : '');
   const cartItem = cartMay.find(i => i.pid === p[0]);
   const acumQty = cartItem ? cartItem.c : 0;
   
@@ -2787,11 +2798,20 @@ window.delFromCartMay = delFromCartMay;
 function _reRenderCardMay(pid) {
   const p = PRODS_MAY.find(x => x[0] === pid);
   if (!p) return;
+  // Desktop card (no suffix)
   const cardEl = document.getElementById('may_' + pid);
-  if (!cardEl) return;
-  const tmp = document.createElement('div');
-  tmp.innerHTML = renderCardMay(p);
-  cardEl.parentNode.replaceChild(tmp.firstChild, cardEl);
+  if (cardEl) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = renderCardMay(p);
+    cardEl.parentNode.replaceChild(tmp.firstChild, cardEl);
+  }
+  // Mobile card (suffix 'm')
+  const cardElM = document.getElementById('may_' + pid + '_m');
+  if (cardElM) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = renderCardMay(p, 'm');
+    cardElM.parentNode.replaceChild(tmp.firstChild, cardElM);
+  }
 }
 
 function updateCartMayCount() {
