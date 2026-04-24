@@ -28,34 +28,64 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── HEADER ── */
 .header{background:var(--azul);position:sticky;top:0;z-index:300;box-shadow:0 3px 16px rgba(0,0,0,.2)}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:8px 20px;gap:14px}
-@media(max-width:767px){.header-inner{padding:8px 10px;gap:8px}}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:8px 16px;gap:10px;overflow:visible}
+@media(max-width:767px){.header-inner{padding:6px 10px;gap:7px}}
 .logo-wrap{flex-shrink:0}
-.logo{width:100px;height:100px;border-radius:50%;object-fit:contain;background:#fff;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-@media(max-width:767px){.logo{width:72px;height:72px}}
-.social-btns{display:flex;gap:8px;align-items:center;flex-shrink:0}
-.social-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s;border:1.5px solid rgba(255,255,255,.3)}
-@media(max-width:767px){.social-btn{width:38px;height:38px}.social-btn svg{width:18px;height:18px}.social-btns{gap:5px}}
+.logo{width:80px;height:80px;border-radius:50%;object-fit:contain;background:#fff;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+@media(max-width:767px){.logo{width:58px;height:58px}}
+.social-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s;border:1.5px solid rgba(255,255,255,.3)}
+@media(max-width:767px){.social-btn{width:34px;height:34px}.social-btn svg{width:17px;height:17px}.social-btns{gap:4px}}
+@media(max-width:400px){.social-btn{width:30px;height:30px}.social-btn svg{width:15px;height:15px}}
 .social-btn:hover{background:rgba(255,255,255,.32);transform:scale(1.08)}
-.social-btn svg{width:22px;height:22px;fill:#fff}
+.social-btn svg{width:20px;height:20px;fill:#fff}
 /* ── HEADER DROPDOWNS ── */
-.header-dropdowns{display:flex;gap:8px;flex:1;justify-content:center;flex-wrap:wrap}
-@media(max-width:500px){.header-dropdowns{gap:5px}}
-.hdrop{position:relative}
-.hdrop-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.35);transition:all .2s;font-family:inherit;white-space:nowrap}
-.hdrop-btn.min-btn{background:#fff;color:var(--azul-dark)}
-.hdrop-btn.may-btn{background:rgba(255,255,255,.15);color:#fff}
-.hdrop-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.hdrop-btn .arrow{font-size:10px;transition:transform .2s;display:inline-block}
+.header-dropdowns{display:flex;gap:7px;flex:1;justify-content:flex-end;flex-wrap:nowrap;align-items:center;min-width:0;overflow:visible}
+.hdrop{position:relative;flex-shrink:0}
+.hdrop-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);transition:all .2s;font-family:inherit;white-space:nowrap;line-height:1.2;background:rgba(255,255,255,.25);color:#fff}
+.hdrop-btn:hover{background:rgba(255,255,255,.42)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.hdrop-btn .arrow{font-size:9px;transition:transform .2s;display:inline-block;opacity:.75}
 .hdrop.open .arrow{transform:rotate(180deg)}
-@media(max-width:500px){.hdrop-btn{padding:7px 10px;font-size:12px}}
-.hdrop-panel{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.2);padding:16px 18px;min-width:270px;z-index:500;display:none;border:1.5px solid var(--border);animation:fadeIn .15s ease}
+/* Mobile: mostrar solo emoji en pantallas muy chicas */
+@media(max-width:430px){
+  .hdrop-btn{padding:7px 10px;font-size:11px;gap:3px}
+  .hdrop-btn .btn-txt{display:none}
+  .hdrop-btn .btn-ico{font-size:17px;line-height:1}
+  .hdrop-btn .arrow{display:none}
+}
+/* Panel: posición fija en mobile para evitar overflow */
+.hdrop-panel{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  width:272px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.22);
+  padding:16px 18px;
+  z-index:600;
+  display:none;
+  border:1.5px solid var(--border);
+  animation:fadeIn .15s ease;
+}
+#hdropMin .hdrop-panel{right:auto;left:0}
+@media(max-width:600px){
+  .hdrop-panel{
+    position:fixed;
+    top:auto;
+    left:8px!important;
+    right:8px!important;
+    width:auto!important;
+    max-height:75vh;
+    overflow-y:auto;
+    border-radius:16px;
+  }
+}
 .hdrop.open .hdrop-panel{display:block}
-@media(max-width:600px){.hdrop-panel{left:0;transform:none;min-width:240px;max-width:calc(100vw - 20px)}}
 .hdrop-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--azul-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
 .hdrop-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:13px;color:var(--fg);line-height:1.45}
 .hdrop-row .ic{font-size:15px;flex-shrink:0;margin-top:1px}
-.hdrop-row strong{color:var(--azul-dark);display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
+.hdrop-row strong{color:var(--azul-dark);display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
 .hdrop-cta{display:block;width:100%;margin-top:12px;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-align:center;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
 .hdrop-cta.min-cta{background:var(--azul);color:#fff}
 .hdrop-cta.min-cta:hover{background:var(--azul-dark)}
@@ -606,7 +636,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <!-- MINORISTA -->
     <div class="hdrop" id="hdropMin">
       <button class="hdrop-btn min-btn" onclick="toggleHdrop('Min')">
-        🛒 Venta Minorista <span class="arrow">▼</span>
+        <span class="btn-ico">🛒</span><span class="btn-txt"> Venta Minorista</span> <span class="arrow">▼</span>
       </button>
       <div class="hdrop-panel">
         <div class="hdrop-title">🛒 Ventas Minoristas</div>
@@ -622,7 +652,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <!-- MAYORISTA -->
     <div class="hdrop" id="hdropMay">
       <button class="hdrop-btn may-btn" onclick="toggleHdrop('May')">
-        📦 Venta Mayorista <span class="arrow">▼</span>
+        <span class="btn-ico">📦</span><span class="btn-txt"> Venta Mayorista</span> <span class="arrow">▼</span>
       </button>
       <div class="hdrop-panel">
         <div class="hdrop-title">📦 Ventas Mayoristas</div>
@@ -1571,6 +1601,7 @@ function responderChat(msg){
   const t=msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if(/minorista.*horario|horario.*minorista|contacto.*minorista|minorista.*contacto|venta minorista/.test(t))
     return '🛒 Ventas Minoristas\n\n📞 Contacto: 261 656 2823\n🕙 Horario: Lunes a Sábados · 10:00 a 20:00 hs\n📍 Pueyrredón 588, esq. Paso de los Andes, Quinta Sección, Mendoza\n\n🏷️ Sin mínimos de compra. Descuentos en compras mayores a $80.000.\n\n🚚 Para envíos, consultá por nuestros canales de venta al por menor.';
+  if(/envio|enviar|delivery|despacho|mando|mandar|entrega|reparto/.test(t))
     return '🚚 Envíos a domicilio\n\nHacemos envíos en Mendoza Capital y Gran Mendoza.\n\n✅ ENVÍO GRATIS en compras mayores a $40.000 dentro de:\nCiudad, Godoy Cruz, Guaymallén, Las Heras, Luján de Cuyo o Maipú.\n\nSi tu compra es menor a ese monto, el envío se abona aparte.\n\nTambién podés retirar en el local sin costo:\nPueyrredón 588, Mendoza.\n\nPara envíos mayoristas, consultá directamente por el canal mayorista.';
   if(/metodo.*pago|medio.*pago|como.*pagar|abonar|pagar|transferencia|efectivo|tarjeta|mercado.*pago|mp|qr/.test(t)||t==='¿qué métodos de pago aceptan?')
     return '💳 Métodos de pago\n\n📍 En el local:\n• Efectivo (5% de descuento)\n• Tarjetas de crédito y débito\n• Mercado Pago o MODO\n\n🚚 Envíos a domicilio:\n• Transferencia bancaria (pedinos el ALIAS)\n• Tarjeta de crédito/débito via link de Mercado Pago\n\nEl descuento en efectivo se aplica sobre el total del pedido.';
@@ -2504,6 +2535,9 @@ function switchTab(tab) {
     if (tabMay) tabMay.classList.add('active');
     if (fabMin) fabMin.style.display = 'none';
     if (fabMay) fabMay.style.display = 'flex';
+    // Actualizar botón WA del header al número mayorista
+    const waHeader = document.querySelector('.social-btn[title^="WhatsApp"]');
+    if (waHeader) { waHeader.href = 'https://wa.me/' + WA_MAYORISTA; waHeader.title = 'WhatsApp Mayorista'; }
     // Cargar productos mayorista si no están cargados
     if (!PRODS_MAY.length && typeof cargarMayorista === 'function') {
       cargarMayorista();
@@ -2517,6 +2551,9 @@ function switchTab(tab) {
     if (tabMay) tabMay.classList.remove('active');
     if (fabMin) fabMin.style.display = 'flex';
     if (fabMay) fabMay.style.display = 'none';
+    // Restaurar botón WA del header al número minorista
+    const waHeader = document.querySelector('.social-btn[title^="WhatsApp"]');
+    if (waHeader) { waHeader.href = 'https://wa.me/' + WA_MINORISTA; waHeader.title = 'WhatsApp Minorista'; }
   }
 }
 window.switchTab = switchTab;
