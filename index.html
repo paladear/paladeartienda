@@ -50,7 +50,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(max-width:430px){
   .hdrop-btn{padding:7px 10px;font-size:11px;gap:3px}
   .hdrop-btn .btn-txt{display:none}
-  .hdrop-btn .btn-ico{font-size:17px;line-height:1}
+  .hdrop-btn .btn-ico{font-size:17px;line-height:1;text-shadow:0 1px 4px rgba(0,0,0,.55);filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   .hdrop-btn .arrow{display:none}
 }
 /* Panel: posición fija en mobile para evitar overflow */
@@ -92,9 +92,9 @@ button{cursor:pointer;border:none;font-family:inherit}
 .hdrop-cta.may-cta{background:#1a3740;color:#ffd700}
 .hdrop-cta.may-cta:hover{background:#0f2328}
 /* Botón flotante del carrito */
-#cart-fab{position:fixed;bottom:94px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 22px rgba(58,99,112,.55);transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
+#cart-fab{position:fixed;bottom:94px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 22px rgba(58,99,112,.55);transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;text-shadow:0 1px 4px rgba(0,0,0,.55);filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
 #cart-fab:hover{transform:scale(1.1)}
-#cart-fab-may{position:fixed;bottom:94px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 22px rgba(58,99,112,.55);transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
+#cart-fab-may{position:fixed;bottom:94px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 22px rgba(58,99,112,.55);transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;text-shadow:0 1px 4px rgba(0,0,0,.55);filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
 #cart-fab-may:hover{transform:scale(1.1)}
 @media(max-width:767px){body.builder-open #cart-fab,body.builder-open #chat-fab{display:none!important}}
 #cart-fab .cart-count{position:absolute;top:-5px;right:-5px;background:var(--destructive);color:#fff;border-radius:50%;min-width:22px;height:22px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 5px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
@@ -352,7 +352,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 @media(max-width:767px){.desktop-only{display:none!important}.mobile-only{display:flex!important}}
 
 /* ── CHATBOT ── */
-#chat-fab{position:fixed;bottom:24px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28);transition:transform .2s}
+#chat-fab{position:fixed;bottom:24px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28);transition:transform .2s;text-shadow:0 1px 4px rgba(0,0,0,.55);filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
 #chat-fab:hover{transform:scale(1.1)}
 #chat-box{position:fixed;bottom:96px;right:24px;z-index:1000;width:360px;max-width:calc(100vw - 32px);background:var(--card);border-radius:18px;box-shadow:0 8px 36px rgba(0,0,0,.2);display:none;flex-direction:column;overflow:hidden;border:1.5px solid var(--border)}
 #chat-box.open{display:flex}
@@ -1601,7 +1601,7 @@ function addUserMsg(txt){
 function responderChat(msg){
   const t=msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if(/minorista.*horario|horario.*minorista|contacto.*minorista|minorista.*contacto|venta minorista/.test(t))
-    return '🛒 Ventas Minoristas\n\n📞 Contacto: 261 656 2823\n🕙 Horario: Lunes a Sábados · 10:00 a 20:00 hs\n📍 Pueyrredón 588, esq. Paso de los Andes, Quinta Sección, Mendoza\n\n🏷️ Sin mínimos de compra. Descuentos en compras mayores a $80.000.\n\n🚚 Para envíos, consultá por nuestros canales de venta al por menor.';
+    return '🛒 Ventas Minoristas\n\n📞 Contacto: +549 261 656 2823\n🕙 Horario: Lunes a Sábados · 10:00 a 20:00 hs\n📍 Pueyrredón 588, esq. Paso de los Andes, Quinta Sección, Mendoza\n\n🏷️ Sin mínimos de compra. Descuentos en compras mayores a $80.000.\n\n🚚 Para envíos, consultá por nuestros canales de venta al por menor.';
   if(/envio|enviar|delivery|despacho|mando|mandar|entrega|reparto/.test(t))
     return '🚚 Envíos a domicilio\n\nHacemos envíos en Mendoza Capital y Gran Mendoza.\n\n✅ ENVÍO GRATIS en compras mayores a $40.000 dentro de:\nCiudad, Godoy Cruz, Guaymallén, Las Heras, Luján de Cuyo o Maipú.\n\nSi tu compra es menor a ese monto, el envío se abona aparte.\n\nTambién podés retirar en el local sin costo:\nPueyrredón 588, Mendoza.\n\nPara envíos mayoristas, consultá directamente por el canal mayorista.';
   if(/metodo.*pago|medio.*pago|como.*pagar|abonar|pagar|transferencia|efectivo|tarjeta|mercado.*pago|mp|qr/.test(t)||t==='¿qué métodos de pago aceptan?')
@@ -1611,15 +1611,15 @@ function responderChat(msg){
   if(/direccion|ubicacion|donde|local|tienda|lugar|mapa/.test(t))
     return 'Estamos en Pueyrredón 588, esquina Paso de los Andes 📍\nQuinta Sección, Ciudad de Mendoza.\n\nHorario minorista: Lunes a Sábados de 10:00 a 20:00 hs.\nPodés encontrarnos en Google Maps como "Paladear Mercado de Sabores".';
   if(/mayorista|mayor|precio mayor|lista mayor|lista 2|250000|250\.000/.test(t))
-    return '📦 Lista Mayorista\n\nContamos con una lista mayorista con precios especiales para compras en volumen.\n\nCondición: Ventas mayores a $250.000 por bulto cerrado.\n\nHorario de atención mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nContacto mayorista: 261 598 3065\n\nPodés acceder desde la pestaña "Lista Mayorista" en el catálogo.';
+    return '📦 Lista Mayorista\n\nContamos con una lista mayorista con precios especiales para compras en volumen.\n\nCondición: Ventas mayores a $250.000 por bulto cerrado.\n\nHorario de atención mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nContacto mayorista: +549 261 598 3065\n\nPodés acceder desde la pestaña "Lista Mayorista" en el catálogo.';
   if(/precio|cuanto.*cuesta|valor|kilo|kg|como.*se.*expresa|descuento|80000|80\.000/.test(t))
     return '💰 Precios\n\nLos precios están publicados por kilogramo en la Lista Minorista.\n\n🏷️ Descuento por cantidad: En compras minoristas que superen los $80.000 se aplica automáticamente un descuento. El precio en azul en cada producto es el precio con descuento.\n\n📦 Lista Mayorista: Para compras mayores a $250.000 por bulto cerrado. Accedé desde la pestaña correspondiente en el catálogo.';
   if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso|paso a paso/.test(t))
     return '📦 Cómo hacer tu pedido\n\n1. Navegá el catálogo y elegí tus productos\n2. Seleccioná la cantidad y tocá "Agregar al pedido"\n3. Abrí el carrito y revisá tu selección\n4. Tocá "Pedir por WhatsApp" para enviarnos tu pedido\n5. Confirmá el pedido con el equipo Paladear\n6. Informanos el método de pago\n7. ¡Lo recibís en casa o lo retirás en el local! 🎉';
   if(/whatsapp.*mayorista|mayorista.*whatsapp|contacto.*mayorista|mayorista.*contacto|numero.*mayorista/.test(t))
-    return 'Contacto Mayorista 📦\n\nWhatsApp: 261 598 3065\nHorario: Lunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nRecordá que la venta mayorista requiere un mínimo de $250.000 por bulto cerrado.';
+    return 'Contacto Mayorista 📦\n\nWhatsApp: +549 261 598 3065\nHorario: Lunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nRecordá que la venta mayorista requiere un mínimo de $250.000 por bulto cerrado.';
   if(/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
-    return 'Podés contactarnos:\n\n🛒 Venta Minorista:\nWhatsApp: 261 656 2823\nLunes a Sábados · 10:00 a 20:00 hs\n\n📦 Venta Mayorista:\nWhatsApp: 261 598 3065\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs';
+    return 'Podés contactarnos:\n\n🛒 Venta Minorista:\nWhatsApp: +549 261 656 2823\nLunes a Sábados · 10:00 a 20:00 hs\n\n📦 Venta Mayorista:\nWhatsApp: +549 261 598 3065\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs';
   if(/mix tradicional/.test(t))
     return 'Mix Tradicional 🥜\nUn clásico que nunca falla.\nContenido: nueces, almendras, pasas rubias, pasas morochas y maní.';
   if(/mix tropical/.test(t))
@@ -1665,8 +1665,8 @@ function responderChat(msg){
   if(/^(hola|buen|buenas|saludos|hey|hi|buenos dias|buenas tardes|buenas noches)/.test(t))
     return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar?';
   if(/gracias|muchas gracias|genial|perfecto|excelente|ok gracias/.test(t))
-    return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos:\n• Minorista: 261 656 2823\n• Mayorista: 261 598 3065';
-  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos:\n• Minorista: WhatsApp 261 656 2823\n• Mayorista: WhatsApp 261 598 3065\n\nTambién puedo contarte sobre:\n• Mixes de frutos secos y granolas\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Horarios y ubicación\n• Precios y lista mayorista';
+    return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos:\n• Minorista: +549 261 656 2823\n• Mayorista: +549 261 598 3065';
+  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos:\n• Minorista: WhatsApp +549 261 656 2823\n• Mayorista: WhatsApp +549 261 598 3065\n\nTambién puedo contarte sobre:\n• Mixes de frutos secos y granolas\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Horarios y ubicación\n• Precios y lista mayorista';
 }
 function sendChat(){
   const input=document.getElementById('chat-input');
