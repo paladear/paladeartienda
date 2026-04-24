@@ -662,6 +662,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
         <div class="hdrop-row"><span class="ic">🏷️</span><div><strong>Condición de venta</strong>Ventas mayores a $250.000 por bulto cerrado</div></div>
         <div class="hdrop-row"><span class="ic">🚚</span><div><strong>Envíos</strong>Consultá por nuestros canales de venta al por mayor</div></div>
         <button class="hdrop-cta may-cta" onclick="closeAllHdrops();switchTab('mayorista')">📦 Ir a Lista Mayorista →</button>
+        <button class="hdrop-cta min-cta" style="margin-top:6px" onclick="closeAllHdrops();window.open('https://wa.me/5492615983065','_blank')">💬 Contactar por WhatsApp</button>
       </div>
     </div>
 
@@ -2758,7 +2759,7 @@ function selectMayCat(catId, productId) {
   activeCatIdMay = catId;
   renderMayCatsUI();
 
-  const prods = PRODS_MAY.filter(p => p[1] === catId);
+  const prods = PRODS_MAY.filter(p => p[1] === catId).sort((a, b) => a[2].localeCompare(b[2], 'es', { sensitivity: 'base' }));
   const cat   = CATS_MAY.find(c => c.id === catId);
   const isMobile = window.innerWidth < 768;
   const prefix   = isMobile ? 'm' : '';
