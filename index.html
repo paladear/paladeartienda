@@ -150,6 +150,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 }
 .cats-sidebar{display:none}
 @media(min-width:768px){.cats-sidebar{display:block}}
+@media(max-width:767px){#mayDesktopProdsArea{display:none!important}}
 .cat-list-btn{width:100%;border-radius:10px;padding:12px 16px;text-align:left;border:2.5px solid transparent;transition:all .2s;display:flex;align-items:center;gap:10px;margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .cat-list-btn:hover{filter:brightness(1.1);transform:translateX(3px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
 .cat-list-btn.active{border-color:#fff!important;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 3px 12px rgba(0,0,0,.2)!important}
@@ -2742,7 +2743,7 @@ function _cardHTMLMay(p) {
   const hasSrc = p[6] && p[6].startsWith('http');
   const cat = CATS_MAY.find(c => c.id === p[1]);
   const bulto = p[12] ? p[12].bulto : 1;
-  return `<div class="carousel-card" onclick="selectMayCat('${p[1]}')">
+  return `<div class="carousel-card" onclick="selectMayCat('${p[1]}', ${p[0]})">
     <div class="carousel-card-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : (cat ? cat.ic : '🌿')}</div>
     <div class="carousel-card-body">
       <div class="carousel-card-name">${p[2]}</div>
@@ -2753,83 +2754,128 @@ function _cardHTMLMay(p) {
   </div>`;
 }
 
-function selectMayCat(catId) {
+function selectMayCat(catId, productId) {
   activeCatIdMay = catId;
   renderMayCatsUI();
-  
+
   const prods = PRODS_MAY.filter(p => p[1] === catId);
-  const cat = CATS_MAY.find(c => c.id === catId);
+  const cat   = CATS_MAY.find(c => c.id === catId);
   const isMobile = window.innerWidth < 768;
-  
-  let h = `<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat ? cat.ic + ' ' + cat.n : catId}</h2>`;
-  if (!prods.length) {
-    h += '<div style="text-align:center;padding:48px;color:var(--muted-fg)">No hay productos en esta categoría</div>';
-  } else {
-    h += '<div class="prod-grid">';
-    prods.forEach(p => { h += renderCardMay(p); });
-    h += '</div>';
-  }
-  
-  const desktop = document.getElementById('mayDesktopProdsArea');
-  const mobile = document.getElementById('mayMobileProdsArea');
-  if (desktop) desktop.innerHTML = h;
-  if (mobile) {
-    let hm = `<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat ? cat.ic + ' ' + cat.n : catId}</h2>`;
+  const prefix   = isMobile ? 'm' : '';
+
+  const backBtn = `<button class="back-btn" onclick="volverMayInicio()">← Volver al inicio</button>`;
+
+  function _buildGrid(sfx) {
+    let h = backBtn + `<h2 style="font-size:22px;color:var(--azul-dark);margin:12px 0 16px;font-weight:700">${cat ? cat.ic + ' ' + cat.n : catId}</h2>`;
     if (!prods.length) {
-      hm += '<div style="text-align:center;padding:48px;color:var(--muted-fg)">No hay productos en esta categoría</div>';
+      h += '<div style="text-align:center;padding:48px;color:var(--muted-fg)">No hay productos en esta categoría</div>';
     } else {
-      hm += '<div class="prod-grid">';
-      prods.forEach(p => { hm += renderCardMay(p, 'm'); });
-      hm += '</div>';
+      h += '<div class="prod-grid">';
+      prods.forEach(p => { h += renderCardMay(p, sfx); });
+      h += '</div>';
     }
-    mobile.innerHTML = hm;
-    mobile.classList.remove('hidden');
+    return h;
   }
-  
-  const mobileArea = document.getElementById('mayMobileProdsArea');
-  if (isMobile && mobileArea) {
-    mobileArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const desktop = document.getElementById('mayDesktopProdsArea');
+  const mobile  = document.getElementById('mayMobileProdsArea');
+
+  if (desktop) desktop.innerHTML = _buildGrid('');
+  if (mobile)  { mobile.innerHTML = _buildGrid('m'); mobile.classList.remove('hidden'); }
+
+  // Scroll: si viene productId, scrollear a esa card; si no, al área
+  const area = isMobile ? mobile : desktop;
+  if (area) {
+    if (productId != null) {
+      setTimeout(() => {
+        const sfx   = isMobile ? '_m' : '';
+        const card  = document.getElementById('may_' + productId + sfx);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('highlight-card');
+          setTimeout(() => card.classList.remove('highlight-card'), 2200);
+        } else {
+          area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 80);
+    } else {
+      area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }
 window.selectMayCat = selectMayCat;
 
+function volverMayInicio() {
+  activeCatIdMay = null;
+  renderMayCatsUI();
+  renderMayCarrusel();
+  const sec = document.getElementById('mayoristaSection');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.volverMayInicio = volverMayInicio;
+
 function renderCardMay(p, suffix) {
-  const opts = Object.keys(p[7]);
-  const precio = opts.length ? p[7][opts[0]][0] : 0;
-  const hasSrc = p[6] && p[6].startsWith('http');
-  const sabores = p[9];
-  const bulto = p[12] ? p[12].bulto : 1;
+  const opts      = Object.keys(p[7]);
+  const precio    = opts.length ? p[7][opts[0]][0] : 0;
+  const hasSrc    = p[6] && p[6].startsWith('http');
+  const sabores   = p[9];
+  const bulto     = p[12] ? p[12].bulto : 1;
   const bultoLabel = opts[0] || ('Bulto x' + bulto);
-  const id = 'may_' + p[0] + (suffix ? '_' + suffix : '');
-  const cartItem = cartMay.find(i => i.pid === p[0]);
-  const acumQty = cartItem ? cartItem.c : 0;
-  
+  const id        = 'may_' + p[0] + (suffix ? '_' + suffix : '');
+  const cartItem  = cartMay.find(i => i.pid === p[0]);
+  const acumQty   = cartItem ? cartItem.c : 0;
+  const acumInfo  = acumQty > 0 ? `<span class="acum-badge">🛒 ${acumQty} ${bultoLabel.toLowerCase()}</span>` : '';
+  const cat       = CATS_MAY.find(c => c.id === p[1]);
+
   let h = `<div class="pcard" id="${id}">`;
-  h += `<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc ? p[6] : ''}">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : '🌿'}</div>`;
+
+  // Imagen
+  h += `<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc ? p[6] : ''}">${hasSrc
+    ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='${cat ? cat.ic : '🌿'}'" loading="lazy">`
+    : (cat ? cat.ic : '🌿')}</div>`;
+
   h += `<div class="pcard-body">`;
+
+  // Nombre
   h += `<div class="pcard-head"><div class="pcard-name">${p[2]}</div></div>`;
-  h += `<div class="pcard-brand" style="color:var(--azul-dark)">${p[3]}</div>`;
-  h += `<span class="bulto-badge">📦 ${bultoLabel}</span>`;
-  
+
+  // Rubro
+  h += `<div class="pcard-brand">${cat ? cat.n : p[3]}</div>`;
+
+  // Badge bulto
+  h += `<div style="margin:6px 0 2px"><span class="bulto-badge">📦 ${bultoLabel}</span></div>`;
+
+  // Selector de sabor si aplica
   if (sabores && sabores.length) {
-    h += `<div class="sabor-row" style="margin-top:8px"><label class="sabor-label" for="${id}_sab">Sabor:</label><select class="sabor-select" id="${id}_sab"><option value="">Seleccionar...</option>`;
+    h += `<div class="sabor-row" style="margin-top:6px"><label class="sabor-label" for="${id}_sab">Sabor:</label>
+      <select class="sabor-select" id="${id}_sab"><option value="">Seleccionar...</option>`;
     sabores.forEach(s => { h += `<option value="${s.replace(/"/g, '&quot;')}">${s}</option>`; });
     h += `</select></div>`;
   }
-  
-  h += `<div class="prices"><div><span class="price-label">Precio Mayorista</span><div class="price-min" style="color:var(--azul-dark)">$${fmt(precio)}</div></div></div>`;
-  
-  const acumInfo = acumQty > 0 ? `<span class="acum-badge">🛒 ${acumQty} ${bultoLabel.toLowerCase()}</span>` : '';
-  h += `<div class="qty-row"><button class="qty-btn" onclick="chgQtyMay('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQtyMay('${id}',1)">+</button>${acumInfo}</div>`;
+
+  // Precio
+  h += `<div class="prices"><div>
+    <span class="price-label">Precio Mayorista</span>
+    <div class="price-min" style="color:var(--azul-dark)">$${fmt(precio)}</div>
+  </div></div>`;
+
+  // Cantidad + agregar
+  h += `<div class="qty-row">
+    <button class="qty-btn" onclick="chgQtyMay('${id}',-1)">−</button>
+    <span class="qty-val" id="${id}_q">1</span>
+    <button class="qty-btn" onclick="chgQtyMay('${id}',1)">+</button>
+    ${acumInfo}
+  </div>`;
   h += `<button class="add-btn" id="${id}_ab" onclick="addToCartMay(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;
-  
+
+  // Acciones si ya está en el carrito
   if (cartItem) {
     h += `<div class="card-cart-actions">
       <button class="card-del-btn" onclick="delFromCartMay(${p[0]})" title="Quitar del carrito">${TRASH_SVG}</button>
       <button class="card-edit-btn" onclick="openCartMay()">📋 Ver pedido</button>
     </div>`;
   }
-  
+
   h += `</div></div>`;
   return h;
 }
@@ -3062,7 +3108,7 @@ function _doSearchMay(val) {
       const hasSrc = p[6] && p[6].startsWith('http');
       const cat = CATS_MAY.find(c => c.id === p[1]);
       const bulto = p[12] ? p[12].bulto : 1;
-      h += `<div class="search-item" onclick="selectMayCat('${p[1]}')">
+    h += `<div class="search-item" onclick="selectMayCat('${p[1]}', ${p[0]})">
         <div class="search-item-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : (cat ? cat.ic : '🌿')}</div>
         <div class="search-item-body">
           <div class="search-item-name">${p[2]}</div>
@@ -3076,9 +3122,12 @@ function _doSearchMay(val) {
     h += '</div>';
   }
   
+  const isMobile = window.innerWidth < 768;
   const desktop = document.getElementById('mayDesktopProdsArea');
+  const mobile  = document.getElementById('mayMobileProdsArea');
   if (desktop) desktop.innerHTML = h;
-  if (sr) { sr.innerHTML = h; }
+  if (mobile)  { mobile.innerHTML = h; mobile.classList.remove('hidden'); }
+  if (sr) sr.innerHTML = '';
 }
 
 // Inicializar mayorista al estar en esa tab
