@@ -363,6 +363,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   .header-brand-tagline{display:none}
   .header-brand-name{font-size:15px}
 }
+.tagline-short{display:none}
+@media(max-width:767px){.tagline-full{display:none}.tagline-short{display:inline}}
 
 /* ── CHATBOT ── */
 #chat-fab{position:fixed;bottom:24px;right:24px;z-index:1000;width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.28);transition:transform .2s;text-shadow:0 1px 4px rgba(0,0,0,.55);filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
@@ -637,10 +639,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   </div>
   <div class="header-brand">
     <span class="header-brand-name">Paladear</span>
-    <span class="header-brand-tagline">mercado de sabores</span>
+    <span class="header-brand-tagline"><span class="tagline-full">mercado de sabores</span><span class="tagline-short">sabores</span></span>
   </div>
   <div class="social-btns">
-    <a class="social-btn" href="https://wa.me/5492616562823" target="_blank" title="WhatsApp Minorista">
+    <a class="social-btn" href="https://wa.me/5492616512823" target="_blank" title="WhatsApp Minorista">
       <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg>
     </a>
     <a class="social-btn" href="https://www.instagram.com/palade.ar?igsh=ZTJweDNkMDhsY3Vj" target="_blank" title="Instagram">
@@ -659,12 +661,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
       </button>
       <div class="hdrop-panel">
         <div class="hdrop-title">🛒 Ventas Minoristas</div>
-        <div class="hdrop-row"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg></span><div><strong>Contacto</strong>+549 261 656 2823</div></div>
+        <div class="hdrop-row"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg></span><div><strong>Contacto</strong>+549 261 651 2823</div></div>
         <div class="hdrop-row"><span class="ic">🕙</span><div><strong>Horario</strong>Lunes a Sábados · 10:00 a 20:00 hs</div></div>
         <div class="hdrop-row"><span class="ic">📍</span><div><strong>Dirección</strong>Pueyrredón 588, esq. Paso de los Andes — Quinta Sección, Mendoza</div></div>
         <div class="hdrop-row"><span class="ic">🏷️</span><div><strong>Condición de venta</strong>Sin mínimos de compra · Descuentos en compras mayores a $80.000</div></div>
         <div class="hdrop-row"><span class="ic">🚚</span><div><strong>Envíos</strong>Consultá por nuestros canales de venta al por menor</div></div>
-        <button class="hdrop-cta min-cta" onclick="closeAllHdrops();window.open('https://wa.me/5492616562823','_blank')">💬 Contactar por WhatsApp</button>
+        <button class="hdrop-cta min-cta" onclick="closeAllHdrops();window.open('https://wa.me/5492616512823','_blank')">💬 Contactar por WhatsApp</button>
       </div>
     </div>
 
@@ -1620,7 +1622,7 @@ function addUserMsg(txt){
 function responderChat(msg){
   const t=msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if(/minorista.*horario|horario.*minorista|contacto.*minorista|minorista.*contacto|venta minorista/.test(t))
-    return '🛒 Ventas Minoristas\n\n📞 Contacto: +549 261 656 2823\n🕙 Horario: Lunes a Sábados · 10:00 a 20:00 hs\n📍 Pueyrredón 588, esq. Paso de los Andes, Quinta Sección, Mendoza\n\n🏷️ Sin mínimos de compra. Descuentos en compras mayores a $80.000.\n\n🚚 Para envíos, consultá por nuestros canales de venta al por menor.';
+    return '🛒 Ventas Minoristas\n\n📞 Contacto: +549 261 651 2823\n🕙 Horario: Lunes a Sábados · 10:00 a 20:00 hs\n📍 Pueyrredón 588, esq. Paso de los Andes, Quinta Sección, Mendoza\n\n🏷️ Sin mínimos de compra. Descuentos en compras mayores a $80.000.\n\n🚚 Para envíos, consultá por nuestros canales de venta al por menor.';
   if(/envio|enviar|delivery|despacho|mando|mandar|entrega|reparto/.test(t))
     return '🚚 Envíos a domicilio\n\nHacemos envíos en Mendoza Capital y Gran Mendoza.\n\n✅ ENVÍO GRATIS en compras mayores a $40.000 dentro de:\nCiudad, Godoy Cruz, Guaymallén, Las Heras, Luján de Cuyo o Maipú.\n\nSi tu compra es menor a ese monto, el envío se abona aparte.\n\nTambién podés retirar en el local sin costo:\nPueyrredón 588, Mendoza.\n\nPara envíos mayoristas, consultá directamente por el canal mayorista.';
   if(/metodo.*pago|medio.*pago|como.*pagar|abonar|pagar|transferencia|efectivo|tarjeta|mercado.*pago|mp|qr/.test(t)||t==='¿qué métodos de pago aceptan?')
@@ -1638,7 +1640,7 @@ function responderChat(msg){
   if(/whatsapp.*mayorista|mayorista.*whatsapp|contacto.*mayorista|mayorista.*contacto|numero.*mayorista/.test(t))
     return 'Contacto Mayorista 📦\n\nWhatsApp: +549 261 598 3065\nHorario: Lunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nRecordá que la venta mayorista requiere un mínimo de $250.000 por bulto cerrado.';
   if(/whatsapp|telefono|contacto|llamar|numero|comunicar/.test(t))
-    return 'Podés contactarnos:\n\n🛒 Venta Minorista:\nWhatsApp: +549 261 656 2823\nLunes a Sábados · 10:00 a 20:00 hs\n\n📦 Venta Mayorista:\nWhatsApp: +549 261 598 3065\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs';
+    return 'Podés contactarnos:\n\n🛒 Venta Minorista:\nWhatsApp: +549 261 651 2823\nLunes a Sábados · 10:00 a 20:00 hs\n\n📦 Venta Mayorista:\nWhatsApp: +549 261 598 3065\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs';
   if(/mix tradicional/.test(t))
     return 'Mix Tradicional 🥜\nUn clásico que nunca falla.\nContenido: nueces, almendras, pasas rubias, pasas morochas y maní.';
   if(/mix tropical/.test(t))
@@ -1684,8 +1686,8 @@ function responderChat(msg){
   if(/^(hola|buen|buenas|saludos|hey|hi|buenos dias|buenas tardes|buenas noches)/.test(t))
     return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar?';
   if(/gracias|muchas gracias|genial|perfecto|excelente|ok gracias/.test(t))
-    return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos:\n• Minorista: +549 261 656 2823\n• Mayorista: +549 261 598 3065';
-  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos:\n• Minorista: WhatsApp +549 261 656 2823\n• Mayorista: WhatsApp +549 261 598 3065\n\nTambién puedo contarte sobre:\n• Mixes de frutos secos y granolas\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Horarios y ubicación\n• Precios y lista mayorista';
+    return '¡De nada! 😊 Si tenés más preguntas estoy acá. También podés contactarnos:\n• Minorista: +549 261 651 2823\n• Mayorista: +549 261 598 3065';
+  return 'No estoy seguro de poder responder eso con exactitud 🤔\n\nPodés contactarnos:\n• Minorista: WhatsApp +549 261 651 2823\n• Mayorista: WhatsApp +549 261 598 3065\n\nTambién puedo contarte sobre:\n• Mixes de frutos secos y granolas\n• Envíos y métodos de pago\n• Cómo hacer un pedido\n• Horarios y ubicación\n• Precios y lista mayorista';
 }
 function sendChat(){
   const input=document.getElementById('chat-input');
@@ -2526,7 +2528,7 @@ const SHEET_BASE_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZa
 // ▲▲▲ FIN CONFIGURACIÓN ▲▲▲
 // Número WhatsApp mayorista
 const WA_MAYORISTA = '5492615983065';
-const WA_MINORISTA = '5492616562823';
+const WA_MINORISTA = '5492616512823';
 const MIN_COMPRA_MAYORISTA = 250000;
 
 let PRODS_MAY = [];
