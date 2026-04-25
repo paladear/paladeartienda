@@ -21,9 +21,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-h
 #loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease}
 #loadingOverlay.hidden{opacity:0;pointer-events:none}
 .spinner{width:64px;height:64px;border:5px solid var(--azul-light);border-top-color:var(--azul);border-radius:50%;animation:spin 1s linear infinite}
-.loading-text{font-family:'Pacifico',cursive;font-size:17px;color:var(--azul-dark);font-weight:400;letter-spacing:.5px}
+.loading-text{font-family:'Fraunces',serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-h1,h2,h3,h4{font-family:'Pacifico',cursive}
+h1,h2,h3,h4{font-family:'Playfair Display',serif}
 button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── HEADER ── */
@@ -82,7 +82,7 @@ button{cursor:pointer;border:none;font-family:inherit}
   }
 }
 .hdrop.open .hdrop-panel{display:block}
-.hdrop-title{font-family:'Pacifico',cursive;font-size:15px;font-weight:400;color:var(--azul-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
+.hdrop-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--azul-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
 .hdrop-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:13px;color:var(--fg);line-height:1.45}
 .hdrop-row .ic{font-size:15px;flex-shrink:0;margin-top:1px}
 .hdrop-row strong{color:var(--azul-dark);display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
@@ -111,7 +111,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── CARRUSEL (mobile) / GRILLA (desktop) ── */
 .carousel-section{margin-bottom:28px}
-.carousel-title{font-size:22px;font-weight:400;color:var(--azul-dark);margin-bottom:14px;font-family:"Pacifico",cursive}
+.carousel-title{font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Playfair Display",serif}
 .carousel-wrap{position:relative}
 .carousel-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 4px 10px;-webkit-overflow-scrolling:touch}
 .carousel-track::-webkit-scrollbar{display:none}
@@ -146,7 +146,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(min-width:768px){
   .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
   .cats-sidebar{position:sticky;top:120px;padding-right:4px}
-  .cats-sidebar h1{font-size:21px;color:var(--azul-dark);margin-bottom:12px;font-weight:400;font-family:"Pacifico",cursive}
+  .cats-sidebar h1{font-size:21px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;font-family:"Playfair Display",serif}
 }
 .cats-sidebar{display:none}
 @media(min-width:768px){.cats-sidebar{display:block}}
@@ -184,7 +184,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .info-modal-close:hover{background:var(--azul);color:#fff}
 .info-modal-img{width:100%;height:180px;background:#f8fafb;border-radius:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .info-modal-img img{max-width:100%;max-height:100%;object-fit:contain}
-.info-modal-title{font-family:'Pacifico',cursive;font-size:22px;color:var(--azul-dark);margin-bottom:12px;font-weight:400;padding-right:30px}
+.info-modal-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;padding-right:30px}
 .info-modal-text{font-size:15px;line-height:1.5;color:var(--fg)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .pcard-brand{font-size:13px;color:var(--muted-fg);margin-bottom:8px}
@@ -379,7 +379,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-banner{background:linear-gradient(135deg,#7a4f1e 0%,#b07030 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(160,100,30,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(160,100,30,.45)}
 @media(max-width:480px){.granola-banner{padding:16px}.granola-banner svg{width:44px;height:44px}.granola-banner-text h3{font-size:17px}.granola-banner-btn{width:100%;text-align:center}}
-.granola-banner-text h3{font-family:'Pacifico',cursive;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.granola-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .granola-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .granola-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .granola-banner-btn:hover{background:#f5e8d8}
@@ -390,7 +390,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:820px;max-height:92vh;background:var(--card);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.granola-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .granola-modal-header{background:#b07030;color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.granola-modal-header h2{font-family:'Pacifico',cursive;font-size:20px;font-weight:700}
+.granola-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
 .granola-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -430,7 +430,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* Granola banner colors */
 .granola-banner{background:linear-gradient(135deg,#7a4f2a 0%,#b87040 100%);border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(120,80,40,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(120,80,40,.45)}
-.granola-banner-text h3{font-family:'Pacifico',cursive;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.granola-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .granola-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .granola-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .granola-banner-btn:hover{background:#f5e8d8}
@@ -446,7 +446,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:860px;max-height:92vh;background:var(--card);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.granola-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .granola-modal-header{background:linear-gradient(135deg,#7a4f2a,#b87040);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.granola-modal-header h2{font-family:'Pacifico',cursive;font-size:20px;font-weight:700}
+.granola-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
 .granola-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -506,7 +506,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 .may-cone{width:54px;height:54px;flex-shrink:0;overflow:visible;position:relative;z-index:1}
 .may-cone svg{overflow:visible;width:54px;height:54px}
-.may-toast-title{font-family:'Pacifico',cursive;font-size:22px;font-weight:400;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center;position:relative;z-index:2}
+.may-toast-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center;position:relative;z-index:2}
 .may-toast-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .may-cone-left{margin-left:-8px}
 .may-cone-right{margin-right:-8px}
@@ -521,7 +521,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(77,125,138,.35);flex-wrap:wrap}
 @media(max-width:480px){.mix-banner{padding:16px}.mix-banner svg{width:44px;height:44px}.mix-banner-text h3{font-size:17px}.mix-banner-btn{width:100%;text-align:center}}
 .mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(77,125,138,.45)}
-.mix-banner-text h3{font-family:'Pacifico',cursive;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.mix-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .mix-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .mix-banner-btn{background:#fff;color:var(--azul-dark);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .mix-banner-btn:hover{background:var(--azul-light)}
@@ -532,7 +532,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:820px;max-height:92vh;background:var(--card);border-radius:18px 18px 18px 18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.mix-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .mix-modal-header{background:var(--azul);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.mix-modal-header h2{font-family:'Pacifico',cursive;font-size:20px;font-weight:700}
+.mix-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
 .mix-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .mix-modal-close:hover{background:rgba(255,255,255,.35)}
 .mix-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -598,7 +598,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mayorista-banner-promo{background:linear-gradient(135deg,var(--azul-dark),var(--azul));color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(58,99,112,.35);transition:all .2s}
 .mayorista-banner-promo:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(58,99,112,.45)}
 .mayorista-banner-promo .may-promo-icon{font-size:32px;flex-shrink:0}
-.mayorista-banner-promo .may-promo-text h3{font-family:'Pacifico',cursive;font-size:17px;font-weight:700;margin-bottom:4px}
+.mayorista-banner-promo .may-promo-text h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:4px}
 .mayorista-banner-promo .may-promo-text p{font-size:13px;opacity:.9}
 .may-nav-btn{background:var(--azul);color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
