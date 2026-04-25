@@ -2921,6 +2921,10 @@ function addToCartMay(pid, elId) {
   const precio = opts.length ? p[7][opts[0]][0] : 0;
   const key = 'may_' + pid + (sabor ? '-' + sabor : '');
   const nombreConSabor = sabor ? p[2] + ' (' + sabor + ')' : p[2];
+
+  // Guardar total previo para detectar hito $250k
+  const prevTotal = cartMay.reduce((a, i) => a + i.l1 * i.c, 0);
+
   const ex = cartMay.find(i => i.key === key);
   if (ex) {
     ex.c += qty;
@@ -2936,8 +2940,136 @@ function addToCartMay(pid, elId) {
     btn.innerHTML = '✓ Agregado!';
     setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = '🛒 Agregar al pedido'; }, 1400);
   }
+
+  // ── FLY-TO-CART ANIMATION (mayorista) ──
+  (function(){
+    const cardEl = document.getElementById(elId);
+    const fab = document.getElementById('cart-fab-may');
+    if (!cardEl || !fab) return;
+    const imgEl = cardEl.querySelector('.pcard-img img, .pcard-img');
+    if (!imgEl) return;
+    const srcRect = imgEl.getBoundingClientRect();
+    const destRect = fab.getBoundingClientRect();
+    const fly = document.createElement('div');
+    fly.className = 'fly-img';
+    if (imgEl.tagName === 'IMG' && imgEl.src) {
+      const inner = document.createElement('img');
+      inner.src = imgEl.src;
+      inner.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:50%';
+      fly.appendChild(inner);
+    } else {
+      fly.textContent = '📦';
+      fly.style.fontSize = '28px';
+      fly.style.display = 'flex';
+      fly.style.alignItems = 'center';
+      fly.style.justifyContent = 'center';
+    }
+    const startX = srcRect.left + srcRect.width / 2 - 30;
+    const startY = srcRect.top + srcRect.height / 2 - 30;
+    const endX = destRect.left + destRect.width / 2 - 30;
+    const endY = destRect.top + destRect.height / 2 - 30;
+    fly.style.cssText += `;left:${startX}px;top:${startY}px;`;
+    document.body.appendChild(fly);
+    const dur = 650; const t0 = performance.now();
+    function step(now) {
+      const t = Math.min((now - t0) / dur, 1);
+      const ease = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const mx = (startX + endX) / 2;
+      const my = Math.min(startY, endY) - 80;
+      const x = (1-ease)*(1-ease)*startX + 2*(1-ease)*ease*mx + ease*ease*endX;
+      const y = (1-ease)*(1-ease)*startY + 2*(1-ease)*ease*my + ease*ease*endY;
+      fly.style.left = x + 'px';
+      fly.style.top = y + 'px';
+      fly.style.transform = `scale(${1 - ease * 0.75})`;
+      fly.style.opacity = t > 0.75 ? (1 - (t - 0.75) / 0.25) : 1;
+      if (t < 1) { requestAnimationFrame(step); }
+      else {
+        fly.remove();
+        fab.style.transform = 'scale(1.3)';
+        setTimeout(() => { fab.style.transform = ''; }, 200);
+      }
+    }
+    requestAnimationFrame(step);
+  })();
+
+  // ── HITO $250.000 ──
+  const newTotal = cartMay.reduce((a, i) => a + i.l1 * i.c, 0);
+  if (prevTotal < MIN_COMPRA_MAYORISTA && newTotal >= MIN_COMPRA_MAYORISTA) {
+    _triggerMayMinimoToast();
+  }
 }
 window.addToCartMay = addToCartMay;
+
+function _triggerMayMinimoToast() {
+  var toast = document.getElementById('mayMinimoToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'mayMinimoToast';
+    toast.className = 'may-toast';
+    toast.innerHTML =
+      '<div style="font-size:40px;margin-bottom:6px">🎉</div>' +
+      '<div class="may-toast-title" style="font-size:18px;letter-spacing:1px">¡MÍNIMO<br>ALCANZADO!</div>' +
+      '<div style="margin-top:10px;font-size:13px;color:var(--muted-fg);line-height:1.5">Superaste los <strong>$250.000</strong><br>Ya podés enviar tu pedido mayorista 📦</div>';
+    document.body.appendChild(toast);
+  }
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+  setTimeout(function() {
+    toast.classList.add('hide');
+    setTimeout(function() { toast.classList.remove('show','hide'); }, 400);
+  }, 4000);
+
+  // Confetti desde el centro
+  if (!_confCanvas) {
+    _confCanvas = document.createElement('canvas');
+    _confCanvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998';
+    document.body.appendChild(_confCanvas);
+  }
+  _confCanvas.width = window.innerWidth;
+  _confCanvas.height = window.innerHeight;
+  var ctx = _confCanvas.getContext('2d');
+  ctx.clearRect(0, 0, _confCanvas.width, _confCanvas.height);
+  setTimeout(function() {
+    var pieces = [];
+    var cx = window.innerWidth / 2;
+    var cy = window.innerHeight * 0.38;
+    for (var i = 0; i < 180; i++) {
+      var angle = (Math.random() * 300 - 240) * (Math.PI / 180);
+      var speed = 4 + Math.random() * 8;
+      pieces.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        w: 6 + Math.random() * 9, h: 5 + Math.random() * 7,
+        rot: Math.random() * 360, drot: (Math.random() - 0.5) * 14,
+        color: _CONF_COLORS[Math.floor(Math.random() * _CONF_COLORS.length)],
+        alpha: 1, round: Math.random() > 0.4, delay: Math.floor(Math.random() * 10)
+      });
+    }
+    var frame = 0;
+    function tick() {
+      ctx.clearRect(0, 0, _confCanvas.width, _confCanvas.height);
+      var alive = false;
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i];
+        if (frame < p.delay) continue;
+        p.x += p.vx; p.y += p.vy; p.vy += 0.14; p.vx *= 0.99; p.rot += p.drot;
+        if (frame > 55) p.alpha = Math.max(0, p.alpha - 0.016);
+        if (p.alpha <= 0) continue;
+        alive = true;
+        ctx.save(); ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        if (p.round) { ctx.beginPath(); ctx.ellipse(0,0,p.w/2,p.h/2,0,0,Math.PI*2); ctx.fill(); }
+        else { ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); }
+        ctx.restore();
+      }
+      frame++;
+      if (alive || frame < 25) requestAnimationFrame(tick);
+      else ctx.clearRect(0, 0, _confCanvas.width, _confCanvas.height);
+    }
+    requestAnimationFrame(tick);
+  }, 100);
+}
 
 function delFromCartMay(pid) {
   cartMay = cartMay.filter(i => i.pid !== pid);
