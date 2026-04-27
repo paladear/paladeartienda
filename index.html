@@ -28,11 +28,11 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── HEADER ── */
 .header{background:var(--azul);position:sticky;top:0;z-index:300;box-shadow:0 3px 16px rgba(0,0,0,.2)}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:10px 20px;gap:16px;overflow:visible;position:relative}
-@media(max-width:767px){.header-inner{padding:6px 10px;gap:10px}.logo-wrap{position:static;transform:none}}
-.logo-wrap{flex-shrink:0;position:absolute;left:50%;transform:translateX(-50%)}
-.logo{width:280px;height:auto;border-radius:0;object-fit:contain;background:transparent;padding:0;box-shadow:none}
-@media(max-width:767px){.logo{width:150px;height:auto;border-radius:0}}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:10px 20px;gap:16px;overflow:visible}
+@media(max-width:767px){.header-inner{padding:6px 10px;gap:6px}.logo-wrap{flex:1;justify-content:flex-start}}
+.logo-wrap{flex:1;display:flex;justify-content:center;align-items:center}
+.logo{width:auto;height:78px;border-radius:0;object-fit:contain;background:transparent;padding:0;box-shadow:none}
+@media(max-width:767px){.logo{width:auto;height:50px;border-radius:0}}
 .social-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s;border:1.5px solid rgba(255,255,255,.3)}
 @media(max-width:767px){.social-btn{width:34px;height:34px}.social-btn svg{width:17px;height:17px}.social-btns{gap:4px}}
@@ -40,7 +40,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .social-btn:hover{background:rgba(255,255,255,.32);transform:scale(1.08)}
 .social-btn svg{width:20px;height:20px;fill:#fff}
 /* ── HEADER DROPDOWNS ── */
-.header-dropdowns{display:flex;gap:7px;flex:1;justify-content:flex-end;flex-wrap:nowrap;align-items:center;min-width:0;overflow:visible}
+.header-dropdowns{display:flex;gap:7px;flex-shrink:0;justify-content:flex-end;flex-wrap:nowrap;align-items:center;min-width:0;overflow:visible}
 .hdrop{position:relative;flex-shrink:0}
 .hdrop-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);transition:all .2s;font-family:inherit;white-space:nowrap;line-height:1.2;background:rgba(255,255,255,.25);color:#fff}
 .hdrop-btn:hover{background:rgba(255,255,255,.42)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
