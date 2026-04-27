@@ -1054,7 +1054,18 @@ function renderCarruseles(){
   const isMobile=window.innerWidth<768;
   let htmlDesktop='',htmlMobile='';
 
-  CATS.forEach((cat,i)=>{
+  // Ordenar carruseles: categorías de dietética primero, el resto alfabético
+  const DIETETICA_IDS=['frutos','semillas','deshidratados','cereales','granos','harinas','sintacc','infusiones'];
+  const catsCarousel=[...CATS].sort((a,b)=>{
+    const ia=DIETETICA_IDS.indexOf(a.id);
+    const ib=DIETETICA_IDS.indexOf(b.id);
+    if(ia!==-1&&ib!==-1)return ia-ib;
+    if(ia!==-1)return -1;
+    if(ib!==-1)return 1;
+    return a.n.localeCompare(b.n,'es');
+  });
+
+  catsCarousel.forEach((cat,i)=>{
     const prods=PRODS.filter(p=>p[1]===cat.id);
     if(!prods.length)return;
     const cid='car'+i;
@@ -1111,10 +1122,11 @@ function rotarCarruseles(){
 
 /* ── RENDER CATEGORÍAS ── */
 function renderCatsUI(){
+  const sortedCats=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
   const mg=document.getElementById('catsMobileGrid');
-  mg.innerHTML=CATS.map((c,i)=>`<button class="cat-mobile-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+  mg.innerHTML=sortedCats.map((c,i)=>`<button class="cat-mobile-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
   const sl=document.getElementById('catsSidebarList');
-  sl.innerHTML=CATS.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+  sl.innerHTML=sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
 }
 
 /* ── SELECCIONAR CATEGORÍA ── */
