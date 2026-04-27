@@ -31,6 +31,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:6px 24px;gap:18px;overflow:visible;min-height:104px;position:relative}
 @media(max-width:767px){.header-inner{padding:3px 10px;gap:6px}.logo-wrap{flex:0;justify-content:flex-start}}
 .logo-wrap{position:absolute;left:50%;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;z-index:1;pointer-events:auto}
+@media(min-width:768px){.logo-wrap{position:relative;left:auto;transform:none;order:0;flex-shrink:0}}
 .logo{width:auto;height:92px;border-radius:50%;object-fit:contain;background:#fff;padding:3px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
 @media(max-width:767px){.logo{width:auto;height:70px;border-radius:50%;padding:2px}}
 @media(max-width:767px){.logo-wrap{position:relative;left:auto;transform:none}}
@@ -439,12 +440,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .bdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s}
 .bdot.active{background:var(--azul)}
 /* Granola banner colors */
-.granola-banner{background:linear-gradient(135deg,#7a4f2a 0%,#b87040 100%);border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(120,80,40,.35);flex-wrap:wrap}
-.granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(120,80,40,.45)}
+.granola-banner{background:#8faf9b;border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(80,130,100,.35);flex-wrap:wrap}
+.granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,130,100,.45)}
 .granola-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .granola-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
-.granola-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
-.granola-banner-btn:hover{background:#f5e8d8}
+.granola-banner-btn{background:#fff;color:#4a7a60;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
+.granola-banner-btn:hover{background:#dff0e8}
 @media(max-width:480px){
   .mix-banner svg,.granola-banner svg{width:44px;height:44px}
   .mix-banner-text h3,.granola-banner-text h3{font-size:17px}
@@ -529,13 +530,13 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .may-cone-right.shake svg{animation:shakeR .7s ease-out}
 
 /* ── MIX BANNER ── */
-.mix-banner{background:#8faf9b;border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(80,130,100,.35);flex-wrap:wrap}
+.mix-banner{background:linear-gradient(135deg,#7a4f2a 0%,#b87040 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(120,80,40,.35);flex-wrap:wrap}
 @media(max-width:480px){.mix-banner{padding:16px}.mix-banner svg{width:44px;height:44px}.mix-banner-text h3{font-size:17px}.mix-banner-btn{width:100%;text-align:center}}
-.mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,130,100,.45)}
+.mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(120,80,40,.45)}
 .mix-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .mix-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
-.mix-banner-btn{background:#fff;color:#4a7a60;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
-.mix-banner-btn:hover{background:#dff0e8}
+.mix-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
+.mix-banner-btn:hover{background:#f5e8d8}
 /* ── MIX MODAL ── */
 .mix-modal{position:fixed;inset:0;z-index:800;display:flex;flex-direction:column}
 .mix-modal.hidden{display:none}
