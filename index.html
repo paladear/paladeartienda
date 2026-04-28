@@ -1759,7 +1759,11 @@ function _parseCSV(csv){
 function _driveToImg(raw){
   if(!raw)return '';
   const m=raw.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
-  return m?'https://lh3.googleusercontent.com/d/'+m[1]:raw;
+  // Se agrega la fecha del día para que el navegador no use imagen
+  // guardada en caché cuando se cambia la foto en el Sheet
+  const hoy=new Date();
+  const bust=hoy.getFullYear()+''+('0'+(hoy.getMonth()+1)).slice(-2)+''+('0'+hoy.getDate()).slice(-2);
+  return m?'https://lh3.googleusercontent.com/d/'+m[1]+'?v='+bust:raw;
 }
 
 // Parsea "250g/500g/1kg" o "1 unidad" y devuelve array de claves de opciones válidas
