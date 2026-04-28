@@ -1725,11 +1725,35 @@ function sendChat(){
 const INFO_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub?gid=1603230501&single=true&output=csv';
 
 function _parseCSV(csv){
-  return csv.trim().split(/\r?\n/).map(l=>{
+  const rows=[];
+  const lines=csv.trim().split(/\r?\n/);
+  let i=0;
+  while(i<lines.length){
+    // una celda puede tener saltos de línea si está entre comillas, así que
+    // acumulamos líneas hasta cerrar todas las comillas abiertas
+    let raw=lines[i++];
+    let quoteCount=(raw.match(/"/g)||[]).length;
+    while(quoteCount%2!==0&&i<lines.length){
+      raw+='\n'+lines[i++];
+      quoteCount=(raw.match(/"/g)||[]).length;
+    }
+    // parsear la fila acumulada caracter a caracter
     const cols=[];let cur='',inQ=false;
-    for(let i=0;i<l.length;i++){if(l[i]==='"'){inQ=!inQ;}else if(l[i]===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=l[i];}
-    cols.push(cur.trim());return cols;
-  });
+    for(let j=0;j<raw.length;j++){
+      const ch=raw[j];
+      if(ch==='"'){
+        if(inQ&&raw[j+1]==='"'){cur+='"';j++;}  // comilla escapada ""
+        else inQ=!inQ;
+      } else if(ch===','&&!inQ){
+        cols.push(cur.trim());cur='';
+      } else {
+        cur+=ch;
+      }
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
 }
 
 function _driveToImg(raw){
