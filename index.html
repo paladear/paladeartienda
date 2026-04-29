@@ -10,9 +10,9 @@ layout: null
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Paladear - Mercado de Sabores</title>
-<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Pacifico&family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
 :root{--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--azul-mid:#6d90aa;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted:#e3e8ed;--muted-fg:#444;--destructive:#e8633a;--whatsapp:#25d366}
 html,body{overflow-x:hidden;max-width:100%}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
@@ -21,9 +21,9 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);mi
 #loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease}
 #loadingOverlay.hidden{opacity:0;pointer-events:none}
 .spinner{width:64px;height:64px;border:5px solid var(--azul-light);border-top-color:var(--azul);border-radius:50%;animation:spin 1s linear infinite}
-.loading-text{font-family:'Fraunces',serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px}
+.loading-text{font-family:'Montserrat',sans-serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-h1,h2,h3,h4{font-family:'Playfair Display',serif}
+h1,h2,h3,h4{font-family:'Montserrat',sans-serif}
 button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── HEADER ── */
@@ -84,7 +84,7 @@ button{cursor:pointer;border:none;font-family:inherit}
   }
 }
 .hdrop.open .hdrop-panel{display:block}
-.hdrop-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--azul-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
+.hdrop-title{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--azul-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
 .hdrop-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;font-size:13px;color:var(--fg);line-height:1.45}
 .hdrop-row .ic{font-size:15px;flex-shrink:0;margin-top:1px}
 .hdrop-row strong{color:var(--azul-dark);display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px}
@@ -103,46 +103,45 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(max-width:767px){#cart-fab{bottom:88px;right:18px;width:52px;height:52px;font-size:24px}#chat-fab{right:18px}}
 .cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:24px;height:24px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
 /* ── BANNER ENVÍOS ── */
-.envios-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:14px;overflow:hidden;position:relative}
-.envios-banner-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
-@media(max-width:480px){.envios-banner-text{font-size:12px}}
-.truck-scene{width:90px;height:36px;position:relative;overflow:hidden;flex-shrink:0}
-.truck-svg{position:absolute;animation:truckDrive 2.2s linear infinite}
-@keyframes truckDrive{
-  0%{left:-60px;opacity:0}
-  10%{opacity:1}
-  80%{opacity:1}
-  100%{left:100px;opacity:0}
+.envios-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);color:#fff;padding:0;overflow:hidden;position:relative;height:54px}
+.envios-convoy{position:absolute;top:50%;left:0;display:flex;align-items:center;gap:22px;white-space:nowrap;animation:convoyDrive 14s linear infinite;will-change:transform}
+@keyframes convoyDrive{
+  0%{transform:translate(-440px,-50%)}
+  100%{transform:translate(calc(100vw + 40px),-50%)}
 }
-.road-line{position:absolute;bottom:2px;width:100%;height:2px;background:rgba(255,255,255,.25);border-radius:2px}
-.road-dashes{position:absolute;bottom:5px;width:200%;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.5) 12px,transparent 12px,transparent 24px);animation:roadMove 0.7s linear infinite}
-@keyframes roadMove{from{transform:translateX(0)}to{transform:translateX(-24px)}}
+.envios-msg{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+@media(max-width:480px){.envios-msg{font-size:12.5px;letter-spacing:.3px}}
+.envios-truck-anim{filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));flex-shrink:0}
+.truck-wheel{transform-origin:center;animation:wheelSpin 0.8s linear infinite}
+@keyframes wheelSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.truck-bounce{animation:truckBounce 0.9s ease-in-out infinite}
+@keyframes truckBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
 
 /* ── MOBILE TICKER DE CATEGORÍAS ── */
 .cats-ticker-wrapper{position:relative;margin:0 -20px 8px;overflow:hidden}
 .cats-ticker-btn{flex-shrink:0;border-radius:999px;padding:9px 16px;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-.cats-ticker-btn .nm{font-family:'Fraunces',serif;font-size:15px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
-.cats-ticker-track{display:flex;gap:8px;width:max-content;animation:tickerScroll 28s linear infinite;padding:4px 12px 10px;cursor:grab}
-.cats-ticker-track:active{cursor:grabbing}
+.cats-ticker-btn .nm{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
+.cats-ticker-track{display:flex;gap:8px;width:max-content;animation:tickerScroll 70s linear infinite;padding:4px 12px 10px;will-change:transform}
 .cats-ticker-track.paused{animation-play-state:paused}
+.cats-ticker-track.dragging{animation:none!important;transition:none}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @media(min-width:768px){.cats-ticker-wrapper{display:none}.cats-mobile-catbtn-row{display:none}}
 
-/* ── MOBILE: botón "Categorías >" y modal ── */
-.cats-mobile-catbtn-row{display:flex;justify-content:flex-end;margin-bottom:6px}
+/* ── MOBILE: botón "Categorías" a la izquierda y modal ── */
+.cats-mobile-catbtn-row{display:flex;justify-content:flex-start;margin-bottom:6px}
 @media(min-width:768px){.cats-mobile-catbtn-row{display:none}}
 .cats-toggle-btn{background:var(--azul);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 2px 10px rgba(84,118,146,.4)}
 .cats-toggle-btn:hover{background:var(--azul-dark)}
 .cats-dropdown-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);animation:fadeIn .18s ease;display:none}
 .cats-dropdown-overlay.open{display:block}
-.cats-dropdown-panel{position:fixed;bottom:0;left:0;right:0;z-index:501;background:var(--card);border-radius:20px 20px 0 0;padding:20px 18px 32px;max-height:72vh;overflow-y:auto;animation:slideUp .22s ease;box-shadow:0 -6px 30px rgba(0,0,0,.2)}
+.cats-dropdown-panel{position:fixed;bottom:0;left:0;right:0;z-index:501;background:var(--card);border-radius:20px 20px 0 0;padding:20px 18px 28px;max-height:78vh;overflow-y:auto;animation:slideUp .22s ease;box-shadow:0 -6px 30px rgba(0,0,0,.2)}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.cats-dropdown-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.cats-dropdown-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .cats-dropdown-close{background:var(--muted);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--fg);flex-shrink:0}
-.cats-dropdown-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.cats-dd-btn{border-radius:12px;padding:12px 14px;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;font-family:inherit}
-.cats-dd-btn .nm{font-family:'Fraunces',serif;font-size:14px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1.2}
-.cats-dd-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.cats-dropdown-list{display:flex;flex-direction:column;gap:7px}
+.cats-dd-btn{height:44px;border-radius:10px;padding:0 14px;border:2.5px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,.13);display:flex;align-items:center;justify-content:flex-start;cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
+.cats-dd-btn .nm{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.4px;text-align:left}
+.cats-dd-btn:hover{filter:brightness(1.12);transform:translateX(3px)}
 
 .banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.92)}
 .banner b{color:#fff}
@@ -155,8 +154,8 @@ button{cursor:pointer;border:none;font-family:inherit}
 
 /* ── CARRUSEL (mobile) / GRILLA (desktop) ── */
 .carousel-section{margin-bottom:28px}
-.carousel-title{font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Playfair Display",serif}
-.carousel-title-btn{background:none;border:none;padding:0;font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Playfair Display",serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s,transform .15s;text-align:left}
+.carousel-title{font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Montserrat",sans-serif}
+.carousel-title-btn{background:none;border:none;padding:0;font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Montserrat",sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s,transform .15s;text-align:left}
 .carousel-title-btn:hover{color:var(--azul);transform:translateX(3px)}
 .carousel-wrap{position:relative}
 .carousel-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 4px 10px;-webkit-overflow-scrolling:touch}
@@ -183,7 +182,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cat-mobile-btn{flex-shrink:0;border-radius:999px;padding:10px 18px;text-align:center;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:all .2s;display:flex;align-items:center;justify-content:center;scroll-snap-align:start}
 .cat-mobile-btn:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.22)}
 .cat-mobile-btn.active{border-color:#fff!important;box-shadow:0 0 0 3px rgba(255,255,255,.5),0 4px 12px rgba(0,0,0,.25)!important}
-.cat-mobile-btn .nm{font-family:'Fraunces',serif;font-size:16px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
+.cat-mobile-btn .nm{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
 .mobile-prods-area{display:block}
 @media(min-width:768px){.mobile-prods-area{display:none}}
 
@@ -192,7 +191,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 @media(min-width:768px){
   .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
   .cats-sidebar{position:sticky;top:120px;padding-right:4px}
-  .cats-sidebar h1{font-size:21px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;font-family:"Playfair Display",serif}
+  .cats-sidebar h1{font-size:21px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;font-family:"Montserrat",sans-serif}
 }
 .cats-sidebar{display:none}
 @media(min-width:768px){.cats-sidebar{display:block}}
@@ -200,7 +199,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cat-list-btn{width:100%;border-radius:10px;padding:12px 16px;text-align:left;border:2.5px solid transparent;transition:all .2s;display:flex;align-items:center;gap:10px;margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .cat-list-btn:hover{filter:brightness(1.1);transform:translateX(3px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
 .cat-list-btn.active{border-color:#fff!important;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 3px 12px rgba(0,0,0,.2)!important}
-.cat-list-btn .nm{font-family:'Fraunces',serif;font-size:18px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:.3px}
+.cat-list-btn .nm{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:.3px}
 
 /* ── PRODUCTOS ── */
 .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
@@ -230,7 +229,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .info-modal-close:hover{background:var(--azul);color:#fff}
 .info-modal-img{width:100%;height:180px;background:#f8fafb;border-radius:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .info-modal-img img{max-width:100%;max-height:100%;object-fit:contain}
-.info-modal-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;padding-right:30px}
+.info-modal-title{font-family:'Montserrat',sans-serif;font-size:22px;color:var(--azul-dark);margin-bottom:12px;font-weight:700;padding-right:30px}
 .info-modal-text{font-size:15px;line-height:1.5;color:var(--fg)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .pcard-brand{font-size:13px;color:var(--muted-fg);margin-bottom:8px}
@@ -398,7 +397,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 @media(max-width:767px){.desktop-only{display:none!important}.mobile-only{display:flex!important}}
 /* ── BRAND TEXT EN HEADER ── */
 .header-brand{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;padding:0 8px;flex:1}
-.header-brand-name{font-family:'Kaushan Script',cursive;font-size:48px;color:#fff;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.3);letter-spacing:-1px}
+.header-brand-name{font-family:'Montserrat',sans-serif;font-size:48px;color:#fff;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.3);letter-spacing:-1px}
 .header-brand-tagline{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.88);font-weight:500;letter-spacing:4px;text-transform:uppercase;margin-top:2px}
 @media(max-width:767px){
   .header-brand{padding:0 6px}
@@ -435,7 +434,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-banner{background:linear-gradient(135deg,#7a4f1e 0%,#b07030 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(160,100,30,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(160,100,30,.45)}
 @media(max-width:480px){.granola-banner{padding:16px}.granola-banner svg{width:44px;height:44px}.granola-banner-text h3{font-size:17px}.granola-banner-btn{width:100%;text-align:center}}
-.granola-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.granola-banner-text h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .granola-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .granola-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .granola-banner-btn:hover{background:#f5e8d8}
@@ -446,7 +445,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:820px;max-height:92vh;background:var(--card);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.granola-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .granola-modal-header{background:#b07030;color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.granola-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700}
 .granola-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -486,7 +485,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* Granola banner colors */
 .granola-banner{background:#8faf9b;border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(80,130,100,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,130,100,.45)}
-.granola-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.granola-banner-text h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .granola-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .granola-banner-btn{background:#fff;color:#4a7a60;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .granola-banner-btn:hover{background:#dff0e8}
@@ -502,7 +501,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:860px;max-height:92vh;background:var(--card);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.granola-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .granola-modal-header{background:linear-gradient(135deg,#7a4f2a,#b87040);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.granola-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700}
 .granola-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -562,7 +561,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 .may-cone{width:54px;height:54px;flex-shrink:0;overflow:visible;position:relative;z-index:1}
 .may-cone svg{overflow:visible;width:54px;height:54px}
-.may-toast-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center;position:relative;z-index:2}
+.may-toast-title{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;color:var(--azul-dark);line-height:1.2;text-transform:uppercase;letter-spacing:1.5px;flex:1;padding:0 4px;text-align:center;position:relative;z-index:2}
 .may-toast-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .may-cone-left{margin-left:-8px}
 .may-cone-right{margin-right:-8px}
@@ -577,7 +576,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-banner{background:linear-gradient(135deg,#7a4f2a 0%,#b87040 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(120,80,40,.35);flex-wrap:wrap}
 @media(max-width:480px){.mix-banner{padding:16px}.mix-banner svg{width:44px;height:44px}.mix-banner-text h3{font-size:17px}.mix-banner-btn{width:100%;text-align:center}}
 .mix-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(120,80,40,.45)}
-.mix-banner-text h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.mix-banner-text h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
 .mix-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
 .mix-banner-btn{background:#fff;color:#7a4f2a;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
 .mix-banner-btn:hover{background:#f5e8d8}
@@ -588,7 +587,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:820px;max-height:92vh;background:var(--card);border-radius:18px 18px 18px 18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.mix-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
 .mix-modal-header{background:var(--azul);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.mix-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700}
 .mix-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
 .mix-modal-close:hover{background:rgba(255,255,255,.35)}
 .mix-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
@@ -654,7 +653,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mayorista-banner-promo{background:linear-gradient(135deg,var(--azul-dark),var(--azul));color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(58,99,112,.35);transition:all .2s}
 .mayorista-banner-promo:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(58,99,112,.45)}
 .mayorista-banner-promo .may-promo-icon{font-size:32px;flex-shrink:0}
-.mayorista-banner-promo .may-promo-text h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:4px}
+.mayorista-banner-promo .may-promo-text h3{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
 .mayorista-banner-promo .may-promo-text p{font-size:13px;opacity:.9}
 .may-nav-btn{background:var(--azul);color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
@@ -735,41 +734,79 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 <!-- ── BANNER ENVÍOS ── -->
 <div class="envios-banner">
-  <div class="truck-scene">
-    <div class="road-line"></div>
-    <div class="road-dashes"></div>
-    <svg class="truck-svg" width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Caja trasera del camión -->
-      <rect x="0" y="4" width="32" height="18" rx="2" fill="rgba(255,255,255,0.9)"/>
-      <!-- Cabina -->
-      <rect x="32" y="8" width="16" height="14" rx="2" fill="rgba(255,255,255,0.75)"/>
-      <!-- Ventana cabina -->
-      <rect x="34" y="10" width="8" height="6" rx="1" fill="#cfdce8"/>
-      <!-- Ruedas -->
-      <circle cx="10" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
-      <circle cx="10" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
-      <circle cx="38" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
-      <circle cx="38" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
-      <!-- Líneas caja para dar volumen -->
-      <line x1="10" y1="4" x2="10" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
-      <line x1="20" y1="4" x2="20" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
-    </svg>
-  </div>
-  <div class="envios-banner-text">🚚 Hacemos envíos a todo el país</div>
-  <div class="truck-scene" style="transform:scaleX(-1)">
-    <div class="road-line"></div>
-    <div class="road-dashes"></div>
-    <svg class="truck-svg" width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation-delay:.8s">
-      <rect x="0" y="4" width="32" height="18" rx="2" fill="rgba(255,255,255,0.9)"/>
-      <rect x="32" y="8" width="16" height="14" rx="2" fill="rgba(255,255,255,0.75)"/>
-      <rect x="34" y="10" width="8" height="6" rx="1" fill="#cfdce8"/>
-      <circle cx="10" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
-      <circle cx="10" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
-      <circle cx="38" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
-      <circle cx="38" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
-      <line x1="10" y1="4" x2="10" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
-      <line x1="20" y1="4" x2="20" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
-    </svg>
+  <div class="envios-convoy">
+    <span class="envios-msg">Hacemos envíos a todo el país</span>
+    <div class="envios-truck-anim truck-bounce">
+      <svg width="86" height="44" viewBox="0 0 95 56" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+        <!-- Sombra debajo -->
+        <ellipse cx="48" cy="52.5" rx="42" ry="2.5" fill="rgba(0,0,0,0.22)"/>
+
+        <!-- CAJA TRASERA (verde) -->
+        <rect x="3" y="14" width="58" height="32" rx="2" fill="#8faf9b" stroke="#2d5040" stroke-width="1.5"/>
+        <!-- Banda superior más oscura -->
+        <rect x="3.75" y="14.75" width="56.5" height="5.5" fill="#6f9080"/>
+        <line x1="3" y1="20.25" x2="61" y2="20.25" stroke="#2d5040" stroke-width="0.7" opacity="0.85"/>
+        <!-- Divisiones verticales (paneles) -->
+        <line x1="22" y1="20.25" x2="22" y2="46" stroke="#2d5040" stroke-width="0.8" opacity="0.55"/>
+        <line x1="42" y1="20.25" x2="42" y2="46" stroke="#2d5040" stroke-width="0.8" opacity="0.55"/>
+        <!-- Manija puerta trasera -->
+        <rect x="55" y="28" width="2.2" height="6.5" rx="0.7" fill="#2d5040"/>
+        <!-- Texto PALADEAR (blanco directo, sin caja) -->
+        <text x="32" y="36" font-family="Montserrat,sans-serif" font-size="8" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">PALADEAR</text>
+
+        <!-- CABINA (marrón, más estrecha) -->
+        <path d="M61,22 L61,46 L85,46 L85,30 L78,22 Z" fill="#b07030" stroke="#4a2d11" stroke-width="1.5"/>
+        <!-- Techo más oscuro -->
+        <path d="M61,22 L78,22 L85,30 L85,33 L61,33 Z" fill="#7a4f1e"/>
+        <!-- Línea sutil bajo el techo -->
+        <line x1="61" y1="33" x2="85" y2="33" stroke="#4a2d11" stroke-width="0.5" opacity="0.6"/>
+        <!-- Parabrisas -->
+        <path d="M64,25 L76,25 L82,31 L64,31 Z" fill="#cfdce8" stroke="#3d5a72" stroke-width="1"/>
+        <!-- Reflejo ventana -->
+        <path d="M66,26 L70,26 L68,30 L65,30 Z" fill="rgba(255,255,255,0.6)"/>
+        <!-- Línea de la puerta -->
+        <line x1="70" y1="33" x2="70" y2="46" stroke="#4a2d11" stroke-width="1"/>
+        <!-- Manija puerta -->
+        <circle cx="67.5" cy="40" r="1" fill="#4a2d11"/>
+        <!-- Espejo retrovisor -->
+        <rect x="76" y="23" width="2.5" height="3.5" rx="0.5" fill="#4a2d11"/>
+        <!-- Guardabarros delantero -->
+        <path d="M72,42 Q78,37 84,42 L84,46 L72,46 Z" fill="#4a2d11"/>
+        <!-- Faro -->
+        <circle cx="83.2" cy="36" r="1.6" fill="#ffe680" stroke="#9a7510" stroke-width="0.6"/>
+        <circle cx="83.2" cy="36" r="0.6" fill="#fff8c0"/>
+        <!-- Escape con humito -->
+        <rect x="79.5" y="20" width="2.5" height="6" rx="1" fill="#4a2d11"/>
+        <ellipse cx="80.7" cy="19" rx="2.2" ry="1.5" fill="rgba(255,255,255,0.5)"/>
+        <ellipse cx="81.5" cy="16" rx="1.8" ry="1.2" fill="rgba(255,255,255,0.3)"/>
+        <ellipse cx="82.2" cy="13.5" rx="1.4" ry="1" fill="rgba(255,255,255,0.18)"/>
+        <!-- Parachoques delantero -->
+        <rect x="84" y="40" width="3" height="6" rx="1" fill="#2a1a0a"/>
+
+        <!-- RUEDAS (3) -->
+        <g class="truck-wheel" style="transform-origin:18px 46px">
+          <circle cx="18" cy="46" r="6" fill="#1a1a1a" stroke="#000" stroke-width="0.5"/>
+          <circle cx="18" cy="46" r="3.4" fill="#5a5a5a"/>
+          <circle cx="18" cy="46" r="1.4" fill="#0a0a0a"/>
+          <rect x="17.4" y="40.5" width="1.2" height="11" fill="#888"/>
+          <rect x="12.5" y="45.4" width="11" height="1.2" fill="#888"/>
+        </g>
+        <g class="truck-wheel" style="transform-origin:46px 46px">
+          <circle cx="46" cy="46" r="6" fill="#1a1a1a" stroke="#000" stroke-width="0.5"/>
+          <circle cx="46" cy="46" r="3.4" fill="#5a5a5a"/>
+          <circle cx="46" cy="46" r="1.4" fill="#0a0a0a"/>
+          <rect x="45.4" y="40.5" width="1.2" height="11" fill="#888"/>
+          <rect x="40.5" y="45.4" width="11" height="1.2" fill="#888"/>
+        </g>
+        <g class="truck-wheel" style="transform-origin:78px 46px">
+          <circle cx="78" cy="46" r="6" fill="#1a1a1a" stroke="#000" stroke-width="0.5"/>
+          <circle cx="78" cy="46" r="3.4" fill="#5a5a5a"/>
+          <circle cx="78" cy="46" r="1.4" fill="#0a0a0a"/>
+          <rect x="77.4" y="40.5" width="1.2" height="11" fill="#888"/>
+          <rect x="72.5" y="45.4" width="11" height="1.2" fill="#888"/>
+        </g>
+      </svg>
+    </div>
   </div>
 </div>
 
@@ -870,7 +907,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
       Categorías
       <button class="cats-dropdown-close" onclick="toggleCatsDropdown()">×</button>
     </div>
-    <div class="cats-dropdown-grid" id="catsDropdownGrid"></div>
+    <div class="cats-dropdown-list" id="catsDropdownGrid"></div>
   </div>
   <!-- MÓVIL: productos -->
   <div class="mobile-prods-area hidden" id="mobileProdsArea"></div>
@@ -3484,35 +3521,70 @@ function _initTickerTouch(){
   _tickerTouchInit=true;
   const track=document.getElementById('catsTickerTrack');
   if(!track)return;
-  let touchStartX=0,isDragging=false,dragOffset=0,animOffset=0;
-  // Pause on touch start
+
+  let touchStartX=0, currentX=0, isDragging=false, startedFromAnim=false;
+  let resumeTimer=null;
+
+  function getAnimatedX(){
+    const m=getComputedStyle(track).transform;
+    if(!m||m==='none')return 0;
+    const match=m.match(/matrix.*\((.+)\)/);
+    if(!match)return 0;
+    return parseFloat(match[1].split(',')[4])||0;
+  }
+
+  // Wrap value within [-halfW, 0] so loop stays seamless
+  function wrap(x){
+    const halfW=track.scrollWidth/2;
+    if(halfW<=0)return x;
+    while(x>0)x-=halfW;
+    while(x<-halfW)x+=halfW;
+    return x;
+  }
+
   track.addEventListener('touchstart',e=>{
-    track.classList.add('paused');
+    if(resumeTimer){clearTimeout(resumeTimer);resumeTimer=null;}
+    // Capture current animated position
+    currentX=getAnimatedX();
+    // Stop animation and lock to current position via inline transform
+    track.classList.add('dragging');
+    track.style.transform=`translateX(${currentX}px)`;
     touchStartX=e.touches[0].clientX;
     isDragging=true;
-    // get current translateX
-    const st=getComputedStyle(track).transform;
-    if(st&&st!=='none'){const m=st.match(/matrix.*\((.+)\)/);if(m){const vals=m[1].split(',');animOffset=parseFloat(vals[4])||0;}}
   },{passive:true});
+
   track.addEventListener('touchmove',e=>{
     if(!isDragging)return;
     const dx=e.touches[0].clientX-touchStartX;
-    dragOffset=dx;
-    track.style.transform=`translateX(${animOffset+dragOffset}px)`;
+    const newX=wrap(currentX+dx);
+    track.style.transform=`translateX(${newX}px)`;
   },{passive:true});
-  track.addEventListener('touchend',()=>{
+
+  function endDrag(){
+    if(!isDragging)return;
     isDragging=false;
-    animOffset+=dragOffset;dragOffset=0;
-    // Snap back into range
-    const halfW=track.scrollWidth/2;
-    if(animOffset>0)animOffset=-halfW+animOffset;
-    if(animOffset<-halfW)animOffset=animOffset+halfW;
-    track.style.transform=`translateX(${animOffset}px)`;
-    setTimeout(()=>{
+    // Save final position
+    const finalX=getAnimatedX();
+    const wrapped=wrap(finalX);
+    // Apply wrapped position then resume animation from there
+    track.style.transform=`translateX(${wrapped}px)`;
+    // Resume animation after a short pause so user can read
+    resumeTimer=setTimeout(()=>{
+      const halfW=track.scrollWidth/2;
+      // Calculate progress (0 → -halfW maps to 0% → 100%)
+      const progress=halfW>0?(-wrapped/halfW):0;
+      // Restart animation with negative delay to continue from current position
       track.style.transform='';
-      track.classList.remove('paused');
-    },600);
-  });
+      track.style.animation='none';
+      void track.offsetWidth; // force reflow
+      track.style.animation=`tickerScroll 70s linear infinite`;
+      track.style.animationDelay=`${-progress*70}s`;
+      track.classList.remove('dragging');
+    },800);
+  }
+
+  track.addEventListener('touchend',endDrag);
+  track.addEventListener('touchcancel',endDrag);
 }
 
 // ── CATS DROPDOWN (mobile) ──
