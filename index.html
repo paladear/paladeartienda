@@ -186,10 +186,11 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cats-sidebar{display:none}
 @media(min-width:768px){.cats-sidebar{display:block}}
 @media(max-width:767px){#mayDesktopProdsArea{display:none!important}}
+@media(max-width:767px){#desktopProdsArea{display:none!important}}
 .cat-list-btn{width:100%;border-radius:10px;padding:12px 16px;text-align:left;border:2.5px solid transparent;transition:all .2s;display:flex;align-items:center;gap:10px;margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .cat-list-btn:hover{filter:brightness(1.1);transform:translateX(3px);box-shadow:0 3px 12px rgba(0,0,0,.2)}
 .cat-list-btn.active{border-color:#fff!important;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 3px 12px rgba(0,0,0,.2)!important}
-.cat-list-btn .nm{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:.3px}
+.cat-list-btn .nm{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:.2px}
 
 /* ── PRODUCTOS ── */
 .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
@@ -1190,16 +1191,8 @@ function renderCarruseles(){
   const isMobile=window.innerWidth<768;
   let htmlDesktop='',htmlMobile='';
 
-  // Ordenar carruseles: categorías de dietética primero, el resto alfabético
-  const DIETETICA_IDS=['frutos','semillas','deshidratados','cereales','granos','harinas','sintacc','infusiones'];
-  const catsCarousel=[...CATS].sort((a,b)=>{
-    const ia=DIETETICA_IDS.indexOf(a.id);
-    const ib=DIETETICA_IDS.indexOf(b.id);
-    if(ia!==-1&&ib!==-1)return ia-ib;
-    if(ia!==-1)return -1;
-    if(ib!==-1)return 1;
-    return a.n.localeCompare(b.n,'es');
-  });
+  // Orden alfabético puro
+  const catsCarousel=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
 
   catsCarousel.forEach((cat,i)=>{
     const prods=PRODS.filter(p=>p[1]===cat.id);
@@ -2916,13 +2909,15 @@ function renderMayCarrusel() {
   }
   
   if (!activeCatIdMay) {
-    // Mostrar carrusel inicial con todos
+    // Mostrar carrusel inicial con todos los rubros en orden alfabético
     let h = '';
-    const catIds = [...new Set(PRODS_MAY.map(p => p[1]))].slice(0, 4);
-    catIds.forEach(catId => {
-      const cat = CATS_MAY.find(c => c.id === catId);
-      if (!cat) return;
-      const prods = PRODS_MAY.filter(p => p[1] === catId).slice(0, 4);
+    const catIdsAll = [...new Set(PRODS_MAY.map(p => p[1]))];
+    const catsSorted = catIdsAll
+      .map(id => CATS_MAY.find(c => c.id === id))
+      .filter(Boolean)
+      .sort((a, b) => a.n.localeCompare(b.n, 'es'));
+    catsSorted.forEach(cat => {
+      const prods = PRODS_MAY.filter(p => p[1] === cat.id).slice(0, 4);
       if (!prods.length) return;
       h += `<div class="carousel-section"><h2 class="carousel-title">${cat.n}</h2>
         <div class="carousel-wrap"><div class="carousel-track">`;
