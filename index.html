@@ -117,16 +117,6 @@ button{cursor:pointer;border:none;font-family:inherit}
 .truck-bounce{animation:truckBounce 0.9s ease-in-out infinite}
 @keyframes truckBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
 
-/* ── MOBILE TICKER DE CATEGORÍAS ── */
-.cats-ticker-wrapper{position:relative;margin:0 -20px 8px;overflow:hidden}
-.cats-ticker-btn{flex-shrink:0;border-radius:999px;padding:9px 16px;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-.cats-ticker-btn .nm{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
-.cats-ticker-track{display:flex;gap:8px;width:max-content;animation:tickerScroll 70s linear infinite;padding:4px 12px 10px;will-change:transform}
-.cats-ticker-track.paused{animation-play-state:paused}
-.cats-ticker-track.dragging{animation:none!important;transition:none}
-@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@media(min-width:768px){.cats-ticker-wrapper{display:none}.cats-mobile-catbtn-row{display:none}}
-
 /* ── MOBILE: botón "Categorías" a la izquierda y modal ── */
 .cats-mobile-catbtn-row{display:flex;justify-content:flex-start;margin-bottom:6px}
 @media(min-width:768px){.cats-mobile-catbtn-row{display:none}}
@@ -140,7 +130,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cats-dropdown-close{background:var(--muted);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--fg);flex-shrink:0}
 .cats-dropdown-list{display:flex;flex-direction:column;gap:7px}
 .cats-dd-btn{height:44px;border-radius:10px;padding:0 14px;border:2.5px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,.13);display:flex;align-items:center;justify-content:flex-start;cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
-.cats-dd-btn .nm{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.4px;text-align:left}
+.cats-dd-btn .nm{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1;letter-spacing:.2px;text-align:left}
 .cats-dd-btn:hover{filter:brightness(1.12);transform:translateX(3px)}
 
 .banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.92)}
@@ -669,6 +659,16 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
 .may-pcard .pcard-name-may{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
 .may-qty-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+
+/* ── UNIFICACIÓN BANNERS MIX & GRANOLA (al final para ganar la cascada) ── */
+.mix-banner-text,.granola-banner-text{flex:1;min-width:0}
+.mix-banner-text h3,.granola-banner-text h3{font-family:'Montserrat',sans-serif!important;font-size:20px!important;font-weight:700!important;color:#fff!important;margin:0 0 4px 0!important;line-height:1.25!important}
+.mix-banner-text p,.granola-banner-text p{font-family:'Montserrat',sans-serif!important;font-size:14px!important;font-weight:400!important;color:rgba(255,255,255,.85)!important;line-height:1.4!important;margin:0!important}
+.mix-banner-btn,.granola-banner-btn{font-family:'Montserrat',sans-serif!important;font-size:14px!important;font-weight:700!important;padding:11px 20px!important;border-radius:10px!important}
+@media(max-width:480px){
+  .mix-banner-text h3,.granola-banner-text h3{font-size:17px!important}
+  .mix-banner-text p,.granola-banner-text p{font-size:13px!important}
+}
 </style>
 
 </head>
@@ -892,15 +892,11 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     </div>
     <button class="may-nav-btn">Ver →</button>
   </div>
-  <!-- MÓVIL: botón Categorías y ticker -->
+  <!-- MÓVIL: botón Categorías -->
   <div class="cats-mobile-catbtn-row">
     <button class="cats-toggle-btn" onclick="toggleCatsDropdown()">
       ☰ Categorías <span style="font-size:10px;opacity:.8">▶</span>
     </button>
-  </div>
-  <!-- Ticker infinito de categorías (mobile) -->
-  <div class="cats-ticker-wrapper" id="catsTickerWrapper">
-    <div class="cats-ticker-track" id="catsTickerTrack"></div>
   </div>
   <!-- Overlay y panel de categorías (mobile) -->
   <div class="cats-dropdown-overlay" id="catsDropdownOverlay" onclick="toggleCatsDropdown()"></div>
@@ -1267,14 +1263,6 @@ function renderCatsUI(){
   // Desktop sidebar
   const sl=document.getElementById('catsSidebarList');
   if(sl)sl.innerHTML=sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
-
-  // Ticker mobile: duplicar para loop continuo
-  const tt=document.getElementById('catsTickerTrack');
-  if(tt){
-    const btnHtml=sortedCats.map((c,i)=>`<button class="cats-ticker-btn" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}');closeCatsDropdown()"><div class="nm">${c.n}</div></button>`).join('');
-    tt.innerHTML=btnHtml+btnHtml;
-    _initTickerTouch();
-  }
 
   // Dropdown grid mobile
   const dg=document.getElementById('catsDropdownGrid');
@@ -3515,79 +3503,6 @@ window.pedirWA=pedirWA;
 window.sendQuickFaq=sendQuickFaq;
 window.volverInicio=volverInicio;
 window.zoomImg=zoomImg;
-
-// ── TICKER TOUCH LOGIC ──
-let _tickerTouchInit=false;
-function _initTickerTouch(){
-  if(_tickerTouchInit)return;
-  _tickerTouchInit=true;
-  const track=document.getElementById('catsTickerTrack');
-  if(!track)return;
-
-  let touchStartX=0, currentX=0, isDragging=false, startedFromAnim=false;
-  let resumeTimer=null;
-
-  function getAnimatedX(){
-    const m=getComputedStyle(track).transform;
-    if(!m||m==='none')return 0;
-    const match=m.match(/matrix.*\((.+)\)/);
-    if(!match)return 0;
-    return parseFloat(match[1].split(',')[4])||0;
-  }
-
-  // Wrap value within [-halfW, 0] so loop stays seamless
-  function wrap(x){
-    const halfW=track.scrollWidth/2;
-    if(halfW<=0)return x;
-    while(x>0)x-=halfW;
-    while(x<-halfW)x+=halfW;
-    return x;
-  }
-
-  track.addEventListener('touchstart',e=>{
-    if(resumeTimer){clearTimeout(resumeTimer);resumeTimer=null;}
-    // Capture current animated position
-    currentX=getAnimatedX();
-    // Stop animation and lock to current position via inline transform
-    track.classList.add('dragging');
-    track.style.transform=`translateX(${currentX}px)`;
-    touchStartX=e.touches[0].clientX;
-    isDragging=true;
-  },{passive:true});
-
-  track.addEventListener('touchmove',e=>{
-    if(!isDragging)return;
-    const dx=e.touches[0].clientX-touchStartX;
-    const newX=wrap(currentX+dx);
-    track.style.transform=`translateX(${newX}px)`;
-  },{passive:true});
-
-  function endDrag(){
-    if(!isDragging)return;
-    isDragging=false;
-    // Save final position
-    const finalX=getAnimatedX();
-    const wrapped=wrap(finalX);
-    // Apply wrapped position then resume animation from there
-    track.style.transform=`translateX(${wrapped}px)`;
-    // Resume animation after a short pause so user can read
-    resumeTimer=setTimeout(()=>{
-      const halfW=track.scrollWidth/2;
-      // Calculate progress (0 → -halfW maps to 0% → 100%)
-      const progress=halfW>0?(-wrapped/halfW):0;
-      // Restart animation with negative delay to continue from current position
-      track.style.transform='';
-      track.style.animation='none';
-      void track.offsetWidth; // force reflow
-      track.style.animation=`tickerScroll 70s linear infinite`;
-      track.style.animationDelay=`${-progress*70}s`;
-      track.classList.remove('dragging');
-    },800);
-  }
-
-  track.addEventListener('touchend',endDrag);
-  track.addEventListener('touchcancel',endDrag);
-}
 
 // ── CATS DROPDOWN (mobile) ──
 let _catsDropOpen=false;
