@@ -470,8 +470,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .banners-track-wrap{margin-bottom:24px;overflow:hidden}
 /* Desktop: side by side */
 @media(min-width:600px){
-  .banners-track{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .banners-track{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
   .banners-dots{display:none}
+  .banner-slide{display:flex}
+  .banner-slide .mix-banner,.banner-slide .granola-banner{flex:1;margin-bottom:0;align-items:center}
 }
 /* Mobile: carousel */
 @media(max-width:599px){
@@ -1222,7 +1224,7 @@ function renderCarruseles(){
     // MOBILE: todos los productos del rubro en el track scrolleable
     const cidM='carM'+i;
     htmlMobile+=`<div class="carousel-section">
-      <div class="carousel-title">${cat.n}</div>
+      <button class="carousel-title carousel-title-btn" onclick="selectCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
       <div class="carousel-wrap">
         <div class="carousel-track" id="${cidM}">${prods.map(_cardHTML).join('')}</div>
       </div>
@@ -1317,7 +1319,7 @@ function volverInicio(){
 }
 
 function renderProdsHTML(cat,prods,prefix){
-  let h=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat.ic} ${cat.n}</h2>`;
+  let h=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat.n}</h2>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   h+='<div class="prod-grid">';
   prods.forEach(p=>{h+=renderCard(p,prefix)});
@@ -2934,7 +2936,7 @@ function renderMayCarrusel() {
       if (!cat) return;
       const prods = PRODS_MAY.filter(p => p[1] === catId).slice(0, 4);
       if (!prods.length) return;
-      h += `<div class="carousel-section"><h2 class="carousel-title">${cat.ic} ${cat.n}</h2>
+      h += `<div class="carousel-section"><h2 class="carousel-title">${cat.n}</h2>
         <div class="carousel-wrap"><div class="carousel-track">`;
       prods.forEach(p => { h += _cardHTMLMay(p); });
       h += `</div></div></div>`;
@@ -2975,7 +2977,7 @@ function selectMayCat(catId, productId) {
   const backBtn = `<button class="back-btn" onclick="volverMayInicio()">← Volver al inicio</button>`;
 
   function _buildGrid(sfx) {
-    let h = backBtn + `<h2 style="font-size:22px;color:var(--azul-dark);margin:12px 0 16px;font-weight:700">${cat ? cat.ic + ' ' + cat.n : catId}</h2>`;
+    let h = backBtn + `<h2 style="font-size:22px;color:var(--azul-dark);margin:12px 0 16px;font-weight:700">${cat ? cat.n : catId}</h2>`;
     if (!prods.length) {
       h += '<div style="text-align:center;padding:48px;color:var(--muted-fg)">No hay productos en esta categoría</div>';
     } else {
