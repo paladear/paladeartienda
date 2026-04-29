@@ -10,12 +10,12 @@ layout: null
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Paladear - Mercado de Sabores</title>
-<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Pacifico&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Pacifico&family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--azul-mid:#6d90aa;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted:#e3e8ed;--muted-fg:#444;--destructive:#e8633a;--whatsapp:#25d366}
 html,body{overflow-x:hidden;max-width:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
 
 /* ── SPINNER DE CARGA ── */
 #loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease}
@@ -102,6 +102,48 @@ button{cursor:pointer;border:none;font-family:inherit}
 #cart-fab .cart-count{position:absolute;top:-5px;right:-5px;background:var(--destructive);color:#fff;border-radius:50%;min-width:22px;height:22px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 5px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 @media(max-width:767px){#cart-fab{bottom:88px;right:18px;width:52px;height:52px;font-size:24px}#chat-fab{right:18px}}
 .cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:24px;height:24px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
+/* ── BANNER ENVÍOS ── */
+.envios-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:14px;overflow:hidden;position:relative}
+.envios-banner-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+@media(max-width:480px){.envios-banner-text{font-size:12px}}
+.truck-scene{width:90px;height:36px;position:relative;overflow:hidden;flex-shrink:0}
+.truck-svg{position:absolute;animation:truckDrive 2.2s linear infinite}
+@keyframes truckDrive{
+  0%{left:-60px;opacity:0}
+  10%{opacity:1}
+  80%{opacity:1}
+  100%{left:100px;opacity:0}
+}
+.road-line{position:absolute;bottom:2px;width:100%;height:2px;background:rgba(255,255,255,.25);border-radius:2px}
+.road-dashes{position:absolute;bottom:5px;width:200%;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.5) 12px,transparent 12px,transparent 24px);animation:roadMove 0.7s linear infinite}
+@keyframes roadMove{from{transform:translateX(0)}to{transform:translateX(-24px)}}
+
+/* ── MOBILE TICKER DE CATEGORÍAS ── */
+.cats-ticker-wrapper{position:relative;margin:0 -20px 8px;overflow:hidden}
+.cats-ticker-btn{flex-shrink:0;border-radius:999px;padding:9px 16px;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cats-ticker-btn .nm{font-family:'Fraunces',serif;font-size:15px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1;letter-spacing:.3px;white-space:nowrap}
+.cats-ticker-track{display:flex;gap:8px;width:max-content;animation:tickerScroll 28s linear infinite;padding:4px 12px 10px;cursor:grab}
+.cats-ticker-track:active{cursor:grabbing}
+.cats-ticker-track.paused{animation-play-state:paused}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media(min-width:768px){.cats-ticker-wrapper{display:none}.cats-mobile-catbtn-row{display:none}}
+
+/* ── MOBILE: botón "Categorías >" y modal ── */
+.cats-mobile-catbtn-row{display:flex;justify-content:flex-end;margin-bottom:6px}
+@media(min-width:768px){.cats-mobile-catbtn-row{display:none}}
+.cats-toggle-btn{background:var(--azul);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 2px 10px rgba(84,118,146,.4)}
+.cats-toggle-btn:hover{background:var(--azul-dark)}
+.cats-dropdown-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);animation:fadeIn .18s ease;display:none}
+.cats-dropdown-overlay.open{display:block}
+.cats-dropdown-panel{position:fixed;bottom:0;left:0;right:0;z-index:501;background:var(--card);border-radius:20px 20px 0 0;padding:20px 18px 32px;max-height:72vh;overflow-y:auto;animation:slideUp .22s ease;box-shadow:0 -6px 30px rgba(0,0,0,.2)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.cats-dropdown-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.cats-dropdown-close{background:var(--muted);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--fg);flex-shrink:0}
+.cats-dropdown-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cats-dd-btn{border-radius:12px;padding:12px 14px;border:2.5px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.cats-dd-btn .nm{font-family:'Fraunces',serif;font-size:14px;font-weight:700;text-transform:uppercase;color:#fff;line-height:1.2}
+.cats-dd-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+
 .banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.92)}
 .banner b{color:#fff}
 
@@ -114,6 +156,8 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* ── CARRUSEL (mobile) / GRILLA (desktop) ── */
 .carousel-section{margin-bottom:28px}
 .carousel-title{font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Playfair Display",serif}
+.carousel-title-btn{background:none;border:none;padding:0;font-size:22px;font-weight:700;color:var(--azul-dark);margin-bottom:14px;font-family:"Playfair Display",serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s,transform .15s;text-align:left}
+.carousel-title-btn:hover{color:var(--azul);transform:translateX(3px)}
 .carousel-wrap{position:relative}
 .carousel-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 4px 10px;-webkit-overflow-scrolling:touch}
 .carousel-track::-webkit-scrollbar{display:none}
@@ -689,6 +733,46 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 </header>
 <div class="banner">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b> en tu compra minorista — precios en azul son precios con descuento</div>
 
+<!-- ── BANNER ENVÍOS ── -->
+<div class="envios-banner">
+  <div class="truck-scene">
+    <div class="road-line"></div>
+    <div class="road-dashes"></div>
+    <svg class="truck-svg" width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Caja trasera del camión -->
+      <rect x="0" y="4" width="32" height="18" rx="2" fill="rgba(255,255,255,0.9)"/>
+      <!-- Cabina -->
+      <rect x="32" y="8" width="16" height="14" rx="2" fill="rgba(255,255,255,0.75)"/>
+      <!-- Ventana cabina -->
+      <rect x="34" y="10" width="8" height="6" rx="1" fill="#cfdce8"/>
+      <!-- Ruedas -->
+      <circle cx="10" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <circle cx="10" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
+      <circle cx="38" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <circle cx="38" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
+      <!-- Líneas caja para dar volumen -->
+      <line x1="10" y1="4" x2="10" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
+      <line x1="20" y1="4" x2="20" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="envios-banner-text">🚚 Hacemos envíos a todo el país</div>
+  <div class="truck-scene" style="transform:scaleX(-1)">
+    <div class="road-line"></div>
+    <div class="road-dashes"></div>
+    <svg class="truck-svg" width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation-delay:.8s">
+      <rect x="0" y="4" width="32" height="18" rx="2" fill="rgba(255,255,255,0.9)"/>
+      <rect x="32" y="8" width="16" height="14" rx="2" fill="rgba(255,255,255,0.75)"/>
+      <rect x="34" y="10" width="8" height="6" rx="1" fill="#cfdce8"/>
+      <circle cx="10" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <circle cx="10" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
+      <circle cx="38" cy="23" r="4" fill="#3d5a72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <circle cx="38" cy="23" r="1.5" fill="rgba(255,255,255,0.6)"/>
+      <line x1="10" y1="4" x2="10" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
+      <line x1="20" y1="4" x2="20" y2="22" stroke="rgba(84,118,146,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+</div>
+
 <div style="max-width:1100px;margin:0 auto;padding:10px 20px 0">
   <div class="may-tabs-wrap" id="mainTabs">
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">🛒 Lista Minorista</button>
@@ -769,8 +853,25 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     </div>
     <button class="may-nav-btn">Ver →</button>
   </div>
-  <!-- MÓVIL: grilla de categorías -->
-  <div class="cats-mobile-grid" id="catsMobileGrid"></div>
+  <!-- MÓVIL: botón Categorías y ticker -->
+  <div class="cats-mobile-catbtn-row">
+    <button class="cats-toggle-btn" onclick="toggleCatsDropdown()">
+      ☰ Categorías <span style="font-size:10px;opacity:.8">▶</span>
+    </button>
+  </div>
+  <!-- Ticker infinito de categorías (mobile) -->
+  <div class="cats-ticker-wrapper" id="catsTickerWrapper">
+    <div class="cats-ticker-track" id="catsTickerTrack"></div>
+  </div>
+  <!-- Overlay y panel de categorías (mobile) -->
+  <div class="cats-dropdown-overlay" id="catsDropdownOverlay" onclick="toggleCatsDropdown()"></div>
+  <div class="cats-dropdown-panel" id="catsDropdownPanel" style="display:none">
+    <div class="cats-dropdown-title">
+      Categorías
+      <button class="cats-dropdown-close" onclick="toggleCatsDropdown()">×</button>
+    </div>
+    <div class="cats-dropdown-grid" id="catsDropdownGrid"></div>
+  </div>
   <!-- MÓVIL: productos -->
   <div class="mobile-prods-area hidden" id="mobileProdsArea"></div>
   <!-- Banner promo Lista Mayorista — solo mobile, va DESPUÉS de los productos -->
@@ -1075,7 +1176,7 @@ function renderCarruseles(){
     _carState[cid]={prods:shuffled,cursor:0};
     const visibles=shuffled.slice(0,4);
     htmlDesktop+=`<div class="carousel-section">
-      <div class="carousel-title">${cat.n}</div>
+      <button class="carousel-title carousel-title-btn" onclick="selectCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
       <div class="carousel-wrap">
         <div class="carousel-track" id="${cid}">${visibles.map(_cardHTML).join('')}</div>
       </div>
@@ -1123,10 +1224,22 @@ function rotarCarruseles(){
 /* ── RENDER CATEGORÍAS ── */
 function renderCatsUI(){
   const sortedCats=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
-  const mg=document.getElementById('catsMobileGrid');
-  mg.innerHTML=sortedCats.map((c,i)=>`<button class="cat-mobile-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+
+  // Desktop sidebar
   const sl=document.getElementById('catsSidebarList');
-  sl.innerHTML=sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+  if(sl)sl.innerHTML=sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+
+  // Ticker mobile: duplicar para loop continuo
+  const tt=document.getElementById('catsTickerTrack');
+  if(tt){
+    const btnHtml=sortedCats.map((c,i)=>`<button class="cats-ticker-btn" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}');closeCatsDropdown()"><div class="nm">${c.n}</div></button>`).join('');
+    tt.innerHTML=btnHtml+btnHtml;
+    _initTickerTouch();
+  }
+
+  // Dropdown grid mobile
+  const dg=document.getElementById('catsDropdownGrid');
+  if(dg)dg.innerHTML=sortedCats.map((c,i)=>`<button class="cats-dd-btn" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}');closeCatsDropdown()"><div class="nm">${c.n}</div></button>`).join('');
 }
 
 /* ── SELECCIONAR CATEGORÍA ── */
@@ -3363,6 +3476,69 @@ window.pedirWA=pedirWA;
 window.sendQuickFaq=sendQuickFaq;
 window.volverInicio=volverInicio;
 window.zoomImg=zoomImg;
+
+// ── TICKER TOUCH LOGIC ──
+let _tickerTouchInit=false;
+function _initTickerTouch(){
+  if(_tickerTouchInit)return;
+  _tickerTouchInit=true;
+  const track=document.getElementById('catsTickerTrack');
+  if(!track)return;
+  let touchStartX=0,isDragging=false,dragOffset=0,animOffset=0;
+  // Pause on touch start
+  track.addEventListener('touchstart',e=>{
+    track.classList.add('paused');
+    touchStartX=e.touches[0].clientX;
+    isDragging=true;
+    // get current translateX
+    const st=getComputedStyle(track).transform;
+    if(st&&st!=='none'){const m=st.match(/matrix.*\((.+)\)/);if(m){const vals=m[1].split(',');animOffset=parseFloat(vals[4])||0;}}
+  },{passive:true});
+  track.addEventListener('touchmove',e=>{
+    if(!isDragging)return;
+    const dx=e.touches[0].clientX-touchStartX;
+    dragOffset=dx;
+    track.style.transform=`translateX(${animOffset+dragOffset}px)`;
+  },{passive:true});
+  track.addEventListener('touchend',()=>{
+    isDragging=false;
+    animOffset+=dragOffset;dragOffset=0;
+    // Snap back into range
+    const halfW=track.scrollWidth/2;
+    if(animOffset>0)animOffset=-halfW+animOffset;
+    if(animOffset<-halfW)animOffset=animOffset+halfW;
+    track.style.transform=`translateX(${animOffset}px)`;
+    setTimeout(()=>{
+      track.style.transform='';
+      track.classList.remove('paused');
+    },600);
+  });
+}
+
+// ── CATS DROPDOWN (mobile) ──
+let _catsDropOpen=false;
+function toggleCatsDropdown(){
+  _catsDropOpen=!_catsDropOpen;
+  const overlay=document.getElementById('catsDropdownOverlay');
+  const panel=document.getElementById('catsDropdownPanel');
+  if(_catsDropOpen){
+    overlay.classList.add('open');
+    panel.style.display='block';
+    panel.style.animation='slideUp .22s ease';
+  } else {
+    overlay.classList.remove('open');
+    panel.style.display='none';
+  }
+}
+function closeCatsDropdown(){
+  _catsDropOpen=false;
+  const overlay=document.getElementById('catsDropdownOverlay');
+  const panel=document.getElementById('catsDropdownPanel');
+  if(overlay)overlay.classList.remove('open');
+  if(panel)panel.style.display='none';
+}
+window.toggleCatsDropdown=toggleCatsDropdown;
+window.closeCatsDropdown=closeCatsDropdown;
 
 // ── HEADER DROPDOWNS ──
 function toggleHdrop(id){
