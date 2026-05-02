@@ -1129,6 +1129,21 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   </div>
   <div id="maySearchResults" class="hidden"></div>
   <!-- Categorías y productos mayorista -->
+  <!-- MÓVIL: botón Categorías mayorista -->
+  <div class="cats-mobile-catbtn-row">
+    <button class="cats-toggle-btn" onclick="toggleMayCatsDropdown()">
+      ☰ Categorías <span style="font-size:10px;opacity:.8">▶</span>
+    </button>
+  </div>
+  <!-- Overlay y panel de categorías mayorista (mobile) -->
+  <div class="cats-dropdown-overlay" id="mayCatsDropdownOverlay" onclick="toggleMayCatsDropdown()"></div>
+  <div class="cats-dropdown-panel" id="mayCatsDropdownPanel" style="display:none">
+    <div class="cats-dropdown-title">
+      Categorías
+      <button class="cats-dropdown-close" onclick="toggleMayCatsDropdown()">×</button>
+    </div>
+    <div class="cats-dropdown-list" id="mayCatsDropdownGrid"></div>
+  </div>
   <div class="main-layout">
     <div class="cats-sidebar">
       <h1>Categorías</h1>
@@ -1136,8 +1151,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     </div>
     <div id="mayDesktopProdsArea"></div>
   </div>
-  <!-- Mobile categorías mayorista -->
-  <div class="cats-mobile-grid" id="mayCatsMobileGrid"></div>
   <div class="mobile-prods-area hidden" id="mayMobileProdsArea"></div>
   <!-- Repetir aviso cerca del carrito -->
   <div class="mayorista-badge" style="margin-top:24px">
@@ -2180,11 +2193,12 @@ function sincronizarDesdeSheets(){
         } else {
           opts={'1 und':[p1,p2]};
         }
-        // Producto: [id, catId, nombre, subcat, unidad, destacado, imagen, opciones, info, sabores]
-        const esMix=inf.mix===true;const esGranola=inf.granola===true;prodsTemp.push([pid++,cat.id,nombreFinal,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola]);
+        // Producto: [id, catId, nombre, subcat, unidad, destacado, imagen, opciones, info, sabores, esMix, esGranola, {productId}]
+        const esMix=inf.mix===true;const esGranola=inf.granola===true;prodsTemp.push([pid++,cat.id,nombreFinal,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola,{productId}]);
       });
       CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
       PRODS=prodsTemp;
+      _MIN_BY_ID=null; // invalidar mapa por ID; se reconstruirá bajo demanda
       console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
       renderCatsUI();
       renderCarruseles();
@@ -3061,19 +3075,21 @@ function renderMayUI() {
 function renderMayCatsUI() {
   const isMobile = window.innerWidth < 768;
   const sidebarList = document.getElementById('mayCatsSidebarList');
-  const mobileGrid  = document.getElementById('mayCatsMobileGrid');
+  const dropdownGrid = document.getElementById('mayCatsDropdownGrid');
   
   if (!CATS_MAY.length) return;
+
+  const sortedCats = [...CATS_MAY].sort((a, b) => a.n.localeCompare(b.n, 'es'));
   
   if (sidebarList) {
-    sidebarList.innerHTML = CATS_MAY.map((cat, i) =>
+    sidebarList.innerHTML = sortedCats.map((cat, i) =>
       `<button class="cat-list-btn${cat.id === activeCatIdMay ? ' active' : ''}" style="background:var(--cat${i%4})" onclick="selectMayCat('${cat.id}')"><div class="nm">${cat.n}</div></button>`
     ).join('');
   }
   
-  if (mobileGrid) {
-    mobileGrid.innerHTML = CATS_MAY.map((cat, i) =>
-      `<button class="cat-mobile-btn${cat.id === activeCatIdMay ? ' active' : ''}" style="background:var(--cat${i%4})" onclick="selectMayCat('${cat.id}')"><div class="nm">${cat.n}</div></button>`
+  if (dropdownGrid) {
+    dropdownGrid.innerHTML = sortedCats.map((cat, i) =>
+      `<button class="cat-list-btn${cat.id === activeCatIdMay ? ' active' : ''}" style="background:var(--cat${i%4})" onclick="selectMayCat('${cat.id}');closeMayCatsDropdown()"><div class="nm">${cat.n}</div></button>`
     ).join('');
   }
 }
@@ -3101,7 +3117,8 @@ function renderMayCarrusel() {
     catsSorted.forEach(cat => {
       const prods = PRODS_MAY.filter(p => p[1] === cat.id).slice(0, 4);
       if (!prods.length) return;
-      h += `<div class="carousel-section"><h2 class="carousel-title">${cat.n}</h2>
+      h += `<div class="carousel-section">
+        <button class="carousel-title carousel-title-btn" onclick="selectMayCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
         <div class="carousel-wrap"><div class="carousel-track">`;
       prods.forEach(p => { h += _cardHTMLMay(p); });
       h += `</div></div></div>`;
@@ -3476,6 +3493,71 @@ function closeCartMay() {
 }
 window.closeCartMay = closeCartMay;
 
+// Mapa de productos minoristas por productId, construido bajo demanda
+let _MIN_BY_ID = null;
+function _buildMinByIdMap() {
+  const m = {};
+  if (PRODS && PRODS.length) {
+    PRODS.forEach(p => {
+      const id = p[12] && p[12].productId;
+      if (id) m[id] = p;
+    });
+  }
+  return m;
+}
+function _getMinForArtId(artId) {
+  if (!artId) return null;
+  if (!_MIN_BY_ID || !Object.keys(_MIN_BY_ID).length) {
+    _MIN_BY_ID = _buildMinByIdMap();
+  }
+  return _MIN_BY_ID[artId] || null;
+}
+
+// Calcula el costo equivalente que tendría el item si se comprara a precio minorista.
+// Devuelve 0 si el producto mayorista no tiene equivalente minorista (por ID).
+function _itemMayMinoristaEquiv(it) {
+  const mayProd = PRODS_MAY.find(x => x[0] === it.pid);
+  if (!mayProd) return 0;
+  const artId = mayProd[12] && mayProd[12].artId;
+  if (!artId) return 0;
+  const minProd = _getMinForArtId(artId);
+  if (!minProd) return 0;
+
+  const opts = minProd[7];
+  const optKeys = Object.keys(opts);
+  if (!optKeys.length) return 0;
+
+  // Detectar la unidad natural del bulto desde el nombre mayorista (x kg, x 500g, etc.)
+  const nm = (mayProd[2] || '').toLowerCase();
+  let matchOpt = null;
+  const mWith = nm.match(/x\s*(\d+(?:[.,]\d+)?)\s*(kg|g|ml|l|und)\b/i);
+  const mNoQty = !mWith && nm.match(/x\s*(kg|g|ml|l|und)\b/i);
+  if (mWith) {
+    const qty = mWith[1].replace(',', '.');
+    const unit = mWith[2].toLowerCase();
+    const tries = [
+      qty + unit,
+      qty + ' ' + unit,
+      (unit === 'kg' && qty === '1') ? '1 kg' : null,
+      (unit === 'und' && qty === '1') ? '1 und' : null
+    ].filter(Boolean);
+    for (const t of tries) {
+      const found = optKeys.find(k => k.replace(/\s+/g,'').toLowerCase() === t.replace(/\s+/g,'').toLowerCase());
+      if (found) { matchOpt = found; break; }
+    }
+  } else if (mNoQty) {
+    const unit = mNoQty[1].toLowerCase();
+    matchOpt = optKeys.find(k => k.replace(/\s+/g,'').toLowerCase() === ('1' + unit)) ||
+               optKeys.find(k => k.replace(/\s+/g,'').toLowerCase() === ('1 ' + unit).replace(/\s+/g,''));
+  }
+  if (!matchOpt) matchOpt = optKeys.find(k => /^1\s*und$/i.test(k));
+  if (!matchOpt) matchOpt = optKeys.find(k => /^1\s*kg$/i.test(k));
+  if (!matchOpt) matchOpt = optKeys[0];
+
+  const minPricePerNatUnit = opts[matchOpt][0];
+  return Math.round(minPricePerNatUnit * (it.bulto || 1) * it.c);
+}
+
 function renderCartMay() {
   const body   = document.getElementById('cartBodyMay');
   const footer = document.getElementById('cartFooterMay');
@@ -3485,6 +3567,9 @@ function renderCartMay() {
     return;
   }
   const total  = cartMay.reduce((a, i) => a + i.l1 * i.c, 0);
+  const totalMinoristaEquiv = cartMay.reduce((a, i) => a + _itemMayMinoristaEquiv(i), 0);
+  const ahorro = Math.max(0, totalMinoristaEquiv - total);
+  const ahorroPct = totalMinoristaEquiv > 0 ? Math.round((ahorro / totalMinoristaEquiv) * 100) : 0;
   const cumple = total >= MIN_COMPRA_MAYORISTA;
   const pct    = Math.min(100, Math.round(total / MIN_COMPRA_MAYORISTA * 100));
   const progColor = cumple ? '#16a34a' : 'var(--azul)';
@@ -3515,8 +3600,17 @@ function renderCartMay() {
   });
   body.innerHTML = h;
 
+  // Bloque de ahorro vs lista minorista
+  const ahorroBlock = ahorro > 0
+    ? `<div class="may-badge may-active" style="margin-bottom:10px">
+         💰 Estás ahorrando <strong>$${fmt(ahorro)}</strong> comparado con la lista minorista
+         <div style="font-size:12px;font-weight:600;margin-top:3px;opacity:.85">(${ahorroPct}% de descuento sobre $${fmt(totalMinoristaEquiv)})</div>
+       </div>`
+    : '';
+
   footer.classList.remove('hidden');
   footer.innerHTML = `
+    ${ahorroBlock}
     <div style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:5px">
         <span style="color:${progColor}">${progMsg}</span><span>${pct}%</span>
@@ -3526,6 +3620,8 @@ function renderCartMay() {
       </div>
     </div>
     <div class="total-rows">
+      ${ahorro > 0 ? `<div class="total-row"><span style="color:var(--muted-fg)">Equivalente minorista</span><span style="color:var(--muted-fg);text-decoration:line-through">$${fmt(totalMinoristaEquiv)}</span></div>
+      <div class="total-row disc"><span>Ahorro mayorista</span><span>−$${fmt(ahorro)}</span></div>` : ''}
       <div class="total-row main"><span>Total Mayorista</span><span>$${fmt(total)}</span></div>
     </div>
     <button class="wa-btn" onclick="closeCartMay();pedirWAMayorista()" ${cumple ? '' : 'disabled style="opacity:.5;cursor:not-allowed"'}>
@@ -3705,6 +3801,31 @@ function closeCatsDropdown(){
 }
 window.toggleCatsDropdown=toggleCatsDropdown;
 window.closeCatsDropdown=closeCatsDropdown;
+
+// ── CATS DROPDOWN MAYORISTA (mobile) ──
+let _mayCatsDropOpen=false;
+function toggleMayCatsDropdown(){
+  _mayCatsDropOpen=!_mayCatsDropOpen;
+  const overlay=document.getElementById('mayCatsDropdownOverlay');
+  const panel=document.getElementById('mayCatsDropdownPanel');
+  if(_mayCatsDropOpen){
+    overlay.classList.add('open');
+    panel.style.display='block';
+    panel.style.animation='slideUp .22s ease';
+  } else {
+    overlay.classList.remove('open');
+    panel.style.display='none';
+  }
+}
+function closeMayCatsDropdown(){
+  _mayCatsDropOpen=false;
+  const overlay=document.getElementById('mayCatsDropdownOverlay');
+  const panel=document.getElementById('mayCatsDropdownPanel');
+  if(overlay)overlay.classList.remove('open');
+  if(panel)panel.style.display='none';
+}
+window.toggleMayCatsDropdown=toggleMayCatsDropdown;
+window.closeMayCatsDropdown=closeMayCatsDropdown;
 
 // ── HEADER DROPDOWNS ──
 function toggleHdrop(id){
