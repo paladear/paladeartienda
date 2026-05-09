@@ -2217,6 +2217,8 @@ function sincronizarDesdeSheets(){
       PRODS=prodsTemp;
       _MIN_BY_ID=null; // invalidar mapa por ID; se reconstruirá bajo demanda
       console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
+      // Guardar en localStorage para uso offline
+      try{localStorage.setItem('paladear_min_v1',JSON.stringify({cats:CATS,prods:PRODS,ts:Date.now()}));}catch(e){}
       renderCatsUI();
       renderCarruseles();
       hideLoader();
@@ -2230,6 +2232,24 @@ function sincronizarDesdeSheets(){
           console.warn('⚠️ Error cargando Sheet, reintentando en 3s...');
           setTimeout(_cargarScript,3000);
         } else {
+          // Intentar restaurar desde localStorage (modo offline)
+          try{
+            const raw=localStorage.getItem('paladear_min_v1');
+            if(raw){
+              const data=JSON.parse(raw);
+              CATS=data.cats; PRODS=data.prods; _MIN_BY_ID=null;
+              const horas=Math.round((Date.now()-data.ts)/3600000);
+              console.log(`📦 Minorista desde caché local (${horas}h atrás)`);
+              renderCatsUI(); renderCarruseles(); hideLoader();
+              setTimeout(()=>{
+                const t=document.createElement('div');
+                t.textContent='📦 Sin conexión — mostrando últimos precios guardados';
+                t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+                document.body.appendChild(t);setTimeout(()=>t.remove(),5000);
+              },400);
+              return;
+            }
+          }catch(e){}
           console.warn('⚠️ Error cargando Sheet tras reintento');
           renderCatsUI();renderCarruseles();hideLoader();
         }
@@ -3017,10 +3037,30 @@ function cargarMayorista() {
       const catIds = [...new Set(PRODS_MAY.map(p => p[1]))];
       CATS_MAY = Object.values(RUBRO_MAP).filter(c => catIds.includes(c.id));
       console.log('✅ Lista Mayorista: ' + PRODS_MAY.length + ' productos, ' + CATS_MAY.length + ' categorías');
+      // Guardar en localStorage para uso offline
+      try{localStorage.setItem('paladear_may_v1',JSON.stringify({cats:CATS_MAY,prods:PRODS_MAY,bultoMap:MAY_BULTO_MAP,ts:Date.now()}));}catch(e){}
       renderMayUI();
     }
 
     function _mostrarErrorMayorista() {
+      // Intentar restaurar desde localStorage (modo offline)
+      try{
+        const raw=localStorage.getItem('paladear_may_v1');
+        if(raw){
+          const data=JSON.parse(raw);
+          CATS_MAY=data.cats; PRODS_MAY=data.prods; MAY_BULTO_MAP=data.bultoMap||MAY_BULTO_MAP;
+          const horas=Math.round((Date.now()-data.ts)/3600000);
+          console.log(`📦 Mayorista desde caché local (${horas}h atrás)`);
+          renderMayUI();
+          setTimeout(()=>{
+            const t=document.createElement('div');
+            t.textContent='📦 Sin conexión — mostrando últimos precios guardados';
+            t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+            document.body.appendChild(t);setTimeout(()=>t.remove(),5000);
+          },400);
+          return;
+        }
+      }catch(e){}
       const area = document.getElementById('mayDesktopProdsArea');
       const mob  = document.getElementById('mayMobileProdsArea');
       if (area) area.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted-fg)">No se pudo cargar la Lista Mayorista.<br>Por favor contactanos por WhatsApp.</div>';
