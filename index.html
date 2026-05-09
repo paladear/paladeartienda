@@ -3046,23 +3046,20 @@ function cargarMayorista() {
       if (mob)  mob.innerHTML  = '';
     }
 
-    // Cargar directamente desde Apps Script JSONP con ?sheet=mayorista (referencia por nombre, no GID)
-    function _cargarScriptMay() {
-      const s = document.createElement('script');
-      s.onerror = () => {
-        console.warn('⚠️ Error cargando mayorista, reintentando en 3s...');
+    // Cargar por nombre de hoja (sin GID — "Mayorista" nunca cambia aunque cambies el Excel)
+    const mayUrl = SHEET_BASE_URL + '?output=csv&sheet=Mayorista&t=' + Date.now();
+    fetch(mayUrl, { cache: 'no-store' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(csv => _procesarCSVMayorista(csv))
+      .catch(err => {
+        console.warn('⚠️ Error cargando mayorista, reintentando en 3s...', err);
         setTimeout(() => {
-          const s2 = document.createElement('script');
-          s2.onerror = () => _mostrarErrorMayorista();
-          s2.src = APPS_SCRIPT_URL + '?callback=recibirPreciosMay&sheet=mayorista&t=' + Date.now();
-          document.head.appendChild(s2);
+          fetch(mayUrl, { cache: 'no-store' })
+            .then(r => r.text())
+            .then(csv => _procesarCSVMayorista(csv))
+            .catch(() => _mostrarErrorMayorista());
         }, 3000);
-      };
-      s.src = APPS_SCRIPT_URL + '?callback=recibirPreciosMay&sheet=mayorista&t=' + Date.now();
-      document.head.appendChild(s);
-    }
-    window.recibirPreciosMay = function(csv) { _procesarCSVMayorista(csv); };
-    _cargarScriptMay();
+      });
   });
 }
 
