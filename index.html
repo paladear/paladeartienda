@@ -2169,60 +2169,70 @@ function _cargarInfo(){
 }
 
 function sincronizarDesdeSheets(){
-  _cargarInfo().then(INFO=>{
-    window.recibirPrecios=function(csv){
-      const filas=_parseCSV(csv);
-      const catMap={},prodsTemp=[];let pid=1;
-      filas.forEach((cols,idx)=>{
-        if(idx===0||cols.length<6)return;
-        const nombre=cols[2].replace(/^"|"$/g,'');
-        const p1=_precio(cols[3]),p2=_precio(cols[4]);
-        const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
-        const productId=(cols[6]||'').replace(/^"|"$/g,'').trim(); // ID en col G
-        const imgPrecios=_driveToImg((cols[7]||'').replace(/^"|"$/g,'').trim()); // imagen en col H
-        if(!nombre||!p1||!p2||!rubro)return;
-        const cat=RUBRO_MAP[rubro];if(!cat)return;
-        if(!catMap[cat.id])catMap[cat.id]=cat;
-        // buscar datos de Info: primero por ID, después por nombre (retrocompatibilidad)
-        const inf=INFO[productId]||INFO[_norm(nombre)]||{};
-        // Nombre a mostrar: usar col A de Info si existe, sino el de Precios como fallback
-        const nombreFinal=inf.nombre||nombre;
-        // esKg: se determina por las cantidades definidas en Info (g/kg = granel, und = varios)
-        // Si no hay Info, fallback al nombre de Precios (retrocompatibilidad)
-        const _infCants=inf.cantidades||[];
-        const esKgInfo=_infCants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
-        const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre); // fallback si no hay Info
-        const esKg=_infCants.length?esKgInfo:esKgNombre;
-        const esEspecia=['especias','infusiones'].includes(cat.id);
-        const imgUrl=inf.imagen||imgPrecios;
-        const infoText=inf.info||'';
-        const sabores=inf.sabores||null;
+  // ── PASO 1: mostrar caché local INMEDIATAMENTE si existe ──────────────
+  // No se espera a la red. Si hay datos guardados, se renderizan al toque.
+  let _yaRenderizado=false;
+  try{
+    const raw=localStorage.getItem('paladear_min_v1');
+    if(raw){
+      const data=JSON.parse(raw);
+      if(data.cats&&data.prods&&data.prods.length){
+        CATS=data.cats; PRODS=data.prods; _MIN_BY_ID=null;
+        _yaRenderizado=true;
+        renderCatsUI(); renderCarruseles(); hideLoader();
+        console.log('📦 Minorista desde caché local — actualizando en background...');
+      }
+    }
+  }catch(e){}
 
-        // cantidades: si Info las define, las usamos; si no, defaults por rubro
-        let opts;
-        if(inf.cantidades&&inf.cantidades.length){
-          opts={};
-          inf.cantidades.forEach(opc=>{opts[opc]=_calcPrecioOpc(opc,p1,p2,esKg)});
-        } else if(esKg&&esEspecia){
-          opts={'100g':[Math.round(p1*.1),Math.round(p2*.1)],'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]};
-        } else if(esKg){
-          opts={'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]};
-        } else {
-          opts={'1 und':[p1,p2]};
-        }
-        // Producto: [id, catId, nombre, subcat, unidad, destacado, imagen, opciones, info, sabores, esMix, esGranola, {productId}]
-        const esMix=inf.mix===true;const esGranola=inf.granola===true;prodsTemp.push([pid++,cat.id,nombreFinal,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola,{productId}]);
-      });
-      CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
-      PRODS=prodsTemp;
-      _MIN_BY_ID=null; // invalidar mapa por ID; se reconstruirá bajo demanda
-      console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
-      // Guardar en localStorage para uso offline
-      try{localStorage.setItem('paladear_min_v1',JSON.stringify({cats:CATS,prods:PRODS,ts:Date.now()}));}catch(e){}
-      renderCatsUI();
-      renderCarruseles();
-      hideLoader();
-    };
+  // ── PASO 2: cargar datos frescos de la red (en background) ───────────
+  function _procesarCSV(INFO,csv){
+    const filas=_parseCSV(csv);
+    const catMap={},prodsTemp=[];let pid=1;
+    filas.forEach((cols,idx)=>{
+      if(idx===0||cols.length<6)return;
+      const nombre=cols[2].replace(/^"|"$/g,'');
+      const p1=_precio(cols[3]),p2=_precio(cols[4]);
+      const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
+      const productId=(cols[6]||'').replace(/^"|"$/g,'').trim();
+      const imgPrecios=_driveToImg((cols[7]||'').replace(/^"|"$/g,'').trim());
+      if(!nombre||!p1||!p2||!rubro)return;
+      const cat=RUBRO_MAP[rubro];if(!cat)return;
+      if(!catMap[cat.id])catMap[cat.id]=cat;
+      const inf=INFO[productId]||INFO[_norm(nombre)]||{};
+      const nombreFinal=inf.nombre||nombre;
+      const _infCants=inf.cantidades||[];
+      const esKgInfo=_infCants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
+      const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre);
+      const esKg=_infCants.length?esKgInfo:esKgNombre;
+      const esEspecia=['especias','infusiones'].includes(cat.id);
+      const imgUrl=inf.imagen||imgPrecios;
+      const infoText=inf.info||'';
+      const sabores=inf.sabores||null;
+      let opts;
+      if(inf.cantidades&&inf.cantidades.length){
+        opts={};
+        inf.cantidades.forEach(opc=>{opts[opc]=_calcPrecioOpc(opc,p1,p2,esKg)});
+      } else if(esKg&&esEspecia){
+        opts={'100g':[Math.round(p1*.1),Math.round(p2*.1)],'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]};
+      } else if(esKg){
+        opts={'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]};
+      } else {
+        opts={'1 und':[p1,p2]};
+      }
+      const esMix=inf.mix===true;const esGranola=inf.granola===true;
+      prodsTemp.push([pid++,cat.id,nombreFinal,esKg?'Granel':'Varios',esKg?'kg':'und',false,imgUrl,opts,infoText,sabores,esMix,esGranola,{productId}]);
+    });
+    CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
+    PRODS=prodsTemp;
+    _MIN_BY_ID=null;
+    console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
+    try{localStorage.setItem('paladear_min_v1',JSON.stringify({cats:CATS,prods:PRODS,ts:Date.now()}));}catch(e){}
+    renderCatsUI(); renderCarruseles(); hideLoader();
+  }
+
+  _cargarInfo().then(INFO=>{
+    window.recibirPrecios=function(csv){ _procesarCSV(INFO,csv); };
     let _retried=false;
     function _cargarScript(){
       const s=document.createElement('script');
@@ -2232,26 +2242,17 @@ function sincronizarDesdeSheets(){
           console.warn('⚠️ Error cargando Sheet, reintentando en 3s...');
           setTimeout(_cargarScript,3000);
         } else {
-          // Intentar restaurar desde localStorage (modo offline)
-          try{
-            const raw=localStorage.getItem('paladear_min_v1');
-            if(raw){
-              const data=JSON.parse(raw);
-              CATS=data.cats; PRODS=data.prods; _MIN_BY_ID=null;
-              const horas=Math.round((Date.now()-data.ts)/3600000);
-              console.log(`📦 Minorista desde caché local (${horas}h atrás)`);
-              renderCatsUI(); renderCarruseles(); hideLoader();
-              setTimeout(()=>{
-                const t=document.createElement('div');
-                t.textContent='📦 Sin conexión — mostrando últimos precios guardados';
-                t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
-                document.body.appendChild(t);setTimeout(()=>t.remove(),5000);
-              },400);
-              return;
-            }
-          }catch(e){}
           console.warn('⚠️ Error cargando Sheet tras reintento');
-          renderCatsUI();renderCarruseles();hideLoader();
+          if(!_yaRenderizado){
+            // Sin caché y sin red: mostrar estado vacío
+            renderCatsUI(); renderCarruseles(); hideLoader();
+          } else {
+            // Ya había caché visible: solo mostrar aviso
+            const t=document.createElement('div');
+            t.textContent='📦 Sin conexión — mostrando últimos precios guardados';
+            t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+            document.body.appendChild(t);setTimeout(()=>t.remove(),5000);
+          }
         }
       };
       s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now()+'&v='+Math.random().toString(36).slice(2);
@@ -2986,7 +2987,6 @@ window.switchTab = switchTab;
 
 // Cargar datos mayorista desde Google Sheets (fetch directo al CSV publicado)
 function cargarMayorista() {
-  // Verificar que los GIDs estén configurados
   if (MAY_PRECIOS_GID.includes('REEMPLAZAR')) {
     const area = document.getElementById('mayDesktopProdsArea');
     const mob  = document.getElementById('mayMobileProdsArea');
@@ -2996,6 +2996,22 @@ function cargarMayorista() {
     console.warn('⚠️ MAY_PRECIOS_GID no configurado. Editá el archivo HTML y reemplazá el placeholder.');
     return;
   }
+
+  // ── PASO 1: mostrar caché local INMEDIATAMENTE si existe ──
+  let _mayYaRenderizado = false;
+  try {
+    const raw = localStorage.getItem('paladear_may_v1');
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.cats && data.prods && data.prods.length) {
+        CATS_MAY = data.cats; PRODS_MAY = data.prods;
+        if (data.bultoMap) MAY_BULTO_MAP = data.bultoMap;
+        _mayYaRenderizado = true;
+        renderMayUI();
+        console.log('📦 Mayorista desde caché local — actualizando en background...');
+      }
+    }
+  } catch(e) {}
 
   const preciosUrl = SHEET_BASE_URL + '?gid=' + MAY_PRECIOS_GID + '&single=true&output=csv';
 
@@ -3043,24 +3059,14 @@ function cargarMayorista() {
     }
 
     function _mostrarErrorMayorista() {
-      // Intentar restaurar desde localStorage (modo offline)
-      try{
-        const raw=localStorage.getItem('paladear_may_v1');
-        if(raw){
-          const data=JSON.parse(raw);
-          CATS_MAY=data.cats; PRODS_MAY=data.prods; MAY_BULTO_MAP=data.bultoMap||MAY_BULTO_MAP;
-          const horas=Math.round((Date.now()-data.ts)/3600000);
-          console.log(`📦 Mayorista desde caché local (${horas}h atrás)`);
-          renderMayUI();
-          setTimeout(()=>{
-            const t=document.createElement('div');
-            t.textContent='📦 Sin conexión — mostrando últimos precios guardados';
-            t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
-            document.body.appendChild(t);setTimeout(()=>t.remove(),5000);
-          },400);
-          return;
-        }
-      }catch(e){}
+      if (_mayYaRenderizado) {
+        // Ya había caché visible: solo mostrar aviso offline
+        const t = document.createElement('div');
+        t.textContent = '📦 Sin conexión — mostrando últimos precios guardados';
+        t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#547692;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:9999;text-align:center;max-width:88vw;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+        document.body.appendChild(t); setTimeout(() => t.remove(), 5000);
+        return;
+      }
       const area = document.getElementById('mayDesktopProdsArea');
       const mob  = document.getElementById('mayMobileProdsArea');
       if (area) area.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted-fg)">No se pudo cargar la Lista Mayorista.<br>Por favor contactanos por WhatsApp.</div>';
