@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.1  |  Estrategia: Network-first con fallback
+// Versión: 1.2  |  Fix: cacheo de respuestas opacas (JSONP)
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v2';
+const CACHE_VERSION = 'paladear-v3';
 
 const SHELL_FILES = [
   '/paladeartienda/',
@@ -46,20 +46,22 @@ self.addEventListener('activate', event => {
 //
 // Con internet  → sirve datos frescos y actualiza el caché.
 // Sin internet  → sirve los últimos datos cacheados.
-// Esto incluye las peticiones al Apps Script de Google
-// (productos del Sheet), que antes se dejaban pasar sin
-// cachear. Ahora se cachean igual que el resto.
+//
+// IMPORTANTE: los datos del Sheet vienen via JSONP (<script>
+// cross-origin), lo que produce respuestas "opacas" con
+// status=0 en el SW. Por eso cacheamos también response.type
+// === 'opaque' y no solo status === 200.
 //
 self.addEventListener('fetch', event => {
-  const url = event.request.url;
-
-  // Solo manejar GET
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        if (response && response.status === 200) {
+        // Cachear respuestas exitosas normales Y respuestas opacas
+        // (las opacas son los JSONP de Google Apps Script)
+        const cacheable = response && (response.status === 200 || response.type === 'opaque');
+        if (cacheable) {
           const clone = response.clone();
           caches.open(CACHE_VERSION)
             .then(cache => cache.put(event.request, clone))
