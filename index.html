@@ -329,8 +329,17 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cats-dd-btn .nm{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1;letter-spacing:.2px;text-align:left}
 .cats-dd-btn:hover{filter:brightness(1.12);transform:translateX(3px)}
 
-.banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.92)}
+.banner{background:var(--azul-dark);text-align:center;padding:8px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.92);position:relative}
 .banner b{color:#fff}
+.banner-rot-slot{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;animation:bannerFadeIn .4s ease}
+@keyframes bannerFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+/* Modal App Install */
+.app-install-modal{max-width:420px;width:calc(100% - 32px);border-radius:20px;padding:24px 20px;position:relative;max-height:92vh;overflow-y:auto}
+.modal-close-btn{position:absolute;top:14px;right:14px;background:var(--muted);border:none;border-radius:50%;width:30px;height:30px;font-size:15px;cursor:pointer;color:var(--fg);display:flex;align-items:center;justify-content:center;font-family:inherit}
+.app-tab-btn{flex:1;padding:9px 8px;border:2px solid var(--muted);border-radius:10px;background:var(--card);color:var(--muted-fg);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
+.app-tab-btn.active{border-color:var(--azul);background:var(--azul);color:#fff}
+.app-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;font-size:13px;line-height:1.4}
+.app-step-num{width:22px;height:22px;border-radius:50%;background:var(--azul);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 
 /* ── BUSCADOR ── */
 .search-wrap{position:relative;margin-bottom:22px}
@@ -929,7 +938,13 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
   </div>
 </div>
 </header>
-<div class="banner">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b> en tu compra minorista — precios en azul son precios con descuento</div>
+<div class="banner" id="bannerRotativo">
+  <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b> en tu compra minorista — precios en azul son precios con descuento</div>
+  <div id="bannerSlot2" class="banner-rot-slot" style="display:none">
+    <span id="bannerAppMsg">📱 <b>5% extra</b> comprando desde la app</span>
+    <button id="bannerAppBtn" onclick="abrirModalApp()" style="margin-left:10px;background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;vertical-align:middle;font-family:inherit">Instalar app →</button>
+  </div>
+</div>
 
 <!-- ── BANNER ENVÍOS ── -->
 <div class="envios-banner">
@@ -1792,8 +1807,13 @@ function renderCart(){
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),totalMay=cart.reduce((a,i)=>a+_itemMay(i),0),esMay=totalMin>=80000,ahorro=totalMin-totalMay,totalFinal=esMay?totalMay:totalMin;
+  const appDesc=_esAppInstalada&&totalFinal>0?Math.round(totalFinal*APP_DISCOUNT):0;
+  const totalConApp=totalFinal-appDesc;
   let fh=esMay?`<div class="may-badge may-active">✅ ¡Descuento por volumen activado!<div style="font-size:17px;font-weight:800;margin-top:3px">Ahorrás $${fmt(ahorro)}</div></div>`:`<div class="may-badge may-inactive">🏷️ Agregá $${fmt(Math.max(0,80000-totalMin))} más para obtener hasta 20% de descuento</div>`;
-  fh+=`<div class="total-rows"><div class="total-row"><span>Subtotal Minorista</span><span>$${fmt(totalMin)}</span></div>${esMay?`<div class="total-row disc"><span>Descuento mayorista</span><span>−$${fmt(ahorro)}</span></div>`:''}<div class="total-row main"><span>Total a pagar</span><span>$${fmt(totalFinal)}</span></div></div>`;
+  if(appDesc>0)fh+=`<div class="may-badge may-active" style="margin-top:6px">🎁 Descuento app (5%) — Ahorrás $${fmt(appDesc)}</div>`;
+  fh+=`<div class="total-rows"><div class="total-row"><span>Subtotal Minorista</span><span>$${fmt(totalMin)}</span></div>${esMay?`<div class="total-row disc"><span>Descuento mayorista</span><span>−$${fmt(ahorro)}</span></div>`:''}`
+  +(appDesc>0?`<div class="total-row disc"><span>Descuento app (5%)</span><span>−$${fmt(appDesc)}</span></div>`:'')
+  +`<div class="total-row main"><span>Total a pagar</span><span>$${fmt(totalConApp)}</span></div></div>`;
   fh+='<button class="wa-btn" onclick="pedirWA()">💬 Pedir por WhatsApp</button>';
   footer.innerHTML=fh;footer.classList.remove('hidden');
 }
@@ -1820,7 +1840,10 @@ function pedirWA(){
     const q=it.unidad==='mix'?_gLabel(it.totalG)+' — '+it.mixDetalle:it.unidad==='kg'?_gLabel(it.totalG):(it.c>1?it.o+' x'+it.c:it.o);
     msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
   });
-  msg+=`\n*TOTAL: $${fmt(tot)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}\n\n_Pedido realizado desde el catálogo online_`;
+  const appDesc=_esAppInstalada&&tot>0?Math.round(tot*APP_DISCOUNT):0;
+  const totFinal=tot-appDesc;
+  msg+=`\n*TOTAL: $${fmt(totFinal)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}${appDesc>0?'\n_(5% de descuento por app aplicado)_':''}`;
+  msg+='\n\n_Pedido realizado desde el catálogo online_';
   const url='https://wa.me/'+WA_MINORISTA+'?text='+encodeURIComponent(msg);
   if(!navigator.onLine){
     _guardarPedidoPendiente(url,'minorista');
@@ -3651,7 +3674,8 @@ function renderCartMay() {
     <div class="total-rows">
       ${ahorro > 0 ? `<div class="total-row"><span style="color:var(--muted-fg)">Equivalente minorista</span><span style="color:var(--muted-fg);text-decoration:line-through">$${fmt(totalMinoristaEquiv)}</span></div>
       <div class="total-row disc"><span>Ahorro mayorista</span><span>−$${fmt(ahorro)}</span></div>` : ''}
-      <div class="total-row main"><span>Total Mayorista</span><span>$${fmt(total)}</span></div>
+      ${_esAppInstalada ? `<div class="total-row disc"><span>Descuento app (5%)</span><span>−$${fmt(Math.round(total*APP_DISCOUNT))}</span></div>` : ''}
+      <div class="total-row main"><span>Total Mayorista</span><span>$${fmt(_esAppInstalada ? Math.round(total*(1-APP_DISCOUNT)) : total)}</span></div>
     </div>
     <button class="wa-btn" onclick="closeCartMay();pedirWAMayorista()" ${cumple ? '' : 'disabled style="opacity:.5;cursor:not-allowed"'}>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.55 4.103 1.508 5.83L0 24l6.335-1.652A11.955 11.955 0 0012 24c6.626 0 12-5.373 12-12S18.626 0 12 0zm0 21.818a9.818 9.818 0 01-5.005-1.37l-.36-.214-3.727.977.995-3.638-.235-.374A9.818 9.818 0 112 12c0 5.42 4.397 9.818 9.818 9.818h.182z"/></svg>
@@ -3701,11 +3725,9 @@ Faltan: $${fmt(MIN_COMPRA_MAYORISTA - total)}`);
     msg += `• ${it.n} (${it.bultoLabel || 'Bulto'} x${it.c}) — $${fmt(sub)}
 `;
   });
-  msg += `
-*TOTAL: $${fmt(tot)}*
-_(Lista Mayorista)_
-
-_Pedido realizado desde el catálogo online_`;
+  const appDescMay = _esAppInstalada && tot > 0 ? Math.round(tot * APP_DISCOUNT) : 0;
+  const totFinalMay = tot - appDescMay;
+  msg += `\n*TOTAL: $${fmt(totFinalMay)}*\n_(Lista Mayorista)_${appDescMay > 0 ? '\n_(5% de descuento por app aplicado)_' : ''}\n\n_Pedido realizado desde el catálogo online_`;
   
   const url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
   if (!navigator.onLine) {
@@ -4035,7 +4057,11 @@ window.addEventListener('online', function() {
 
   // Llamar desde cualquier botón: onclick="mostrarPromptInstalacion()"
   window.mostrarPromptInstalacion = function() {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      // Si no hay prompt (ya instalado, iOS, o fue descartado), mostrar instrucciones manuales
+      _showManualInstall();
+      return;
+    }
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(function(choice) {
       deferredPrompt = null;
@@ -4046,9 +4072,153 @@ window.addEventListener('online', function() {
 
   window.addEventListener('appinstalled', function() {
     deferredPrompt = null;
+    // Actualizar banner al instalarse
+    _actualizarBannerApp();
   });
 })();
+
+// ═══════════════════════════════════════════
+// DESCUENTO APP + BANNER ROTATIVO + MODAL
+// ═══════════════════════════════════════════
+
+// Detectar si está corriendo como app instalada (standalone)
+var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true; // iOS Safari
+
+// Descuento app: 5%
+var APP_DISCOUNT = 0.05;
+
+// Aplicar descuento app al total
+function _aplicarDescuentoApp(total) {
+  return _esAppInstalada ? Math.round(total * (1 - APP_DISCOUNT)) : total;
+}
+
+// Actualizar texto del banner rotativo según estado de app
+function _actualizarBannerApp() {
+  _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  var msgEl = document.getElementById('bannerAppMsg');
+  var btnEl = document.getElementById('bannerAppBtn');
+  if (!msgEl) return;
+  if (_esAppInstalada) {
+    msgEl.innerHTML = '🎁 <b>5% de descuento</b> activo — comprás desde la app';
+    if (btnEl) btnEl.style.display = 'none';
+  } else {
+    msgEl.innerHTML = '📱 <b>5% extra</b> comprando desde la app';
+    if (btnEl) { btnEl.style.display = 'inline-block'; btnEl.textContent = 'Instalar app →'; }
+  }
+}
+
+// Banner rotativo: alterna entre slot1 y slot2 cada 4s
+(function _initBannerRotativo() {
+  _actualizarBannerApp();
+  var cur = 0;
+  var slots = [document.getElementById('bannerSlot1'), document.getElementById('bannerSlot2')];
+  if (!slots[0] || !slots[1]) return;
+  setInterval(function() {
+    slots[cur].style.display = 'none';
+    cur = (cur + 1) % 2;
+    slots[cur].style.display = '';
+  }, 4000);
+})();
+
+// Modal de instalación
+window.abrirModalApp = function() {
+  var modal = document.getElementById('modalInstalarApp');
+  if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+};
+window.cerrarModalApp = function() {
+  var modal = document.getElementById('modalInstalarApp');
+  if (modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
+};
+window.switchTabApp = function(tab) {
+  ['android','ios'].forEach(function(t) {
+    document.getElementById('appTab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('appTabContent-' + t).classList.toggle('hidden', t !== tab);
+  });
+};
+
+function _showManualInstall() {
+  // Detectar iOS
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  window.abrirModalApp();
+  if (isIOS) setTimeout(function() { window.switchTabApp('ios'); }, 50);
+  else setTimeout(function() { window.switchTabApp('android'); }, 50);
+}
+
+// Escuchar cambios de display-mode (cuando el usuario instala en esta sesión)
+window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
+  if (e.matches) { _esAppInstalada = true; _actualizarBannerApp(); }
+});
 </script>
+
+<!-- ═══ MODAL INSTALAR APP ═══ -->
+<div id="modalInstalarApp" class="modal-overlay" onclick="if(event.target===this)cerrarModalApp()">
+  <div class="modal-box app-install-modal">
+    <button class="modal-close-btn" onclick="cerrarModalApp()">✕</button>
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:40px;margin-bottom:8px">📲</div>
+      <h2 style="font-size:20px;font-weight:800;color:var(--azul-dark);margin:0 0 6px">Instalá la app de Paladear</h2>
+      <div style="background:#e8f5e9;color:#2e7d32;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;display:inline-block">
+        🎁 5% de descuento exclusivo por usar la app
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button id="appTab-android" class="app-tab-btn active" onclick="switchTabApp('android')">🤖 Android</button>
+      <button id="appTab-ios" class="app-tab-btn" onclick="switchTabApp('ios')">🍎 iPhone / iPad</button>
+    </div>
+    <!-- Android -->
+    <div id="appTabContent-android">
+      <div id="appAndroidPromptWrap" style="margin-bottom:14px">
+        <button onclick="mostrarPromptInstalacion();cerrarModalApp();" class="wa-btn" style="background:var(--azul);max-width:100%;font-size:15px;padding:14px">
+          📲 Instalar Paladear en mi celular
+        </button>
+        <div style="font-size:11px;color:var(--muted-fg);text-align:center;margin-top:6px">Chrome mostrará un popup de confirmación</div>
+      </div>
+      <div style="border-top:1px solid var(--muted);padding-top:12px">
+        <div style="font-size:12px;color:var(--muted-fg);margin-bottom:8px;font-weight:600">O manualmente desde Chrome:</div>
+        <div class="app-step">
+          <div class="app-step-num">1</div>
+          <div>Abrí el menú de Chrome <span style="font-size:15px">⋮</span> (arriba a la derecha)</div>
+        </div>
+        <div class="app-step">
+          <div class="app-step-num">2</div>
+          <div>Tocá <b>"Agregar a pantalla de inicio"</b></div>
+        </div>
+        <div class="app-step">
+          <div class="app-step-num">3</div>
+          <div>Confirmá tocando <b>"Agregar"</b></div>
+        </div>
+      </div>
+    </div>
+    <!-- iOS -->
+    <div id="appTabContent-ios" class="hidden">
+      <div style="background:#fff3cd;border-radius:10px;padding:10px 14px;font-size:13px;color:#856404;margin-bottom:14px">
+        ⚠️ En iPhone/iPad usá <b>Safari</b> (no Chrome ni Firefox) para poder instalarla
+      </div>
+      <div class="app-step">
+        <div class="app-step-num">1</div>
+        <div>Abrí esta página en <b>Safari</b> e ingresá a <b>paladear.github.io/paladeartienda</b></div>
+      </div>
+      <div class="app-step">
+        <div class="app-step-num">2</div>
+        <div>Tocá el botón <b>Compartir</b> <span style="font-size:16px">⎙</span> (abajo al centro de la pantalla)</div>
+      </div>
+      <div class="app-step">
+        <div class="app-step-num">3</div>
+        <div>Deslizá y tocá <b>"Agregar a pantalla de inicio"</b> 🏠</div>
+      </div>
+      <div class="app-step">
+        <div class="app-step-num">4</div>
+        <div>Tocá <b>"Agregar"</b> arriba a la derecha</div>
+      </div>
+      <div style="background:#e8f5e9;border-radius:8px;padding:8px 12px;font-size:12px;color:#2e7d32;margin-top:12px;font-weight:600">
+        🎁 Al abrirla desde el ícono en tu inicio, el 5% se activa automáticamente
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
