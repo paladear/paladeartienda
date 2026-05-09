@@ -1,4 +1,4 @@
-nombre,cantidades,info,sabores,imagen,mix,Artículo,Estado,1
+nombre,cantidades,info,sabores,imagen,mix,Artículo,Estado,#REF!
 "ACEITE COCO NEUTRO ENTRENUTS ""SIN TACC"" x 200",1 UNIDAD,"El Aceite de Coco Neutro Entrenuts es un producto versátil, ideal tanto para la cocina como para el cuidado personal, ya que ha sido refinado para eliminar el sabor y el aroma característicos del coco.",,https://drive.google.com/file/d/1DT-EJI0FphtfZMGLOEMrSeYMNeaS2Dbp/view,,2265,🟢 ok,
 "ACEITE COCO NEUTRO ENTRENUTS ""SIN TACC"" x 360 G",1 UNIDAD,"El Aceite de Coco Neutro Entrenuts es un producto versátil, ideal tanto para la cocina como para el cuidado personal, ya que ha sido refinado para eliminar el sabor y el aroma característicos del coco.",,https://drive.google.com/file/d/152trCrtVnqrqBpTZmgkdRxJtLgjKj0VW/view,,2141,🟢 ok,
 "ACEITE COCO VIRGEN ENTRENUTS ""SIN TACC"" X 200 g",1 UNIDAD,"El Aceite de Coco Virgen Entrenuts es un producto 100% natural y puro, obtenido mediante prensado en frío para conservar su aroma y sabor característicos a coco. Es apto para personas con celiaquía (Sin TACC) y para dietas veganas.",,https://drive.google.com/file/d/1bIaTu-IwSu3LSvSHplMMRH646c_O-vfl/view,,2142,🟢 ok,
@@ -558,7 +558,7 @@ MASTROENI EXTRA BRUT,1 UNIDAD,,,https://drive.google.com/file/d/1hUvyWxUIv2SztAs
 MELENA DE LEON SUPPLY 60 ml,1 UNIDAD,,,,,2337,🟡 falta imagen,
 "MIEL CREMOGENADA  x 500 g ""TRES SOLES"" - FLOR DEL ALGARROBO",1 UNIDAD,,,,,2285,🟡 falta imagen,
 MIX CITRICOS ,100G/250G/1KG,,,https://drive.google.com/file/d/12QBbEObkcuELenw4Hw1i5M2bxaDm3aIy/view,,1005,🔵 falta descripción,
-MIXTURAS ,1 UNIDAD,,,https://drive.google.com/file/d/17A_aCq6JKmEtpo6fOC74wZ8HW36XueuG/view,,2443,🔵 falta descripción,CAMBIAR ID EN SISTEMA
+MIXTURAS ,1 UNIDAD,,,https://drive.google.com/file/d/17A_aCq6JKmEtpo6fOC74wZ8HW36XueuG/view,,2443,❌ borrar (no está en precios),CAMBIAR ID EN SISTEMA
 MOLDES HUEVOS,1 UNIDAD,,,,,2499,🟡 falta imagen,
 NUEZ CUARTILLO X KG,250G/500G/1KG,,,https://drive.google.com/file/d/14S3MSYxxh2QTPkE9oteOswe1cHG7X6Dl/view,,1441,🔵 falta descripción,
 OREGANO SINERGICO X30ml,1 UNIDAD,,,,,1972,🟡 falta imagen,
@@ -581,3 +581,7 @@ VALERIANA TINTURA MADRE X 60 CC,1 UNIDAD,,,https://drive.google.com/file/d/11Jx0
 ZAPALLO EN ALMIBAR X3.8KG,1 UNIDAD,,,,,1655,🟡 falta imagen,
 ENVIO,,,,,,2388,🟡 falta imagen,
 NULO,,,,,,0,🟡 falta imagen,
+MIXTURAS ,,,,,,2514,🟡 falta imagen,
+PRESTAMO,,,,,,1,🟡 falta imagen,
+VARIOS,,,,,,1,🟡 falta imagen,
+"YOGURT PROTEICO ""YOGURLAC"" X 1L",,,,,,1795,🟡 falta imagen,
