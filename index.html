@@ -2168,17 +2168,11 @@ function _cargarInfo(){
       console.log(`📘 Info: ${Object.keys(mapa).length} entradas cargadas`);
       resolve(mapa);
     }
-    // 1. Archivo estático en el repo (URL fija → el SW lo cachea correctamente)
-    fetch('/paladeartienda/info-min.csv')
-      .then(r=>{ if(!r.ok) throw new Error('sin snapshot'); return r.text(); })
-      .then(csv=>_procesar(csv))
-      .catch(()=>{
-        // 2. Fallback: URL directa del Sheet (con cache-busting, no cacheable por SW)
-        if(!INFO_CSV_URL||INFO_CSV_URL.indexOf('REEMPLAZAR')>=0){console.warn('ℹ️ Hoja Info no configurada aún');resolve({});return;}
-        fetch(INFO_CSV_URL+'&t='+Date.now()+'&v='+Math.random().toString(36).slice(2),{cache:'no-store'})
-          .then(r=>r.text()).then(csv=>_procesar(csv))
-          .catch(err=>{console.warn('⚠️ Error cargando Info:',err);resolve({});});
-      });
+    // Cargar directamente desde Sheet (GID estable, el usuario nunca reemplaza esta hoja)
+    if(!INFO_CSV_URL||INFO_CSV_URL.indexOf('REEMPLAZAR')>=0){console.warn('ℹ️ Hoja Info no configurada aún');resolve({});return;}
+    fetch(INFO_CSV_URL+'&t='+Date.now(),{cache:'no-store'})
+      .then(r=>r.text()).then(csv=>_procesar(csv))
+      .catch(err=>{console.warn('⚠️ Error cargando Info:',err);resolve({});});
   });
 }
 
@@ -2231,35 +2225,25 @@ function sincronizarDesdeSheets(){
       hideLoader();
     }
 
-    // ── Intento 1: archivo estático del repo (URL fija → el SW lo cachea) ──
-    fetch('/paladeartienda/precios-min.csv')
-      .then(r=>{ if(!r.ok) throw new Error('sin snapshot'); return r.text(); })
-      .then(csv=>{
-        console.log('📄 Precios minorista desde archivo estático');
-        _procesarCSV(csv);
-      })
-      .catch(()=>{
-        // ── Intento 2: JSONP desde Apps Script (fallback, no cacheable) ──
-        console.warn('⚠️ Archivo estático no disponible, usando Apps Script JSONP...');
-        window.recibirPrecios=function(csv){ _procesarCSV(csv); };
-        let _retried=false;
-        function _cargarScript(){
-          const s=document.createElement('script');
-          s.onerror=()=>{
-            if(!_retried){
-              _retried=true;
-              console.warn('⚠️ Error cargando Sheet, reintentando en 3s...');
-              setTimeout(_cargarScript,3000);
-            } else {
-              console.warn('⚠️ Error cargando Sheet tras reintento');
-              renderCatsUI();renderCarruseles();hideLoader();
-            }
-          };
-          s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now()+'&v='+Math.random().toString(36).slice(2);
-          document.head.appendChild(s);
+    // Cargar directamente desde Apps Script JSONP (referencia la hoja por nombre, no GID)
+    window.recibirPrecios=function(csv){ _procesarCSV(csv); };
+    let _retried=false;
+    function _cargarScript(){
+      const s=document.createElement('script');
+      s.onerror=()=>{
+        if(!_retried){
+          _retried=true;
+          console.warn('⚠️ Error cargando Sheet, reintentando en 3s...');
+          setTimeout(_cargarScript,3000);
+        } else {
+          console.warn('⚠️ Error cargando Sheet tras reintento');
+          renderCatsUI();renderCarruseles();hideLoader();
         }
-        _cargarScript();
-      });
+      };
+      s.src=APPS_SCRIPT_URL+'?callback=recibirPrecios&t='+Date.now()+'&v='+Math.random().toString(36).slice(2);
+      document.head.appendChild(s);
+    }
+    _cargarScript();
   });
 }
 sincronizarDesdeSheets();
@@ -2986,18 +2970,8 @@ function switchTab(tab) {
 }
 window.switchTab = switchTab;
 
-// Cargar datos mayorista desde Google Sheets (fetch directo al CSV publicado)
+// Cargar datos mayorista desde Apps Script (referencia la hoja por nombre, no GID)
 function cargarMayorista() {
-  if (MAY_PRECIOS_GID.includes('REEMPLAZAR')) {
-    const area = document.getElementById('mayDesktopProdsArea');
-    const mob  = document.getElementById('mayMobileProdsArea');
-    const msg  = '<div style="padding:32px;text-align:center;color:var(--muted-fg);font-size:15px">⚙️ Configuración pendiente: reemplazá <b>MAY_PRECIOS_GID</b> en el código con el GID real de la hoja 3 del spreadsheet.</div>';
-    if (area) area.innerHTML = msg;
-    if (mob)  mob.innerHTML  = '';
-    console.warn('⚠️ MAY_PRECIOS_GID no configurado. Editá el archivo HTML y reemplazá el placeholder.');
-    return;
-  }
-
   // ── PASO 1: mostrar caché local INMEDIATAMENTE si existe ──
   let _mayYaRenderizado = false;
   try {
@@ -3013,8 +2987,6 @@ function cargarMayorista() {
       }
     }
   } catch(e) {}
-
-  const preciosUrl = SHEET_BASE_URL + '?gid=' + MAY_PRECIOS_GID + '&single=true&output=csv';
 
   _cargarInfoMay().then(infoMay => {
     function _procesarCSVMayorista(csv) {
@@ -3074,32 +3046,23 @@ function cargarMayorista() {
       if (mob)  mob.innerHTML  = '';
     }
 
-    // ── Intento 1: archivo estático del repo (URL fija → el SW lo cachea) ──
-    fetch('/paladeartienda/precios-may.csv')
-      .then(r => { if (!r.ok) throw new Error('sin snapshot'); return r.text(); })
-      .then(csv => {
-        console.log('📄 Precios mayorista desde archivo estático');
-        _procesarCSVMayorista(csv);
-      })
-      .catch(() => {
-        // ── Intento 2: URL directa del Sheet (fallback, no cacheable) ──
-        console.warn('⚠️ Snapshot mayorista no disponible, usando Sheet directo...');
-        fetch(preciosUrl + '&t=' + Date.now(), { cache: 'no-store' })
-          .then(r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.text();
-          })
-          .then(csv => _procesarCSVMayorista(csv))
-          .catch(err => {
-            console.warn('⚠️ Error cargando precios mayorista, reintentando...', err);
-            setTimeout(() => {
-              fetch(preciosUrl + '&t=' + Date.now(), { cache: 'no-store' })
-                .then(r => r.text())
-                .then(csv => _procesarCSVMayorista(csv))
-                .catch(() => _mostrarErrorMayorista());
-            }, 3000);
-          });
-      });
+    // Cargar directamente desde Apps Script JSONP con ?sheet=mayorista (referencia por nombre, no GID)
+    function _cargarScriptMay() {
+      const s = document.createElement('script');
+      s.onerror = () => {
+        console.warn('⚠️ Error cargando mayorista, reintentando en 3s...');
+        setTimeout(() => {
+          const s2 = document.createElement('script');
+          s2.onerror = () => _mostrarErrorMayorista();
+          s2.src = APPS_SCRIPT_URL + '?callback=recibirPreciosMay&sheet=mayorista&t=' + Date.now();
+          document.head.appendChild(s2);
+        }, 3000);
+      };
+      s.src = APPS_SCRIPT_URL + '?callback=recibirPreciosMay&sheet=mayorista&t=' + Date.now();
+      document.head.appendChild(s);
+    }
+    window.recibirPreciosMay = function(csv) { _procesarCSVMayorista(csv); };
+    _cargarScriptMay();
   });
 }
 
@@ -3126,18 +3089,12 @@ function _cargarInfoMay() {
       });
       resolve(mapa);
     }
-    // 1. Archivo estático del repo (URL fija → el SW lo cachea)
-    fetch('/paladeartienda/info-may.csv')
-      .then(r => { if (!r.ok) throw new Error('sin snapshot'); return r.text(); })
-      .then(csv => _procesar(csv))
-      .catch(() => {
-        // 2. Fallback: URL directa del Sheet
-        if (MAY_INFO_GID.includes('REEMPLAZAR')) { console.warn('ℹ️ MAY_INFO_GID no configurado.'); resolve({}); return; }
-        const infoUrl = SHEET_BASE_URL + '?gid=' + MAY_INFO_GID + '&single=true&output=csv';
-        fetch(infoUrl + '&t=' + Date.now(), { cache: 'no-store' })
-          .then(r => r.text()).then(csv => _procesar(csv))
-          .catch(() => resolve({}));
-      });
+    // Cargar directamente desde Sheet (GID estable, el usuario nunca reemplaza esta hoja)
+    if (MAY_INFO_GID.includes('REEMPLAZAR')) { console.warn('ℹ️ MAY_INFO_GID no configurado.'); resolve({}); return; }
+    const infoUrl = SHEET_BASE_URL + '?gid=' + MAY_INFO_GID + '&single=true&output=csv';
+    fetch(infoUrl + '&t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.text()).then(csv => _procesar(csv))
+      .catch(() => resolve({}));
   });
 }
 
