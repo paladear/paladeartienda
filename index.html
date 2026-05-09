@@ -3047,7 +3047,7 @@ function cargarMayorista() {
     }
 
     // Cargar por nombre de hoja (sin GID — "Mayorista" nunca cambia aunque cambies el Excel)
-    const mayUrl = SHEET_BASE_URL + '?output=csv&sheet=Mayorista&t=' + Date.now();
+    const mayUrl = 'https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=Mayorista&t=' + Date.now();
     fetch(mayUrl, { cache: 'no-store' })
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
       .then(csv => _procesarCSVMayorista(csv))
