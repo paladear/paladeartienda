@@ -1821,7 +1821,12 @@ function pedirWA(){
     msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
   });
   msg+=`\n*TOTAL: $${fmt(tot)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}\n\n_Pedido realizado desde el catálogo online_`;
-  window.open('https://wa.me/'+WA_MINORISTA+'?text='+encodeURIComponent(msg),'_blank');
+  const url='https://wa.me/'+WA_MINORISTA+'?text='+encodeURIComponent(msg);
+  if(!navigator.onLine){
+    _guardarPedidoPendiente(url,'minorista');
+    return;
+  }
+  window.open(url,'_blank');
 }
 
 let _searchTimer=null;
@@ -3748,7 +3753,12 @@ _(Lista Mayorista)_
 
 _Pedido realizado desde el catálogo online_`;
   
-  window.open('https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg), '_blank');
+  const url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
+  if (!navigator.onLine) {
+    _guardarPedidoPendiente(url, 'mayorista');
+    return;
+  }
+  window.open(url, '_blank');
 }
 window.pedirWAMayorista = pedirWAMayorista;
 
@@ -3914,6 +3924,123 @@ window.toggleHdrop=toggleHdrop;
 window.closeAllHdrops=closeAllHdrops;
 
 })(); // fin IIFE
+// Si el usuario toca "Pedir por WhatsApp" sin internet, guardamos el pedido
+// y lo enviamos cuando vuelva la conexión.
+
+function _guardarPedidoPendiente(url, tipo) {
+  try {
+    localStorage.setItem('paladear_pedido_pendiente', JSON.stringify({url, tipo, ts: Date.now()}));
+  } catch(e) {}
+  // Mostrar aviso
+  _quitarBannerPedido();
+  const banner = document.createElement('div');
+  banner.id = 'bannerPedidoOffline';
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:20px">📦</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px">Sin conexión — pedido guardado</div>
+        <div style="font-size:12px;opacity:.85">Cuando tengas internet, tocá el botón para enviarlo</div>
+      </div>
+      <button onclick="_enviarPedidoPendiente()" style="background:#25d366;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">💬 Enviar</button>
+      <button onclick="_cancelarPedidoPendiente()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;padding:9px 10px;font-size:13px;cursor:pointer">✕</button>
+    </div>`;
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#547692;color:#fff;padding:14px 16px;z-index:10000;box-shadow:0 -2px 12px rgba(0,0,0,.2)';
+  document.body.appendChild(banner);
+}
+
+function _quitarBannerPedido() {
+  const b = document.getElementById('bannerPedidoOffline');
+  if (b) b.remove();
+}
+
+function _enviarPedidoPendiente() {
+  try {
+    const raw = localStorage.getItem('paladear_pedido_pendiente');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (!navigator.onLine) {
+      // Todavía sin internet: avisar
+      const btn = document.querySelector('#bannerPedidoOffline button');
+      if (btn) { btn.textContent = '⚠️ Aún sin conexión'; setTimeout(()=>{ btn.textContent='💬 Enviar'; }, 2000); }
+      return;
+    }
+    window.open(data.url, '_blank');
+    localStorage.removeItem('paladear_pedido_pendiente');
+    _quitarBannerPedido();
+  } catch(e) {}
+}
+window._enviarPedidoPendiente = _enviarPedidoPendiente;
+
+function _cancelarPedidoPendiente() {
+  localStorage.removeItem('paladear_pedido_pendiente');
+  _quitarBannerPedido();
+}
+window._cancelarPedidoPendiente = _cancelarPedidoPendiente;
+
+// Al recuperar internet: mostrar el banner si hay pedido pendiente
+window.addEventListener('online', function() {
+  try {
+    const raw = localStorage.getItem('paladear_pedido_pendiente');
+    if (!raw) return;
+    _quitarBannerPedido();
+    const data = JSON.parse(raw);
+    const banner = document.createElement('div');
+    banner.id = 'bannerPedidoOffline';
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:20px">🌐</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px">¡Volvió la conexión!</div>
+          <div style="font-size:12px;opacity:.85">Tenés un pedido guardado listo para enviar</div>
+        </div>
+        <button onclick="_enviarPedidoPendiente()" style="background:#25d366;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">💬 Enviar por WhatsApp</button>
+        <button onclick="_cancelarPedidoPendiente()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;padding:9px 10px;font-size:13px;cursor:pointer">✕</button>
+      </div>`;
+    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#2d7a4f;color:#fff;padding:14px 16px;z-index:10000;box-shadow:0 -2px 12px rgba(0,0,0,.2)';
+    document.body.appendChild(banner);
+  } catch(e) {}
+});
+
+// Al abrir la app: si hay pedido pendiente y hay internet, mostrar el banner
+(function() {
+  try {
+    const raw = localStorage.getItem('paladear_pedido_pendiente');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    // Solo mostrar si el pedido tiene menos de 24 horas
+    if (Date.now() - data.ts > 86400000) { localStorage.removeItem('paladear_pedido_pendiente'); return; }
+    if (navigator.onLine) {
+      // Hay internet y pedido pendiente: mostrar banner verde de reenvío
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          _quitarBannerPedido();
+          const banner = document.createElement('div');
+          banner.id = 'bannerPedidoOffline';
+          banner.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="font-size:20px">📦</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:700;font-size:14px">Tenés un pedido guardado</div>
+                <div style="font-size:12px;opacity:.85">Quedó guardado cuando no había conexión</div>
+              </div>
+              <button onclick="_enviarPedidoPendiente()" style="background:#25d366;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap">💬 Enviar por WhatsApp</button>
+              <button onclick="_cancelarPedidoPendiente()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;padding:9px 10px;font-size:13px;cursor:pointer">✕</button>
+            </div>`;
+          banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#2d7a4f;color:#fff;padding:14px 16px;z-index:10000;box-shadow:0 -2px 12px rgba(0,0,0,.2)';
+          document.body.appendChild(banner);
+        }, 1500);
+      });
+    } else {
+      // Sin internet y hay pedido: mostrar el banner azul
+      window.addEventListener('load', function() {
+        setTimeout(function() { _guardarPedidoPendiente(data.url, data.tipo); }, 1000);
+      });
+    }
+  } catch(e) {}
+})();
+
+
 </script>
 
 <!-- ══════════ SERVICE WORKER (PWA) ══════════ -->
