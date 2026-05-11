@@ -466,9 +466,12 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* Sección Ofertas del mes (carrusel destacado) */
 .ofertas-mes-section{background:linear-gradient(135deg,#fdefd8 0%,#fbe2bd 100%);border:2px solid #d4543c;border-radius:18px;padding:18px 16px;margin-bottom:28px;position:relative;overflow:hidden}
 .ofertas-mes-section::before{content:"";position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(212,84,60,.08);border-radius:50%}
-.ofertas-mes-title{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1}
-.ofertas-mes-title h2{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#b04020;margin:0}
-.ofertas-mes-title .badge{background:#b04020;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px}
+.ofertas-mes-title{display:flex;align-items:center;gap:8px;margin-bottom:14px;position:relative;z-index:1;flex-wrap:nowrap}
+.ofertas-mes-emoji{font-size:22px;flex-shrink:0;line-height:1}
+.ofertas-mes-title h2{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#b04020;margin:0;white-space:nowrap;flex-shrink:0}
+.ofertas-mes-title .badge{background:#b04020;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px;flex-shrink:0}
+.ofertas-mes-ver-btn{margin-left:auto;background:#b04020;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.ofertas-mes-ver-btn:hover{background:#943318}
 .ofertas-mes-subtitle{font-size:12px;color:#8a3520;margin-bottom:14px;position:relative;z-index:1;line-height:1.4}
 /* Desktop: grilla fija de 4, sin scroll */
 @media(min-width:768px){
@@ -1498,7 +1501,8 @@ function _sortOpts(opts){
   }
   return [...opts].sort((a,b)=>_optWeight(b)-_optWeight(a));
 }
-function _cardHTML(p){
+function _cardHTML(p, xopts){
+  const opts2=(xopts&&typeof xopts==='object'&&!Array.isArray(xopts))?xopts:{};
   const opts=_sortOpts(Object.keys(p[7]));
   const precio=opts.length?p[7][opts[0]][0]:0;
   const hasSrc=p[6]&&p[6].startsWith('http');
@@ -1509,7 +1513,8 @@ function _cardHTML(p){
   const precioHTML=oferta>0
     ? `<div class="carousel-card-price"><span class="precio-tachado">$${fmt(precio)}</span> <span class="precio-oferta">$${fmt(precioOferta)}</span></div>`
     : `<div class="carousel-card-price">$${fmt(precio)}</div>`;
-  return `<div class="carousel-card" onclick="selectCat('${p[1]}',${p[0]})">
+  const onclick=opts2.onclick||`selectCat('${p[1]}',${p[0]})`;
+  return `<div class="carousel-card" onclick="${onclick}">
     ${ofertaBadge}
     <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
     <div class="carousel-card-body">
@@ -1542,19 +1547,31 @@ function renderCarruseles(){
     _carState[cidOf]={prods:shuffledOf,cursor:0};
     const visiblesOf=shuffledOf.slice(0,4);
     const ofertaHeader=`<div class="ofertas-mes-title">
-        <h2>🏷️ Ofertas del mes</h2>
+        <span class="ofertas-mes-emoji">🏷️</span>
+        <h2>Ofertas del mes</h2>
         <span class="badge">Hasta -${Math.max(...prodsOferta.map(p=>p[12].oferta))}%</span>
+        <button class="ofertas-mes-ver-btn" onclick="selectOfertasMes()">Ver todos →</button>
       </div>
       <div class="ofertas-mes-subtitle">Productos seleccionados con descuento — no acumulable con descuento por volumen ($80.000+)</div>`;
+    const _ofOpts={onclick:'selectOfertasMes(event.currentTarget.dataset.pid)',};
+    const _cardHTMLOferta=p=>`<div class="carousel-card" onclick="selectOfertasMes(${p[0]})">
+    ${p[12]&&p[12].oferta?`<div class="oferta-badge">−${p[12].oferta}%</div>`:''}
+    <div class="carousel-card-img">${p[6]&&p[6].startsWith('http')?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${CATS.find(c=>c.id===p[1])?CATS.find(c=>c.id===p[1]).ic:'🌿'}`}</div>
+    <div class="carousel-card-body">
+      <div class="carousel-card-name">${p[2]}</div>
+      <div class="carousel-card-cat">${CATS.find(c=>c.id===p[1])?CATS.find(c=>c.id===p[1]).n:''}</div>
+      ${(()=>{const opts=_sortOpts(Object.keys(p[7]));const precio=opts.length?p[7][opts[0]][0]:0;const pct=p[12]&&p[12].oferta?p[12].oferta:0;return pct>0?`<div class="carousel-card-price"><span class="precio-tachado">$${fmt(precio)}</span> <span class="precio-oferta">$${fmt(Math.round(precio*(1-pct/100)))}</span></div>`:`<div class="carousel-card-price">$${fmt(precio)}</div>`})()}
+    </div>
+  </div>`;
     htmlDesktop+=`<div class="ofertas-mes-section">
       ${ofertaHeader}
-      <div class="carousel-wrap"><div class="carousel-track" id="${cidOf}">${visiblesOf.map(_cardHTML).join('')}</div></div>
+      <div class="carousel-wrap"><div class="carousel-track" id="${cidOf}">${visiblesOf.map(_cardHTMLOferta).join('')}</div></div>
     </div>`;
     // Mobile: todos
     const prodsOfertaSorted=[...prodsOferta].sort((a,b)=>a[2].localeCompare(b[2],'es'));
     htmlMobile+=`<div class="ofertas-mes-section">
       ${ofertaHeader}
-      <div class="carousel-wrap"><div class="carousel-track" id="${cidOfM}">${prodsOfertaSorted.map(_cardHTML).join('')}</div></div>
+      <div class="carousel-wrap"><div class="carousel-track" id="${cidOfM}">${prodsOfertaSorted.map(_cardHTMLOferta).join('')}</div></div>
     </div>`;
   }
 
@@ -1661,7 +1678,50 @@ function selectCat(catId,productId){
   }
 }
 
+let _activeOfertasMes=false;
+
+function selectOfertasMes(productId){
+  if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
+  _activeOfertasMes=true;
+  activeCatId=null;
+  renderCatsUI();
+  const prods=PRODS.filter(p=>p[12]&&p[12].oferta>0)
+    .sort((a,b)=>a[2].localeCompare(b[2],'es',{sensitivity:'base'}));
+  const isMobile=window.innerWidth<768;
+  const prefix=isMobile?'mb':'dt';
+  const backBtn=`<button class="back-btn" onclick="volverInicio()">← Volver al inicio</button>`;
+  const maxPct=prods.length?Math.max(...prods.map(p=>p[12].oferta)):15;
+  let h=backBtn+`<div style="display:flex;align-items:center;gap:8px;margin:12px 0 4px;flex-wrap:nowrap">
+    <span style="font-size:22px;flex-shrink:0">🏷️</span>
+    <h2 style="font-size:22px;color:#b04020;font-weight:800;margin:0;white-space:nowrap">Ofertas del mes</h2>
+    <span style="background:#b04020;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;flex-shrink:0">Hasta -${maxPct}%</span>
+  </div>
+  <div style="font-size:12px;color:#8a3520;margin-bottom:16px;line-height:1.4">Productos seleccionados con descuento — no acumulable con descuento por volumen ($80.000+)</div>`;
+  h+='<div class="prod-grid">';
+  prods.forEach(p=>{h+=renderCard(p,prefix);});
+  h+='</div>';
+  const area=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
+  if(isMobile)area.classList.remove('hidden');
+  area.innerHTML=h;
+  if(!history.state||history.state.view!=='ofertasMes'){
+    history.pushState({view:'ofertasMes',productId:productId||null},'');
+  }
+  if(productId!=null){
+    setTimeout(()=>{
+      const card=document.getElementById(prefix+'_'+productId);
+      if(card){
+        card.scrollIntoView({behavior:'smooth',block:'center'});
+        card.classList.add('highlight-card');
+        setTimeout(()=>card.classList.remove('highlight-card'),2200);
+      }
+    },80);
+  }
+  _saveAppState();
+}
+window.selectOfertasMes=selectOfertasMes;
+
 function volverInicio(){
+  _activeOfertasMes=false;
   activeCatId=null;
   renderCatsUI();
   renderCarruseles();
@@ -2535,7 +2595,15 @@ window.addEventListener('popstate',function(e){
   const infoModal=document.getElementById('infoModal');
   if(infoModal){infoModal.remove();history.pushState(st,'');return;}
 
-  // 3. Si estamos en una categoría MAYORISTA → volver al inicio del mayorista
+  // 3. Si estamos en la vista de Ofertas del mes → volver al inicio
+  if(_activeOfertasMes){
+    volverInicio();
+    history.pushState({view:'home'},'');
+    _saveAppState();
+    return;
+  }
+
+  // 3b. Si estamos en una categoría MAYORISTA → volver al inicio del mayorista
   if(activeCatIdMay && currentTab==='mayorista'){
     volverMayInicio();
     history.pushState({view:'home'},'');
@@ -2586,6 +2654,7 @@ function _saveAppState() {
         tab: (typeof currentTab !== 'undefined' && currentTab) ? currentTab : 'minorista',
         catMin: activeCatId || null,
         catMay: activeCatIdMay || null,
+        ofertasMes: _activeOfertasMes || false,
         scrollY: window.scrollY,
         ts: Date.now()
       };
@@ -2661,7 +2730,9 @@ function _restoreAppState() {
       intentos++;
       if (PRODS && PRODS.length) {
         clearInterval(waitMin);
-        if (state.catMin) {
+        if (state.ofertasMes) {
+          selectOfertasMes();
+        } else if (state.catMin) {
           selectCat(state.catMin);
         }
         _restoreScroll();
