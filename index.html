@@ -1585,6 +1585,7 @@ function selectCat(catId,productId){
   if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
   activeCatId=catId;
   renderCatsUI();
+  _saveAppState();
   const cat=CATS.find(c=>c.id===catId);
   const prods=PRODS.filter(p=>p[1]===catId);
   const isMobile=window.innerWidth<768;
@@ -2369,12 +2370,65 @@ history.replaceState({view:'home'},'');
 window.addEventListener('popstate',function(e){
   const st=e.state||{view:'home'};
 
-  // 1. Si el carrito está abierto → cerrarlo (no salir de la app)
+  // 0. Si el modal de instalación de app está abierto → cerrarlo
+  const appModal=document.getElementById('modalInstalarApp');
+  if(appModal && !appModal.classList.contains('hidden')){
+    cerrarModalApp();
+    history.pushState({view:'home'},'');
+    return;
+  }
+
+  // 0b. Si el warning de in-app browser está abierto → cerrarlo
+  const iabWarn=document.getElementById('iabWarning');
+  if(iabWarn && !iabWarn.classList.contains('hidden')){
+    dismissIAB();
+    history.pushState({view:'home'},'');
+    return;
+  }
+
+  // 0c. Si un modal de mix/granola está abierto → cerrarlo
+  const mixModal=document.getElementById('mixModal');
+  if(mixModal && !mixModal.classList.contains('hidden')){
+    if(typeof closeMixModal==='function')closeMixModal();
+    else mixModal.classList.add('hidden');
+    history.pushState({view:'home'},'');
+    return;
+  }
+  const granolaModal=document.getElementById('granolaModal');
+  if(granolaModal && !granolaModal.classList.contains('hidden')){
+    if(typeof closeGranolaModal==='function')closeGranolaModal();
+    else granolaModal.classList.add('hidden');
+    history.pushState({view:'home'},'');
+    return;
+  }
+
+  // 0d. Si el dropdown de categorías mobile está abierto → cerrarlo
+  const catsDD=document.getElementById('catsDropdown');
+  if(catsDD && catsDD.classList.contains('open')){
+    if(typeof closeCatsDropdown==='function')closeCatsDropdown();
+    history.pushState({view:'home'},'');
+    return;
+  }
+  const mayCatsDD=document.getElementById('mayCatsDropdown');
+  if(mayCatsDD && mayCatsDD.classList.contains('open')){
+    if(typeof closeMayCatsDropdown==='function')closeMayCatsDropdown();
+    history.pushState({view:'home'},'');
+    return;
+  }
+
+  // 1. Si el carrito MINORISTA está abierto → cerrarlo
   const cartPanel=document.getElementById('cartPanel');
   if(cartPanel&&cartPanel.classList.contains('open')){
     closeCart();
-    // Volver a dejar un estado home en el historial para el próximo "atrás"
     history.pushState({view:activeCatId?{view:'cat',catId:activeCatId}:'home'},'');
+    return;
+  }
+
+  // 1b. Si el carrito MAYORISTA está abierto → cerrarlo
+  const cartPanelMay=document.getElementById('cartPanelMay');
+  if(cartPanelMay&&cartPanelMay.classList.contains('open')){
+    closeCartMay();
+    history.pushState({view:activeCatIdMay?{view:'catMay',catId:activeCatIdMay}:'home'},'');
     return;
   }
 
@@ -2382,10 +2436,27 @@ window.addEventListener('popstate',function(e){
   const infoModal=document.getElementById('infoModal');
   if(infoModal){infoModal.remove();history.pushState(st,'');return;}
 
-  // 3. Si estamos en una categoría → volver al inicio del catálogo
+  // 3. Si estamos en una categoría MAYORISTA → volver al inicio del mayorista
+  if(activeCatIdMay && currentTab==='mayorista'){
+    volverMayInicio();
+    history.pushState({view:'home'},'');
+    _saveAppState();
+    return;
+  }
+
+  // 3b. Si estamos en una categoría MINORISTA → volver al inicio del catálogo
   if(activeCatId){
     volverInicio();
     history.pushState({view:'home'},'');
+    _saveAppState();
+    return;
+  }
+
+  // 3c. Si estamos en mayorista (sin categoría) → volver a minorista
+  if(currentTab==='mayorista'){
+    switchTab('minorista');
+    history.pushState({view:'home'},'');
+    _saveAppState();
     return;
   }
 
@@ -2403,6 +2474,112 @@ window.addEventListener('popstate',function(e){
     history.pushState({view:'home'},'');
   }
 });
+
+// ═══ PERSISTENCIA DE ESTADO (sobrevive al reload) ═══
+
+let _saveStateTimer = null;
+function _saveAppState() {
+  // Debounce: guardar máximo cada 200ms
+  if (_saveStateTimer) clearTimeout(_saveStateTimer);
+  _saveStateTimer = setTimeout(function() {
+    try {
+      const state = {
+        tab: (typeof currentTab !== 'undefined' && currentTab) ? currentTab : 'minorista',
+        catMin: activeCatId || null,
+        catMay: activeCatIdMay || null,
+        scrollY: window.scrollY,
+        ts: Date.now()
+      };
+      sessionStorage.setItem('paladear_view_state', JSON.stringify(state));
+    } catch(e) {}
+  }, 200);
+}
+
+// Guardar scroll periódicamente (debounced)
+let _scrollSaveTimer = null;
+window.addEventListener('scroll', function() {
+  if (_scrollSaveTimer) clearTimeout(_scrollSaveTimer);
+  _scrollSaveTimer = setTimeout(_saveAppState, 500);
+}, { passive: true });
+
+// Guardar antes de descargar la página (último intento)
+window.addEventListener('beforeunload', function() {
+  try {
+    const state = {
+      tab: (typeof currentTab !== 'undefined' && currentTab) ? currentTab : 'minorista',
+      catMin: activeCatId || null,
+      catMay: activeCatIdMay || null,
+      scrollY: window.scrollY,
+      ts: Date.now()
+    };
+    sessionStorage.setItem('paladear_view_state', JSON.stringify(state));
+  } catch(e) {}
+});
+
+function _restoreAppState() {
+  let state;
+  try {
+    const raw = sessionStorage.getItem('paladear_view_state');
+    if (!raw) return;
+    state = JSON.parse(raw);
+    // Solo restaurar si el estado es reciente (menos de 30 minutos)
+    if (!state || Date.now() - state.ts > 30 * 60 * 1000) {
+      sessionStorage.removeItem('paladear_view_state');
+      return;
+    }
+  } catch(e) { return; }
+
+  function _restoreScroll() {
+    if (state.scrollY > 0) {
+      // Múltiples intentos porque el layout puede seguir reacomodándose
+      setTimeout(() => window.scrollTo(0, state.scrollY), 100);
+      setTimeout(() => window.scrollTo(0, state.scrollY), 350);
+      setTimeout(() => window.scrollTo(0, state.scrollY), 800);
+    }
+  }
+
+  if (state.tab === 'mayorista') {
+    // Cambiar a mayorista, esperar productos, restaurar categoría
+    switchTab('mayorista');
+    let intentos = 0;
+    const waitMay = setInterval(function() {
+      intentos++;
+      if (PRODS_MAY && PRODS_MAY.length) {
+        clearInterval(waitMay);
+        if (state.catMay) {
+          selectMayCat(state.catMay);
+        }
+        _restoreScroll();
+      } else if (intentos > 80) { // ~8s timeout
+        clearInterval(waitMay);
+        _restoreScroll();
+      }
+    }, 100);
+  } else {
+    // Minorista: esperar a que PRODS esté listo
+    let intentos = 0;
+    const waitMin = setInterval(function() {
+      intentos++;
+      if (PRODS && PRODS.length) {
+        clearInterval(waitMin);
+        if (state.catMin) {
+          selectCat(state.catMin);
+        }
+        _restoreScroll();
+      } else if (intentos > 80) {
+        clearInterval(waitMin);
+        _restoreScroll();
+      }
+    }, 100);
+  }
+}
+
+// Llamar al restaurar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _restoreAppState);
+} else {
+  setTimeout(_restoreAppState, 100);
+}
 
 /* ── MIX BUILDER ── */
 const MIX_SIZES=[{g:500,lbl:'500 g'},{g:1000,lbl:'1 kg'},{g:2000,lbl:'2 kg'},{g:5000,lbl:'5 kg'}];
@@ -3083,6 +3260,14 @@ function switchTab(tab) {
   }
 }
 window.switchTab = switchTab;
+// Hook: guardar estado cuando cambia el tab
+(function(){
+  const _origSwitchTab = switchTab;
+  window.switchTab = function(tab){
+    _origSwitchTab(tab);
+    if(typeof _saveAppState==='function') _saveAppState();
+  };
+})();
 
 // Cargar datos mayorista desde Apps Script (referencia la hoja por nombre, no GID)
 function cargarMayorista() {
@@ -3251,25 +3436,65 @@ function renderMayCarrusel() {
   
   if (!activeCatIdMay) {
     // Mostrar carrusel inicial con todos los rubros en orden alfabético
-    let h = '';
+    let h = '', hMobile = '';
     const catIdsAll = [...new Set(PRODS_MAY.map(p => p[1]))];
     const catsSorted = catIdsAll
       .map(id => CATS_MAY.find(c => c.id === id))
       .filter(Boolean)
       .sort((a, b) => a.n.localeCompare(b.n, 'es'));
-    catsSorted.forEach(cat => {
-      const prods = PRODS_MAY.filter(p => p[1] === cat.id).slice(0, 4);
+    // Limpiar estado de rotación anterior
+    if (_carStateMay) {
+      for (const k in _carStateMay) delete _carStateMay[k];
+    } else {
+      _carStateMay = {};
+    }
+    catsSorted.forEach((cat, i) => {
+      const prods = PRODS_MAY.filter(p => p[1] === cat.id);
       if (!prods.length) return;
+      const cid = 'carMay' + i;
+      const cidM = 'carMayM' + i;
+      // DESKTOP: 4 productos visibles con auto-rotación
+      const shuffled = [...prods].sort(() => Math.random() - .5);
+      _carStateMay[cid] = { prods: shuffled, cursor: 0 };
+      const visibles = shuffled.slice(0, 4);
       h += `<div class="carousel-section">
         <button class="carousel-title carousel-title-btn" onclick="selectMayCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
-        <div class="carousel-wrap"><div class="carousel-track">`;
-      prods.forEach(p => { h += _cardHTMLMay(p); });
-      h += `</div></div></div>`;
+        <div class="carousel-wrap"><div class="carousel-track" id="${cid}">${visibles.map(_cardHTMLMay).join('')}</div></div>
+      </div>`;
+      // MOBILE: TODOS los productos en el track scrolleable
+      const prodsSorted = [...prods].sort((a, b) => a[2].localeCompare(b[2], 'es', { sensitivity: 'base' }));
+      hMobile += `<div class="carousel-section">
+        <button class="carousel-title carousel-title-btn" onclick="selectMayCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
+        <div class="carousel-wrap"><div class="carousel-track" id="${cidM}">${prodsSorted.map(_cardHTMLMay).join('')}</div></div>
+      </div>`;
     });
     if (desktop) desktop.innerHTML = h;
-    if (mobile) { mobile.innerHTML = h; mobile.classList.remove('hidden'); }
+    if (mobile) { mobile.innerHTML = hMobile; mobile.classList.remove('hidden'); }
+    // Auto-rotación desktop cada 12s
+    if (_carRotationIntervalMay) clearInterval(_carRotationIntervalMay);
+    if (!isMobile) _carRotationIntervalMay = setInterval(rotarCarruselesMay, 12000);
   } else {
     selectMayCat(activeCatIdMay);
+  }
+}
+
+var _carStateMay = {};
+var _carRotationIntervalMay = null;
+function rotarCarruselesMay() {
+  for (const cid in _carStateMay) {
+    const track = document.getElementById(cid);
+    if (!track) continue;
+    const st = _carStateMay[cid];
+    if (st.prods.length <= 4) continue;
+    st.cursor = (st.cursor + 4) % st.prods.length;
+    const nuevos = [];
+    for (let k = 0; k < 4; k++) nuevos.push(st.prods[(st.cursor + k) % st.prods.length]);
+    track.style.transition = 'opacity .4s ease';
+    track.style.opacity = '0';
+    setTimeout(() => {
+      track.innerHTML = nuevos.map(_cardHTMLMay).join('');
+      track.style.opacity = '1';
+    }, 400);
   }
 }
 
@@ -3293,6 +3518,11 @@ function _cardHTMLMay(p) {
 function selectMayCat(catId, productId) {
   activeCatIdMay = catId;
   renderMayCatsUI();
+  // Push state para que el botón "atrás" del navegador vuelva al inicio del mayorista
+  if (!history.state || history.state.view !== 'catMay' || history.state.catId !== catId) {
+    history.pushState({view:'catMay', catId, productId}, '');
+  }
+  _saveAppState();
 
   const prods = PRODS_MAY.filter(p => p[1] === catId).sort((a, b) => a[2].localeCompare(b[2], 'es', { sensitivity: 'base' }));
   const cat   = CATS_MAY.find(c => c.id === catId);
@@ -4234,6 +4464,9 @@ function _isInAppBrowser() {
 window.abrirModalApp = function() {
   var modal = document.getElementById('modalInstalarApp');
   if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+  if (!history.state || history.state.view !== 'appModal') {
+    history.pushState({view:'appModal'}, '');
+  }
   // Auto-detectar y mostrar el tab correcto primero
   if (_isIOS()) {
     setTimeout(function() { switchTabApp('ios'); }, 30);
