@@ -390,6 +390,28 @@ button{cursor:pointer;border:none;font-family:inherit}
 .co-radio:has(input:checked){border-color:var(--azul);background:rgba(84,118,146,.05)}
 .co-radio input{flex-shrink:0;margin-top:2px;accent-color:var(--azul);width:16px;height:16px}
 .co-radio span{font-size:13px;color:var(--fg);line-height:1.4}
+/* Row de campos lado a lado */
+.co-field-row{display:flex;gap:10px}
+.co-field-row .co-field{margin-bottom:16px}
+/* Radio tipo casa/depto inline */
+.co-tipo-opts{display:flex;gap:6px}
+.co-tipo-radio{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;border:2px solid var(--muted);border-radius:10px;padding:11px 6px;cursor:pointer;transition:border-color .2s;background:var(--card);font-size:13px;color:var(--fg)}
+.co-tipo-radio:has(input:checked){border-color:var(--azul);background:rgba(84,118,146,.07);color:var(--azul-dark);font-weight:600}
+.co-tipo-radio input{display:none}
+textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
+/* Caja de ubicación opcional */
+.co-ubicacion-box{background:var(--muted);border-radius:12px;padding:14px;margin-top:8px}
+.co-ubic-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.co-ubic-title{font-size:14px;font-weight:600;color:var(--azul-dark);margin-bottom:2px}
+.co-ubic-desc{font-size:12px;color:var(--muted-fg)}
+.co-ubic-btn{background:var(--azul);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.co-ubic-btn:hover{background:var(--azul-dark)}
+.co-ubic-actions{display:flex;gap:8px;margin-top:10px}
+.co-ubic-hint{font-size:11px;color:var(--muted-fg);text-align:center;margin-top:8px;line-height:1.4}
+.co-ubic-close{display:block;background:transparent;border:none;color:var(--muted-fg);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;margin:8px auto 0;padding:4px}
+.co-ubic-close:hover{color:#e53935}
+.co-ubic-confirm{display:flex;align-items:center;gap:8px;background:#e8f5e9;border-radius:8px;padding:10px 12px;font-size:12px;color:#2e7d32;margin-top:10px;line-height:1.4;font-weight:600}
+#coMap{height:200px;border-radius:10px;overflow:hidden;border:2px solid var(--card);margin-top:10px}
 .app-tab-btn{flex:1;padding:9px 8px;border:2px solid var(--muted);border-radius:10px;background:var(--card);color:var(--azul-dark);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
 .app-tab-btn.active{border-color:var(--azul);background:var(--azul);color:#fff}
 .app-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;font-size:13px;line-height:1.4}
@@ -4518,8 +4540,13 @@ function cerrarCheckout() {
   document.getElementById('checkoutOverlay').classList.add('hidden');
   document.body.style.overflow = '';
   if (_coMap) { _coMap.remove(); _coMap = null; _coMarker = null; }
-  document.getElementById('coMap').classList.add('hidden');
-  document.getElementById('coMapConfirm').classList.add('hidden');
+  _coCoords = null;
+  var panel = document.getElementById('coUbicacionPanel');
+  if (panel) panel.classList.add('hidden');
+  var btn = document.getElementById('coUbicBtn');
+  if (btn) btn.style.display = '';
+  var conf = document.getElementById('coUbicConfirm');
+  if (conf) conf.classList.add('hidden');
 }
 window.cerrarCheckout = cerrarCheckout;
 
@@ -4558,16 +4585,10 @@ function coElegirEntrega(tipo) {
   document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
   document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
   document.getElementById('coBtnBack').style.display = '';
-  if (tipo === 'domicilio') {
-    _coLoadLeaflet();
-    // Efectivo solo para minorista y solo retiro en local — ocultarlo en domicilio
-    var efWrap = document.getElementById('coRadioEfectivoWrap');
-    if (efWrap) efWrap.style.display = 'none';
-  } else {
-    // Retiro: efectivo solo si es minorista
-    var efWrap2 = document.getElementById('coRadioEfectivoWrap');
-    if (efWrap2) efWrap2.style.display = _coVenta === 'minorista' ? '' : 'none';
-  }
+  if (tipo === 'domicilio') _coLoadLeaflet();
+  // Efectivo solo se muestra para venta minorista
+  var efWrap = document.getElementById('coRadioEfectivoWrap');
+  if (efWrap) efWrap.style.display = _coVenta === 'minorista' ? '' : 'none';
 }
 window.coElegirEntrega = coElegirEntrega;
 
@@ -4593,7 +4614,6 @@ function _coInitMap() {
   if (_coMap) { setTimeout(function(){ _coMap.invalidateSize(); }, 100); return; }
   var mapDiv = document.getElementById('coMap');
   if (!mapDiv || !window.L) { setTimeout(_coInitMap, 500); return; }
-  mapDiv.classList.remove('hidden');
   _coMap = L.map('coMap').setView([-32.89, -68.83], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap', maxZoom: 19
@@ -4601,18 +4621,45 @@ function _coInitMap() {
   _coMarker = L.marker([-32.89, -68.83], {draggable: true}).addTo(_coMap);
   _coMarker.on('dragend', function(){
     var p = _coMarker.getLatLng();
-    _coReverseGeocode(p.lat, p.lng);
+    _coCoords = { lat: p.lat, lng: p.lng };
+    _coShowConfirm();
   });
   setTimeout(function(){ _coMap.invalidateSize(); }, 150);
 }
 
+// Coords guardadas (sin tocar el campo de dirección)
+var _coCoords = null;
+
+function coAbrirUbicacion() {
+  _coLoadLeaflet();
+  document.getElementById('coUbicacionPanel').classList.remove('hidden');
+  document.getElementById('coUbicBtn').style.display = 'none';
+  // Esperar a Leaflet y inicializar
+  var tries = 0;
+  var waiter = setInterval(function() {
+    tries++;
+    if (window.L) { clearInterval(waiter); _coInitMap(); }
+    else if (tries > 30) { clearInterval(waiter); alert('No se pudo cargar el mapa. Revisá tu conexión.'); }
+  }, 200);
+}
+window.coAbrirUbicacion = coAbrirUbicacion;
+
+function coCerrarUbicacion() {
+  document.getElementById('coUbicacionPanel').classList.add('hidden');
+  document.getElementById('coUbicBtn').style.display = '';
+  document.getElementById('coUbicConfirm').classList.add('hidden');
+  _coCoords = null;
+}
+window.coCerrarUbicacion = coCerrarUbicacion;
+
 function coBuscarMapa() {
   var addr = (document.getElementById('coDireccion').value || '').trim();
-  if (!addr) { document.getElementById('coDireccion').focus(); return; }
-  if (!window.L) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
-  var mapDiv = document.getElementById('coMap');
-  mapDiv.classList.remove('hidden');
-  if (!_coMap) { _coInitMap(); setTimeout(coBuscarMapa, 600); return; }
+  if (!addr) {
+    alert('Primero escribí tu dirección arriba.');
+    document.getElementById('coDireccion').focus();
+    return;
+  }
+  if (!window.L || !_coMap) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
   var q = addr + ', Mendoza, Argentina';
   fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=ar')
     .then(function(r){ return r.json(); })
@@ -4621,10 +4668,11 @@ function coBuscarMapa() {
         var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
         _coMap.setView([lat, lon], 16);
         _coMarker.setLatLng([lat, lon]);
-        _coShowMapConfirm(data[0].display_name);
+        _coCoords = { lat: lat, lng: lon };
+        _coShowConfirm();
         setTimeout(function(){ _coMap.invalidateSize(); }, 100);
       } else {
-        alert('No se encontró la dirección. Probá escribirla más completa.');
+        alert('No se encontró la dirección. Probá escribirla más completa o usá "Mi ubicación actual".');
       }
     })
     .catch(function(){ alert('No se pudo buscar la dirección. Revisá tu conexión.'); });
@@ -4636,50 +4684,22 @@ function coUsarUbicacion() {
   navigator.geolocation.getCurrentPosition(
     function(pos) {
       var lat = pos.coords.latitude, lon = pos.coords.longitude;
-      if (!window.L) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
-      var mapDiv = document.getElementById('coMap');
-      mapDiv.classList.remove('hidden');
-      if (!_coMap) { _coInitMap(); setTimeout(function(){ _coMap.setView([lat,lon],16); _coMarker.setLatLng([lat,lon]); _coReverseGeocode(lat,lon); }, 700); return; }
-      _coMap.setView([lat, lon], 16);
+      if (!window.L || !_coMap) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
+      _coMap.setView([lat, lon], 17);
       _coMarker.setLatLng([lat, lon]);
-      _coReverseGeocode(lat, lon);
+      _coCoords = { lat: lat, lng: lon };
+      _coShowConfirm();
       setTimeout(function(){ _coMap.invalidateSize(); }, 100);
     },
-    function(){ alert('No se pudo obtener tu ubicación. Por favor escribí tu dirección manualmente.'); },
+    function(){ alert('No se pudo obtener tu ubicación. Activá los permisos de ubicación o arrastrá el pin en el mapa.'); },
     { enableHighAccuracy: true, timeout: 8000 }
   );
 }
 window.coUsarUbicacion = coUsarUbicacion;
 
-var _coRevTimer = null;
-function _coReverseGeocode(lat, lon) {
-  clearTimeout(_coRevTimer);
-  _coRevTimer = setTimeout(function() {
-    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if (data && data.display_name) {
-          var short = data.display_name.split(',').slice(0,4).join(',').trim();
-          document.getElementById('coDireccion').value = short;
-          _coShowMapConfirm(data.display_name);
-        }
-      }).catch(function(){});
-  }, 500);
+function _coShowConfirm() {
+  document.getElementById('coUbicConfirm').classList.remove('hidden');
 }
-
-function _coShowMapConfirm(full) {
-  var el = document.getElementById('coMapConfirm');
-  var sp = document.getElementById('coMapAddr');
-  if (el && sp) {
-    sp.textContent = full.split(',').slice(0,4).join(',');
-    el.classList.remove('hidden');
-  }
-}
-
-function _coAddrChanged() {
-  document.getElementById('coMapConfirm').classList.add('hidden');
-}
-window._coAddrChanged = _coAddrChanged;
 
 function coEnviar() {
   var tipo = _coEntrega;
@@ -4692,10 +4712,21 @@ function coEnviar() {
     deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
     deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
     deliveryMsg += '\n📍 Pueyrredón 588, Mendoza';
+    var pagoElR = document.querySelector('input[name="coPago"]:checked');
+    if (pagoElR) {
+      var pagoTxtR = pagoElR.value === 'efectivo' ? 'Efectivo'
+        : pagoElR.value === 'transferencia' ? 'Transferencia bancaria'
+        : 'Tarjeta de débito/crédito';
+      deliveryMsg += '\n💳 Pago: ' + pagoTxtR;
+    }
   } else {
     nombre = (document.getElementById('coNombreDom').value || '').trim();
     direccion = (document.getElementById('coDireccion').value || '').trim();
-    horario = (document.getElementById('coHorarioDom').value || '').trim();
+    var pisoDepto = (document.getElementById('coPisoDepto').value || '').trim();
+    var tipoVivEl = document.querySelector('input[name="coTipo"]:checked');
+    var tipoViv = tipoVivEl ? tipoVivEl.value : '';
+    var entreCalles = (document.getElementById('coEntreCalles').value || '').trim();
+    var indicaciones = (document.getElementById('coIndicaciones').value || '').trim();
     var pagoEl = document.querySelector('input[name="coPago"]:checked');
     if (!nombre) { _coMarkRequired('coNombreDom'); return; }
     if (!direccion) { _coMarkRequired('coDireccion'); return; }
@@ -4707,7 +4738,13 @@ function coEnviar() {
       : 'Tarjeta de débito/crédito';
     deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
     deliveryMsg += '\n📍 ' + direccion;
-    if (horario) deliveryMsg += '\n🕐 Disponibilidad: ' + horario;
+    if (pisoDepto) deliveryMsg += '\n🏠 Piso/Depto: ' + pisoDepto;
+    if (tipoViv) deliveryMsg += '\n🏢 Tipo: ' + (tipoViv === 'casa' ? 'Casa' : 'Departamento');
+    if (entreCalles) deliveryMsg += '\n↔️ Entre calles: ' + entreCalles;
+    if (indicaciones) deliveryMsg += '\n📝 Indicaciones: ' + indicaciones;
+    if (_coCoords) {
+      deliveryMsg += '\n📌 Ubicación en mapa: https://maps.google.com/?q=' + _coCoords.lat + ',' + _coCoords.lng;
+    }
     deliveryMsg += '\n💳 Pago: ' + pagoTxt;
   }
 
@@ -5332,29 +5369,58 @@ window.copiarLinkParaNavegador = function() {
         </div>
         <div class="co-field">
           <label>Dirección <span style="color:#e53935">*</span></label>
-          <div class="co-addr-row">
-            <input type="text" id="coDireccion" placeholder="Calle, número, ciudad" class="co-input" oninput="_coAddrChanged()">
-            <button class="co-map-btn" onclick="coBuscarMapa()" id="coMapBtn" title="Ver en mapa">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              Mapa
-            </button>
+          <input type="text" id="coDireccion" placeholder="Calle, número, ciudad" class="co-input" autocomplete="street-address">
+        </div>
+        <div class="co-field-row">
+          <div class="co-field" style="flex:1">
+            <label>Piso / Depto <span class="opt-lbl">(opcional)</span></label>
+            <input type="text" id="coPisoDepto" placeholder="Ej: 3°B" class="co-input">
           </div>
-          <button class="co-loc-btn" onclick="coUsarUbicacion()">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-            Usar mi ubicación actual
-          </button>
-          <div id="coMap" class="hidden"></div>
-          <div id="coMapConfirm" class="co-map-confirm hidden">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="#2e7d32" style="flex-shrink:0;margin-top:1px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            <span id="coMapAddr"></span>
+          <div class="co-field" style="flex:1.4">
+            <label>Tipo <span class="opt-lbl">(opcional)</span></label>
+            <div class="co-tipo-opts">
+              <label class="co-tipo-radio"><input type="radio" name="coTipo" value="casa"><span>🏠 Casa</span></label>
+              <label class="co-tipo-radio"><input type="radio" name="coTipo" value="depto"><span>🏢 Depto</span></label>
+            </div>
           </div>
         </div>
         <div class="co-field">
-          <label>Horario de disponibilidad <span class="opt-lbl">(opcional)</span></label>
-          <input type="text" id="coHorarioDom" placeholder="Ej: de 9 a 13hs o por las tardes" class="co-input">
-          <span class="co-hint">No es el horario exacto de entrega — es tu disponibilidad estimada para recibirlo</span>
+          <label>Entre calles <span class="opt-lbl">(opcional)</span></label>
+          <input type="text" id="coEntreCalles" placeholder="Ej: entre Belgrano y San Martín" class="co-input">
         </div>
         <div class="co-field">
+          <label>Indicaciones para llegar <span class="opt-lbl">(opcional)</span></label>
+          <textarea id="coIndicaciones" placeholder="Ej: casa rosada, tocar timbre 2 veces" class="co-input" rows="2"></textarea>
+        </div>
+        <!-- Ubicación opcional -->
+        <div class="co-ubicacion-box">
+          <div class="co-ubic-header">
+            <div>
+              <div class="co-ubic-title">📍 Ubicación exacta <span class="opt-lbl">(opcional)</span></div>
+              <div class="co-ubic-desc">Compartila para que el envío llegue más rápido</div>
+            </div>
+            <button class="co-ubic-btn" id="coUbicBtn" onclick="coAbrirUbicacion()">Compartir</button>
+          </div>
+          <div id="coUbicacionPanel" class="hidden">
+            <div id="coMap"></div>
+            <div class="co-ubic-actions">
+              <button class="co-loc-btn" onclick="coUsarUbicacion()" style="flex:1;justify-content:center;margin:0">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                Mi ubicación actual
+              </button>
+              <button class="co-loc-btn" onclick="coBuscarMapa()" style="flex:1;justify-content:center;margin:0">
+                🔍 Buscar mi dirección
+              </button>
+            </div>
+            <div class="co-ubic-hint">Podés arrastrar el pin para ajustar la ubicación exacta.</div>
+            <button class="co-ubic-close" onclick="coCerrarUbicacion()">Quitar ubicación</button>
+          </div>
+          <div id="coUbicConfirm" class="co-ubic-confirm hidden">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="#2e7d32" style="flex-shrink:0"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>Ubicación confirmada — se enviará junto al pedido</span>
+          </div>
+        </div>
+        <div class="co-field" style="margin-top:18px">
           <label>Medio de pago <span style="color:#e53935">*</span></label>
           <div class="co-pago-opts">
             <label class="co-radio co-pago-efectivo" id="coRadioEfectivoWrap"><input type="radio" name="coPago" value="efectivo"><span>💵 Efectivo</span></label>
