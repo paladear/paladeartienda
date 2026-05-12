@@ -2131,8 +2131,18 @@ function cartDel(key){
   if(pid&&pid>0)_reRenderCard(pid);
 }
 function pedirWA(){
-  closeCart();
-  abrirCheckout('minorista');
+  try {
+    if (typeof abrirCheckout !== 'function') {
+      console.error('abrirCheckout no está definida');
+      alert('Hubo un error al abrir el formulario. Por favor recargá la página e intentá de nuevo.');
+      return;
+    }
+    closeCart();
+    abrirCheckout('minorista');
+  } catch(e) {
+    console.error('Error en pedirWA:', e);
+    alert('Error: ' + e.message);
+  }
 }
 
 let _searchTimer=null;
@@ -4600,6 +4610,268 @@ window.addEventListener('online', function() {
 })();
 
 
+
+
+// ═══ CHECKOUT — ENTREGA Y DATOS ═══
+var _coVenta = 'minorista';
+var _coEntrega = null;
+var _coMap = null, _coMarker = null, _leafletReady = false;
+
+function abrirCheckout(venta) {
+  _coVenta = venta || 'minorista';
+  _coEntrega = null;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+  _coRenderSummary();
+  document.getElementById('checkoutOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  if (!history.state || history.state.view !== 'checkout') {
+    history.pushState({view:'checkout'}, '');
+  }
+}
+window.abrirCheckout = abrirCheckout;
+
+function cerrarCheckout() {
+  document.getElementById('checkoutOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  if (_coMap) { _coMap.remove(); _coMap = null; _coMarker = null; }
+  document.getElementById('coMap').classList.add('hidden');
+  document.getElementById('coMapConfirm').classList.add('hidden');
+}
+window.cerrarCheckout = cerrarCheckout;
+
+function _coBack() {
+  _coEntrega = null;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+}
+window._coBack = _coBack;
+
+function _coRenderSummary() {
+  var isMin = _coVenta === 'minorista';
+  var total = 0;
+  var count = 0;
+  if (isMin) {
+    var totalMin = cart.reduce(function(a,i){return a+_itemMin(i);}, 0);
+    var esMay = totalMin >= 80000;
+    cart.forEach(function(i){ total += esMay ? _itemMay(i) : _itemMinConOferta(i); });
+    count = cart.length;
+  } else {
+    cartMay.forEach(function(i){ total += i.l1 * i.c; });
+    count = cartMay.length;
+  }
+  document.getElementById('coSummary').innerHTML =
+    '<span>' + count + ' producto' + (count !== 1 ? 's' : '') + '</span>' +
+    '<span>Total: <b>$' + fmt(total) + '</b></span>';
+}
+
+function coElegirEntrega(tipo) {
+  _coEntrega = tipo;
+  document.getElementById('coStep1').classList.add('hidden');
+  document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
+  document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
+  document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
+  document.getElementById('coBtnBack').style.display = '';
+  if (tipo === 'domicilio') {
+    _coLoadLeaflet();
+    // Efectivo solo para minorista y solo retiro en local — ocultarlo en domicilio
+    var efWrap = document.getElementById('coRadioEfectivoWrap');
+    if (efWrap) efWrap.style.display = 'none';
+  } else {
+    // Retiro: efectivo solo si es minorista
+    var efWrap2 = document.getElementById('coRadioEfectivoWrap');
+    if (efWrap2) efWrap2.style.display = _coVenta === 'minorista' ? '' : 'none';
+  }
+}
+window.coElegirEntrega = coElegirEntrega;
+
+function _coLoadLeaflet() {
+  if (window.L) return;
+  if (!document.getElementById('leafletCSS')) {
+    var lk = document.createElement('link');
+    lk.id = 'leafletCSS';
+    lk.rel = 'stylesheet';
+    lk.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(lk);
+  }
+  if (!document.getElementById('leafletJS')) {
+    var sc = document.createElement('script');
+    sc.id = 'leafletJS';
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    sc.onload = function(){ _leafletReady = true; };
+    document.head.appendChild(sc);
+  }
+}
+
+function _coInitMap() {
+  if (_coMap) { setTimeout(function(){ _coMap.invalidateSize(); }, 100); return; }
+  var mapDiv = document.getElementById('coMap');
+  if (!mapDiv || !window.L) { setTimeout(_coInitMap, 500); return; }
+  mapDiv.classList.remove('hidden');
+  _coMap = L.map('coMap').setView([-32.89, -68.83], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap', maxZoom: 19
+  }).addTo(_coMap);
+  _coMarker = L.marker([-32.89, -68.83], {draggable: true}).addTo(_coMap);
+  _coMarker.on('dragend', function(){
+    var p = _coMarker.getLatLng();
+    _coReverseGeocode(p.lat, p.lng);
+  });
+  setTimeout(function(){ _coMap.invalidateSize(); }, 150);
+}
+
+function coBuscarMapa() {
+  var addr = (document.getElementById('coDireccion').value || '').trim();
+  if (!addr) { document.getElementById('coDireccion').focus(); return; }
+  if (!window.L) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
+  var mapDiv = document.getElementById('coMap');
+  mapDiv.classList.remove('hidden');
+  if (!_coMap) { _coInitMap(); setTimeout(coBuscarMapa, 600); return; }
+  var q = addr + ', Mendoza, Argentina';
+  fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=ar')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data && data.length) {
+        var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+        _coMap.setView([lat, lon], 16);
+        _coMarker.setLatLng([lat, lon]);
+        _coShowMapConfirm(data[0].display_name);
+        setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+      } else {
+        alert('No se encontró la dirección. Probá escribirla más completa.');
+      }
+    })
+    .catch(function(){ alert('No se pudo buscar la dirección. Revisá tu conexión.'); });
+}
+window.coBuscarMapa = coBuscarMapa;
+
+function coUsarUbicacion() {
+  if (!navigator.geolocation) { alert('Tu dispositivo no permite compartir la ubicación.'); return; }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      if (!window.L) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
+      var mapDiv = document.getElementById('coMap');
+      mapDiv.classList.remove('hidden');
+      if (!_coMap) { _coInitMap(); setTimeout(function(){ _coMap.setView([lat,lon],16); _coMarker.setLatLng([lat,lon]); _coReverseGeocode(lat,lon); }, 700); return; }
+      _coMap.setView([lat, lon], 16);
+      _coMarker.setLatLng([lat, lon]);
+      _coReverseGeocode(lat, lon);
+      setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+    },
+    function(){ alert('No se pudo obtener tu ubicación. Por favor escribí tu dirección manualmente.'); },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+window.coUsarUbicacion = coUsarUbicacion;
+
+var _coRevTimer = null;
+function _coReverseGeocode(lat, lon) {
+  clearTimeout(_coRevTimer);
+  _coRevTimer = setTimeout(function() {
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.display_name) {
+          var short = data.display_name.split(',').slice(0,4).join(',').trim();
+          document.getElementById('coDireccion').value = short;
+          _coShowMapConfirm(data.display_name);
+        }
+      }).catch(function(){});
+  }, 500);
+}
+
+function _coShowMapConfirm(full) {
+  var el = document.getElementById('coMapConfirm');
+  var sp = document.getElementById('coMapAddr');
+  if (el && sp) {
+    sp.textContent = full.split(',').slice(0,4).join(',');
+    el.classList.remove('hidden');
+  }
+}
+
+function _coAddrChanged() {
+  document.getElementById('coMapConfirm').classList.add('hidden');
+}
+window._coAddrChanged = _coAddrChanged;
+
+function coEnviar() {
+  var tipo = _coEntrega;
+  var nombre, horario, direccion, pago, deliveryMsg;
+
+  if (tipo === 'retiro') {
+    nombre = (document.getElementById('coNombre').value || '').trim();
+    if (!nombre) { _coMarkRequired('coNombre'); return; }
+    horario = (document.getElementById('coHorarioRetiro').value || '').trim();
+    deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
+    deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
+    deliveryMsg += '\n📍 Pueyrredón 588, Mendoza';
+  } else {
+    nombre = (document.getElementById('coNombreDom').value || '').trim();
+    direccion = (document.getElementById('coDireccion').value || '').trim();
+    horario = (document.getElementById('coHorarioDom').value || '').trim();
+    var pagoEl = document.querySelector('input[name="coPago"]:checked');
+    if (!nombre) { _coMarkRequired('coNombreDom'); return; }
+    if (!direccion) { _coMarkRequired('coDireccion'); return; }
+    if (!pagoEl) { alert('Por favor seleccioná un medio de pago.'); return; }
+    var pagoTxt = pagoEl.value === 'efectivo'
+      ? 'Efectivo'
+      : pagoEl.value === 'transferencia'
+      ? 'Transferencia bancaria'
+      : 'Tarjeta de débito/crédito';
+    deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
+    deliveryMsg += '\n📍 ' + direccion;
+    if (horario) deliveryMsg += '\n🕐 Disponibilidad: ' + horario;
+    deliveryMsg += '\n💳 Pago: ' + pagoTxt;
+  }
+
+  var isMin = _coVenta === 'minorista';
+  var msg, url;
+
+  if (isMin) {
+    var totalMin = cart.reduce(function(a,i){ return a+_itemMin(i); }, 0);
+    var esMay = totalMin >= 80000;
+    var tot = 0;
+    var lines = '🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
+    cart.forEach(function(it){
+      var s = esMay ? _itemMay(it) : _itemMinConOferta(it); tot += s;
+      var q = it.unidad==='mix' ? _gLabel(it.totalG)+' — '+it.mixDetalle : it.unidad==='kg' ? _gLabel(it.totalG) : (it.c>1?it.o+' x'+it.c:it.o);
+      lines += '• ' + it.n + ' (' + q + ') — $' + fmt(s) + '\n';
+    });
+    var huboOferta = !esMay && cart.some(function(it){ return _getOfertaPct(it.pid)>0; });
+    lines += '\n*TOTAL: $' + fmt(tot) + '*' + (esMay?'\n_(Descuento por volumen aplicado)_':'') + (huboOferta?'\n_(Ofertas del mes aplicadas)_':'');
+    msg = lines + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
+    url = 'https://wa.me/' + WA_MINORISTA + '?text=' + encodeURIComponent(msg);
+  } else {
+    var tot2 = 0;
+    var lines2 = '📦 *Pedido Mayorista - Paladear Mercado de Sabores*\n\n';
+    cartMay.forEach(function(it){ var sub=it.l1*it.c; tot2+=sub; lines2+='• '+it.n+' ('+(it.bultoLabel||'Bulto')+' x'+it.c+') — $'+fmt(sub)+'\n'; });
+    lines2 += '\n*TOTAL: $' + fmt(tot2) + '*\n_(Lista Mayorista)_';
+    msg = lines2 + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
+    url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
+  }
+
+  cerrarCheckout();
+  if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
+  window.open(url, '_blank');
+}
+window.coEnviar = coEnviar;
+
+function _coMarkRequired(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '#e53935';
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.focus();
+  el.addEventListener('input', function(){ el.style.borderColor = ''; }, {once:true});
+}
+
 </script>
 
 <!-- ══════════ SERVICE WORKER (PWA) ══════════ -->
@@ -5094,267 +5366,7 @@ window.copiarLinkParaNavegador = function() {
   </div>
 </div>
 
-<script>
-// ═══ CHECKOUT — ENTREGA Y DATOS ═══
-var _coVenta = 'minorista';
-var _coEntrega = null;
-var _coMap = null, _coMarker = null, _leafletReady = false;
-
-function abrirCheckout(venta) {
-  _coVenta = venta || 'minorista';
-  _coEntrega = null;
-  document.getElementById('coStep1').classList.remove('hidden');
-  document.getElementById('coStep2Retiro').classList.add('hidden');
-  document.getElementById('coStep2Dom').classList.add('hidden');
-  document.getElementById('coTitle').textContent = 'Finalizar pedido';
-  document.getElementById('coBtnBack').style.display = 'none';
-  _coRenderSummary();
-  document.getElementById('checkoutOverlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-  if (!history.state || history.state.view !== 'checkout') {
-    history.pushState({view:'checkout'}, '');
-  }
-}
-window.abrirCheckout = abrirCheckout;
-
-function cerrarCheckout() {
-  document.getElementById('checkoutOverlay').classList.add('hidden');
-  document.body.style.overflow = '';
-  if (_coMap) { _coMap.remove(); _coMap = null; _coMarker = null; }
-  document.getElementById('coMap').classList.add('hidden');
-  document.getElementById('coMapConfirm').classList.add('hidden');
-}
-window.cerrarCheckout = cerrarCheckout;
-
-function _coBack() {
-  _coEntrega = null;
-  document.getElementById('coStep1').classList.remove('hidden');
-  document.getElementById('coStep2Retiro').classList.add('hidden');
-  document.getElementById('coStep2Dom').classList.add('hidden');
-  document.getElementById('coTitle').textContent = 'Finalizar pedido';
-  document.getElementById('coBtnBack').style.display = 'none';
-}
-window._coBack = _coBack;
-
-function _coRenderSummary() {
-  var isMin = _coVenta === 'minorista';
-  var total = 0;
-  var count = 0;
-  if (isMin) {
-    var totalMin = cart.reduce(function(a,i){return a+_itemMin(i);}, 0);
-    var esMay = totalMin >= 80000;
-    cart.forEach(function(i){ total += esMay ? _itemMay(i) : _itemMinConOferta(i); });
-    count = cart.length;
-  } else {
-    cartMay.forEach(function(i){ total += i.l1 * i.c; });
-    count = cartMay.length;
-  }
-  document.getElementById('coSummary').innerHTML =
-    '<span>' + count + ' producto' + (count !== 1 ? 's' : '') + '</span>' +
-    '<span>Total: <b>$' + fmt(total) + '</b></span>';
-}
-
-function coElegirEntrega(tipo) {
-  _coEntrega = tipo;
-  document.getElementById('coStep1').classList.add('hidden');
-  document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
-  document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
-  document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
-  document.getElementById('coBtnBack').style.display = '';
-  if (tipo === 'domicilio') {
-    _coLoadLeaflet();
-    // Efectivo solo para minorista y solo retiro en local — ocultarlo en domicilio
-    var efWrap = document.getElementById('coRadioEfectivoWrap');
-    if (efWrap) efWrap.style.display = 'none';
-  } else {
-    // Retiro: efectivo solo si es minorista
-    var efWrap2 = document.getElementById('coRadioEfectivoWrap');
-    if (efWrap2) efWrap2.style.display = _coVenta === 'minorista' ? '' : 'none';
-  }
-}
-window.coElegirEntrega = coElegirEntrega;
-
-function _coLoadLeaflet() {
-  if (window.L) return;
-  if (!document.getElementById('leafletCSS')) {
-    var lk = document.createElement('link');
-    lk.id = 'leafletCSS';
-    lk.rel = 'stylesheet';
-    lk.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-    document.head.appendChild(lk);
-  }
-  if (!document.getElementById('leafletJS')) {
-    var sc = document.createElement('script');
-    sc.id = 'leafletJS';
-    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-    sc.onload = function(){ _leafletReady = true; };
-    document.head.appendChild(sc);
-  }
-}
-
-function _coInitMap() {
-  if (_coMap) { setTimeout(function(){ _coMap.invalidateSize(); }, 100); return; }
-  var mapDiv = document.getElementById('coMap');
-  if (!mapDiv || !window.L) { setTimeout(_coInitMap, 500); return; }
-  mapDiv.classList.remove('hidden');
-  _coMap = L.map('coMap').setView([-32.89, -68.83], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap', maxZoom: 19
-  }).addTo(_coMap);
-  _coMarker = L.marker([-32.89, -68.83], {draggable: true}).addTo(_coMap);
-  _coMarker.on('dragend', function(){
-    var p = _coMarker.getLatLng();
-    _coReverseGeocode(p.lat, p.lng);
-  });
-  setTimeout(function(){ _coMap.invalidateSize(); }, 150);
-}
-
-function coBuscarMapa() {
-  var addr = (document.getElementById('coDireccion').value || '').trim();
-  if (!addr) { document.getElementById('coDireccion').focus(); return; }
-  if (!window.L) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
-  var mapDiv = document.getElementById('coMap');
-  mapDiv.classList.remove('hidden');
-  if (!_coMap) { _coInitMap(); setTimeout(coBuscarMapa, 600); return; }
-  var q = addr + ', Mendoza, Argentina';
-  fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=ar')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if (data && data.length) {
-        var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
-        _coMap.setView([lat, lon], 16);
-        _coMarker.setLatLng([lat, lon]);
-        _coShowMapConfirm(data[0].display_name);
-        setTimeout(function(){ _coMap.invalidateSize(); }, 100);
-      } else {
-        alert('No se encontró la dirección. Probá escribirla más completa.');
-      }
-    })
-    .catch(function(){ alert('No se pudo buscar la dirección. Revisá tu conexión.'); });
-}
-window.coBuscarMapa = coBuscarMapa;
-
-function coUsarUbicacion() {
-  if (!navigator.geolocation) { alert('Tu dispositivo no permite compartir la ubicación.'); return; }
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      var lat = pos.coords.latitude, lon = pos.coords.longitude;
-      if (!window.L) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
-      var mapDiv = document.getElementById('coMap');
-      mapDiv.classList.remove('hidden');
-      if (!_coMap) { _coInitMap(); setTimeout(function(){ _coMap.setView([lat,lon],16); _coMarker.setLatLng([lat,lon]); _coReverseGeocode(lat,lon); }, 700); return; }
-      _coMap.setView([lat, lon], 16);
-      _coMarker.setLatLng([lat, lon]);
-      _coReverseGeocode(lat, lon);
-      setTimeout(function(){ _coMap.invalidateSize(); }, 100);
-    },
-    function(){ alert('No se pudo obtener tu ubicación. Por favor escribí tu dirección manualmente.'); },
-    { enableHighAccuracy: true, timeout: 8000 }
-  );
-}
-window.coUsarUbicacion = coUsarUbicacion;
-
-var _coRevTimer = null;
-function _coReverseGeocode(lat, lon) {
-  clearTimeout(_coRevTimer);
-  _coRevTimer = setTimeout(function() {
-    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if (data && data.display_name) {
-          var short = data.display_name.split(',').slice(0,4).join(',').trim();
-          document.getElementById('coDireccion').value = short;
-          _coShowMapConfirm(data.display_name);
-        }
-      }).catch(function(){});
-  }, 500);
-}
-
-function _coShowMapConfirm(full) {
-  var el = document.getElementById('coMapConfirm');
-  var sp = document.getElementById('coMapAddr');
-  if (el && sp) {
-    sp.textContent = full.split(',').slice(0,4).join(',');
-    el.classList.remove('hidden');
-  }
-}
-
-function _coAddrChanged() {
-  document.getElementById('coMapConfirm').classList.add('hidden');
-}
-window._coAddrChanged = _coAddrChanged;
-
-function coEnviar() {
-  var tipo = _coEntrega;
-  var nombre, horario, direccion, pago, deliveryMsg;
-
-  if (tipo === 'retiro') {
-    nombre = (document.getElementById('coNombre').value || '').trim();
-    if (!nombre) { _coMarkRequired('coNombre'); return; }
-    horario = (document.getElementById('coHorarioRetiro').value || '').trim();
-    deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
-    deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
-    deliveryMsg += '\n📍 Pueyrredón 588, Mendoza';
-  } else {
-    nombre = (document.getElementById('coNombreDom').value || '').trim();
-    direccion = (document.getElementById('coDireccion').value || '').trim();
-    horario = (document.getElementById('coHorarioDom').value || '').trim();
-    var pagoEl = document.querySelector('input[name="coPago"]:checked');
-    if (!nombre) { _coMarkRequired('coNombreDom'); return; }
-    if (!direccion) { _coMarkRequired('coDireccion'); return; }
-    if (!pagoEl) { alert('Por favor seleccioná un medio de pago.'); return; }
-    var pagoTxt = pagoEl.value === 'efectivo'
-      ? 'Efectivo'
-      : pagoEl.value === 'transferencia'
-      ? 'Transferencia bancaria'
-      : 'Tarjeta de débito/crédito';
-    deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
-    deliveryMsg += '\n📍 ' + direccion;
-    if (horario) deliveryMsg += '\n🕐 Disponibilidad: ' + horario;
-    deliveryMsg += '\n💳 Pago: ' + pagoTxt;
-  }
-
-  var isMin = _coVenta === 'minorista';
-  var msg, url;
-
-  if (isMin) {
-    var totalMin = cart.reduce(function(a,i){ return a+_itemMin(i); }, 0);
-    var esMay = totalMin >= 80000;
-    var tot = 0;
-    var lines = '🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
-    cart.forEach(function(it){
-      var s = esMay ? _itemMay(it) : _itemMinConOferta(it); tot += s;
-      var q = it.unidad==='mix' ? _gLabel(it.totalG)+' — '+it.mixDetalle : it.unidad==='kg' ? _gLabel(it.totalG) : (it.c>1?it.o+' x'+it.c:it.o);
-      lines += '• ' + it.n + ' (' + q + ') — $' + fmt(s) + '\n';
-    });
-    var huboOferta = !esMay && cart.some(function(it){ return _getOfertaPct(it.pid)>0; });
-    lines += '\n*TOTAL: $' + fmt(tot) + '*' + (esMay?'\n_(Descuento por volumen aplicado)_':'') + (huboOferta?'\n_(Ofertas del mes aplicadas)_':'');
-    msg = lines + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
-    url = 'https://wa.me/' + WA_MINORISTA + '?text=' + encodeURIComponent(msg);
-  } else {
-    var tot2 = 0;
-    var lines2 = '📦 *Pedido Mayorista - Paladear Mercado de Sabores*\n\n';
-    cartMay.forEach(function(it){ var sub=it.l1*it.c; tot2+=sub; lines2+='• '+it.n+' ('+(it.bultoLabel||'Bulto')+' x'+it.c+') — $'+fmt(sub)+'\n'; });
-    lines2 += '\n*TOTAL: $' + fmt(tot2) + '*\n_(Lista Mayorista)_';
-    msg = lines2 + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
-    url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
-  }
-
-  cerrarCheckout();
-  if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
-  window.open(url, '_blank');
-}
-window.coEnviar = coEnviar;
-
-function _coMarkRequired(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.style.borderColor = '#e53935';
-  el.scrollIntoView({behavior:'smooth', block:'center'});
-  el.focus();
-  el.addEventListener('input', function(){ el.style.borderColor = ''; }, {once:true});
-}
-</script>
+<!-- checkout script moved into main script -->
 
 </body>
 </html>
