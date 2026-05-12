@@ -466,12 +466,18 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* Sección Ofertas del mes (carrusel destacado) */
 .ofertas-mes-section{background:linear-gradient(135deg,#fdefd8 0%,#fbe2bd 100%);border:2px solid #d4543c;border-radius:18px;padding:18px 16px;margin-bottom:28px;position:relative;overflow:hidden}
 .ofertas-mes-section::before{content:"";position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(212,84,60,.08);border-radius:50%}
-.ofertas-mes-title{display:flex;align-items:center;gap:8px;margin-bottom:14px;position:relative;z-index:1;flex-wrap:nowrap}
+.ofertas-mes-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:1;flex-wrap:wrap;row-gap:6px}
 .ofertas-mes-emoji{font-size:22px;flex-shrink:0;line-height:1}
 .ofertas-mes-title h2{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#b04020;margin:0;white-space:nowrap;flex-shrink:0}
 .ofertas-mes-title .badge{background:#b04020;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px;flex-shrink:0}
 .ofertas-mes-ver-btn{margin-left:auto;background:#b04020;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s;flex-shrink:0}
 .ofertas-mes-ver-btn:hover{background:#943318}
+@media(max-width:600px){
+  .ofertas-mes-title{flex-wrap:nowrap;align-items:flex-start}
+  .ofertas-mes-title h2{font-size:18px}
+  .ofertas-mes-title-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;width:100%}
+  .ofertas-mes-ver-btn{padding:5px 9px;font-size:11px}
+}
 .ofertas-mes-subtitle{font-size:12px;color:#8a3520;margin-bottom:14px;position:relative;z-index:1;line-height:1.4}
 /* Desktop: grilla fija de 4, sin scroll */
 @media(min-width:768px){
@@ -1010,6 +1016,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <a class="social-btn" href="https://maps.app.goo.gl/5TtZMgtvq5XfycqG8" target="_blank" title="Cómo llegar">
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
     </a>
+    <button class="social-btn" id="btnInstalarApp" onclick="abrirModalApp()" title="Instalar app" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M17 12h-4V3h-2v9H7l5 5 5-5zM5 20v2h14v-2H5z"/></svg>
+    </button>
   </div>
   <div class="header-dropdowns">
 
@@ -1050,10 +1059,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 </header>
 <div class="banner" id="bannerRotativo">
   <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b> en tu compra minorista — precios en azul son precios con descuento</div>
-  <div id="bannerSlot2" class="banner-rot-slot" style="display:none;gap:8px">
-    <span id="bannerAppMsg">📱 Instalá Paladear · <b>Precios exclusivos</b> para usuarios de la app</span>
-    <button id="bannerAppBtn" onclick="abrirModalApp()" style="margin-left:6px;background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;vertical-align:middle;font-family:inherit;white-space:nowrap;flex-shrink:0">Instalar →</button>
-  </div>
   <div id="bannerSlot3" class="banner-rot-slot" style="display:none">🏷️ <b>Ofertas del mes activas</b> — productos seleccionados con descuento (no acumulable con descuento por volumen)</div>
 </div>
 
@@ -1202,11 +1207,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     </div>
 
   </div>
-  <!-- dots solo mobile -->
-  <div class="banners-dots" id="bannersDots">
-    <span class="bdot active" onclick="goSlide(0)"></span>
-    <span class="bdot" onclick="goSlide(1)"></span>
-  </div>
+  <!-- sin dots: se desliza con swipe -->
 </div>
 
   <!-- Banner promo Lista Mayorista — solo desktop -->
@@ -1553,7 +1554,6 @@ function renderCarruseles(){
         <button class="ofertas-mes-ver-btn" onclick="selectOfertasMes()">Ver todos →</button>
       </div>
       <div class="ofertas-mes-subtitle">Productos seleccionados con descuento — no acumulable con descuento por volumen ($80.000+)</div>`;
-    const _ofOpts={onclick:'selectOfertasMes(event.currentTarget.dataset.pid)',};
     const _cardHTMLOferta=p=>`<div class="carousel-card" onclick="selectOfertasMes(${p[0]})">
     ${p[12]&&p[12].oferta?`<div class="oferta-badge">−${p[12].oferta}%</div>`:''}
     <div class="carousel-card-img">${p[6]&&p[6].startsWith('http')?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${CATS.find(c=>c.id===p[1])?CATS.find(c=>c.id===p[1]).ic:'🌿'}`}</div>
@@ -2041,8 +2041,8 @@ function renderCart(){
   const ahorroOferta=totalMin-totalConOferta;
   const huboOferta=ahorroOferta>0;
   const totalFinal=esMay?totalMay:(huboOferta?totalConOferta:totalMin);
-  const appDesc=_esAppInstalada&&totalFinal>0?Math.round(totalFinal*APP_DISCOUNT):0;
-  const totalConApp=totalFinal-appDesc;
+  const appDesc=0;
+  const totalConApp=totalFinal;
   // Badge principal
   let fh='';
   if(esMay){
@@ -2056,12 +2056,12 @@ function renderCart(){
   } else {
     fh=`<div class="may-badge may-inactive">🏷️ Agregá $${fmt(Math.max(0,80000-totalMin))} más para obtener hasta 20% de descuento</div>`;
   }
-  if(appDesc>0)fh+=`<div class="may-badge may-active" style="margin-top:6px">🎁 Descuento app (5%) — Ahorrás $${fmt(appDesc)}</div>`;
+
   // Líneas de total
   fh+=`<div class="total-rows"><div class="total-row"><span>Subtotal Minorista</span><span>$${fmt(totalMin)}</span></div>`;
   if(!esMay&&huboOferta)fh+=`<div class="total-row disc"><span>Ofertas del mes</span><span>−$${fmt(ahorroOferta)}</span></div>`;
   if(esMay)fh+=`<div class="total-row disc"><span>Descuento por volumen</span><span>−$${fmt(ahorroMay)}</span></div>`;
-  if(appDesc>0)fh+=`<div class="total-row disc"><span>Descuento app (5%)</span><span>−$${fmt(appDesc)}</span></div>`;
+
   fh+=`<div class="total-row main"><span>Total a pagar</span><span>$${fmt(totalConApp)}</span></div></div>`;
   fh+='<button class="wa-btn" onclick="pedirWA()">💬 Pedir por WhatsApp</button>';
   footer.innerHTML=fh;footer.classList.remove('hidden');
@@ -2090,9 +2090,8 @@ function pedirWA(){
     msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
   });
   const huboOferta=!esMay&&cart.some(it=>_getOfertaPct(it.pid)>0);
-  const appDesc=_esAppInstalada&&tot>0?Math.round(tot*APP_DISCOUNT):0;
-  const totFinal=tot-appDesc;
-  msg+=`\n*TOTAL: $${fmt(totFinal)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}${huboOferta?'\n_(Ofertas del mes aplicadas)_':''}${appDesc>0?'\n_(5% de descuento por app aplicado)_':''}`;
+  const totFinal=tot;
+  msg+=`\n*TOTAL: $${fmt(totFinal)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}${huboOferta?'\n_(Ofertas del mes aplicadas)_':''}`;
   msg+='\n\n_Pedido realizado desde el catálogo online_';
   const url='https://wa.me/'+WA_MINORISTA+'?text='+encodeURIComponent(msg);
   if(!navigator.onLine){
@@ -2960,15 +2959,14 @@ function mixAgregarAlCarrito(){
 }
 
 
-/* ── BANNER CAROUSEL (mobile auto-slide) ── */
+/* ── BANNER CAROUSEL (mobile swipe + auto-slide) ── */
 let _bannerCur=0,_bannerTimer=null;
-function goSlide(i){
+function goSlide(i,smooth){
   const track=document.getElementById('bannersTrack');
-  if(!track||!track.parentElement.classList.contains('banners-track-wrap'))return;
-  if(window.innerWidth>=600)return;
-  _bannerCur=i;
+  if(!track||window.innerWidth>=600)return;
+  _bannerCur=Math.max(0,Math.min(i,1));
+  track.style.transition=smooth===false?'none':'transform .35s cubic-bezier(.4,0,.2,1)';
   track.style.transform='translateX(-'+(_bannerCur*100)+'%)';
-  document.querySelectorAll('.bdot').forEach((d,j)=>d.classList.toggle('active',j===i));
 }
 function _startBannerTimer(){
   if(_bannerTimer)clearInterval(_bannerTimer);
@@ -2977,17 +2975,50 @@ function _startBannerTimer(){
     goSlide((_bannerCur+1)%2);
   },7000);
 }
-window.addEventListener('DOMContentLoaded',()=>{
-  _startBannerTimer();
-  // Mostrar items guardados en el contador al cargar
-  document.getElementById('cartCount').textContent=cart.length;
-
-  // ── BOTÓN VOLVER ARRIBA ──
-  const btt=document.getElementById('backToTop');
-  window.addEventListener('scroll',()=>{
-    btt.classList.toggle('visible',window.scrollY>400);
-  },{passive:true});
-});
+// Touch swipe
+(function _initBannerSwipe(){
+  let tx0=0,ty0=0,dragging=false,startCur=0;
+  function onStart(e){
+    const t=e.touches?e.touches[0]:e;
+    tx0=t.clientX;ty0=t.clientY;dragging=true;startCur=_bannerCur;
+    const track=document.getElementById('bannersTrack');
+    if(track)track.style.transition='none';
+    if(_bannerTimer)clearInterval(_bannerTimer);
+  }
+  function onMove(e){
+    if(!dragging)return;
+    const t=e.touches?e.touches[0]:e;
+    const dx=t.clientX-tx0,dy=t.clientY-ty0;
+    if(Math.abs(dy)>Math.abs(dx)+8){dragging=false;return;} // scroll vertical → no interferir
+    e.preventDefault();
+    const track=document.getElementById('bannersTrack');
+    if(!track||window.innerWidth>=600)return;
+    const pct=startCur*100-(dx/track.parentElement.offsetWidth*100);
+    track.style.transform='translateX(-'+Math.max(0,Math.min(100,pct))+'%)';
+  }
+  function onEnd(e){
+    if(!dragging)return;
+    dragging=false;
+    const t=e.changedTouches?e.changedTouches[0]:e;
+    const dx=t.clientX-tx0;
+    const THRESHOLD=40;
+    if(dx<-THRESHOLD)goSlide(startCur+1);
+    else if(dx>THRESHOLD)goSlide(startCur-1);
+    else goSlide(startCur); // snap back
+    _startBannerTimer();
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    _startBannerTimer();
+    const wrap=document.getElementById('bannersTrackWrap');
+    if(!wrap)return;
+    wrap.addEventListener('touchstart',onStart,{passive:true});
+    wrap.addEventListener('touchmove',onMove,{passive:false});
+    wrap.addEventListener('touchend',onEnd,{passive:true});
+    document.getElementById('cartCount').textContent=cart.length;
+    const btt=document.getElementById('backToTop');
+    window.addEventListener('scroll',()=>{btt.classList.toggle('visible',window.scrollY>400);},{passive:true});
+  });
+})();
 window.addEventListener('resize',()=>{
   if(window.innerWidth>=600){
     const track=document.getElementById('bannersTrack');
@@ -4165,8 +4196,7 @@ function renderCartMay() {
     <div class="total-rows">
       ${ahorro > 0 ? `<div class="total-row"><span style="color:var(--muted-fg)">Equivalente minorista</span><span style="color:var(--muted-fg);text-decoration:line-through">$${fmt(totalMinoristaEquiv)}</span></div>
       <div class="total-row disc"><span>Ahorro mayorista</span><span>−$${fmt(ahorro)}</span></div>` : ''}
-      ${_esAppInstalada ? `<div class="total-row disc"><span>Descuento app (5%)</span><span>−$${fmt(Math.round(total*APP_DISCOUNT))}</span></div>` : ''}
-      <div class="total-row main"><span>Total Mayorista</span><span>$${fmt(_esAppInstalada ? Math.round(total*(1-APP_DISCOUNT)) : total)}</span></div>
+      <div class="total-row main"><span>Total Mayorista</span><span>$${fmt(total)}</span></div>
     </div>
     <button class="wa-btn" onclick="closeCartMay();pedirWAMayorista()" ${cumple ? '' : 'disabled style="opacity:.5;cursor:not-allowed"'}>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.55 4.103 1.508 5.83L0 24l6.335-1.652A11.955 11.955 0 0012 24c6.626 0 12-5.373 12-12S18.626 0 12 0zm0 21.818a9.818 9.818 0 01-5.005-1.37l-.36-.214-3.727.977.995-3.638-.235-.374A9.818 9.818 0 112 12c0 5.42 4.397 9.818 9.818 9.818h.182z"/></svg>
@@ -4216,9 +4246,7 @@ Faltan: $${fmt(MIN_COMPRA_MAYORISTA - total)}`);
     msg += `• ${it.n} (${it.bultoLabel || 'Bulto'} x${it.c}) — $${fmt(sub)}
 `;
   });
-  const appDescMay = _esAppInstalada && tot > 0 ? Math.round(tot * APP_DISCOUNT) : 0;
-  const totFinalMay = tot - appDescMay;
-  msg += `\n*TOTAL: $${fmt(totFinalMay)}*\n_(Lista Mayorista)_${appDescMay > 0 ? '\n_(5% de descuento por app aplicado)_' : ''}\n\n_Pedido realizado desde el catálogo online_`;
+  msg += `\n*TOTAL: $${fmt(tot)}*\n_(Lista Mayorista)_\n\n_Pedido realizado desde el catálogo online_`;
   
   const url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
   if (!navigator.onLine) {
@@ -4563,65 +4591,53 @@ window.addEventListener('online', function() {
 
   window.addEventListener('appinstalled', function() {
     deferredPrompt = null;
-    // Actualizar banner al instalarse
-    _actualizarBannerApp();
   });
 })();
 
 // ═══════════════════════════════════════════
-// DESCUENTO APP + BANNER ROTATIVO + MODAL
+// ESTADO DE APP + BANNER ROTATIVO + MODAL
 // ═══════════════════════════════════════════
 
 // Detectar si está corriendo como app instalada (standalone)
 var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true; // iOS Safari
 
-// Descuento app: 5%
-var APP_DISCOUNT = 0.05;
-
-// Aplicar descuento app al total
-function _aplicarDescuentoApp(total) {
-  return _esAppInstalada ? Math.round(total * (1 - APP_DISCOUNT)) : total;
-}
-
-// Actualizar texto del banner rotativo según estado de app
-function _actualizarBannerApp() {
-  _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
-    || window.navigator.standalone === true;
-  var msgEl = document.getElementById('bannerAppMsg');
-  var btnEl = document.getElementById('bannerAppBtn');
-  if (!msgEl) return;
-  if (_esAppInstalada) {
-    msgEl.innerHTML = '✓ Precio app activo · <b>5% de descuento</b> en todo tu pedido';
-    if (btnEl) btnEl.style.display = 'none';
-  } else {
-    msgEl.innerHTML = '📱 Instalá Paladear · <b>Precios exclusivos</b> para usuarios de la app';
-    if (btnEl) { btnEl.style.display = 'inline-block'; btnEl.textContent = 'Instalar →'; }
-  }
-}
-
-// Banner rotativo: alterna entre slots cada 10s (slot 3 solo si hay ofertas activas)
+// Banner rotativo: alterna entre slot1 y slot3 cada 10s (slot3 solo si hay ofertas activas)
 (function _initBannerRotativo() {
-  _actualizarBannerApp();
   var cur = 0;
   var slot1 = document.getElementById('bannerSlot1');
-  var slot2 = document.getElementById('bannerSlot2');
   var slot3 = document.getElementById('bannerSlot3');
-  if (!slot1 || !slot2) return;
+  if (!slot1) return;
   function _getActiveSlots() {
-    var arr = [slot1, slot2];
-    // slot3 solo se incluye si hay productos en oferta cargados
-    if (slot3 && typeof _hayOfertasDelMes === 'function' && _hayOfertasDelMes()) {
-      arr.push(slot3);
-    }
+    var arr = [slot1];
+    if (slot3 && typeof _hayOfertasDelMes === 'function' && _hayOfertasDelMes()) arr.push(slot3);
     return arr;
   }
   setInterval(function() {
     var slots = _getActiveSlots();
+    if (slots.length < 2) return; // sin alternancia si no hay ofertas
     slots.forEach(function(s){ s.style.display = 'none'; });
     cur = (cur + 1) % slots.length;
     slots[cur].style.display = '';
   }, 10000);
+})();
+
+// Mostrar ícono de instalar app en el header (solo si no está instalada)
+(function _initInstallHeaderBtn() {
+  var btn = document.getElementById('btnInstalarApp');
+  if (!btn) return;
+  // Mostrar si: no está instalada Y hay prompt disponible (Android) O es iOS Safari
+  function _checkShow() {
+    if (_esAppInstalada) { btn.style.display = 'none'; return; }
+    if (_isIOSSafari() || _isAndroid()) btn.style.display = 'flex';
+  }
+  // Esperar a que las funciones de detección estén listas
+  setTimeout(_checkShow, 500);
+  // Esconder al instalar
+  window.addEventListener('appinstalled', function() { btn.style.display = 'none'; });
+  window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
+    if (e.matches) btn.style.display = 'none';
+  });
 })();
 
 // Helpers de detección de dispositivo
@@ -4676,7 +4692,7 @@ function _showManualInstall() {
 
 // Escuchar cambios de display-mode (cuando el usuario instala en esta sesión)
 window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
-  if (e.matches) { _esAppInstalada = true; _actualizarBannerApp(); }
+  if (e.matches) { _esAppInstalada = true; }
 });
 
 // ═══ HELPERS PARA iOS Y NAVEGADORES IN-APP ═══
@@ -4761,7 +4777,7 @@ window.copiarLinkParaNavegador = function() {
   <button class="ios-helper-close" onclick="dismissIOSHelper()" aria-label="Cerrar">✕</button>
   <div class="ios-helper-content">
     <div class="ios-helper-text">
-      <b>📱 Instalá Paladear y obtené 5% de descuento</b>
+      <b>📲 Instalá Paladear en tu pantalla de inicio</b>
       <span>Tocá <span class="ios-helper-share-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/></svg></span> abajo y luego <b>"Agregar a pantalla de inicio"</b></span>
     </div>
   </div>
@@ -4773,7 +4789,7 @@ window.copiarLinkParaNavegador = function() {
   <div class="iab-warning-inner">
     <div style="font-size:32px;text-align:center;margin-bottom:6px">⚠️</div>
     <div style="font-size:15px;font-weight:700;text-align:center;color:#fff;margin-bottom:6px">Abrí en tu navegador para instalar la app</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.92);text-align:center;line-height:1.4;margin-bottom:12px">Estás viendo el sitio dentro de una app (Instagram, WhatsApp, etc.). Para instalar Paladear con el <b>5% de descuento</b>, abrilo en <b>Safari</b> o <b>Chrome</b>.</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.92);text-align:center;line-height:1.4;margin-bottom:12px">Estás viendo el sitio dentro de una app (Instagram, WhatsApp, etc.). Para instalar Paladear, abrilo en <b>Safari</b> o <b>Chrome</b>.</div>
     <button onclick="copiarLinkParaNavegador()" style="width:100%;background:#fff;color:#547692;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px">📋 Copiar el link</button>
     <button onclick="dismissIAB()" style="width:100%;background:transparent;color:rgba(255,255,255,0.85);border:none;padding:6px;font-size:12px;cursor:pointer;font-family:inherit">Ahora no</button>
   </div>
@@ -4787,7 +4803,7 @@ window.copiarLinkParaNavegador = function() {
       <div style="font-size:40px;margin-bottom:8px">📲</div>
       <h2 style="font-size:20px;font-weight:800;color:var(--azul-dark);margin:0 0 6px">Instalá la app de Paladear</h2>
       <div style="background:#e8f5e9;color:#2e7d32;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;display:inline-block">
-        🎁 5% de descuento exclusivo por usar la app
+        📲 Instalá la app y accedé al catálogo sin internet
       </div>
     </div>
     <!-- Tabs -->
@@ -4920,7 +4936,7 @@ window.copiarLinkParaNavegador = function() {
         </div>
       </div>
       <div style="background:#e8f5e9;border-radius:8px;padding:8px 12px;font-size:12px;color:#2e7d32;margin-top:12px;font-weight:600;text-align:center">
-        🎁 Al abrirla desde el ícono, el 5% se activa automáticamente
+        📲 Al instalarla tenés el catálogo disponible aunque no tengas internet
       </div>
     </div>
   </div>
