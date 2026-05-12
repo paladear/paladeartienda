@@ -314,6 +314,20 @@ button{cursor:pointer;border:none;font-family:inherit}
 @keyframes truckBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
 
 /* ── MOBILE: botón "Categorías" a la izquierda y modal ── */
+.cats-mobile-catbtn-row{display:none} /* oculto: ahora el botón va en el search-wrap */
+.search-cats-btn{flex-shrink:0;width:44px;height:44px;padding:0;border-radius:12px;box-shadow:none;justify-content:center}
+@media(min-width:768px){.search-cats-btn{display:none!important}}
+/* Search input con botón de categorías a la izquierda */
+@media(max-width:767px){
+  .search-wrap{display:flex;align-items:center;gap:8px}
+  .search-wrap .search-input{flex:1;padding-left:14px}
+  .search-wrap .search-icon{right:12px}
+}
+/* Header colapsable cuando se busca en mobile */
+.header-collapsible{transition:max-height .3s ease,opacity .25s ease,padding .3s ease,margin .3s ease;overflow:hidden;max-height:200px;opacity:1}
+.header-collapsible.collapsed{max-height:0;opacity:0;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:0!important}
+.banner.collapsed{max-height:0;opacity:0;overflow:hidden;padding:0;transition:max-height .25s ease,opacity .2s ease,padding .25s ease}
+#mainTabs.collapsed{max-height:0;opacity:0;overflow:hidden;padding:0!important;margin:0!important;transition:max-height .25s ease,opacity .2s ease,padding .25s ease}
 .cats-mobile-catbtn-row{display:flex;justify-content:flex-start;margin-bottom:6px}
 @media(min-width:768px){.cats-mobile-catbtn-row{display:none}}
 .cats-toggle-btn{background:var(--azul);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 2px 10px rgba(84,118,146,.4)}
@@ -338,6 +352,44 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* Modal App Install */
 .app-install-modal{max-width:420px;width:calc(100% - 32px);border-radius:20px;padding:24px 20px;position:relative;max-height:92vh;overflow-y:auto;background:var(--card);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .modal-close-btn{position:absolute;top:14px;right:14px;background:var(--muted);border:none;border-radius:50%;width:30px;height:30px;font-size:15px;cursor:pointer;color:var(--fg);display:flex;align-items:center;justify-content:center;font-family:inherit}
+/* ── CHECKOUT MODAL ── */
+.checkout-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:10002;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.checkout-overlay{align-items:center}}
+.checkout-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:94vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.22);display:flex;flex-direction:column}
+@media(min-width:600px){.checkout-sheet{border-radius:20px;max-height:88vh}}
+.checkout-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--muted);position:sticky;top:0;background:var(--card);z-index:1;flex-shrink:0}
+.checkout-hdr-btn{background:var(--muted);border:none;border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--fg);flex-shrink:0;line-height:1}
+.checkout-hdr h2{flex:1;font-size:17px;font-weight:700;margin:0;color:var(--azul-dark);text-align:center}
+.checkout-summary{padding:9px 16px;background:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted-fg);flex-shrink:0}
+.checkout-summary b{color:var(--azul-dark);font-size:15px}
+.checkout-body{padding:20px 16px;overflow-y:auto;flex:1}
+.checkout-step-lbl{font-size:15px;font-weight:600;color:var(--fg);margin:0 0 16px}
+.checkout-delivery-opts{display:flex;flex-direction:column;gap:10px}
+.checkout-delivery-btn{background:var(--card);border:2px solid var(--muted);border-radius:14px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-family:inherit;text-align:left;width:100%}
+.checkout-delivery-btn:hover,.checkout-delivery-btn:active{border-color:var(--azul);background:rgba(84,118,146,.05)}
+.checkout-delivery-ic{font-size:30px;flex-shrink:0;line-height:1}
+.checkout-delivery-txt{flex:1}
+.checkout-delivery-txt b{display:block;font-size:15px;color:var(--fg);margin-bottom:2px;font-family:inherit}
+.checkout-delivery-txt small{font-size:12px;color:var(--muted-fg)}
+.checkout-delivery-arr{font-size:22px;color:var(--muted-fg);font-weight:200}
+.co-field{margin-bottom:16px}
+.co-field label{display:block;font-size:13px;font-weight:600;color:var(--fg);margin-bottom:5px}
+.co-field .opt-lbl{font-weight:400;color:var(--muted-fg);font-size:12px}
+.co-input{width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid var(--muted);border-radius:10px;font-size:15px;font-family:inherit;color:var(--fg);background:var(--card);transition:border-color .2s;-webkit-appearance:none}
+.co-input:focus{outline:none;border-color:var(--azul)}
+.co-hint{display:block;font-size:11px;color:var(--muted-fg);margin-top:4px;line-height:1.4}
+.co-addr-row{display:flex;gap:8px;margin-bottom:6px}
+.co-addr-row .co-input{flex:1;margin:0}
+.co-map-btn{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:0 13px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;flex-shrink:0;height:48px}
+.co-loc-btn{background:transparent;border:1.5px solid var(--muted);border-radius:8px;padding:7px 11px;font-size:12px;color:var(--muted-fg);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;margin-bottom:10px;width:100%}
+.co-loc-btn:hover{border-color:var(--azul);color:var(--azul)}
+#coMap{height:220px;border-radius:12px;overflow:hidden;margin-bottom:8px;border:2px solid var(--muted)}
+.co-map-confirm{display:flex;align-items:flex-start;gap:6px;background:#e8f5e9;border-radius:8px;padding:8px 10px;font-size:12px;color:#2e7d32;margin-bottom:8px;line-height:1.4}
+.co-pago-opts{display:flex;flex-direction:column;gap:10px}
+.co-radio{display:flex;align-items:flex-start;gap:10px;border:2px solid var(--muted);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .2s;background:var(--card)}
+.co-radio:has(input:checked){border-color:var(--azul);background:rgba(84,118,146,.05)}
+.co-radio input{flex-shrink:0;margin-top:2px;accent-color:var(--azul);width:16px;height:16px}
+.co-radio span{font-size:13px;color:var(--fg);line-height:1.4}
 .app-tab-btn{flex:1;padding:9px 8px;border:2px solid var(--muted);border-radius:10px;background:var(--card);color:var(--azul-dark);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
 .app-tab-btn.active{border-color:var(--azul);background:var(--azul);color:#fff}
 .app-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;font-size:13px;line-height:1.4}
@@ -1151,7 +1203,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 </div>
 <div style="max-width:1100px;margin:0 auto;padding:18px 20px" id="mainContainer">
   <div class="search-wrap">
-    <input class="search-input" type="text" placeholder="Buscar productos..." oninput="onSearch(this.value)" id="searchInput">
+    <button class="cats-toggle-btn search-cats-btn mobile-only" onclick="toggleCatsDropdown()" title="Categorías" aria-label="Categorías">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <input class="search-input" type="text" placeholder="Buscar productos..." oninput="onSearch(this.value)" id="searchInput" onfocus="_onSearchFocus()" onblur="_onSearchBlur(this)">
     <span class="search-icon">🔍</span>
   </div>
   <!-- Resultados de búsqueda en mobile: aparecen justo bajo el buscador -->
@@ -1219,13 +1274,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     </div>
     <button class="may-nav-btn">Ver →</button>
   </div>
-  <!-- MÓVIL: botón Categorías -->
-  <div class="cats-mobile-catbtn-row">
-    <button class="cats-toggle-btn" onclick="toggleCatsDropdown()">
-      ☰ Categorías <span style="font-size:10px;opacity:.8">▶</span>
-    </button>
-  </div>
-  <!-- Overlay y panel de categorías (mobile) -->
+  <!-- MÓVIL: panel de categorías (el botón está integrado en el buscador) -->
   <div class="cats-dropdown-overlay" id="catsDropdownOverlay" onclick="toggleCatsDropdown()"></div>
   <div class="cats-dropdown-panel" id="catsDropdownPanel" style="display:none">
     <div class="cats-dropdown-title">
@@ -2082,29 +2131,40 @@ function cartDel(key){
   if(pid&&pid>0)_reRenderCard(pid);
 }
 function pedirWA(){
-  const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0),esMay=totalMin>=80000;
-  let msg='🛒 *Pedido - Paladear Mercado de Sabores*\n\n',tot=0;
-  cart.forEach(it=>{
-    const s=esMay?_itemMay(it):_itemMinConOferta(it);tot+=s;
-    const q=it.unidad==='mix'?_gLabel(it.totalG)+' — '+it.mixDetalle:it.unidad==='kg'?_gLabel(it.totalG):(it.c>1?it.o+' x'+it.c:it.o);
-    msg+=`• ${it.n} (${q}) — $${fmt(s)}\n`;
-  });
-  const huboOferta=!esMay&&cart.some(it=>_getOfertaPct(it.pid)>0);
-  const totFinal=tot;
-  msg+=`\n*TOTAL: $${fmt(totFinal)}*${esMay?'\n_(Descuento por volumen aplicado)_':''}${huboOferta?'\n_(Ofertas del mes aplicadas)_':''}`;
-  msg+='\n\n_Pedido realizado desde el catálogo online_';
-  const url='https://wa.me/'+WA_MINORISTA+'?text='+encodeURIComponent(msg);
-  if(!navigator.onLine){
-    _guardarPedidoPendiente(url,'minorista');
-    return;
-  }
-  window.open(url,'_blank');
+  closeCart();
+  abrirCheckout('minorista');
 }
 
 let _searchTimer=null;
 function onSearch(val){
   clearTimeout(_searchTimer);
   _searchTimer=setTimeout(()=>_doSearch(val),300);
+}
+
+function _onSearchFocus(){
+  if(window.innerWidth>=768)return;
+  // Colapsar header, banner y tabs en mobile para ganar espacio
+  const header=document.querySelector('.header');
+  const banner=document.querySelector('.banner');
+  const tabs=document.getElementById('mainTabs');
+  if(header)header.classList.add('collapsed');
+  if(banner)banner.classList.add('collapsed');
+  if(tabs)tabs.classList.add('collapsed');
+}
+
+function _onSearchBlur(input){
+  // Pequeño delay para que no colapse antes de procesar el click en un resultado
+  setTimeout(function(){
+    if(window.innerWidth>=768)return;
+    const val=input?input.value:'';
+    if(val)return; // si hay texto, mantener colapsado mientras busca
+    const header=document.querySelector('.header');
+    const banner=document.querySelector('.banner');
+    const tabs=document.getElementById('mainTabs');
+    if(header)header.classList.remove('collapsed');
+    if(banner)banner.classList.remove('collapsed');
+    if(tabs)tabs.classList.remove('collapsed');
+  },250);
 }
 function _doSearch(val){
   searchTerm=val.trim();
@@ -2113,6 +2173,13 @@ function _doSearch(val){
   const srMobile=document.getElementById('searchResultsMobile');
 
   if(!searchTerm){
+    // Restaurar header colapsado
+    const header=document.querySelector('.header');
+    const banner=document.querySelector('.banner');
+    const tabs=document.getElementById('mainTabs');
+    if(header)header.classList.remove('collapsed');
+    if(banner)banner.classList.remove('collapsed');
+    if(tabs)tabs.classList.remove('collapsed');
     // Limpiar resultados mobile
     if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
     if(bannersWrap)bannersWrap.style.display='';
@@ -2178,6 +2245,13 @@ function irAProducto(pid){
   const inp=document.getElementById('searchInput');if(inp)inp.value='';
   searchTerm='';
   clearTimeout(_searchTimer);
+  // Restaurar header
+  const header=document.querySelector('.header');
+  const banner=document.querySelector('.banner');
+  const tabs=document.getElementById('mainTabs');
+  if(header)header.classList.remove('collapsed');
+  if(banner)banner.classList.remove('collapsed');
+  if(tabs)tabs.classList.remove('collapsed');
   // Cerrar overlay mobile de búsqueda
   const srMobile=document.getElementById('searchResultsMobile');
   if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
@@ -2527,6 +2601,14 @@ history.replaceState({view:'home'},'');
 
 window.addEventListener('popstate',function(e){
   const st=e.state||{view:'home'};
+
+  // 0. Si el checkout está abierto → cerrarlo
+  const checkoutOverlay=document.getElementById('checkoutOverlay');
+  if(checkoutOverlay && !checkoutOverlay.classList.contains('hidden')){
+    cerrarCheckout();
+    history.pushState({view:'home'},'');
+    return;
+  }
 
   // 0. Si el modal de instalación de app está abierto → cerrarlo
   const appModal=document.getElementById('modalInstalarApp');
@@ -4231,29 +4313,11 @@ function pedirWAMayorista() {
   }
   const total = cartMay.reduce((a, i) => a + i.l1 * i.c, 0);
   if (total < MIN_COMPRA_MAYORISTA) {
-    alert(`⚠️ Debes alcanzar el mínimo de compra de $${fmt(MIN_COMPRA_MAYORISTA)} para continuar.
-
-Total actual: $${fmt(total)}
-Faltan: $${fmt(MIN_COMPRA_MAYORISTA - total)}`);
+    alert(`⚠️ Debes alcanzar el mínimo de compra de $${fmt(MIN_COMPRA_MAYORISTA)} para continuar.\n\nTotal actual: $${fmt(total)}\nFaltan: $${fmt(MIN_COMPRA_MAYORISTA - total)}`);
     return;
   }
-  
-  let msg = '📦 *Pedido Mayorista - Paladear Mercado de Sabores*\n\n';
-  let tot = 0;
-  cartMay.forEach(it => {
-    const sub = it.l1 * it.c;
-    tot += sub;
-    msg += `• ${it.n} (${it.bultoLabel || 'Bulto'} x${it.c}) — $${fmt(sub)}
-`;
-  });
-  msg += `\n*TOTAL: $${fmt(tot)}*\n_(Lista Mayorista)_\n\n_Pedido realizado desde el catálogo online_`;
-  
-  const url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
-  if (!navigator.onLine) {
-    _guardarPedidoPendiente(url, 'mayorista');
-    return;
-  }
-  window.open(url, '_blank');
+  closeCartMay();
+  abrirCheckout('mayorista');
 }
 window.pedirWAMayorista = pedirWAMayorista;
 
@@ -4941,6 +5005,356 @@ window.copiarLinkParaNavegador = function() {
     </div>
   </div>
 </div>
+
+<!-- ═══ MODAL CHECKOUT — ENTREGA Y DATOS ═══ -->
+<div id="checkoutOverlay" class="checkout-overlay hidden" onclick="if(event.target===this)cerrarCheckout()">
+  <div class="checkout-sheet">
+    <!-- Header -->
+    <div class="checkout-hdr">
+      <button class="checkout-hdr-btn" id="coBtnBack" onclick="_coBack()" style="display:none" title="Volver">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h2 id="coTitle">Finalizar pedido</h2>
+      <button class="checkout-hdr-btn" onclick="cerrarCheckout()" title="Cerrar">✕</button>
+    </div>
+    <!-- Resumen -->
+    <div class="checkout-summary" id="coSummary"></div>
+    <!-- Body dinámico -->
+    <div class="checkout-body" id="coBody">
+      <!-- Step 1 -->
+      <div id="coStep1">
+        <p class="checkout-step-lbl">¿Cómo querés recibir tu pedido?</p>
+        <div class="checkout-delivery-opts">
+          <button class="checkout-delivery-btn" onclick="coElegirEntrega('retiro')">
+            <span class="checkout-delivery-ic">🏪</span>
+            <div class="checkout-delivery-txt"><b>Retiro en el local</b><small>Pueyrredón 588, Mendoza · Lun–Sáb 10 a 20hs</small></div>
+            <span class="checkout-delivery-arr">›</span>
+          </button>
+          <button class="checkout-delivery-btn" onclick="coElegirEntrega('domicilio')">
+            <span class="checkout-delivery-ic">🚚</span>
+            <div class="checkout-delivery-txt"><b>Envío a domicilio</b><small>Hacemos envíos a todo el país</small></div>
+            <span class="checkout-delivery-arr">›</span>
+          </button>
+        </div>
+      </div>
+      <!-- Step 2: Retiro -->
+      <div id="coStep2Retiro" class="hidden">
+        <div class="co-field">
+          <label>Nombre y apellido <span style="color:#e53935">*</span></label>
+          <input type="text" id="coNombre" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
+        </div>
+        <div class="co-field">
+          <label>Horario preferido de retiro <span class="opt-lbl">(opcional)</span></label>
+          <input type="text" id="coHorarioRetiro" placeholder="Ej: entre 10 y 12hs" class="co-input">
+          <span class="co-hint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
+        </div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+      </div>
+      <!-- Step 2: Domicilio -->
+      <div id="coStep2Dom" class="hidden">
+        <div class="co-field">
+          <label>Nombre y apellido <span style="color:#e53935">*</span></label>
+          <input type="text" id="coNombreDom" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
+        </div>
+        <div class="co-field">
+          <label>Dirección <span style="color:#e53935">*</span></label>
+          <div class="co-addr-row">
+            <input type="text" id="coDireccion" placeholder="Calle, número, ciudad" class="co-input" oninput="_coAddrChanged()">
+            <button class="co-map-btn" onclick="coBuscarMapa()" id="coMapBtn" title="Ver en mapa">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Mapa
+            </button>
+          </div>
+          <button class="co-loc-btn" onclick="coUsarUbicacion()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+            Usar mi ubicación actual
+          </button>
+          <div id="coMap" class="hidden"></div>
+          <div id="coMapConfirm" class="co-map-confirm hidden">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="#2e7d32" style="flex-shrink:0;margin-top:1px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span id="coMapAddr"></span>
+          </div>
+        </div>
+        <div class="co-field">
+          <label>Horario de disponibilidad <span class="opt-lbl">(opcional)</span></label>
+          <input type="text" id="coHorarioDom" placeholder="Ej: de 9 a 13hs o por las tardes" class="co-input">
+          <span class="co-hint">No es el horario exacto de entrega — es tu disponibilidad estimada para recibirlo</span>
+        </div>
+        <div class="co-field">
+          <label>Medio de pago <span style="color:#e53935">*</span></label>
+          <div class="co-pago-opts">
+            <label class="co-radio co-pago-efectivo" id="coRadioEfectivoWrap"><input type="radio" name="coPago" value="efectivo"><span>💵 Efectivo</span></label>
+            <label class="co-radio"><input type="radio" name="coPago" value="transferencia"><span>🏦 Transferencia bancaria</span></label>
+            <label class="co-radio"><input type="radio" name="coPago" value="tarjeta"><span>💳 Tarjeta de débito/crédito</span></label>
+          </div>
+        </div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ CHECKOUT — ENTREGA Y DATOS ═══
+var _coVenta = 'minorista';
+var _coEntrega = null;
+var _coMap = null, _coMarker = null, _leafletReady = false;
+
+function abrirCheckout(venta) {
+  _coVenta = venta || 'minorista';
+  _coEntrega = null;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+  _coRenderSummary();
+  document.getElementById('checkoutOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  if (!history.state || history.state.view !== 'checkout') {
+    history.pushState({view:'checkout'}, '');
+  }
+}
+window.abrirCheckout = abrirCheckout;
+
+function cerrarCheckout() {
+  document.getElementById('checkoutOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  if (_coMap) { _coMap.remove(); _coMap = null; _coMarker = null; }
+  document.getElementById('coMap').classList.add('hidden');
+  document.getElementById('coMapConfirm').classList.add('hidden');
+}
+window.cerrarCheckout = cerrarCheckout;
+
+function _coBack() {
+  _coEntrega = null;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+}
+window._coBack = _coBack;
+
+function _coRenderSummary() {
+  var isMin = _coVenta === 'minorista';
+  var total = 0;
+  var count = 0;
+  if (isMin) {
+    var totalMin = cart.reduce(function(a,i){return a+_itemMin(i);}, 0);
+    var esMay = totalMin >= 80000;
+    cart.forEach(function(i){ total += esMay ? _itemMay(i) : _itemMinConOferta(i); });
+    count = cart.length;
+  } else {
+    cartMay.forEach(function(i){ total += i.l1 * i.c; });
+    count = cartMay.length;
+  }
+  document.getElementById('coSummary').innerHTML =
+    '<span>' + count + ' producto' + (count !== 1 ? 's' : '') + '</span>' +
+    '<span>Total: <b>$' + fmt(total) + '</b></span>';
+}
+
+function coElegirEntrega(tipo) {
+  _coEntrega = tipo;
+  document.getElementById('coStep1').classList.add('hidden');
+  document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
+  document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
+  document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
+  document.getElementById('coBtnBack').style.display = '';
+  if (tipo === 'domicilio') {
+    _coLoadLeaflet();
+    // Efectivo solo para minorista y solo retiro en local — ocultarlo en domicilio
+    var efWrap = document.getElementById('coRadioEfectivoWrap');
+    if (efWrap) efWrap.style.display = 'none';
+  } else {
+    // Retiro: efectivo solo si es minorista
+    var efWrap2 = document.getElementById('coRadioEfectivoWrap');
+    if (efWrap2) efWrap2.style.display = _coVenta === 'minorista' ? '' : 'none';
+  }
+}
+window.coElegirEntrega = coElegirEntrega;
+
+function _coLoadLeaflet() {
+  if (window.L) return;
+  if (!document.getElementById('leafletCSS')) {
+    var lk = document.createElement('link');
+    lk.id = 'leafletCSS';
+    lk.rel = 'stylesheet';
+    lk.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(lk);
+  }
+  if (!document.getElementById('leafletJS')) {
+    var sc = document.createElement('script');
+    sc.id = 'leafletJS';
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    sc.onload = function(){ _leafletReady = true; };
+    document.head.appendChild(sc);
+  }
+}
+
+function _coInitMap() {
+  if (_coMap) { setTimeout(function(){ _coMap.invalidateSize(); }, 100); return; }
+  var mapDiv = document.getElementById('coMap');
+  if (!mapDiv || !window.L) { setTimeout(_coInitMap, 500); return; }
+  mapDiv.classList.remove('hidden');
+  _coMap = L.map('coMap').setView([-32.89, -68.83], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap', maxZoom: 19
+  }).addTo(_coMap);
+  _coMarker = L.marker([-32.89, -68.83], {draggable: true}).addTo(_coMap);
+  _coMarker.on('dragend', function(){
+    var p = _coMarker.getLatLng();
+    _coReverseGeocode(p.lat, p.lng);
+  });
+  setTimeout(function(){ _coMap.invalidateSize(); }, 150);
+}
+
+function coBuscarMapa() {
+  var addr = (document.getElementById('coDireccion').value || '').trim();
+  if (!addr) { document.getElementById('coDireccion').focus(); return; }
+  if (!window.L) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
+  var mapDiv = document.getElementById('coMap');
+  mapDiv.classList.remove('hidden');
+  if (!_coMap) { _coInitMap(); setTimeout(coBuscarMapa, 600); return; }
+  var q = addr + ', Mendoza, Argentina';
+  fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=ar')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data && data.length) {
+        var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+        _coMap.setView([lat, lon], 16);
+        _coMarker.setLatLng([lat, lon]);
+        _coShowMapConfirm(data[0].display_name);
+        setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+      } else {
+        alert('No se encontró la dirección. Probá escribirla más completa.');
+      }
+    })
+    .catch(function(){ alert('No se pudo buscar la dirección. Revisá tu conexión.'); });
+}
+window.coBuscarMapa = coBuscarMapa;
+
+function coUsarUbicacion() {
+  if (!navigator.geolocation) { alert('Tu dispositivo no permite compartir la ubicación.'); return; }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      if (!window.L) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
+      var mapDiv = document.getElementById('coMap');
+      mapDiv.classList.remove('hidden');
+      if (!_coMap) { _coInitMap(); setTimeout(function(){ _coMap.setView([lat,lon],16); _coMarker.setLatLng([lat,lon]); _coReverseGeocode(lat,lon); }, 700); return; }
+      _coMap.setView([lat, lon], 16);
+      _coMarker.setLatLng([lat, lon]);
+      _coReverseGeocode(lat, lon);
+      setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+    },
+    function(){ alert('No se pudo obtener tu ubicación. Por favor escribí tu dirección manualmente.'); },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+window.coUsarUbicacion = coUsarUbicacion;
+
+var _coRevTimer = null;
+function _coReverseGeocode(lat, lon) {
+  clearTimeout(_coRevTimer);
+  _coRevTimer = setTimeout(function() {
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.display_name) {
+          var short = data.display_name.split(',').slice(0,4).join(',').trim();
+          document.getElementById('coDireccion').value = short;
+          _coShowMapConfirm(data.display_name);
+        }
+      }).catch(function(){});
+  }, 500);
+}
+
+function _coShowMapConfirm(full) {
+  var el = document.getElementById('coMapConfirm');
+  var sp = document.getElementById('coMapAddr');
+  if (el && sp) {
+    sp.textContent = full.split(',').slice(0,4).join(',');
+    el.classList.remove('hidden');
+  }
+}
+
+function _coAddrChanged() {
+  document.getElementById('coMapConfirm').classList.add('hidden');
+}
+window._coAddrChanged = _coAddrChanged;
+
+function coEnviar() {
+  var tipo = _coEntrega;
+  var nombre, horario, direccion, pago, deliveryMsg;
+
+  if (tipo === 'retiro') {
+    nombre = (document.getElementById('coNombre').value || '').trim();
+    if (!nombre) { _coMarkRequired('coNombre'); return; }
+    horario = (document.getElementById('coHorarioRetiro').value || '').trim();
+    deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
+    deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
+    deliveryMsg += '\n📍 Pueyrredón 588, Mendoza';
+  } else {
+    nombre = (document.getElementById('coNombreDom').value || '').trim();
+    direccion = (document.getElementById('coDireccion').value || '').trim();
+    horario = (document.getElementById('coHorarioDom').value || '').trim();
+    var pagoEl = document.querySelector('input[name="coPago"]:checked');
+    if (!nombre) { _coMarkRequired('coNombreDom'); return; }
+    if (!direccion) { _coMarkRequired('coDireccion'); return; }
+    if (!pagoEl) { alert('Por favor seleccioná un medio de pago.'); return; }
+    var pagoTxt = pagoEl.value === 'efectivo'
+      ? 'Efectivo'
+      : pagoEl.value === 'transferencia'
+      ? 'Transferencia bancaria'
+      : 'Tarjeta de débito/crédito';
+    deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
+    deliveryMsg += '\n📍 ' + direccion;
+    if (horario) deliveryMsg += '\n🕐 Disponibilidad: ' + horario;
+    deliveryMsg += '\n💳 Pago: ' + pagoTxt;
+  }
+
+  var isMin = _coVenta === 'minorista';
+  var msg, url;
+
+  if (isMin) {
+    var totalMin = cart.reduce(function(a,i){ return a+_itemMin(i); }, 0);
+    var esMay = totalMin >= 80000;
+    var tot = 0;
+    var lines = '🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
+    cart.forEach(function(it){
+      var s = esMay ? _itemMay(it) : _itemMinConOferta(it); tot += s;
+      var q = it.unidad==='mix' ? _gLabel(it.totalG)+' — '+it.mixDetalle : it.unidad==='kg' ? _gLabel(it.totalG) : (it.c>1?it.o+' x'+it.c:it.o);
+      lines += '• ' + it.n + ' (' + q + ') — $' + fmt(s) + '\n';
+    });
+    var huboOferta = !esMay && cart.some(function(it){ return _getOfertaPct(it.pid)>0; });
+    lines += '\n*TOTAL: $' + fmt(tot) + '*' + (esMay?'\n_(Descuento por volumen aplicado)_':'') + (huboOferta?'\n_(Ofertas del mes aplicadas)_':'');
+    msg = lines + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
+    url = 'https://wa.me/' + WA_MINORISTA + '?text=' + encodeURIComponent(msg);
+  } else {
+    var tot2 = 0;
+    var lines2 = '📦 *Pedido Mayorista - Paladear Mercado de Sabores*\n\n';
+    cartMay.forEach(function(it){ var sub=it.l1*it.c; tot2+=sub; lines2+='• '+it.n+' ('+(it.bultoLabel||'Bulto')+' x'+it.c+') — $'+fmt(sub)+'\n'; });
+    lines2 += '\n*TOTAL: $' + fmt(tot2) + '*\n_(Lista Mayorista)_';
+    msg = lines2 + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
+    url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
+  }
+
+  cerrarCheckout();
+  if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
+  window.open(url, '_blank');
+}
+window.coEnviar = coEnviar;
+
+function _coMarkRequired(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '#e53935';
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.focus();
+  el.addEventListener('input', function(){ el.style.borderColor = ''; }, {once:true});
+}
+</script>
 
 </body>
 </html>
