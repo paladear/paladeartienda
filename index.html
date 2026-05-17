@@ -5136,6 +5136,11 @@ function _normalizeInstagramUrl(url) {
 }
 
 // Configuración de categorías
+function _escHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 const INSP_CATS = {
   'Receta':      { emoji:'🍽', bg:'#b07030', light:'#fdf3e8' },
   'Hierbas':     { emoji:'🌿', bg:'#4a8a62', light:'#eaf4ee' },
