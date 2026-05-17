@@ -5051,31 +5051,40 @@ var _instagramEmbedScriptLoaded = false;
 // URL de la hoja "inspiracion" — usa gviz/tq para resolver por nombre
 const RECETAS_URL = 'https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=inspiracion';
 
-function _parseCSVLine(line) {
-  // Simple CSV parser que respeta comillas
-  const out = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
+function _parseCSVRows(text) {
+  // Parser CSV completo que respeta comillas (incluso saltos de línea dentro de campos)
+  const rows = [];
+  let cur = '', row = [], inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     if (ch === '"') {
-      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      if (inQ && text[i+1] === '"') { cur += '"'; i++; }
       else inQ = !inQ;
     } else if (ch === ',' && !inQ) {
-      out.push(cur); cur = '';
+      row.push(cur); cur = '';
+    } else if ((ch === '\n' || ch === '\r') && !inQ) {
+      // Fin de fila (solo si NO estamos dentro de comillas)
+      if (ch === '\r' && text[i+1] === '\n') i++; // saltar \n del \r\n
+      row.push(cur); cur = '';
+      if (row.some(c => c.trim().length)) rows.push(row);
+      row = [];
     } else {
       cur += ch;
     }
   }
-  out.push(cur);
-  return out.map(s => s.trim());
+  if (cur || row.length) {
+    row.push(cur);
+    if (row.some(c => c.trim().length)) rows.push(row);
+  }
+  return rows.map(r => r.map(c => c.trim()));
 }
 
 function _parseRecetasCSV(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim().length);
-  if (lines.length <= 1) return [];
+  const rows = _parseCSVRows(text);
+  if (rows.length <= 1) return [];
   const out = [];
-  for (let i = 1; i < lines.length; i++) {
-    const cols = _parseCSVLine(lines[i]);
+  for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i];
     const titulo = (cols[0] || '').trim();
     if (!titulo) continue;
     const categoria = (cols[1] || '').trim();
