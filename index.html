@@ -5135,6 +5135,34 @@ function _normalizeInstagramUrl(url) {
   return 'https://www.instagram.com/p/' + id + '/';
 }
 
+// Resolver IDs/rubros del campo "productos" en productos reales del catálogo
+function _resolveRecetaProductos(refs) {
+  if (!refs || !PRODS || !CATS) return [];
+  const tokens = refs.split(',').map(s => s.trim()).filter(Boolean);
+  const found = [];
+  const seen = new Set();
+  tokens.forEach(token => {
+    const num = parseInt(token, 10);
+    if (!isNaN(num) && String(num) === token) {
+      // Es un ID numérico → buscar por productId
+      const match = PRODS.find(p => {
+        const pid = p[12] && p[12].productId;
+        return String(pid) === token;
+      });
+      if (match && !seen.has(match[0])) { found.push(match); seen.add(match[0]); }
+    } else {
+      // Es un nombre de rubro → buscar todos los productos del rubro
+      const cat = CATS.find(c => c.n.toLowerCase() === token.toLowerCase());
+      if (cat) {
+        PRODS.filter(p => p[1] === cat.id).forEach(p => {
+          if (!seen.has(p[0])) { found.push(p); seen.add(p[0]); }
+        });
+      }
+    }
+  });
+  return found;
+}
+
 // Configuración de categorías
 function _escHtml(s) {
   if (s == null) return '';
