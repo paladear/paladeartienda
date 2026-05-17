@@ -2011,12 +2011,15 @@ function _precioXG(p,totalG,nivel){
 }
 function _reRenderCard(pid){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-  ['mb','dt'].forEach(function(prefix){
+  ['mb','dt','rp'].forEach(function(prefix){
     const cardEl=document.getElementById(prefix+'_'+pid);
     if(!cardEl)return;
     const tmp=document.createElement('div');
     tmp.innerHTML=renderCard(p,prefix);
     cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
+    // Restaurar el opt seleccionado
+    const opts=_sortOpts(Object.keys(p[7]));
+    if(opts.length)selOpt(prefix+'_'+pid,opts[0],p[7][opts[0]][0],p[7][opts[0]][1]);
   });
 }
 
@@ -3710,7 +3713,7 @@ function switchTab(tab) {
     if (maySection) maySection.classList.remove('active');
     if (recSection) recSection.style.display = '';
     if (tabRec) tabRec.classList.add('active');
-    if (fabMin) fabMin.style.display = 'none';
+    if (fabMin) fabMin.style.display = 'flex'; // carrito visible en recetas
     if (fabMay) fabMay.style.display = 'none';
     // Mantener WA minorista en recetas (es lo más probable que el cliente quiera)
     const waHeader = document.querySelector('.social-btn[title^="WhatsApp"]');
