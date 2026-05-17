@@ -4951,7 +4951,8 @@ function _parseRecetasCSV(text) {
       productos: (cols[3] || '').trim(),
       tiempo: (cols[4] || '').trim(),
       esVideo: /^si$/i.test((cols[5] || '').trim()),
-      cantidades: (cols[6] || '').trim()
+      cantidades: (cols[6] || '').trim(),
+      miniatura: (cols[7] || '').trim()
     });
   }
   return out;
@@ -5025,10 +5026,10 @@ function _renderRecetasGrid() {
   let h = '';
   recetas.forEach((r, i) => {
     const idx = RECETAS.indexOf(r);
-    const ig = _getInstagramPostId(r.url);
-    const thumb = ig
-      ? '<img src="https://www.instagram.com/p/' + ig + '/media/?size=l" alt="' + _escHtml(r.titulo) + '" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'no-img\')">'
-      : '<span>🍴</span>';
+    const thumbSrc = r.miniatura ? _driveToImg(r.miniatura) : '';
+    const thumb = thumbSrc
+      ? '<img src="' + thumbSrc + '" alt="' + _escHtml(r.titulo) + '" loading="lazy" onerror="this.style.display=\'none\'">'
+      : '<span style="font-size:42px">🍴</span>';
     const playBtn = r.esVideo ? '<div class="receta-thumb-overlay"><div class="receta-play">▶</div></div>' : '<div class="receta-thumb-overlay" style="background:rgba(0,0,0,0)"></div>';
     const tag = r.categoria ? '<span class="receta-tag">' + _escHtml(r.categoria) + '</span>' : '';
     let prodChip = '';
