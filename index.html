@@ -523,7 +523,8 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .recetas-hero-title{font-size:22px;font-weight:800;margin:0;color:var(--azul-dark);line-height:1.1}
 .recetas-hero-sub{font-size:13px;color:var(--muted-fg);margin:4px 0 0;line-height:1.4}
 /* Filtros */
-.recetas-filters{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.recetas-filters{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.recetas-filters::-webkit-scrollbar{display:none}
 .recetas-filter-chip{flex-shrink:0;padding:8px 16px;border:1.5px solid var(--muted);border-radius:999px;background:var(--card);color:var(--muted-fg);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
 .recetas-filter-chip.active{background:var(--azul);color:#fff;border-color:var(--azul)}
 .recetas-filter-chip:not(.active):hover{border-color:var(--azul);color:var(--azul)}
@@ -596,6 +597,13 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .insp-lb-prev{left:10px}
 .insp-lb-next{right:10px}
 .insp-lb-counter{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px;font-weight:600;font-family:'Montserrat',sans-serif}
+@media(max-width:600px){
+  .insp-lightbox img{max-width:100%;max-height:72vh}
+  .insp-lb-nav{top:auto;transform:none;bottom:18px;width:48px;height:48px}
+  .insp-lb-prev{left:calc(50% - 56px)}
+  .insp-lb-next{right:auto;left:calc(50% + 8px)}
+  .insp-lb-counter{bottom:74px}
+}
 /* Productos verticales scrolleables en modal inspiración */
 .insp-prods-compact{max-height:174px;overflow-y:auto;border:0.5px solid var(--muted);border-radius:12px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
 .insp-prods-compact::-webkit-scrollbar{width:3px}
