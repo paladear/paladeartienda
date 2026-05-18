@@ -515,7 +515,7 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .banner-may-wa:hover{background:#1da851}
 .banner-may-pdf{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s}
 .banner-may-pdf:hover{background:rgba(255,255,255,.28)}
-@media(max-width:480px){.banner-may-sub{display:none}.banner-may-wa{padding:7px 10px;font-size:12px}}
+@media(max-width:600px){.banner-may-text{display:none}.banner-may-inner{justify-content:center}.banner-may-wa{padding:9px 16px;font-size:13px}.banner-may-pdf{padding:8px 14px;font-size:13px}}
 /* ═══ INSPIRACIÓN PALADEAR ═══ */
 .recetas-section{font-family:'Montserrat',sans-serif}
 .recetas-hero{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,var(--card) 0%,rgba(84,118,146,.06) 100%);border-radius:20px;padding:20px 22px;margin-bottom:20px;border:1px solid var(--muted)}
@@ -587,10 +587,15 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .insp-slide-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);cursor:pointer;transition:all .2s}
 .insp-slide-dot.active{background:var(--azul);transform:scale(1.3)}
 /* Lightbox */
-.insp-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10010;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:16px}
+.insp-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:10010;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:16px}
 .insp-lightbox.hidden{display:none}
-.insp-lightbox img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
-.insp-lightbox-close{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.insp-lightbox img{max-width:calc(100% - 80px);max-height:86vh;object-fit:contain;border-radius:6px;cursor:default}
+.insp-lightbox-close{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;border-radius:50%;width:38px;height:38px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1}
+.insp-lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;border-radius:50%;width:44px;height:44px;color:#fff;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1;padding-bottom:2px;transition:background .2s}
+.insp-lb-nav:hover{background:rgba(255,255,255,.3)}
+.insp-lb-prev{left:10px}
+.insp-lb-next{right:10px}
+.insp-lb-counter{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px;font-weight:600;font-family:'Montserrat',sans-serif}
 /* Productos compactos en modal */
 .insp-prods-compact{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .insp-prod-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(84,118,146,.09);border:1.5px solid var(--azul);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--azul-dark);cursor:pointer;transition:all .18s;white-space:nowrap}
@@ -598,9 +603,10 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 /* Instagram block */
 .insp-ig-block{border-radius:14px;overflow:hidden;border:2px solid #e1306c;margin-bottom:14px;cursor:pointer;transition:opacity .2s;text-decoration:none;display:block}
 .insp-ig-block:hover{opacity:.9}
-.insp-ig-thumb{width:100%;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);position:relative;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center}
+.insp-ig-thumb{width:100%;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);position:relative;overflow:hidden;min-height:120px;display:flex;align-items:center;justify-content:center}
 .insp-ig-thumb img{width:100%;height:auto;display:block;object-fit:contain}
-.insp-ig-thumb-fallback{display:flex;align-items:center;justify-content:center;padding:40px}
+.insp-ig-thumb-fallback{display:flex;align-items:center;justify-content:center;padding:30px;gap:14px;flex-direction:column}
+.insp-ig-play{color:rgba(255,255,255,.9);font-size:28px;margin-top:6px}
 .insp-ig-footer{background:linear-gradient(135deg,#833ab4,#fd1d1d 50%,#fcb045);padding:12px 16px;display:flex;align-items:center;gap:10px}
 .insp-ig-footer svg{fill:#fff;flex-shrink:0;width:20px;height:20px}
 .insp-ig-footer-text{flex:1}
@@ -5106,40 +5112,68 @@ function _coMarkRequired(id) {
 // DESCARGA LISTA MAYORISTA
 function descargarListaMayorista() {
   if (!PRODS_MAY.length) { alert('La lista mayorista aún se está cargando. Esperá un momento.'); return; }
-  const fecha = new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  let rows = '';
-  const byCat = {};
-  PRODS_MAY.forEach(p => {
-    const cat = CATS_MAY.find(c => c.id === p[1]);
-    const catName = cat ? cat.n : 'Otros';
-    if (!byCat[catName]) byCat[catName] = [];
-    byCat[catName].push(p);
-  });
-  Object.keys(byCat).sort().forEach(cat => {
-    rows += '<tr class="cat-row"><td colspan="3">' + cat + '</td></tr>';
-    byCat[cat].forEach(p => {
-      const opts = Object.keys(p[7]);
-      const precio = opts.length ? p[7][opts[0]][0] : 0;
-      rows += '<tr><td>' + p[2] + '</td><td>' + opts.join(' / ') + '</td><td>$' + fmt(precio) + '</td></tr>';
+  function _generar() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const fecha = new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+    // Header
+    doc.setFillColor(84, 118, 146);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+    doc.text('Paladear Mercado de Sabores', 14, 11);
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    doc.text('Lista Mayorista — ' + fecha, 14, 18);
+    doc.text('Compra mínima $250.000 · Solo por bulto cerrado', 14, 24);
+    // Tabla
+    const byCat = {};
+    PRODS_MAY.forEach(p => {
+      const cat = CATS_MAY.find(c => c.id === p[1]);
+      const cn = cat ? cat.n : 'Otros';
+      if (!byCat[cn]) byCat[cn] = [];
+      byCat[cn].push(p);
     });
-  });
-  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Lista Mayorista Paladear</title>' +
-    '<style>body{font-family:Arial,sans-serif;font-size:11px;margin:24px;color:#111}' +
-    'h1{font-size:18px;margin:0 0 4px;color:#547692}.sub{font-size:11px;color:#666;margin-bottom:18px}' +
-    'table{width:100%;border-collapse:collapse}th{background:#547692;color:#fff;text-align:left;padding:6px 8px;font-size:11px}' +
-    'td{padding:5px 8px;border-bottom:1px solid #eee}.cat-row td{background:#e8f0f6;font-weight:700;color:#2c4a5a;border-bottom:2px solid #c0d0dc}' +
-    '.footer{margin-top:20px;font-size:10px;color:#999;text-align:center}' +
-    '@media print{body{margin:12px}}</style></head><body>' +
-    '<h1>Paladear — Lista Mayorista</h1>' +
-    '<div class="sub">Compra mínima $250.000 · Solo por bulto cerrado · ' + fecha + '</div>' +
-    '<table><thead><tr><th>Producto</th><th>Presentación</th><th>Precio</th></tr></thead>' +
-    '<tbody>' + rows + '</tbody></table>' +
-    '<div class="footer">Paladear Mercado de Sabores · @palade.ar</div></body></html>';
-  const w = window.open('', '_blank');
-  if (!w) { alert('Habilitá las ventanas emergentes en tu navegador para descargar la lista.'); return; }
-  w.document.write(html);
-  w.document.close();
-  setTimeout(function(){ w.print(); }, 400);
+    const body = [];
+    Object.keys(byCat).sort().forEach(cat => {
+      body.push([{ content: cat, colSpan: 3, styles: { fillColor: [232, 240, 246], textColor: [44, 74, 90], fontStyle: 'bold', fontSize: 10 } }]);
+      byCat[cat].forEach(p => {
+        const opts = Object.keys(p[7]);
+        const precio = opts.length ? p[7][opts[0]][0] : 0;
+        body.push([p[2], opts.join(' / '), '$' + fmt(precio)]);
+      });
+    });
+    doc.autoTable({
+      startY: 32,
+      head: [['Producto', 'Presentación', 'Precio']],
+      body: body,
+      headStyles: { fillColor: [84, 118, 146], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 100 }, 1: { cellWidth: 50 }, 2: { cellWidth: 30, halign: 'right' } },
+      alternateRowStyles: { fillColor: [248, 251, 253] },
+      margin: { left: 14, right: 14 },
+      didDrawPage: function(data) {
+        // Footer en cada página
+        doc.setFontSize(8); doc.setTextColor(150);
+        doc.text('@palade.ar · Pueyrredón 588, Mendoza', 14, 290);
+        doc.text('Página ' + doc.getCurrentPageInfo().pageNumber, 196, 290, { align: 'right' });
+      }
+    });
+    doc.save('Paladear-Lista-Mayorista-' + fecha.replace(/\//g, '-') + '.pdf');
+  }
+  // Cargar jsPDF + autoTable si no están cargados
+  if (window.jspdf && window.jspdf.jsPDF) {
+    _generar();
+    return;
+  }
+  const s1 = document.createElement('script');
+  s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s1.onload = function() {
+    const s2 = document.createElement('script');
+    s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+    s2.onload = _generar;
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
 }
 window.descargarListaMayorista = descargarListaMayorista;
 
@@ -5250,16 +5284,38 @@ function _normalizeInstagramUrl(url) {
 
 // Resolver IDs/rubros del campo "productos" en productos reales del catálogo
 // ── LIGHTBOX ──
-function abrirLightbox(src, alt) {
+var _lbImages = [];   // lista de todas las imgs del modal actual
+var _lbIndex = 0;     // índice actual
+
+function abrirLightbox(src, alt, allImgs, startIdx) {
   const lb = document.getElementById('inspLightbox');
   const img = document.getElementById('inspLightboxImg');
   if (!lb || !img) return;
-  img.src = src; img.alt = alt || '';
+  _lbImages = allImgs || [src];
+  _lbIndex = startIdx || 0;
+  _lbSetImg(_lbIndex);
   lb.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   history.pushState({ view: 'lightbox' }, '');
 }
 window.abrirLightbox = abrirLightbox;
+
+function _lbSetImg(i) {
+  _lbIndex = Math.max(0, Math.min(i, _lbImages.length - 1));
+  const img = document.getElementById('inspLightboxImg');
+  if (img) img.src = _lbImages[_lbIndex];
+  // prev/next buttons
+  const prev = document.getElementById('lbPrev');
+  const next = document.getElementById('lbNext');
+  if (prev) prev.style.display = _lbImages.length > 1 ? '' : 'none';
+  if (next) next.style.display = _lbImages.length > 1 ? '' : 'none';
+  const counter = document.getElementById('lbCounter');
+  if (counter) counter.textContent = _lbImages.length > 1 ? (_lbIndex+1) + ' / ' + _lbImages.length : '';
+}
+
+function lbPrev(e) { e && e.stopPropagation(); _lbSetImg(_lbIndex - 1); }
+function lbNext(e) { e && e.stopPropagation(); _lbSetImg(_lbIndex + 1); }
+window.lbPrev = lbPrev; window.lbNext = lbNext;
 
 function cerrarLightbox() {
   const lb = document.getElementById('inspLightbox');
@@ -5267,6 +5323,23 @@ function cerrarLightbox() {
   document.body.style.overflow = '';
 }
 window.cerrarLightbox = cerrarLightbox;
+
+// Swipe en el lightbox
+(function() {
+  var tx0 = 0;
+  document.addEventListener('touchstart', function(e) {
+    const lb = document.getElementById('inspLightbox');
+    if (!lb || lb.classList.contains('hidden')) return;
+    tx0 = e.touches[0].clientX;
+  }, {passive:true});
+  document.addEventListener('touchend', function(e) {
+    const lb = document.getElementById('inspLightbox');
+    if (!lb || lb.classList.contains('hidden')) return;
+    const dx = e.changedTouches[0].clientX - tx0;
+    if (Math.abs(dx) > 50) { if (dx < 0) lbNext(); else lbPrev(); }
+  }, {passive:true});
+})();
+
 
 function _resolveRecetaProductos(refs) {
   if (!refs || !PRODS || !CATS) return [];
@@ -5467,17 +5540,19 @@ function abrirReceta(idx, skipHistory) {
   // Instagram — bloque visual con thumbnail y gradiente
   if (r.urlIG) {
     const igUrl = _normalizeInstagramUrl(r.urlIG);
-    const thumbSrc = r.miniatura ? _driveToImg(r.miniatura) : '';
-    const igThumb = thumbSrc
-      ? '<img src="' + thumbSrc + '" alt="' + _escHtml(r.titulo) + '" loading="lazy">'
-      : '<div class="insp-ig-thumb-fallback"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>';
+    const igIsVideo = r.urlIG.includes('/reel/') || r.urlIG.includes('/tv/');
     html += '<a href="' + igUrl + '" target="_blank" rel="noopener" class="insp-ig-block">' +
-      '<div class="insp-ig-thumb">' + igThumb + '</div>' +
+      '<div class="insp-ig-thumb">' +
+        '<div class="insp-ig-thumb-fallback">' +
+          '<svg viewBox="0 0 24 24" width="52" height="52" fill="rgba(255,255,255,.85)"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' +
+          (igIsVideo ? '<div class=\"insp-ig-play\">▶</div>' : '') +
+        '</div>' +
+      '</div>' +
       '<div class="insp-ig-footer">' +
-        '<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' +
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' +
         '<div class="insp-ig-footer-text">' +
           '<span class="insp-ig-footer-label">@palade.ar</span>' +
-          '<span class="insp-ig-footer-sub">Ver publicación en Instagram</span>' +
+          '<span class="insp-ig-footer-sub">' + (igIsVideo ? 'Ver reel en Instagram' : 'Ver publicación en Instagram') + '</span>' +
         '</div>' +
         '<span class="insp-ig-arrow">→</span>' +
       '</div>' +
@@ -5492,11 +5567,25 @@ function abrirReceta(idx, skipHistory) {
       _irAProductoDesdeReceta(parseInt(el.dataset.pid), el.dataset.cat);
     });
   });
-  // Event delegation para imágenes de slides → lightbox
-  body.querySelectorAll('.insp-slide-img img').forEach(function(img) {
+  // Lightbox: recopilar TODAS las imágenes del modal (hero + slides)
+  var allLbImgs = [];
+  var heroImg = body.querySelector('.receta-modal-hero img');
+  if (heroImg) allLbImgs.push(heroImg.src);
+  body.querySelectorAll('.insp-slide-img img').forEach(function(img) { allLbImgs.push(img.src); });
+  // Hero clickeable
+  if (heroImg) {
+    heroImg.style.cursor = 'zoom-in';
+    heroImg.addEventListener('click', function(e) {
+      e.stopPropagation();
+      abrirLightbox(heroImg.src, heroImg.alt, allLbImgs, 0);
+    });
+  }
+  // Slides clickeables
+  body.querySelectorAll('.insp-slide-img img').forEach(function(img, si) {
     img.addEventListener('click', function(e) {
       e.stopPropagation();
-      abrirLightbox(img.src, img.alt);
+      var heroOffset = heroImg ? 1 : 0;
+      abrirLightbox(img.src, img.alt, allLbImgs, heroOffset + si);
     });
   });
   document.getElementById('recetaModalOverlay').classList.remove('hidden');
@@ -6163,8 +6252,11 @@ window.copiarLinkParaNavegador = function() {
 <!-- ═══ MODAL RECETA — INSTAGRAM EMBED ═══ -->
 <!-- Lightbox para imágenes de slides -->
 <div id="inspLightbox" class="insp-lightbox hidden" onclick="cerrarLightbox()">
-  <button class="insp-lightbox-close">✕</button>
-  <img id="inspLightboxImg" src="" alt="">
+  <button class="insp-lightbox-close" onclick="cerrarLightbox();event.stopPropagation()">✕</button>
+  <button id="lbPrev" class="insp-lb-nav insp-lb-prev" onclick="lbPrev(event)">‹</button>
+  <img id="inspLightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  <button id="lbNext" class="insp-lb-nav insp-lb-next" onclick="lbNext(event)">›</button>
+  <div id="lbCounter" class="insp-lb-counter"></div>
 </div>
 
 <div id="recetaModalOverlay" class="receta-modal-overlay hidden" onclick="if(event.target===this)cerrarRecetaModal()">
