@@ -530,16 +530,17 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .iab-warning{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;font-family:inherit}
 .iab-warning.hidden{display:none}
 .iab-warning-inner{background:linear-gradient(160deg,#547692 0%,#3d5a73 100%);border-radius:16px;padding:24px 20px;max-width:340px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.4)}
-.banner-mayorista{padding:10px 20px;margin-top:18px}
-.banner-may-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.banner-mayorista{background:var(--card);color:var(--azul-dark);padding:14px 18px;margin:18px 16px 0;border-radius:14px;border:1.5px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);max-width:1068px}
+@media(min-width:1100px){.banner-mayorista{margin-left:auto;margin-right:auto}}
+.banner-may-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .banner-may-text{flex:1;min-width:0}
-.banner-may-label{display:block;font-weight:800;font-size:14px;color:#fff;white-space:nowrap}
-.banner-may-sub{display:block;font-size:11px;color:rgba(255,255,255,.75);margin-top:1px}
+.banner-may-label{display:block;font-weight:800;font-size:14px;color:var(--azul-dark);white-space:nowrap}
+.banner-may-sub{display:block;font-size:11.5px;color:var(--muted-fg);margin-top:1px}
 .banner-may-actions{display:flex;gap:8px;flex-shrink:0;align-items:center}
 .banner-may-wa{display:flex;align-items:center;gap:7px;background:#25d366;color:#fff;text-decoration:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;white-space:nowrap;transition:background .2s}
 .banner-may-wa:hover{background:#1da851}
-.banner-may-pdf{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s}
-.banner-may-pdf:hover{background:rgba(255,255,255,.28)}
+.banner-may-pdf{display:flex;align-items:center;gap:6px;background:var(--azul-light);color:var(--azul-dark);border:1.5px solid var(--azul-mid);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s}
+.banner-may-pdf:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
 @media(max-width:600px){.banner-may-text{display:none}.banner-may-inner{justify-content:center}.banner-may-wa{padding:9px 16px;font-size:13px}.banner-may-pdf{padding:8px 14px;font-size:13px}}
 /* ═══ INSPIRACIÓN PALADEAR ═══ */
 .recetas-section{font-family:'Montserrat',sans-serif}
@@ -1296,10 +1297,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .tabs-zone{background:var(--bg);padding:0;margin:0}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
 .tabs-pill{position:absolute;top:0;bottom:0;left:0;width:0;opacity:0;background:var(--azul);border-radius:0 0 22px 22px;transition:transform .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),opacity .25s;box-shadow:0 4px 12px rgba(84,118,146,.25);z-index:0;will-change:transform,width}
-.may-tab{cursor:pointer;padding:12px 12px 14px;border-radius:0;font-weight:700;font-size:14px;transition:color .25s;border:none;background:transparent;color:var(--azul-dark);flex:1;text-align:center;position:relative;z-index:1;font-family:inherit;line-height:1.1}
+.may-tab{cursor:pointer;padding:8px 8px 12px;border-radius:0;font-weight:700;font-size:13px;transition:color .25s;border:none;background:transparent;color:var(--azul-dark);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;z-index:1;font-family:inherit;line-height:1.1}
+.may-tab-icon{width:34px;height:34px;object-fit:contain;display:block;flex-shrink:0;transition:transform .25s}
+.may-tab.active .may-tab-icon{transform:scale(1.08)}
 .may-tab.active{color:#fff}
 .may-tab:hover:not(.active){color:var(--azul)}
-@media(max-width:767px){.may-tab{padding:10px 6px 12px;font-size:12.5px}}
+@media(max-width:767px){.may-tab{padding:6px 4px 10px;font-size:11.5px;gap:1px}.may-tab-icon{width:30px;height:30px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1510,13 +1513,22 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     <span class="envios-msg">Hacemos envíos a todo el país</span>
   </div>
 </div>
-<!-- Tabs de navegación (zona azul continua con el camión, pill blanco "burbuja") -->
+<!-- Tabs de navegación (zona celeste con burbuja azul colgada del camión) -->
 <div class="tabs-zone">
   <div class="may-tabs-wrap" id="mainTabs">
     <div class="tabs-pill" id="tabsPill"></div>
-    <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">🛒 Minorista</button>
-    <button class="may-tab" id="tabMayorista" onclick="switchTab('mayorista')">📦 Mayorista</button>
-    <button class="may-tab" id="tabRecetas" onclick="switchTab('recetas')">✨ Inspiración</button>
+    <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">
+      <img class="may-tab-icon" src="icon-minorista.png" alt="" aria-hidden="true">
+      <span>Minorista</span>
+    </button>
+    <button class="may-tab" id="tabMayorista" onclick="switchTab('mayorista')">
+      <img class="may-tab-icon" src="icon-mayorista.png" alt="" aria-hidden="true">
+      <span>Mayorista</span>
+    </button>
+    <button class="may-tab" id="tabRecetas" onclick="switchTab('recetas')">
+      <img class="may-tab-icon" src="icon-inspiracion.png" alt="" aria-hidden="true">
+      <span>Inspiración</span>
+    </button>
   </div>
 </div>
 <!-- Banner Mayorista -->
@@ -1668,28 +1680,9 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     <div class="may-warn">📦 Venta únicamente por bulto cerrado</div>
     <div class="may-info">Seleccioná los productos y el sistema validará automáticamente que cumplas con los requisitos de compra mayorista.</div>
   </div>
-  <!-- Buscador mayorista -->
-  <div class="search-wrap" style="margin-bottom:18px">
-    <input class="search-input" type="text" placeholder="Buscar en Lista Mayorista..." oninput="onSearchMay(this.value)" id="searchInputMay">
-    <span class="search-icon">🔍</span>
-  </div>
+  <!-- Búsqueda y categorías ahora viven en el compact-header (al scrollear) -->
+  <input type="hidden" id="searchInputMay">
   <div id="maySearchResults" class="hidden"></div>
-  <!-- Categorías y productos mayorista -->
-  <!-- MÓVIL: botón Categorías mayorista -->
-  <div class="cats-mobile-catbtn-row">
-    <button class="cats-toggle-btn" onclick="toggleMayCatsDropdown()">
-      ☰ Categorías <span style="font-size:10px;opacity:.8">▶</span>
-    </button>
-  </div>
-  <!-- Overlay y panel de categorías mayorista (mobile) -->
-  <div class="cats-dropdown-overlay" id="mayCatsDropdownOverlay" onclick="toggleMayCatsDropdown()"></div>
-  <div class="cats-dropdown-panel" id="mayCatsDropdownPanel" style="display:none">
-    <div class="cats-dropdown-title">
-      Categorías
-      <button class="cats-dropdown-close" onclick="toggleMayCatsDropdown()">×</button>
-    </div>
-    <div class="cats-dropdown-list" id="mayCatsDropdownGrid"></div>
-  </div>
   <div class="main-layout">
     <div class="cats-sidebar">
       <h1>Categorías</h1>
