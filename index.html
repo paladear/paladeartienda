@@ -870,7 +870,8 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .opt-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
 .opt-btn:hover:not(.active){border-color:var(--azul-mid)}
 .prices{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
-.price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:700;display:block;text-align:center}
+.prices>div{text-align:center}
 .price-min{font-size:18px;font-weight:800}
 .price-may{font-size:15px;font-weight:800;color:#1a4d5e;background:#9eccd8;padding:3px 10px;border-radius:8px}
 .qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -1767,10 +1768,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <button id="chat-close" onclick="toggleChat()">×</button>
   </div>
   <div id="chat-msgs"></div>
-  <div id="chat-input-row">
-    <textarea id="chat-input" placeholder="Escribí tu consulta..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
-    <button id="chat-send" onclick="sendChat()">➤</button>
-  </div>
 </div>
 
 <script>
@@ -1792,6 +1789,7 @@ function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
 function _bultoLabel(n,unidad){if(unidad==='kg')return n+' Kg';return n===1?'1 Unidad':n+' Unidades';}
+function _tc(s){return(s||'').toLowerCase().replace(/(^|[\s\-\/])(\S)/g,function(_,b,c){return b+c.toUpperCase();});}
 const _STOPWORDS=new Set(['DE','DEL','LA','EL','LOS','LAS','UN','UNA','Y','O','CON','EN','X','POR']);
 function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));const tn=_norm(t);if(!qn.length)return false;return qn.some(w=>tn.includes(w))}
 function _levenshtein(a,b){
@@ -1856,7 +1854,7 @@ function _cardHTML(p, xopts){
     ${ofertaBadge}
     <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
     <div class="carousel-card-body">
-      <div class="carousel-card-name">${p[2]}</div>
+      <div class="carousel-card-name">${_tc(p[2])}</div>
       <div class="carousel-card-cat">${cat?cat.n:''}</div>
       ${precioHTML}
     </div>
@@ -1895,7 +1893,7 @@ function renderCarruseles(){
     ${p[12]&&p[12].oferta?`<div class="oferta-badge">−${p[12].oferta}%</div>`:''}
     <div class="carousel-card-img">${p[6]&&p[6].startsWith('http')?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${CATS.find(c=>c.id===p[1])?CATS.find(c=>c.id===p[1]).ic:'🌿'}`}</div>
     <div class="carousel-card-body">
-      <div class="carousel-card-name">${p[2]}</div>
+      <div class="carousel-card-name">${_tc(p[2])}</div>
       <div class="carousel-card-cat">${CATS.find(c=>c.id===p[1])?CATS.find(c=>c.id===p[1]).n:''}</div>
       ${(()=>{const opts=_sortOpts(Object.keys(p[7]));const precio=opts.length?p[7][opts[0]][0]:0;const pct=p[12]&&p[12].oferta?p[12].oferta:0;return pct>0?`<div class="carousel-card-price"><span class="precio-tachado">$${fmt(precio)}</span> <span class="precio-oferta">$${fmt(Math.round(precio*(1-pct/100)))}</span></div>`:`<div class="carousel-card-price">$${fmt(precio)}</div>`})()}
     </div>
@@ -2098,10 +2096,10 @@ function renderCard(p,prefix){
   if(oferta>0)h+=`<div class="oferta-badge oferta-badge-lg">−${oferta}% OFF</div>`;
   h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</div>`;
   h+=`<div class="pcard-body">`;
-  h+=`<div class="pcard-head"><div class="pcard-name">${p[2]}</div>`;
+  h+=`<div class="pcard-head"><div class="pcard-name">${_tc(p[2])}</div>`;
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
   h+=`</div>`;
-  h+=`<div class="pcard-brand">${p[3]}</div>`;
+  if(p[3]&&p[3]!=='Varios'&&p[3]!=='Granel')h+=`<div class="pcard-brand">${p[3]}</div>`;
   h+='<div class="opt-btns">';
   opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
   h+='</div>';
@@ -2115,7 +2113,7 @@ function renderCard(p,prefix){
   const minHTML=oferta>0
     ? `<div class="price-min"><span class="precio-tachado-sm">$${fmt(precioMin)}</span><span class="precio-oferta">$${fmt(precioMinOferta)}</span></div>`
     : `<div class="price-min">$${fmt(precioMin)}</div>`;
-  h+=`<div class="prices"><div><span class="price-label">Minorista${oferta>0?' (Oferta)':''}</span>${minHTML}</div><div><span class="price-label">Desc. Volumen</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
+  h+=`<div class="prices"><div><span class="price-label">Precio${oferta>0?' (Oferta)':''}</span>${minHTML}</div><div><span class="price-label">Con descuento</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
   const acumInfo=acumLbl?`<span class="acum-badge">🛒 ${acumLbl}</span>`:'';
   h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button>${acumInfo}</div>`;
   h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;
@@ -4166,7 +4164,7 @@ function _cardHTMLMay(p) {
   return `<div class="carousel-card" onclick="selectMayCat('${p[1]}', ${p[0]})">
     <div class="carousel-card-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : (cat ? cat.ic : '🌿')}</div>
     <div class="carousel-card-body">
-      <div class="carousel-card-name">${p[2]}</div>
+      <div class="carousel-card-name">${_tc(p[2])}</div>
       <div class="carousel-card-cat">${cat ? cat.n : ''}</div>
       <span class="bulto-badge">📦 ${opts[0] || 'Bulto'}</span>
       <div class="carousel-card-price">$${fmt(precio)}</div>
@@ -4262,10 +4260,11 @@ function renderCardMay(p, suffix) {
   h += `<div class="pcard-body">`;
 
   // Nombre
-  h += `<div class="pcard-head"><div class="pcard-name">${p[2]}</div></div>`;
+  h += `<div class="pcard-head"><div class="pcard-name">${_tc(p[2])}</div></div>`;
 
   // Rubro
-  h += `<div class="pcard-brand">${cat ? cat.n : p[3]}</div>`;
+  const _mayBrand = cat ? cat.n : p[3];
+  if(_mayBrand && _mayBrand !== 'Varios' && _mayBrand !== 'Granel') h += `<div class="pcard-brand">${_mayBrand}</div>`;
 
   // Badge bulto
   h += `<div style="margin:6px 0 2px"><span class="bulto-badge">📦 ${bultoLabel}</span></div>`;
