@@ -229,14 +229,19 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);mi
 .loader-ring{position:absolute;inset:0;border:5px solid rgba(84,118,146,.15);border-top-color:var(--azul);border-radius:50%;animation:spin 1.2s linear infinite}
 .loading-text{font-family:'Montserrat',sans-serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px;z-index:2}
 .loader-bubbles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-.loader-bubble{position:absolute;border-radius:50%;opacity:.4;bottom:-100px;animation:bubbleUp 11s linear infinite}
-.loader-bubble.b1{width:62px;height:62px;background:#547692;left:8%;animation-duration:12s;animation-delay:0s}
-.loader-bubble.b2{width:36px;height:36px;background:#7ba85a;left:22%;animation-duration:9s;animation-delay:2.5s}
-.loader-bubble.b3{width:52px;height:52px;background:#9a7a52;left:38%;animation-duration:13s;animation-delay:5s}
-.loader-bubble.b4{width:44px;height:44px;background:#547692;left:60%;animation-duration:10.5s;animation-delay:1.5s}
-.loader-bubble.b5{width:30px;height:30px;background:#7ba85a;left:76%;animation-duration:9.5s;animation-delay:3.5s}
-.loader-bubble.b6{width:58px;height:58px;background:#9a7a52;left:90%;animation-duration:12.5s;animation-delay:6s}
-@keyframes bubbleUp{0%{transform:translateY(0);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-110vh);opacity:0}}
+.loader-bubble{position:absolute;border-radius:50%;opacity:.4;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:transform}
+.loader-bubble.b1{width:62px;height:62px;background:#547692;top:12%;left:8%;animation:bub1 16s infinite ease-in-out}
+.loader-bubble.b2{width:36px;height:36px;background:#7ba85a;top:68%;left:18%;animation:bub2 13s infinite ease-in-out}
+.loader-bubble.b3{width:52px;height:52px;background:#9a7a52;top:24%;left:72%;animation:bub3 18s infinite ease-in-out}
+.loader-bubble.b4{width:44px;height:44px;background:#547692;top:78%;left:64%;animation:bub4 14s infinite ease-in-out}
+.loader-bubble.b5{width:30px;height:30px;background:#7ba85a;top:42%;left:88%;animation:bub5 12s infinite ease-in-out}
+.loader-bubble.b6{width:58px;height:58px;background:#9a7a52;top:82%;left:38%;animation:bub6 17s infinite ease-in-out}
+@keyframes bub1{0%,100%{transform:translate(0,0)}25%{transform:translate(60vw,30vh)}50%{transform:translate(40vw,60vh)}75%{transform:translate(-5vw,40vh)}}
+@keyframes bub2{0%,100%{transform:translate(0,0)}20%{transform:translate(40vw,-50vh)}45%{transform:translate(70vw,-20vh)}70%{transform:translate(30vw,-60vh)}}
+@keyframes bub3{0%,100%{transform:translate(0,0)}30%{transform:translate(-60vw,30vh)}55%{transform:translate(-30vw,60vh)}80%{transform:translate(-70vw,10vh)}}
+@keyframes bub4{0%,100%{transform:translate(0,0)}25%{transform:translate(-40vw,-30vh)}55%{transform:translate(-60vw,-60vh)}80%{transform:translate(-10vw,-40vh)}}
+@keyframes bub5{0%,100%{transform:translate(0,0)}20%{transform:translate(-50vw,20vh)}50%{transform:translate(-80vw,-30vh)}75%{transform:translate(-40vw,40vh)}}
+@keyframes bub6{0%,100%{transform:translate(0,0)}25%{transform:translate(30vw,-50vh)}50%{transform:translate(-20vw,-70vh)}75%{transform:translate(50vw,-30vh)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 h1,h2,h3,h4{font-family:'Montserrat',sans-serif}
 button{cursor:pointer;border:none;font-family:inherit}
