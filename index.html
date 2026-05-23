@@ -229,18 +229,18 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);mi
 .loader-ring{position:absolute;inset:0;border:5px solid rgba(84,118,146,.15);border-top-color:var(--azul);border-radius:50%;animation:spin 1.2s linear infinite}
 .loading-text{font-family:'Montserrat',sans-serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px;z-index:2}
 .loader-bubbles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-.loader-bubble{position:absolute;border-radius:50%;bottom:-90px;animation-iteration-count:infinite;animation-timing-function:ease-in-out;will-change:transform;box-shadow:0 4px 14px rgba(0,0,0,.06)}
-.loader-bubble.b1{width:54px;height:54px;background:#6B8FAB;left:6%;animation:floatSwayL 32s infinite ease-in-out}
-.loader-bubble.b2{width:34px;height:34px;background:#8FB573;left:16%;animation:floatSwayR 38s infinite ease-in-out;animation-delay:-8s}
-.loader-bubble.b3{width:46px;height:46px;background:#B5916C;left:80%;animation:floatSwayL 36s infinite ease-in-out;animation-delay:-14s}
-.loader-bubble.b4{width:40px;height:40px;background:#6B8FAB;left:90%;animation:floatSwayR 30s infinite ease-in-out;animation-delay:-4s}
-.loader-bubble.b5{width:28px;height:28px;background:#8FB573;left:10%;animation:floatSwayR 34s infinite ease-in-out;animation-delay:-20s}
-.loader-bubble.b6{width:50px;height:50px;background:#B5916C;left:84%;animation:floatSwayL 40s infinite ease-in-out;animation-delay:-26s}
-.loader-bubble.b7{width:38px;height:38px;background:#6B8FAB;left:3%;animation:floatSwayR 35s infinite ease-in-out;animation-delay:-12s}
-.loader-bubble.b8{width:60px;height:60px;background:#6B8FAB;left:74%;animation:floatSwayL 33s infinite ease-in-out;animation-delay:-22s}
-.loader-bubble.b9{width:42px;height:42px;background:#6B8FAB;left:22%;animation:floatSwayR 37s infinite ease-in-out;animation-delay:-16s}
-@keyframes floatSwayL{0%{transform:translate(0,0)}25%{transform:translate(-3vw,-30vh)}50%{transform:translate(2vw,-60vh)}75%{transform:translate(-2vw,-90vh)}100%{transform:translate(0,-120vh)}}
-@keyframes floatSwayR{0%{transform:translate(0,0)}25%{transform:translate(3vw,-30vh)}50%{transform:translate(-2vw,-60vh)}75%{transform:translate(2vw,-90vh)}100%{transform:translate(0,-120vh)}}
+.loader-bubble{position:absolute;border-radius:50%;bottom:-90px;animation-iteration-count:infinite;animation-timing-function:linear;will-change:transform;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.loader-bubble.b1{width:54px;height:54px;background:#6B8FAB;left:6%;animation:floatSwayL 32s infinite linear}
+.loader-bubble.b2{width:34px;height:34px;background:#8FB573;left:16%;animation:floatSwayR 38s infinite linear;animation-delay:-8s}
+.loader-bubble.b3{width:46px;height:46px;background:#B5916C;left:80%;animation:floatSwayL 36s infinite linear;animation-delay:-14s}
+.loader-bubble.b4{width:40px;height:40px;background:#6B8FAB;left:90%;animation:floatSwayR 30s infinite linear;animation-delay:-4s}
+.loader-bubble.b5{width:28px;height:28px;background:#8FB573;left:10%;animation:floatSwayR 34s infinite linear;animation-delay:-20s}
+.loader-bubble.b6{width:50px;height:50px;background:#B5916C;left:84%;animation:floatSwayL 40s infinite linear;animation-delay:-26s}
+.loader-bubble.b7{width:38px;height:38px;background:#6B8FAB;left:3%;animation:floatSwayR 35s infinite linear;animation-delay:-12s}
+.loader-bubble.b8{width:60px;height:60px;background:#6B8FAB;left:74%;animation:floatSwayL 33s infinite linear;animation-delay:-22s}
+.loader-bubble.b9{width:42px;height:42px;background:#6B8FAB;left:22%;animation:floatSwayR 37s infinite linear;animation-delay:-16s}
+@keyframes floatSwayL{0%{transform:translate(0,0)}12.5%{transform:translate(-2vw,-15vh)}25%{transform:translate(-3vw,-30vh)}37.5%{transform:translate(-1vw,-45vh)}50%{transform:translate(2vw,-60vh)}62.5%{transform:translate(1vw,-75vh)}75%{transform:translate(-2vw,-90vh)}87.5%{transform:translate(-1vw,-105vh)}100%{transform:translate(0,-120vh)}}
+@keyframes floatSwayR{0%{transform:translate(0,0)}12.5%{transform:translate(2vw,-15vh)}25%{transform:translate(3vw,-30vh)}37.5%{transform:translate(1vw,-45vh)}50%{transform:translate(-2vw,-60vh)}62.5%{transform:translate(-1vw,-75vh)}75%{transform:translate(2vw,-90vh)}87.5%{transform:translate(1vw,-105vh)}100%{transform:translate(0,-120vh)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 h1,h2,h3,h4{font-family:'Montserrat',sans-serif}
 button{cursor:pointer;border:none;font-family:inherit}
