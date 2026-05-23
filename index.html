@@ -774,7 +774,6 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .oferta-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,#d4543c 0%,#b04020 100%);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;z-index:5;box-shadow:0 3px 8px rgba(180,60,30,.45);letter-spacing:.2px;transform:rotate(-6deg);transform-origin:center;transition:transform .25s ease}
 .oferta-badge:hover{transform:rotate(-3deg) scale(1.08)}
 .oferta-badge-lg{font-size:13px;padding:5px 11px;top:12px;left:12px}
-.bulto-badge{transform:rotate(-3deg);transform-origin:center}
 .pcard{position:relative}
 .precio-tachado{text-decoration:line-through;color:var(--muted-fg);font-weight:600;font-size:13px;margin-right:5px}
 .precio-tachado-sm{text-decoration:line-through;color:var(--muted-fg);font-weight:600;font-size:13px;display:block;line-height:1}
@@ -1294,17 +1293,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mayorista-banner-promo .may-promo-text p{font-size:13px;opacity:.9}
 .may-nav-btn{background:var(--azul);color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
-.may-tab{cursor:pointer;padding:14px 24px;border-radius:10px;font-weight:700;font-size:16px;transition:all .2s;border:2.5px solid var(--border);background:var(--card);color:var(--azul-dark);flex:1;text-align:center}
-.may-tab.active{background:var(--azul);color:#fff;border-color:var(--azul);box-shadow:0 4px 14px rgba(84,118,146,.4)}
-.may-tab:hover:not(.active){border-color:var(--azul);background:var(--azul-light)}
-.may-tabs-wrap{display:flex;gap:10px;margin-bottom:20px;position:relative}
-.tabs-wave-wrap{position:relative;width:100%;height:22px;margin-top:-2px;pointer-events:none;overflow:visible}
-.tabs-wave-wrap svg.tabs-wave{display:block;width:100%;height:22px}
-.tabs-wave-wrap svg.tabs-wave path{fill:var(--azul-dark)}
-.wave-indicator{position:absolute;top:0;left:0;width:54px;height:22px;pointer-events:none;transition:transform .45s cubic-bezier(.4,.0,.2,1);will-change:transform}
-.wave-indicator svg{display:block;width:100%;height:100%}
-.wave-indicator path{fill:var(--azul-dark)}
-@media(max-width:767px){.may-tab{padding:10px 8px;font-size:13px}}
+.may-tabs-wrap{display:flex;gap:0;margin-bottom:18px;position:relative;background:transparent;padding:6px;border-radius:999px}
+.tabs-pill{position:absolute;top:6px;bottom:6px;left:0;width:0;opacity:0;background:var(--azul);border-radius:999px;transition:transform .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),opacity .25s;box-shadow:0 6px 18px rgba(84,118,146,.45);z-index:0;will-change:transform,width}
+.may-tab{cursor:pointer;padding:13px 14px;border-radius:999px;font-weight:700;font-size:15px;transition:color .25s;border:none;background:transparent;color:var(--azul-dark);flex:1;text-align:center;position:relative;z-index:1;font-family:inherit}
+.may-tab.active{color:#fff;background:transparent}
+.may-tab:hover:not(.active){color:var(--azul)}
+@media(max-width:767px){.may-tab{padding:11px 6px;font-size:12.5px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1515,6 +1509,15 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     <span class="envios-msg">Hacemos envíos a todo el país</span>
   </div>
 </div>
+<!-- Tabs de navegación (con pill animado) -->
+<div style="max-width:1100px;margin:0 auto;padding:14px 20px 6px">
+  <div class="may-tabs-wrap" id="mainTabs">
+    <div class="tabs-pill" id="tabsPill"></div>
+    <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">🛒 Minorista</button>
+    <button class="may-tab" id="tabMayorista" onclick="switchTab('mayorista')">📦 Mayorista</button>
+    <button class="may-tab" id="tabRecetas" onclick="switchTab('recetas')">✨ Inspiración</button>
+  </div>
+</div>
 <div class="banner" id="bannerRotativo">
   <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b></div>
   <div id="bannerSlot3" class="banner-rot-slot" style="display:none">🏷️ <b>Ofertas del mes activas</b> — productos seleccionados con descuento (no acumulable con descuento por volumen)</div>
@@ -1540,26 +1543,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   </div>
 </div>
 
-<!-- Ola que conecta el banner con la pestaña activa -->
-<div style="max-width:1100px;margin:0 auto;padding:0 20px">
-  <div class="tabs-wave-wrap" id="tabsWaveWrap">
-    <svg class="tabs-wave" viewBox="0 0 1440 22" preserveAspectRatio="none">
-      <path d="M0,0 H1440 V8 C1200,20 960,4 720,12 C480,20 240,4 0,10 Z"/>
-    </svg>
-    <div class="wave-indicator" id="waveIndicator">
-      <svg viewBox="0 0 54 22" preserveAspectRatio="none">
-        <path d="M0,0 C12,0 14,22 27,22 C40,22 42,0 54,0 Z"/>
-      </svg>
-    </div>
-  </div>
-</div>
-<div style="max-width:1100px;margin:0 auto;padding:6px 20px 0">
-  <div class="may-tabs-wrap" id="mainTabs">
-    <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">🛒 Lista Minorista</button>
-    <button class="may-tab" id="tabMayorista" onclick="switchTab('mayorista')">📦 Lista Mayorista</button>
-    <button class="may-tab" id="tabRecetas" onclick="switchTab('recetas')">✨ Inspiración</button>
-  </div>
-</div>
 <div style="max-width:1100px;margin:0 auto;padding:18px 20px" id="mainContainer">
   <!-- Buscador y categorías ahora viven en el compact-header (aparecen al scrollear) -->
   <input type="hidden" id="searchInput">
@@ -1933,31 +1916,31 @@ document.addEventListener('pointerdown',function(e){
   };
 })();
 
-// ── INDICADOR DE OLA QUE SIGUE LA PESTAÑA ACTIVA ──
+// ── PILL ANIMADO QUE ENVUELVE EL TAB ACTIVO ──
 (function(){
-  function _positionWaveIndicator(){
+  function _positionTabsPill(){
     const wrap=document.getElementById('mainTabs');
-    const ind=document.getElementById('waveIndicator');
-    if(!wrap||!ind)return;
+    const pill=document.getElementById('tabsPill');
+    if(!wrap||!pill)return;
     const active=wrap.querySelector('.may-tab.active');
     if(!active)return;
+    // Coordenadas relativas al wrap (sin padding del wrap, lo restamos)
     const wrapRect=wrap.getBoundingClientRect();
     const tabRect=active.getBoundingClientRect();
-    const center=tabRect.left+tabRect.width/2-wrapRect.left;
-    const indW=ind.offsetWidth||54;
-    ind.style.transform='translateX('+(center-indW/2)+'px)';
+    const x=tabRect.left-wrapRect.left;
+    pill.style.width=tabRect.width+'px';
+    pill.style.transform='translateX('+x+'px)';
+    pill.style.opacity='1';
   }
-  window._positionWaveIndicator=_positionWaveIndicator;
-  // Reposicionar al click en cualquier tab (espera al cambio de .active)
+  window._positionTabsPill=_positionTabsPill;
+  // Click en cualquier tab → reposicionar tras cambio de .active
   document.addEventListener('click',function(e){
-    if(e.target.closest('.may-tab'))setTimeout(_positionWaveIndicator,10);
+    if(e.target.closest('.may-tab'))setTimeout(_positionTabsPill,10);
   });
-  // Reposicionar en resize y al cargar
-  window.addEventListener('resize',_positionWaveIndicator);
-  window.addEventListener('load',_positionWaveIndicator);
-  // Primer cálculo después de DOM listo
-  if(document.readyState!=='loading')setTimeout(_positionWaveIndicator,50);
-  else document.addEventListener('DOMContentLoaded',()=>setTimeout(_positionWaveIndicator,50));
+  window.addEventListener('resize',_positionTabsPill);
+  window.addEventListener('load',_positionTabsPill);
+  if(document.readyState!=='loading')setTimeout(_positionTabsPill,50);
+  else document.addEventListener('DOMContentLoaded',()=>setTimeout(_positionTabsPill,50));
 })();
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
