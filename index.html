@@ -222,7 +222,7 @@ html,body{overflow-x:hidden;max-width:100%}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
 
 /* ── SPINNER DE CARGA ── */
-#loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .4s ease;overflow:hidden}
+#loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:10100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .4s ease;overflow:hidden}
 #loadingOverlay.hidden{opacity:0;pointer-events:none}
 .loader-logo-wrap{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;z-index:2}
 .loader-logo{width:104px;height:104px;border-radius:50%;object-fit:cover;box-shadow:0 6px 22px rgba(84,118,146,.22)}
@@ -236,6 +236,9 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);mi
 .loader-bubble.b4{width:40px;height:40px;background:#6B8FAB;left:90%;animation:floatSwayR 30s infinite ease-in-out;animation-delay:-4s}
 .loader-bubble.b5{width:28px;height:28px;background:#8FB573;left:10%;animation:floatSwayR 34s infinite ease-in-out;animation-delay:-20s}
 .loader-bubble.b6{width:50px;height:50px;background:#B5916C;left:84%;animation:floatSwayL 40s infinite ease-in-out;animation-delay:-26s}
+.loader-bubble.b7{width:38px;height:38px;background:#6B8FAB;left:3%;animation:floatSwayR 35s infinite ease-in-out;animation-delay:-12s}
+.loader-bubble.b8{width:60px;height:60px;background:#6B8FAB;left:74%;animation:floatSwayL 33s infinite ease-in-out;animation-delay:-22s}
+.loader-bubble.b9{width:42px;height:42px;background:#6B8FAB;left:22%;animation:floatSwayR 37s infinite ease-in-out;animation-delay:-16s}
 @keyframes floatSwayL{0%{transform:translate(0,0)}25%{transform:translate(-3vw,-30vh)}50%{transform:translate(2vw,-60vh)}75%{transform:translate(-2vw,-90vh)}100%{transform:translate(0,-120vh)}}
 @keyframes floatSwayR{0%{transform:translate(0,0)}25%{transform:translate(3vw,-30vh)}50%{transform:translate(-2vw,-60vh)}75%{transform:translate(2vw,-90vh)}100%{transform:translate(0,-120vh)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1320,6 +1323,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
     <span class="loader-bubble b4"></span>
     <span class="loader-bubble b5"></span>
     <span class="loader-bubble b6"></span>
+    <span class="loader-bubble b7"></span>
+    <span class="loader-bubble b8"></span>
+    <span class="loader-bubble b9"></span>
   </div>
   <div class="loader-logo-wrap">
     <div class="loader-ring"></div>
