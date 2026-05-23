@@ -1297,13 +1297,23 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .may-tab{cursor:pointer;padding:14px 24px;border-radius:10px;font-weight:700;font-size:16px;transition:all .2s;border:2.5px solid var(--border);background:var(--card);color:var(--azul-dark);flex:1;text-align:center}
 .may-tab.active{background:var(--azul);color:#fff;border-color:var(--azul);box-shadow:0 4px 14px rgba(84,118,146,.4)}
 .may-tab:hover:not(.active){border-color:var(--azul);background:var(--azul-light)}
-.may-tabs-wrap{display:flex;gap:10px;margin-bottom:20px}
+.may-tabs-wrap{display:flex;gap:10px;margin-bottom:20px;position:relative}
+.tabs-wave-wrap{position:relative;width:100%;height:22px;margin-top:-2px;pointer-events:none;overflow:visible}
+.tabs-wave-wrap svg.tabs-wave{display:block;width:100%;height:22px}
+.tabs-wave-wrap svg.tabs-wave path{fill:var(--azul-dark)}
+.wave-indicator{position:absolute;top:0;left:0;width:54px;height:22px;pointer-events:none;transition:transform .45s cubic-bezier(.4,.0,.2,1);will-change:transform}
+.wave-indicator svg{display:block;width:100%;height:100%}
+.wave-indicator path{fill:var(--azul-dark)}
 @media(max-width:767px){.may-tab{padding:10px 8px;font-size:13px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
 .ripple-ink{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);pointer-events:none;transform:scale(0);animation:rippleExpand .55s ease-out forwards;z-index:1}
 @keyframes rippleExpand{to{transform:scale(1);opacity:0}}
+
+/* ── SIN RECUADRO AZUL EN TAP ── */
+*{-webkit-tap-highlight-color:transparent}
+button:focus,a:focus{outline:none}
 
 /* ── HEADER COMPACTO (aparece al scrollear en minorista/mayorista) ── */
 .compact-header{position:fixed;top:0;left:0;right:0;z-index:299;background:linear-gradient(120deg,#3f5e7a 0%,#547692 35%,#6989a8 65%,#547692 100%);background-size:300% 300%;animation:headerGradient 40s ease-in-out infinite;box-shadow:0 4px 18px rgba(0,0,0,.22);transform:translateY(-110%);transition:transform .4s cubic-bezier(.4,.0,.2,1);pointer-events:none;will-change:transform}
@@ -1506,7 +1516,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   </div>
 </div>
 <div class="banner" id="bannerRotativo">
-  <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b> en tu compra minorista — precios en azul son precios con descuento</div>
+  <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b></div>
   <div id="bannerSlot3" class="banner-rot-slot" style="display:none">🏷️ <b>Ofertas del mes activas</b> — productos seleccionados con descuento (no acumulable con descuento por volumen)</div>
 </div>
 
@@ -1530,7 +1540,20 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   </div>
 </div>
 
-<div style="max-width:1100px;margin:0 auto;padding:10px 20px 0">
+<!-- Ola que conecta el banner con la pestaña activa -->
+<div style="max-width:1100px;margin:0 auto;padding:0 20px">
+  <div class="tabs-wave-wrap" id="tabsWaveWrap">
+    <svg class="tabs-wave" viewBox="0 0 1440 22" preserveAspectRatio="none">
+      <path d="M0,0 H1440 V8 C1200,20 960,4 720,12 C480,20 240,4 0,10 Z"/>
+    </svg>
+    <div class="wave-indicator" id="waveIndicator">
+      <svg viewBox="0 0 54 22" preserveAspectRatio="none">
+        <path d="M0,0 C12,0 14,22 27,22 C40,22 42,0 54,0 Z"/>
+      </svg>
+    </div>
+  </div>
+</div>
+<div style="max-width:1100px;margin:0 auto;padding:6px 20px 0">
   <div class="may-tabs-wrap" id="mainTabs">
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">🛒 Lista Minorista</button>
     <button class="may-tab" id="tabMayorista" onclick="switchTab('mayorista')">📦 Lista Mayorista</button>
@@ -1538,14 +1561,9 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   </div>
 </div>
 <div style="max-width:1100px;margin:0 auto;padding:18px 20px" id="mainContainer">
-  <div class="search-wrap">
-    <button class="cats-toggle-btn search-cats-btn mobile-only" onclick="toggleCatsDropdown()" title="Categorías" aria-label="Categorías">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-    </button>
-    <input class="search-input" type="text" placeholder="Buscar productos..." oninput="onSearch(this.value)" id="searchInput" onfocus="_onSearchFocus()" onblur="_onSearchBlur(this)">
-    <span class="search-icon">🔍</span>
-  </div>
-  <!-- Resultados de búsqueda en mobile: aparecen justo bajo el buscador -->
+  <!-- Buscador y categorías ahora viven en el compact-header (aparecen al scrollear) -->
+  <input type="hidden" id="searchInput">
+  <!-- Resultados de búsqueda en mobile -->
   <div id="searchResultsMobile" class="hidden"></div>
 
 
@@ -1914,6 +1932,33 @@ document.addEventListener('pointerdown',function(e){
     else window.scrollTo({top:0,behavior:'smooth'});
   };
 })();
+
+// ── INDICADOR DE OLA QUE SIGUE LA PESTAÑA ACTIVA ──
+(function(){
+  function _positionWaveIndicator(){
+    const wrap=document.getElementById('mainTabs');
+    const ind=document.getElementById('waveIndicator');
+    if(!wrap||!ind)return;
+    const active=wrap.querySelector('.may-tab.active');
+    if(!active)return;
+    const wrapRect=wrap.getBoundingClientRect();
+    const tabRect=active.getBoundingClientRect();
+    const center=tabRect.left+tabRect.width/2-wrapRect.left;
+    const indW=ind.offsetWidth||54;
+    ind.style.transform='translateX('+(center-indW/2)+'px)';
+  }
+  window._positionWaveIndicator=_positionWaveIndicator;
+  // Reposicionar al click en cualquier tab (espera al cambio de .active)
+  document.addEventListener('click',function(e){
+    if(e.target.closest('.may-tab'))setTimeout(_positionWaveIndicator,10);
+  });
+  // Reposicionar en resize y al cargar
+  window.addEventListener('resize',_positionWaveIndicator);
+  window.addEventListener('load',_positionWaveIndicator);
+  // Primer cálculo después de DOM listo
+  if(document.readyState!=='loading')setTimeout(_positionWaveIndicator,50);
+  else document.addEventListener('DOMContentLoaded',()=>setTimeout(_positionWaveIndicator,50));
+})();
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
@@ -1951,7 +1996,9 @@ function _matchScore(q,t){
   if(allMatch&&qn.length>1)score+=15;
   return score;
 }
-function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')z.remove()};z.innerHTML=`<button class="zoom-close" onclick="document.getElementById('imgZoom').remove()">×</button><img src="${src}" alt="">`;document.body.appendChild(z)}
+function _closeImgZoom(){const z=document.getElementById('imgZoom');if(z)z.remove();}
+function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG'){_closeImgZoom();if(history.state&&history.state.modal==='imgZoom')history.back();}};z.innerHTML=`<button class="zoom-close" onclick="_closeImgZoom();if(history.state&&history.state.modal==='imgZoom')history.back();">×</button><img src="${src}" alt="">`;document.body.appendChild(z);history.pushState({modal:'imgZoom'},'');}
+window.addEventListener('popstate',function(){const z=document.getElementById('imgZoom');if(z)z.remove();});
 
 /* ── CARRUSELES ── */
 let _carRotationInterval=null;
