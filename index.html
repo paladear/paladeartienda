@@ -222,10 +222,21 @@ html,body{overflow-x:hidden;max-width:100%}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;font-size:16px}
 
 /* ── SPINNER DE CARGA ── */
-#loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s ease}
+#loadingOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .4s ease;overflow:hidden}
 #loadingOverlay.hidden{opacity:0;pointer-events:none}
-.spinner{width:64px;height:64px;border:5px solid var(--azul-light);border-top-color:var(--azul);border-radius:50%;animation:spin 1s linear infinite}
-.loading-text{font-family:'Montserrat',sans-serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px}
+.loader-logo-wrap{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;z-index:2}
+.loader-logo{width:104px;height:104px;border-radius:50%;object-fit:cover;box-shadow:0 6px 22px rgba(84,118,146,.22)}
+.loader-ring{position:absolute;inset:0;border:5px solid rgba(84,118,146,.15);border-top-color:var(--azul);border-radius:50%;animation:spin 1.2s linear infinite}
+.loading-text{font-family:'Montserrat',sans-serif;font-size:17px;color:var(--azul-dark);font-weight:600;letter-spacing:.5px;z-index:2}
+.loader-bubbles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.loader-bubble{position:absolute;border-radius:50%;opacity:.4;bottom:-100px;animation:bubbleUp 11s linear infinite}
+.loader-bubble.b1{width:62px;height:62px;background:#547692;left:8%;animation-duration:12s;animation-delay:0s}
+.loader-bubble.b2{width:36px;height:36px;background:#7ba85a;left:22%;animation-duration:9s;animation-delay:2.5s}
+.loader-bubble.b3{width:52px;height:52px;background:#9a7a52;left:38%;animation-duration:13s;animation-delay:5s}
+.loader-bubble.b4{width:44px;height:44px;background:#547692;left:60%;animation-duration:10.5s;animation-delay:1.5s}
+.loader-bubble.b5{width:30px;height:30px;background:#7ba85a;left:76%;animation-duration:9.5s;animation-delay:3.5s}
+.loader-bubble.b6{width:58px;height:58px;background:#9a7a52;left:90%;animation-duration:12.5s;animation-delay:6s}
+@keyframes bubbleUp{0%{transform:translateY(0);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-110vh);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 h1,h2,h3,h4{font-family:'Montserrat',sans-serif}
 button{cursor:pointer;border:none;font-family:inherit}
@@ -873,7 +884,10 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:700;display:block;text-align:center}
 .prices>div{text-align:center}
 .cats-mobile-heading{display:none}
-@media(max-width:767px){.cats-mobile-heading{display:block;font-size:18px;color:var(--azul-dark);font-weight:700;margin:18px 0 12px;letter-spacing:.2px}}
+@media(max-width:767px){
+  .cats-mobile-heading{display:block;text-align:center;font-size:26px;color:var(--azul-dark);font-weight:800;margin:22px 0 18px;letter-spacing:.3px;position:relative;padding-bottom:12px}
+  .cats-mobile-heading::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:64px;height:3px;background:var(--azul);border-radius:2px}
+}
 .price-min{font-size:18px;font-weight:800}
 .price-may{font-size:15px;font-weight:800;color:#1a4d5e;background:#9eccd8;padding:3px 10px;border-radius:8px}
 .qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -1298,7 +1312,18 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 <body>
 
 <div id="loadingOverlay">
-  <div class="spinner"></div>
+  <div class="loader-bubbles" aria-hidden="true">
+    <span class="loader-bubble b1"></span>
+    <span class="loader-bubble b2"></span>
+    <span class="loader-bubble b3"></span>
+    <span class="loader-bubble b4"></span>
+    <span class="loader-bubble b5"></span>
+    <span class="loader-bubble b6"></span>
+  </div>
+  <div class="loader-logo-wrap">
+    <div class="loader-ring"></div>
+    <img class="loader-logo" src="android-chrome-192x192.png" alt="Paladear" onerror="this.style.display='none'">
+  </div>
   <div class="loading-text">Cargando Paladear...</div>
 </div>
 
