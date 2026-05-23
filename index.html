@@ -872,6 +872,8 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .prices{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
 .price-label{font-size:11px;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.5px;font-weight:700;display:block;text-align:center}
 .prices>div{text-align:center}
+.cats-mobile-heading{display:none}
+@media(max-width:767px){.cats-mobile-heading{display:block;font-size:18px;color:var(--azul-dark);font-weight:700;margin:18px 0 12px;letter-spacing:.2px}}
 .price-min{font-size:18px;font-weight:800}
 .price-may{font-size:15px;font-weight:800;color:#1a4d5e;background:#9eccd8;padding:3px 10px;border-radius:8px}
 .qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -1784,7 +1786,7 @@ function fmt(n){return n.toLocaleString('es-AR')}
 let _loaderHidden=false;
 function hideLoader(){if(_loaderHidden)return;_loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
 // Timeout de seguridad: máximo 8s de espera
-setTimeout(hideLoader,8000);
+setTimeout(hideLoader,6000);
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
@@ -1912,6 +1914,9 @@ function renderCarruseles(){
 
   // Orden alfabético puro
   const catsCarousel=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
+
+  // Encabezado solo mobile (en desktop ya hay sidebar "Categorías")
+  if(catsCarousel.length) htmlMobile+=`<h2 class="cats-mobile-heading">Explorá por categoría</h2>`;
 
   catsCarousel.forEach((cat,i)=>{
     const prods=PRODS.filter(p=>p[1]===cat.id);
@@ -2828,6 +2833,22 @@ function _cargarInfo(){
 }
 
 function sincronizarDesdeSheets(){
+  // Stale-while-revalidate: hidratar UI desde cache local para render instantáneo
+  try {
+    const raw = localStorage.getItem('paladear_min_v1');
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.prods && data.prods.length && data.cats && data.cats.length) {
+        CATS = data.cats;
+        PRODS = data.prods;
+        _MIN_BY_ID = null;
+        renderCatsUI();
+        renderCarruseles();
+        hideLoader();
+        console.log('⚡ Paladear: catálogo desde cache ('+PRODS.length+' productos)');
+      }
+    }
+  } catch(e) {}
   _cargarInfo().then(INFO=>{
 
     function _procesarCSV(csv){
@@ -2871,6 +2892,8 @@ function sincronizarDesdeSheets(){
       CATS=Object.keys(RUBRO_MAP).filter(k=>catMap[RUBRO_MAP[k].id]).map(k=>RUBRO_MAP[k]);
       PRODS=prodsTemp;
       _MIN_BY_ID=null;
+      // Guardar en localStorage para hidratación instantánea en próxima visita
+      try{localStorage.setItem('paladear_min_v1',JSON.stringify({cats:CATS,prods:PRODS,ts:Date.now()}));}catch(e){}
       console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
       renderCatsUI();
       renderCarruseles();
@@ -2888,7 +2911,10 @@ function sincronizarDesdeSheets(){
     }
 
     // Cargar directamente desde Apps Script JSONP (referencia la hoja por nombre, no GID)
-    window.recibirPrecios=function(csv){ _procesarCSV(csv); };
+    window.recibirPrecios=function(csv){
+      try { _procesarCSV(csv); }
+      catch(e){ console.warn('⚠️ Error procesando CSV:',e); hideLoader(); }
+    };
     let _retried=false;
     function _cargarScript(){
       const s=document.createElement('script');

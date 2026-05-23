@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.2  |  Fix: cacheo de respuestas opacas (JSONP)
+// Versión: 1.3  |  Bump cache para destrabar PWA colgadas en splash
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v3';
+const CACHE_VERSION = 'paladear-v4';
 
 const SHELL_FILES = [
   '/paladeartienda/',
