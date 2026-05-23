@@ -330,7 +330,7 @@ button{cursor:pointer;border:none;font-family:inherit}
   0%{transform:translate(calc(100vw + 40px),-50%)}
   100%{transform:translate(-440px,-50%)}
 }
-.envios-msg{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+.envios-msg{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3);transition:opacity .35s ease}
 @media(max-width:480px){.envios-msg{font-size:11px;letter-spacing:.2px}}
 .envios-truck-anim{filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));flex-shrink:0}
 .truck-wheel{transform-origin:center;animation:wheelSpin 0.8s linear infinite}
@@ -530,7 +530,7 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .iab-warning{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;font-family:inherit}
 .iab-warning.hidden{display:none}
 .iab-warning-inner{background:linear-gradient(160deg,#547692 0%,#3d5a73 100%);border-radius:16px;padding:24px 20px;max-width:340px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.4)}
-.banner-mayorista{padding:10px 20px}
+.banner-mayorista{padding:10px 20px;margin-top:18px}
 .banner-may-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .banner-may-text{flex:1;min-width:0}
 .banner-may-label{display:block;font-weight:800;font-size:14px;color:#fff;white-space:nowrap}
@@ -1293,13 +1293,13 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mayorista-banner-promo .may-promo-text p{font-size:13px;opacity:.9}
 .may-nav-btn{background:var(--azul);color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
-.tabs-zone{background:var(--azul);padding:6px 0;margin:0}
+.tabs-zone{background:var(--bg);padding:0;margin:0}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
-.tabs-pill{position:absolute;top:0;bottom:0;left:0;width:0;opacity:0;background:#fff;border-radius:999px;transition:transform .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),opacity .25s;box-shadow:0 3px 12px rgba(0,0,0,.18);z-index:0;will-change:transform,width}
-.may-tab{cursor:pointer;padding:10px 12px;border-radius:999px;font-weight:700;font-size:14px;transition:color .25s;border:none;background:transparent;color:rgba(255,255,255,.85);flex:1;text-align:center;position:relative;z-index:1;font-family:inherit;line-height:1.1}
-.may-tab.active{color:var(--azul)}
-.may-tab:hover:not(.active){color:#fff}
-@media(max-width:767px){.may-tab{padding:9px 6px;font-size:12.5px}}
+.tabs-pill{position:absolute;top:0;bottom:0;left:0;width:0;opacity:0;background:var(--azul);border-radius:0 0 22px 22px;transition:transform .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),opacity .25s;box-shadow:0 4px 12px rgba(84,118,146,.25);z-index:0;will-change:transform,width}
+.may-tab{cursor:pointer;padding:12px 12px 14px;border-radius:0;font-weight:700;font-size:14px;transition:color .25s;border:none;background:transparent;color:var(--azul-dark);flex:1;text-align:center;position:relative;z-index:1;font-family:inherit;line-height:1.1}
+.may-tab.active{color:#fff}
+.may-tab:hover:not(.active){color:var(--azul)}
+@media(max-width:767px){.may-tab{padding:10px 6px 12px;font-size:12.5px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1519,11 +1519,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     <button class="may-tab" id="tabRecetas" onclick="switchTab('recetas')">✨ Inspiración</button>
   </div>
 </div>
-<div class="banner" id="bannerRotativo">
-  <div id="bannerSlot1" class="banner-rot-slot">🏷️ <b>Hasta 20% de descuento</b> superando los <b>$80.000</b></div>
-  <div id="bannerSlot3" class="banner-rot-slot" style="display:none">🏷️ <b>Ofertas del mes activas</b> — productos seleccionados con descuento (no acumulable con descuento por volumen)</div>
-</div>
-
 <!-- Banner Mayorista -->
 <div class="banner banner-mayorista" id="bannerMayorista" style="display:none">
   <div class="banner-may-inner">
@@ -1647,7 +1642,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 
 <!-- ── SECCIÓN LISTA MAYORISTA ── -->
 <!-- ═══ SECCIÓN RECETAS ═══ -->
-<div style="max-width:1100px;margin:0 auto;padding:0 20px 30px;display:none" id="recetasSection" class="recetas-section">
+<div style="max-width:1100px;margin:0 auto;padding:18px 20px 30px;display:none" id="recetasSection" class="recetas-section">
   <div class="recetas-hero">
     <div class="recetas-hero-icon">✨</div>
     <div>
@@ -6121,24 +6116,20 @@ window.addEventListener('online', function() {
 var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true; // iOS Safari
 
-// Banner rotativo: alterna entre slot1 y slot3 cada 10s (slot3 solo si hay ofertas activas)
-(function _initBannerRotativo() {
-  var cur = 0;
-  var slot1 = document.getElementById('bannerSlot1');
-  var slot3 = document.getElementById('bannerSlot3');
-  if (!slot1) return;
-  function _getActiveSlots() {
-    var arr = [slot1];
-    if (slot3 && typeof _hayOfertasDelMes === 'function' && _hayOfertasDelMes()) arr.push(slot3);
-    return arr;
-  }
-  setInterval(function() {
-    var slots = _getActiveSlots();
-    if (slots.length < 2) return; // sin alternancia si no hay ofertas
-    slots.forEach(function(s){ s.style.display = 'none'; });
-    cur = (cur + 1) % slots.length;
-    slots[cur].style.display = '';
-  }, 10000);
+// Rotación del mensaje del banner del camión: alterna entre envíos y descuento
+(function _initEnviosRotativo(){
+  var msgs=['Hacemos envíos a todo el país','Hasta 20% de descuento +$80.000'];
+  var el=document.querySelector('.envios-msg');
+  if(!el)return;
+  var i=0;
+  setInterval(function(){
+    el.style.opacity='0';
+    setTimeout(function(){
+      i=(i+1)%msgs.length;
+      el.textContent=msgs[i];
+      el.style.opacity='1';
+    },350);
+  },6000);
 })();
 
 // Mostrar ícono de instalar app en el header (solo si no está instalada)
