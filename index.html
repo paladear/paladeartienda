@@ -347,8 +347,6 @@ button{cursor:pointer;border:none;font-family:inherit}
 .envios-msg{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)}
 @media(max-width:480px){.envios-msg{font-size:11px;letter-spacing:.2px}}
 .envios-truck-anim{filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));flex-shrink:0}
-.truck-img-paladear{width:74px;height:auto;display:block;object-fit:contain}
-@media(max-width:480px){.truck-img-paladear{width:60px}}
 .truck-wheel{transform-origin:center;animation:wheelSpin 0.8s linear infinite}
 @keyframes wheelSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .truck-bounce{animation:truckBounce 0.9s ease-in-out infinite}
@@ -1465,10 +1463,8 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 <!-- ── BANNER ENVÍOS ── -->
 <div class="envios-banner">
   <div class="envios-convoy">
-    <div class="envios-truck-anim">
+    <div class="envios-truck-anim" style="transform:scaleX(-1)">
      <div class="truck-bounce">
-      <img src="truck-paladear.png" alt="" class="truck-img-paladear">
-      <!--SVG_TRUCK_OBSOLETO_START
       <svg width="60" height="32" viewBox="0 0 95 56" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
         <!-- Sombra debajo -->
         <ellipse cx="48" cy="52.5" rx="42" ry="2.5" fill="rgba(0,0,0,0.22)"/>
@@ -1538,7 +1534,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
           <rect x="72.5" y="45.4" width="11" height="1.2" fill="#888"/>
         </g>
       </svg>
-      SVG_TRUCK_OBSOLETO_END-->
      </div>
     </div>
     <span class="envios-msg">Hacemos envíos a todo el país</span>
