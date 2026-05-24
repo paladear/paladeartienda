@@ -1324,15 +1324,16 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
 .tabs-zone{background:var(--azul);padding:0;margin:0}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
-.tabs-pill{display:none}
+.tabs-pill{position:absolute;top:0;bottom:0;left:var(--pill-x,0);width:var(--pill-w,0);background:var(--bg);border-radius:24px 24px 0 0;z-index:1;pointer-events:none;will-change:transform}
+.tabs-pill::before,.tabs-pill::after{content:'';position:absolute;bottom:0;width:28px;height:28px;pointer-events:none}
+.tabs-pill::before{left:-28px;background:radial-gradient(circle at 0% 0%,transparent 28px,var(--bg) 28.5px)}
+.tabs-pill::after{right:-28px;background:radial-gradient(circle at 100% 0%,transparent 28px,var(--bg) 28.5px)}
+.tabs-pill.sliding{animation:pillSlide .55s ease-out forwards}
+@keyframes pillSlide{0%{transform:translateX(var(--pill-dx,0));animation-timing-function:cubic-bezier(.22,.61,.36,1)}62%{transform:translateX(0);animation-timing-function:ease-in-out}74%{transform:translateX(6px);animation-timing-function:ease-in-out}84%{transform:translateX(-3px);animation-timing-function:ease-in-out}92%{transform:translateX(1.5px)}100%{transform:translateX(0)}}
 .may-tab{cursor:pointer;padding:8px 12px 18px;border-radius:0;font-weight:700;font-size:14px;transition:color .2s;border:none;background:transparent;color:rgba(255,255,255,.78);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;z-index:2;font-family:inherit;line-height:1.1}
 .may-tab-icon{width:32px;height:32px;object-fit:contain;display:block;flex-shrink:0}
-.may-tab.active{background:var(--bg);color:var(--azul-dark);position:relative;z-index:3;border-radius:24px 24px 0 0;transform-origin:bottom center;animation:pillBounce .5s cubic-bezier(.34,1.56,.64,1) forwards}
+.may-tab.active{color:var(--azul-dark);position:relative;z-index:3}
 .may-tab.active .may-tab-icon{animation:iconBounce .5s cubic-bezier(.34,1.56,.64,1) forwards}
-.may-tab.active::before,.may-tab.active::after{content:'';position:absolute;bottom:0;width:28px;height:28px;pointer-events:none}
-.may-tab.active::before{left:-28px;background:radial-gradient(circle at 0% 0%,transparent 28px,var(--bg) 28.5px)}
-.may-tab.active::after{right:-28px;background:radial-gradient(circle at 100% 0%,transparent 28px,var(--bg) 28.5px)}
-@keyframes pillBounce{0%{transform:scaleY(.82)}100%{transform:scaleY(1)}}
 @keyframes iconBounce{0%{transform:scale(.88)}100%{transform:scale(1.06)}}
 .may-tab:hover:not(.active){color:#fff}
 @media(max-width:767px){.may-tab{padding:6px 4px 12px;font-size:11.5px;gap:1px}.may-tab-icon{width:28px;height:28px}}
@@ -1482,6 +1483,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 <!-- Tabs de navegación -->
 <div class="tabs-zone">
   <div class="may-tabs-wrap" id="mainTabs">
+    <div class="tabs-pill" id="tabsPill"></div>
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">
       <img class="may-tab-icon" src="icon-minorista.png" alt="" aria-hidden="true">
       <span>Minorista</span>
@@ -4003,6 +4005,34 @@ let _searchTimerMay = null;
 // Mapa de bultos por artículo: {articuloId: {bulto, nombre, sabores, imagen}}
 let MAY_BULTO_MAP = {};
 
+// Pill deslizante
+let _pillX = null;
+function _setPill(btn) {
+  var pill = document.getElementById('tabsPill');
+  if (!pill) return;
+  var newLeft = btn.offsetLeft;
+  var newWidth = btn.offsetWidth;
+  if (_pillX === null) {
+    pill.style.setProperty('--pill-x', newLeft + 'px');
+    pill.style.setProperty('--pill-w', newWidth + 'px');
+    _pillX = newLeft;
+    return;
+  }
+  var dx = _pillX - newLeft;
+  pill.style.setProperty('--pill-dx', dx + 'px');
+  pill.style.setProperty('--pill-x', newLeft + 'px');
+  pill.style.setProperty('--pill-w', newWidth + 'px');
+  _pillX = newLeft;
+  pill.classList.remove('sliding');
+  void pill.offsetWidth;
+  pill.classList.add('sliding');
+}
+// Init pill en tab activo inicial
+(function(){
+  var ab = document.querySelector('#mainTabs .may-tab.active');
+  if (ab) _setPill(ab);
+})();
+
 // Tab switcher
 let currentTab = 'minorista';
 function switchTab(tab) {
@@ -4062,6 +4092,8 @@ function switchTab(tab) {
     const waHeader = document.querySelector('.social-btn[title^="WhatsApp"]');
     if (waHeader) { waHeader.href = 'https://wa.me/' + WA_MINORISTA; waHeader.title = 'WhatsApp Minorista'; }
   }
+  var _at = document.querySelector('#mainTabs .may-tab.active');
+  if (_at) _setPill(_at);
 }
 window.switchTab = switchTab;
 // Hook: guardar estado cuando cambia el tab + resetear scroll a top
