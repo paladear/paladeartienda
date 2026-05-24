@@ -1325,12 +1325,15 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .tabs-zone{background:var(--azul);padding:0;margin:0}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
 .tabs-pill{display:none}
-.may-tab{cursor:pointer;padding:8px 12px 14px;border-radius:0;font-weight:700;font-size:14px;transition:color .2s,background .25s;border:none;background:transparent;color:rgba(255,255,255,.78);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;z-index:2;font-family:inherit;line-height:1.1}
+.may-tab{cursor:pointer;padding:8px 12px 18px;border-radius:0;font-weight:700;font-size:14px;transition:color .2s,background .3s;border:none;background:transparent;color:rgba(255,255,255,.78);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;z-index:2;font-family:inherit;line-height:1.1}
 .may-tab-icon{width:32px;height:32px;object-fit:contain;display:block;flex-shrink:0;transition:transform .2s}
 .may-tab.active .may-tab-icon{transform:scale(1.06)}
-.may-tab.active{background:var(--bg);color:var(--azul-dark);border-radius:0 0 22px 22px}
+.may-tab.active{background:var(--bg);color:var(--azul-dark)}
+.may-tab.active::before,.may-tab.active::after{content:'';position:absolute;bottom:0;width:32px;height:18px;pointer-events:none;background:radial-gradient(circle at 0 0,var(--azul) 16px,transparent 16px)}
+.may-tab.active::before{left:0}
+.may-tab.active::after{right:0;background:radial-gradient(circle at 100% 0,var(--azul) 16px,transparent 16px)}
 .may-tab:hover:not(.active){color:#fff}
-@media(max-width:767px){.may-tab{padding:6px 4px 10px;font-size:11.5px;gap:1px}.may-tab-icon{width:28px;height:28px}.may-tab.active{border-radius:0 0 18px 18px}}
+@media(max-width:767px){.may-tab{padding:6px 4px 12px;font-size:11.5px;gap:1px}.may-tab-icon{width:28px;height:28px}.may-tab.active::before,.may-tab.active::after{width:24px;height:12px;background:radial-gradient(circle at 0 0,var(--azul) 11px,transparent 11px)}.may-tab.active::after{background:radial-gradient(circle at 100% 0,var(--azul) 11px,transparent 11px)}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1474,7 +1477,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   </div>
   <div class="envios-discount">🏷️ Hasta 20% de descuento +$80.000</div>
 </div>
-<!-- Tabs de navegación (zona celeste con burbuja azul colgada del camión) -->
+<!-- Tabs de navegación -->
 <div class="tabs-zone">
   <div class="may-tabs-wrap" id="mainTabs">
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">
