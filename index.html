@@ -1218,6 +1218,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 
 /* ── MAYORISTA CONFETTI ── */
 .may-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:9999;background:#fff;border-radius:20px;padding:28px 20px 24px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;width:300px;max-width:90vw}
+.may-toast.may-toast-img{padding:0;background:transparent;box-shadow:none;width:auto;max-width:92vw}
+.may-toast-imgsrc{display:block;width:auto;max-width:520px;height:auto;border-radius:22px;box-shadow:0 16px 52px rgba(0,0,0,.32)}
+@media(max-width:600px){.may-toast-imgsrc{max-width:92vw}}
 .may-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 .may-toast.hide{transform:translate(-50%,-50%) scale(.85);opacity:0}
 
@@ -3928,26 +3931,13 @@ function _triggerMayoristaConfetti(){
   if(!toast){
     toast=document.createElement('div');
     toast.id='mayToast';
-    toast.className='may-toast';
-    toast.innerHTML=
-      '<div class="may-toast-row">'+
-        _buildConeHTML('mayConL',false)+
-        '<div class="may-toast-title">\u00a1DESCUENTO<br>ACTIVADO!</div>'+
-        _buildConeHTML('mayConR',true)+
-      '</div>';
+    toast.className='may-toast may-toast-img';
+    toast.innerHTML='<img src="discount-unlocked.png" alt="\u00a1Desbloqueaste tu descuento!" class="may-toast-imgsrc">';
     document.body.appendChild(toast);
   }
   toast.classList.remove('hide');
   toast.classList.add('show');
   setTimeout(function(){toast.classList.add('hide');setTimeout(function(){toast.classList.remove('show','hide');},400);},3400);
-
-  setTimeout(function(){
-    ['mayConL','mayConR'].forEach(function(id){
-      var el=document.getElementById(id);if(!el)return;
-      el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');
-      setTimeout(function(){el.classList.remove('shake');},750);
-    });
-  },50);
 
   if(!_confCanvas){
     _confCanvas=document.createElement('canvas');
