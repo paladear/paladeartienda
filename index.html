@@ -1086,10 +1086,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* ── GRANOLA BANNER ── */
 /* ── ÍCONOS ANIMADOS (mix / granola) ── */
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
-.sprite-mix{width:74px;height:118px;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5) infinite}
-.sprite-granola{width:84px;height:96px;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5) infinite}
+.sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5) infinite}
+.sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5) infinite}
 @keyframes spriteCycle{0%{background-position:0 0}100%{background-position:-400% 0}}
-@media(max-width:480px){.sprite-mix{width:56px;height:90px}.sprite-granola{width:64px;height:74px}}
+@media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}}
 
 .granola-banner{background:linear-gradient(135deg,#7a4f1e 0%,#b07030 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(160,100,30,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(160,100,30,.45)}
