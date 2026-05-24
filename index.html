@@ -1324,13 +1324,16 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
 .tabs-zone{background:var(--azul);padding:0;margin:0}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
-.tabs-pill{position:absolute;top:6px;bottom:0;left:0;width:0;opacity:0;background:var(--bg);border-radius:24px;transition:transform .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),opacity .25s;z-index:0;will-change:transform,width}
+.tabs-pill{display:none}
 .may-tab{cursor:pointer;padding:9px 8px 12px;border-radius:0;font-weight:700;font-size:13px;transition:color .25s;border:none;background:transparent;color:rgba(255,255,255,.78);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;z-index:1;font-family:inherit;line-height:1.1}
 .may-tab-icon{width:34px;height:34px;object-fit:contain;display:block;flex-shrink:0;transition:transform .25s}
 .may-tab.active .may-tab-icon{transform:scale(1.06)}
-.may-tab.active{color:var(--azul-dark)}
+.may-tab.active{background:var(--bg);color:var(--azul-dark);position:relative;z-index:2;border-radius:0 0 10px 10px}
+.may-tab.active::before,.may-tab.active::after{content:'';position:absolute;bottom:0;width:32px;height:28px;z-index:-1;pointer-events:none;background:radial-gradient(circle at 16px 0,transparent 16px,var(--bg) 16px);transition:opacity .35s cubic-bezier(.4,0,.2,1)}
+.may-tab.active::before{left:-16px}
+.may-tab.active::after{right:-16px}
 .may-tab:hover:not(.active){color:#fff}
-@media(max-width:767px){.may-tab{padding:7px 4px 10px;font-size:11.5px;gap:1px}.may-tab-icon{width:30px;height:30px}}
+@media(max-width:767px){.may-tab{padding:7px 4px 10px;font-size:11.5px;gap:1px}.may-tab-icon{width:30px;height:30px}.may-tab.active::before,.may-tab.active::after{width:24px;height:22px;background:radial-gradient(circle at 12px 0,transparent 12px,var(--bg) 12px)}.may-tab.active::before{left:-12px}.may-tab.active::after{right:-12px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1477,7 +1480,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 <!-- Tabs de navegación (zona celeste con burbuja azul colgada del camión) -->
 <div class="tabs-zone">
   <div class="may-tabs-wrap" id="mainTabs">
-    <div class="tabs-pill" id="tabsPill"></div>
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">
       <img class="may-tab-icon" src="icon-minorista.png" alt="" aria-hidden="true">
       <span>Minorista</span>
@@ -1860,31 +1862,10 @@ document.addEventListener('pointerdown',function(e){
   };
 })();
 
-// ── PILL ANIMADO QUE ENVUELVE EL TAB ACTIVO ──
+// ── (reservado, antes tabs-pill) ──
 (function(){
-  function _positionTabsPill(){
-    const wrap=document.getElementById('mainTabs');
-    const pill=document.getElementById('tabsPill');
-    if(!wrap||!pill)return;
-    const active=wrap.querySelector('.may-tab.active');
-    if(!active)return;
-    // Coordenadas relativas al wrap (sin padding del wrap, lo restamos)
-    const wrapRect=wrap.getBoundingClientRect();
-    const tabRect=active.getBoundingClientRect();
-    const x=tabRect.left-wrapRect.left;
-    pill.style.width=tabRect.width+'px';
-    pill.style.transform='translateX('+x+'px)';
-    pill.style.opacity='1';
-  }
+  function _positionTabsPill(){}
   window._positionTabsPill=_positionTabsPill;
-  // Click en cualquier tab → reposicionar tras cambio de .active
-  document.addEventListener('click',function(e){
-    if(e.target.closest('.may-tab'))setTimeout(_positionTabsPill,10);
-  });
-  window.addEventListener('resize',_positionTabsPill);
-  window.addEventListener('load',_positionTabsPill);
-  if(document.readyState!=='loading')setTimeout(_positionTabsPill,50);
-  else document.addEventListener('DOMContentLoaded',()=>setTimeout(_positionTabsPill,50));
 })();
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
