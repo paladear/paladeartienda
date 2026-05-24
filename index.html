@@ -1440,8 +1440,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
         <div class="hdrop-row"><span class="ic">🕗</span><div><strong>Horario</strong>Lunes a Viernes · 08:00 a 16:00 hs<br>Sábados · 08:00 a 13:00 hs</div></div>
         <div class="hdrop-row"><span class="ic">🏷️</span><div><strong>Condición de venta</strong>Ventas mayores a $250.000 por bulto cerrado</div></div>
         <div class="hdrop-row"><span class="ic">🚚</span><div><strong>Envíos</strong>Consultá por nuestros canales de venta al por mayor</div></div>
-        <button class="hdrop-cta may-cta" onclick="closeAllHdrops();switchTab('mayorista')">📦 Ir a Lista Mayorista →</button>
-        <button class="hdrop-cta min-cta" style="margin-top:6px" onclick="closeAllHdrops();window.open('https://wa.me/5492615983065','_blank')">💬 Contactar por WhatsApp</button>
+        <button class="hdrop-cta min-cta" onclick="closeAllHdrops();window.open('https://wa.me/5492615983065','_blank')">💬 Contactar por WhatsApp</button>
       </div>
     </div>
 
@@ -1893,7 +1892,8 @@ document.addEventListener('pointerdown',function(e){
   function _updateCompact(){
     const y=window.scrollY||window.pageYOffset||0;
     const tab=(typeof currentTab!=='undefined')?currentTab:'minorista';
-    const show=(y>THRESHOLD)&&(tab==='minorista'||tab==='mayorista');
+    const searchActive=!!((document.getElementById('compactSearchInput')||{}).value);
+    const show=(y>THRESHOLD||searchActive)&&(tab==='minorista'||tab==='mayorista');
     document.body.classList.toggle('compact-on',show);
     ticking=false;
   }
@@ -2618,6 +2618,20 @@ function pedirWA(){
 }
 
 let _searchTimer=null;
+let _searchPreScrollY=0;
+let _searchOverlayOpen=false;
+function cerrarBusqueda(){
+  const inp=document.getElementById('compactSearchInput');
+  if(inp)inp.value='';
+  searchTerm='';
+  clearTimeout(_searchTimer);
+  _doSearch('');
+  const saved=_searchPreScrollY;
+  _searchOverlayOpen=false;
+  _searchPreScrollY=0;
+  if(saved>0)requestAnimationFrame(()=>window.scrollTo(0,saved));
+}
+window.cerrarBusqueda=cerrarBusqueda;
 function onSearch(val){
   clearTimeout(_searchTimer);
   _searchTimer=setTimeout(()=>_doSearch(val),300);
@@ -2662,12 +2676,21 @@ function _doSearch(val){
     if(header)header.classList.remove('collapsed');
     if(banner)banner.classList.remove('collapsed');
     if(tabs)tabs.classList.remove('collapsed');
+    // Desbloquear scroll del body
+    document.body.style.overflow='';
+    _searchOverlayOpen=false;
     // Limpiar resultados mobile
     if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
     if(bannersWrap)bannersWrap.style.display='';
     if(activeCatId)selectCat(activeCatId);
     else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden');}
     return;
+  }
+  // Guardar posición de scroll al abrir el overlay por primera vez
+  if(isMobile&&!_searchOverlayOpen){
+    _searchPreScrollY=window.scrollY||window.pageYOffset||0;
+    _searchOverlayOpen=true;
+    history.pushState({view:'search'},'');
   }
 
   // Ocultar banners en mobile mientras se busca
@@ -2709,9 +2732,12 @@ function _doSearch(val){
   }
 
   if(isMobile&&srMobile){
-    srMobile.innerHTML=h;
+    const backBtn='<button class="back-btn" style="margin-bottom:12px" onclick="cerrarBusqueda()">← Volver</button>';
+    srMobile.innerHTML=backBtn+h;
     srMobile.classList.remove('hidden');
     srMobile.classList.add('active');
+    srMobile.scrollTop=0;
+    document.body.style.overflow='hidden';
     document.getElementById('mobileProdsArea').innerHTML='';
     document.getElementById('desktopProdsArea').innerHTML='';
   } else {
@@ -2735,6 +2761,8 @@ function irAProducto(pid){
   if(banner)banner.classList.remove('collapsed');
   if(tabs)tabs.classList.remove('collapsed');
   // Cerrar overlay mobile de búsqueda
+  document.body.style.overflow='';
+  _searchOverlayOpen=false;_searchPreScrollY=0;
   const srMobile=document.getElementById('searchResultsMobile');
   if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
   const bannersWrap=document.getElementById('bannersTrackWrap');
@@ -3113,6 +3141,26 @@ history.replaceState({view:'home'},'');
 
 window.addEventListener('popstate',function(e){
   const st=e.state||{view:'home'};
+
+  // 0. Si el overlay de búsqueda mobile está abierto → cerrarlo
+  if(_searchOverlayOpen){
+    const inp=document.getElementById('compactSearchInput');
+    if(inp)inp.value='';
+    searchTerm='';
+    clearTimeout(_searchTimer);
+    const srMobile=document.getElementById('searchResultsMobile');
+    if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
+    document.body.style.overflow='';
+    const saved=_searchPreScrollY;
+    _searchOverlayOpen=false;_searchPreScrollY=0;
+    const bannersWrap=document.getElementById('bannersTrackWrap');
+    if(bannersWrap)bannersWrap.style.display='';
+    if(activeCatId)selectCat(activeCatId);
+    else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden');}
+    if(saved>0)requestAnimationFrame(()=>window.scrollTo(0,saved));
+    history.pushState({view:'home'},'');
+    return;
+  }
 
   // 0. Si el lightbox está abierto → cerrarlo
   const lightbox = document.getElementById('inspLightbox');
@@ -4155,19 +4203,20 @@ function cargarMayorista() {
         const bulto        = inf.bulto  || 1;
         const sabores      = inf.sabores || null;
         const imgUrl       = inf.imagen  || '';
+        const nombreFinal  = inf.nombre  || nombre;
         const precioTotal  = precio * bulto;
 
         const opts = {};
         opts[_bultoLabel(bulto, inf.bultoUnidad || 'unidad')] = [precioTotal, precioTotal];
 
         prodsTemp.push([
-          pid++, cat.id, nombre, rubro, 'und', false, imgUrl,
+          pid++, cat.id, nombreFinal, rubro, 'und', false, imgUrl,
           opts, '', sabores, false, false,
           { bulto, bultoUnidad: inf.bultoUnidad || 'unidad', artId }
         ]);
 
-        MAY_BULTO_MAP[artId] = { bulto, nombre, sabores, imagen: imgUrl, precio };
-        if (_norm(nombre) !== artId) MAY_BULTO_MAP[_norm(nombre)] = MAY_BULTO_MAP[artId];
+        MAY_BULTO_MAP[artId] = { bulto, nombre: nombreFinal, sabores, imagen: imgUrl, precio };
+        if (_norm(nombreFinal) !== artId) MAY_BULTO_MAP[_norm(nombreFinal)] = MAY_BULTO_MAP[artId];
       });
 
       PRODS_MAY = prodsTemp;
