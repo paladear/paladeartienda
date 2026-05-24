@@ -417,6 +417,9 @@ button{cursor:pointer;border:none;font-family:inherit}
 .co-input{width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid var(--muted);border-radius:10px;font-size:15px;font-family:inherit;color:var(--fg);background:var(--card);transition:border-color .2s;-webkit-appearance:none}
 .co-input:focus{outline:none;border-color:var(--azul)}
 .co-hint{display:block;font-size:11px;color:var(--muted-fg);margin-top:4px;line-height:1.4}
+.co-saved-hint{text-align:center;font-size:11px;color:var(--muted-fg);margin-top:10px;line-height:1.5}
+.co-saved-hint a{color:var(--muted-fg);text-decoration:underline}
+.co-saved-hint a:hover{color:var(--azul)}
 .co-addr-row{display:flex;gap:8px;margin-bottom:6px}
 .co-addr-row .co-input{flex:1;margin:0}
 .co-map-btn{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:0 13px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;flex-shrink:0;height:48px}
@@ -5060,6 +5063,48 @@ var _coVenta = 'minorista';
 var _coEntrega = null;
 var _coMap = null, _coMarker = null, _leafletReady = false;
 
+// ═══ PERFIL LOCAL (localStorage) — recuerda datos del cliente entre pedidos ═══
+var _PALADEAR_PERFIL_KEY = 'paladear_perfil_v1';
+function _coCargarPerfil() {
+  try { return JSON.parse(localStorage.getItem(_PALADEAR_PERFIL_KEY) || '{}') || {}; }
+  catch(e) { return {}; }
+}
+function _coGuardarPerfil(p) {
+  try { localStorage.setItem(_PALADEAR_PERFIL_KEY, JSON.stringify(p)); } catch(e) {}
+}
+function _coSet(id, val) {
+  var el = document.getElementById(id);
+  if (el && !el.value && val) el.value = val;
+}
+function _coAutocompletar() {
+  var p = _coCargarPerfil();
+  if (!p || !Object.keys(p).length) return;
+  _coSet('coNombre', p.nombre);
+  _coSet('coNombreDom', p.nombre);
+  _coSet('coHorarioRetiro', p.horarioRetiro);
+  _coSet('coDireccion', p.direccion);
+  _coSet('coPisoDepto', p.pisoDepto);
+  _coSet('coEntreCalles', p.entreCalles);
+  _coSet('coIndicaciones', p.indicaciones);
+  if (p.tipoViv) {
+    var rt = document.querySelector('input[name="coTipo"][value="' + p.tipoViv + '"]');
+    if (rt) rt.checked = true;
+  }
+  if (p.pagoPref) {
+    var rp = document.querySelector('input[name="coPago"][value="' + p.pagoPref + '"]');
+    if (rp) rp.checked = true;
+  }
+}
+window.coBorrarPerfil = function() {
+  if (!confirm('¿Borrar tus datos guardados (nombre, dirección, etc.)?')) return;
+  try { localStorage.removeItem(_PALADEAR_PERFIL_KEY); } catch(e) {}
+  ['coNombre','coNombreDom','coHorarioRetiro','coDireccion','coPisoDepto','coEntreCalles','coIndicaciones'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('input[name="coTipo"],input[name="coPago"]').forEach(function(r){ r.checked = false; });
+};
+
 function abrirCheckout(venta) {
   _coVenta = venta || 'minorista';
   _coEntrega = null;
@@ -5071,6 +5116,7 @@ function abrirCheckout(venta) {
   _coRenderSummary();
   document.getElementById('checkoutOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  _coAutocompletar();
   if (!history.state || history.state.view !== 'checkout') {
     history.pushState({view:'checkout'}, '');
   }
@@ -5314,6 +5360,22 @@ function coEnviar() {
     msg = lines2 + deliveryMsg + '\n\n_Pedido realizado desde el catálogo online_';
     url = 'https://wa.me/' + WA_MAYORISTA + '?text=' + encodeURIComponent(msg);
   }
+
+  // Guardar perfil para próximos pedidos
+  var _perfil = _coCargarPerfil();
+  _perfil.nombre = nombre;
+  if (tipo === 'retiro') {
+    if (horario) _perfil.horarioRetiro = horario;
+  } else {
+    _perfil.direccion = direccion;
+    if (pisoDepto) _perfil.pisoDepto = pisoDepto;
+    if (tipoViv) _perfil.tipoViv = tipoViv;
+    if (entreCalles) _perfil.entreCalles = entreCalles;
+    if (indicaciones) _perfil.indicaciones = indicaciones;
+  }
+  var _pagoSel = document.querySelector('input[name="coPago"]:checked');
+  if (_pagoSel) _perfil.pagoPref = _pagoSel.value;
+  _coGuardarPerfil(_perfil);
 
   cerrarCheckout();
   if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
@@ -6487,6 +6549,7 @@ window.copiarLinkParaNavegador = function() {
           <span class="co-hint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
         </div>
         <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+        <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
       </div>
       <!-- Step 2: Domicilio -->
       <div id="coStep2Dom" class="hidden">
@@ -6556,6 +6619,7 @@ window.copiarLinkParaNavegador = function() {
           </div>
         </div>
         <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+        <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
       </div>
     </div>
   </div>
