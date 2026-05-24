@@ -1344,7 +1344,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .tab-style-3 .may-tab.active::before{left:0;width:28px;height:100%;background:var(--azul);border-radius:0 0 0 28px;transform:skewY(8deg);transform-origin:bottom left}
 .tab-style-3 .may-tab.active::after{right:0;width:28px;height:100%;background:var(--azul);border-radius:0 0 28px 0;transform:skewY(-8deg);transform-origin:bottom right}
 
-/* ── OPCIÓN 4: CONVEXA ARRIBA + CÓNCAVA ABAJO ── */
+/* ── OPCIÓN 5: CONVEXA TODO ── border-radius parejo arriba y abajo ── */
+.tab-style-5 .may-tab.active{border-radius:16px 16px 16px 16px}
+.tab-style-5 .may-tab.active::before,.tab-style-5 .may-tab.active::after{display:none}
 .tab-style-4 .may-tab.active{border-radius:16px 16px 0 0}
 .tab-style-4 .may-tab.active::before,.tab-style-4 .may-tab.active::after{content:'';position:absolute;bottom:0;width:32px;height:18px;pointer-events:none;background:radial-gradient(circle at 0 0,var(--azul) 16px,transparent 16px)}
 .tab-style-4 .may-tab.active::before{left:0}
@@ -1358,7 +1360,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .tab-style-3 .may-tab.active::after{width:20px;border-radius:0 0 20px 0;transform:skewY(-6deg)}
 .tab-style-4 .may-tab.active{border-radius:12px 12px 0 0}
 .tab-style-4 .may-tab.active::before,.tab-style-4 .may-tab.active::after{width:24px;height:12px;background:radial-gradient(circle at 0 0,var(--azul) 11px,transparent 11px)}
-.tab-style-4 .may-tab.active::after{background:radial-gradient(circle at 100% 0,var(--azul) 11px,transparent 11px)}}
+.tab-style-4 .may-tab.active::after{background:radial-gradient(circle at 100% 0,var(--azul) 11px,transparent 11px)}
+.tab-style-5 .may-tab.active{border-radius:12px}}
 .may-cart-warn{background:#fff3cd;border:2px solid #ffc107;border-radius:10px;padding:12px 16px;color:#856404;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
 .may-cart-warn.visible{display:block}
 .bulto-badge{display:inline-block;background:var(--azul-light);color:var(--azul-dark);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:4px}
@@ -1504,7 +1507,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 </div>
 <!-- Tabs de navegación -->
 <div class="tabs-zone">
-  <div class="may-tabs-wrap tab-style-4" id="mainTabs">
+  <div class="may-tabs-wrap tab-style-5" id="mainTabs">
     <button class="may-tab active" id="tabMinorista" onclick="switchTab('minorista')">
       <img class="may-tab-icon" src="icon-minorista.png" alt="" aria-hidden="true">
       <span>Minorista</span>
