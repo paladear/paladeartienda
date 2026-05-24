@@ -1016,6 +1016,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .cart-body{flex:1;overflow-y:auto;padding:16px}
 .cart-empty{text-align:center;padding:48px 0;color:var(--muted-fg)}
 .cart-empty .big{font-size:44px;display:block;margin-bottom:12px;opacity:.3}
+.cart-empty-repeat{margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s}
+.cart-empty-repeat:active{opacity:.85}
 .cart-item{display:flex;align-items:start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .cart-item-name{flex:1;font-size:14px;font-weight:700;line-height:1.3}
 .cart-item-opt{font-size:12px;color:var(--muted-fg);font-weight:400;display:block}
@@ -1793,9 +1795,22 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos',ic:'🥜'},'DESHIDRATADOS':{id:'deshidratados',n:'Deshidratados',ic:'🍇'},'SEMILLAS':{id:'semillas',n:'Semillas',ic:'🌻'},'ESPECIAS':{id:'especias',n:'Especias',ic:'🌿'},'INFUSIONES Y HIERBAS':{id:'infusiones',n:'Infusiones y Hierbas',ic:'🍵'},'CEREALES':{id:'cereales',n:'Cereales',ic:'🥣'},'GRANOS Y LEGUMBRES':{id:'granos',n:'Granos y Legumbres',ic:'🫘'},'HARINAS':{id:'harinas',n:'Harinas',ic:'🌾'},'PRODUCTOS SIN TACC':{id:'sintacc',n:'Sin TACC',ic:'🌱'},'DULCES, MIEL Y CHOCOLATES':{id:'dulces',n:'Dulces, Miel y Chocolates',ic:'🍯'},'AZUCAR, CACAO Y REPOSTERIA':{id:'reposteria',n:'Azúcar, Cacao y Repostería',ic:'🍫'},'MANTECAS Y PASTAS':{id:'mantecas',n:'Mantecas y Pastas',ic:'🧈'},'ACEITES Y VINAGRES':{id:'aceites',n:'Aceites y Vinagres',ic:'🫙'},'ACEITUNAS':{id:'aceitunas',n:'Aceitunas',ic:'🫒'},'ENCURTIDOS':{id:'encurtidos',n:'Encurtidos',ic:'🥒'},'TOMATE TRITURADO':{id:'tomate',n:'Tomate',ic:'🍅'},'SNACK':{id:'snack',n:'Snacks',ic:'🍿'},'SUPLEMENTOS':{id:'suplementos',n:'Suplementos',ic:'💊'},'LINEA GOURMET':{id:'gourmet',n:'Línea Gourmet',ic:'⭐'},'BEBIDAS':{id:'bebidas',n:'Bebidas',ic:'🥤'},'VINOS':{id:'vinos',n:'Vinos y Licores',ic:'🍷'},'PRODUCTOS DE FRIO':{id:'frio',n:'Productos de Frío',ic:'❄️'},'PRODUCTOS CONGELADOS':{id:'congelados',n:'Congelados',ic:'🧊'},'PALADEAR HOME':{id:'home',n:'Paladear Home',ic:'🏠'}};
 let CATS=[],PRODS=[],searchTerm='',activeCatId=null,miniCartTimer=null;
 
-/* ── PERSISTENCIA DEL CARRITO ── */
-function _saveCart(){try{localStorage.setItem('paladear_cart',JSON.stringify(cart));}catch(e){}}
-function _loadCart(){try{const s=localStorage.getItem('paladear_cart');return s?JSON.parse(s):[];}catch(e){return[];}}
+/* ── CARRITO: empieza vacío cada sesión; sólo se guarda el ÚLTIMO pedido enviado ── */
+function _saveCart(){/* no-op: ya no persistimos el carrito entre sesiones */}
+function _loadCart(){
+  // Limpieza única de versiones viejas que guardaban el carrito
+  try{localStorage.removeItem('paladear_cart');}catch(e){}
+  return [];
+}
+function _guardarUltimoPedido(){try{if(cart && cart.length)localStorage.setItem('paladear_ultimo_pedido',JSON.stringify(cart));}catch(e){}}
+function _cargarUltimoPedido(){try{const s=localStorage.getItem('paladear_ultimo_pedido');return s?JSON.parse(s):null;}catch(e){return null;}}
+window._repetirUltimoPedido=function(){
+  const u=_cargarUltimoPedido();
+  if(!u||!u.length){return;}
+  cart=u.slice();
+  if(typeof renderCart==='function')renderCart();
+  if(typeof updateCartBadge==='function')updateCartBadge();
+};
 let cart=_loadCart();
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
@@ -2458,7 +2473,11 @@ function _hayOfertasDelMes(){
 function _itemCount(it){return it.unidad==='kg'?_gLabel(it.totalG):it.c}
 function renderCart(){
   const body=document.getElementById('cartBody'),footer=document.getElementById('cartFooter');
-  if(!cart.length){body.innerHTML='<div class="cart-empty"><span class="big">🛒</span><div style="font-size:16px;font-weight:600;margin-bottom:6px">Tu carrito está vacío</div><div style="font-size:14px;color:var(--muted-fg)">Agregá productos para armar tu pedido</div></div>';footer.classList.add('hidden');return}
+  if(!cart.length){
+    var _ult=_cargarUltimoPedido();
+    var _ultBtn=(_ult&&_ult.length)?'<button class="cart-empty-repeat" onclick="_repetirUltimoPedido()">🔄 Volver a pedir lo último ('+_ult.length+' producto'+(_ult.length!==1?'s':'')+')</button>':'';
+    body.innerHTML='<div class="cart-empty"><span class="big">🛒</span><div style="font-size:16px;font-weight:600;margin-bottom:6px">Tu carrito está vacío</div><div style="font-size:14px;color:var(--muted-fg)">Agregá productos para armar tu pedido</div>'+_ultBtn+'</div>';
+    footer.classList.add('hidden');return}
   let h='';
   cart.forEach(it=>{
     const sMin=_itemMin(it);
@@ -5377,6 +5396,9 @@ function coEnviar() {
   if (_pagoSel) _perfil.pagoPref = _pagoSel.value;
   _coGuardarPerfil(_perfil);
 
+  // Guardar el último pedido (minorista) para poder repetirlo después
+  if (isMin) _guardarUltimoPedido();
+
   cerrarCheckout();
   if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
   window.open(url, '_blank');
@@ -5825,13 +5847,15 @@ function abrirReceta(idx, skipHistory) {
     html += '</div>';
   }
 
-  // Instagram — iframe embed (Instagram NO bloquea las URLs /embed/)
+  // Instagram — link al reel/post (Instagram NO permite reproducir reels inline, así que un botón limpio es lo más útil)
   if (r.urlIG) {
-    const embedUrl = _getInstagramEmbedUrl(r.urlIG);
-    if (embedUrl) {
-      const isReel = r.urlIG.includes('/reel/');
-      const h = isReel ? 720 : 560;
-      html += '<div class="receta-ig-embed"><div class="receta-ig-embed-title">🎥 Video original</div><iframe src="' + embedUrl + '" width="100%" height="' + h + '" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe></div>';
+    const igUrl = _normalizeInstagramUrl(r.urlIG);
+    const isReel = r.urlIG.includes('/reel/');
+    if (igUrl) {
+      html += '<a class="receta-ig-link" href="' + igUrl + '" target="_blank" rel="noopener noreferrer">'
+        + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>'
+        + (isReel ? 'Ver el reel en Instagram' : 'Ver el post en Instagram')
+        + '</a>';
     }
   }
 
