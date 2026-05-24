@@ -331,12 +331,20 @@ button{cursor:pointer;border:none;font-family:inherit}
 .cart-count{background:var(--destructive);color:#fff;border-radius:50%;width:24px;height:24px;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
 /* ── BANNER ENVÍOS ── */
 .envios-banner{background:var(--azul);color:#fff;padding:0;overflow:hidden;position:relative;height:40px}
-.envios-convoy{position:absolute;top:50%;left:0;display:flex;align-items:center;gap:14px;white-space:nowrap;animation:convoyDrive 14s linear infinite;will-change:transform}
+.envios-convoy{position:absolute;top:50%;left:0;display:flex;align-items:center;gap:14px;white-space:nowrap;animation:convoyDrive 13s linear infinite;will-change:transform}
 @keyframes convoyDrive{
   0%{transform:translate(calc(100vw + 40px),-50%)}
+  68%{transform:translate(-440px,-50%)}
   100%{transform:translate(-440px,-50%)}
 }
-.envios-msg{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3);transition:opacity .35s ease}
+.envios-discount{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;animation:discFade 13s linear infinite;pointer-events:none;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+@media(max-width:480px){.envios-discount{font-size:11px;letter-spacing:.2px}}
+@keyframes discFade{
+  0%,72%{opacity:0}
+  78%,93%{opacity:1}
+  98%,100%{opacity:0}
+}
+.envios-msg{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)}
 @media(max-width:480px){.envios-msg{font-size:11px;letter-spacing:.2px}}
 .envios-truck-anim{filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));flex-shrink:0}
 .truck-wheel{transform-origin:center;animation:wheelSpin 0.8s linear infinite}
@@ -1523,6 +1531,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     </div>
     <span class="envios-msg">Hacemos envíos a todo el país</span>
   </div>
+  <div class="envios-discount">🏷️ Hasta 20% de descuento +$80.000</div>
 </div>
 <!-- Tabs de navegación (zona celeste con burbuja azul colgada del camión) -->
 <div class="tabs-zone">
@@ -1945,7 +1954,7 @@ document.addEventListener('pointerdown',function(e){
 function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m[1])*qty;return t>=1000?(t/1000)%1===0?(t/1000)+' kg':(t/1000).toFixed(1)+' kg':t+' g'}m=opc.match(/^(\d[\d,.]*)\s*kg$/i);if(m){let v=parseFloat(m[1].replace(',','.'))*qty;return v%1===0?v+' kg':v.toFixed(1)+' kg'}return opc+(qty>1?' x'+qty:'')}
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
-function _bultoLabel(n,unidad){if(unidad==='kg')return n+' Kg';return n===1?'1 Unidad':n+' Unidades';}
+function _bultoLabel(n,unidad){const s=String(n).replace('.',',');if(unidad==='kg')return s+' Kg';return n===1?'1 Unidad':s+' Unidades';}
 function _tc(s){return(s||'').toLowerCase().replace(/(^|[\s\-\/])(\S)/g,function(_,b,c){return b+c.toUpperCase();});}
 const _STOPWORDS=new Set(['DE','DEL','LA','EL','LOS','LAS','UN','UNA','Y','O','CON','EN','X','POR']);
 function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));const tn=_norm(t);if(!qn.length)return false;return qn.some(w=>tn.includes(w))}
@@ -4214,7 +4223,8 @@ function _cargarInfoMay() {
         const artId = (cols[0] || '').replace(/^"|"$/g, '').trim();
         const nombre = (cols[1] || '').replace(/^"|"$/g, '').trim();
         const bultoRaw = (cols[2] || '').replace(/^"|"$/g, '').trim();
-        const bulto = parseInt(bultoRaw) || 1;
+        // Parsear como float, soportando coma decimal argentina (2,5 → 2.5)
+        const bulto = parseFloat(bultoRaw.replace(',', '.')) || 1;
         const bultoUnidad = /kg|kgr|kilo/i.test(bultoRaw) ? 'kg' : 'unidad';
         const saboresStr = (cols[3] || '').replace(/^"|"$/g, '').trim();
         const imgRaw = (cols[4] || '').replace(/^"|"$/g, '').trim();
@@ -6126,21 +6136,9 @@ window.addEventListener('online', function() {
 var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true; // iOS Safari
 
-// Rotación del mensaje del banner del camión: alterna entre envíos y descuento
-(function _initEnviosRotativo(){
-  var msgs=['Hacemos envíos a todo el país','Hasta 20% de descuento +$80.000'];
-  var el=document.querySelector('.envios-msg');
-  if(!el)return;
-  var i=0;
-  setInterval(function(){
-    el.style.opacity='0';
-    setTimeout(function(){
-      i=(i+1)%msgs.length;
-      el.textContent=msgs[i];
-      el.style.opacity='1';
-    },350);
-  },6000);
-})();
+// Rotación del mensaje del camión: ahora se maneja por CSS keyframes
+// El convoy hace cycle de 13s: 0-68% drive, 68-100% off-screen
+// El envios-discount aparece con opacity 0→1 cuando el camión está off-screen
 
 // Mostrar ícono de instalar app en el header (solo si no está instalada)
 (function _initInstallHeaderBtn() {
