@@ -667,8 +667,8 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .insp-ig-footer-label{display:block;color:#fff;font-size:13px;font-weight:700}
 .insp-ig-footer-sub{display:block;color:rgba(255,255,255,.75);font-size:11px;margin-top:1px}
 .insp-ig-arrow{font-size:18px;color:rgba(255,255,255,.85)}
-.receta-ig-link{display:block;text-align:center;color:var(--muted-fg);font-size:12px;text-decoration:none;padding:10px;margin-top:10px;border-top:1px solid var(--muted)}
-.receta-ig-link:hover{color:var(--azul)}
+.receta-ig-link{display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:13px 20px;margin-top:16px;border-radius:12px;letter-spacing:.01em}
+.receta-ig-link:active{opacity:.85}
 .receta-badge-prod{display:inline-flex;align-items:center;gap:4px;background:transparent;color:var(--muted-fg);font-size:11px;font-weight:500;padding:3px 0;margin-top:4px;cursor:pointer;border:none;font-family:inherit;font-style:italic}
 .receta-badge-prod:hover{color:var(--azul)}
 /* Cantidades/receta box */
@@ -748,8 +748,8 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .receta-modal-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .receta-modal-time{font-size:13px;color:var(--muted-fg)}
 .receta-ig-btn{display:none} /* ya no se usa */
-.receta-ig-link{display:block;text-align:center;color:var(--muted-fg);font-size:12px;text-decoration:none;padding:10px;margin-top:10px;border-top:1px solid var(--muted)}
-.receta-ig-link:hover{color:var(--azul)}
+.receta-ig-link{display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:13px 20px;margin-top:16px;border-radius:12px;letter-spacing:.01em}
+.receta-ig-link:active{opacity:.85}
 /* Badge "Tiene receta" en cards de producto */
 .receta-badge-prod{display:inline-flex;align-items:center;gap:4px;background:transparent;color:var(--muted-fg);font-size:11px;font-weight:500;padding:3px 0;margin-top:4px;cursor:pointer;border:none;font-family:inherit;font-style:italic}
 .receta-badge-prod:hover{color:var(--azul)}
@@ -5762,11 +5762,11 @@ function abrirReceta(idx, skipHistory) {
     html += '</div>';
   }
 
-  // Instagram — iframe embed (el video se ve directo en la página)
+  // Instagram — botón que abre el reel directamente en la app
   if (r.urlIG) {
-    const embedUrl = _getInstagramEmbedUrl(r.urlIG);
-    if (embedUrl) {
-      html += '<div class="receta-ig-embed"><iframe src="' + embedUrl + '" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen="true" loading="lazy"></iframe></div>';
+    const igUrl = _normalizeInstagramUrl(r.urlIG);
+    if (igUrl) {
+      html += '<a class="receta-ig-link" href="' + igUrl + '" target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Ver en Instagram</a>';
     }
   }
 
