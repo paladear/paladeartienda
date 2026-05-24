@@ -724,8 +724,9 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .receta-prep-time{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted-fg);margin-bottom:10px;padding:8px 12px;background:var(--muted);border-radius:8px}
 .receta-cantidades-box{background:#fdefd8;border:1px solid #b07030;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#8a3520;line-height:1.5;white-space:pre-line}
 .receta-cantidades-box .receta-cantidades-title{font-weight:700;margin-bottom:6px;display:block}
-.receta-ig-embed{margin-bottom:14px;border-radius:10px;overflow:hidden}
-.receta-ig-embed iframe,.receta-ig-embed blockquote{max-width:100%!important;width:100%!important;margin:0 auto!important}
+.receta-ig-embed{margin:16px 0;border-radius:14px;overflow:hidden;border:1px solid #eee;background:#fafafa}
+.receta-ig-embed-title{font-size:13px;font-weight:600;color:#666;padding:10px 14px;background:#fff;border-bottom:1px solid #eee}
+.receta-ig-embed iframe{display:block;max-width:100%!important;width:100%!important;margin:0 auto!important;border:none}
 .receta-prod-link{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(84,118,146,.08);border:1.5px solid var(--azul);border-radius:12px;cursor:pointer;transition:all .2s}
 .receta-prod-link:hover{background:rgba(84,118,146,.15);transform:translateX(2px)}
 .receta-prod-link-icon{font-size:22px;flex-shrink:0}
@@ -5762,11 +5763,13 @@ function abrirReceta(idx, skipHistory) {
     html += '</div>';
   }
 
-  // Instagram — botón que abre el reel directamente en la app
+  // Instagram — iframe embed (Instagram NO bloquea las URLs /embed/)
   if (r.urlIG) {
-    const igUrl = _normalizeInstagramUrl(r.urlIG);
-    if (igUrl) {
-      html += '<a class="receta-ig-link" href="' + igUrl + '" target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Ver en Instagram</a>';
+    const embedUrl = _getInstagramEmbedUrl(r.urlIG);
+    if (embedUrl) {
+      const isReel = r.urlIG.includes('/reel/');
+      const h = isReel ? 720 : 560;
+      html += '<div class="receta-ig-embed"><div class="receta-ig-embed-title">🎥 Video original</div><iframe src="' + embedUrl + '" width="100%" height="' + h + '" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe></div>';
     }
   }
 
