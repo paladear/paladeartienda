@@ -4125,6 +4125,8 @@ function switchTab(tab) {
   }
   var _at = document.querySelector('#mainTabs .may-tab.active');
   if (_at) _setPill(_at);
+  // Quitar foco del botón para evitar el focus ring de Chrome Android (línea fina debajo de la pill)
+  try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(e){}
 }
 window.switchTab = switchTab;
 // Hook: guardar estado cuando cambia el tab + resetear scroll a top
