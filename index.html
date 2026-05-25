@@ -1113,7 +1113,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal.hidden{display:none}
 .granola-modal-bg{display:none}
 .granola-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
-.granola-modal-header{background:#b07030;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
+.granola-modal-header{background:#4a7c39;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
 .granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
 .granola-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .granola-modal-back:hover,.granola-modal-back:active{background:rgba(255,255,255,.32)}
@@ -1123,7 +1123,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
 /* cat tabs scroll hint mobile */
 .mix-cat-tabs-wrap{position:relative}
-.mix-cat-tabs-wrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:32px;background:linear-gradient(to right,transparent,var(--card));pointer-events:none;border-radius:0 8px 0 0}
 /* granola reuses mix inner styles but with amber accents */
 .granola-cat-tab{flex-shrink:0;padding:9px 14px;font-size:13px;cursor:pointer;border:none;border-bottom:2.5px solid transparent;color:var(--muted-fg);background:none;font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s}
 .granola-cat-tab.active{color:#7a4f1e;border-bottom-color:#b07030}
@@ -1200,10 +1199,11 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* granola prod list same as mix */
 .granola-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
 .granola-prod-list{max-height:260px;overflow-y:auto}
-.granola-prod-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border)}
+.granola-prod-row{display:grid;grid-template-columns:1fr 90px 130px 24px;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
 .granola-prod-row:last-child{border-bottom:none}
-.granola-prod-name{flex:1;font-size:13px;font-weight:600;color:var(--fg)}
-.granola-prod-price{font-size:12px;color:var(--muted-fg);margin-right:6px;white-space:nowrap}
+.granola-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
+.granola-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
+@media(max-width:520px){.granola-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row > button[onclick*="granolaRemoveProd"]{position:absolute;display:none}}
 .granola-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:#7a4f2a;text-align:center;outline:none;background:var(--card)}
 .granola-prod-input:focus{border-color:#b87040}
 .granola-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1263,7 +1263,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-bg{display:none}
 .mix-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
 @keyframes slideInModal{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
-.mix-modal-header{background:var(--azul);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
+.mix-modal-header{background:#7a4f2a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
 .mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
 .mix-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .mix-modal-back:hover,.mix-modal-back:active{background:rgba(255,255,255,.32)}
@@ -1287,11 +1287,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:10px 14px;-webkit-overflow-scrolling:touch}
 .mix-cat-tab{flex-shrink:0;padding:9px 16px;font-size:13px;cursor:pointer;border:none;border-radius:999px;color:#fff;background:var(--tab-color,var(--azul));font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s;opacity:.7}
 .mix-cat-tab.active{opacity:1;box-shadow:0 0 0 2.5px #fff,0 2px 8px rgba(0,0,0,.2)}
-.mix-prod-list{max-height:280px;overflow-y:auto}
-.mix-prod-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border)}
+.mix-prod-list{max-height:320px;overflow-y:auto;overflow-x:hidden}
+.mix-prod-row{display:grid;grid-template-columns:1fr 90px 130px 24px;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
 .mix-prod-row:last-child{border-bottom:none}
-.mix-prod-name{flex:1;font-size:13px;font-weight:600;color:var(--fg)}
-.mix-prod-price{font-size:12px;color:var(--muted-fg);margin-right:6px;white-space:nowrap}
+.mix-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
+.mix-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
+@media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row > button[onclick*="mixRemoveProd"]{display:none}}
 .mix-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--azul-dark);text-align:center;outline:none;background:var(--card)}
 .mix-prod-input:focus{border-color:var(--azul)}
 .mix-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1302,12 +1303,17 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .prod-step-btn:disabled{opacity:.35;cursor:not-allowed}
 .prod-step-val{min-width:48px;text-align:center;font-size:13px;font-weight:700;color:var(--azul-dark);padding:0 4px}
 .prod-stepper.over .prod-step-val{color:#e8633a}
-.granola-stepper{background:#fdefd8}
-.granola-stepper .prod-step-btn{color:#7a4f2a}
-.granola-stepper .prod-step-val{color:#7a4f2a}
+.granola-stepper{background:#e0eed7}
+.granola-stepper .prod-step-btn{color:var(--azul-dark)}
+.granola-stepper .prod-step-val{color:var(--azul-dark)}
 .granola-stepper.over{background:#ffe0d4}
 .granola-stepper.over .prod-step-val{color:#e8633a}
 .mix-sum-panel{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;align-self:start;position:sticky;top:0}
+.mix-mini-progress{display:none;position:sticky;top:0;background:var(--card);padding:10px 14px;border-bottom:1.5px solid var(--border);z-index:4;align-items:center;gap:10px}
+.mix-mini-progress .mini-bar{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+.mix-mini-progress .mini-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .2s,background .2s}
+.mix-mini-progress .mini-lbl{font-size:12px;font-weight:700;color:var(--azul-dark);white-space:nowrap}
+@media(max-width:600px){.mix-mini-progress{display:flex}.mix-sum-panel{position:static}}
 .mix-sum-head{background:var(--azul-light);padding:10px 14px;font-size:13px;font-weight:700;color:var(--azul-dark)}
 .mix-fill-wrap{padding:12px 14px 10px}
 .mix-fill-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;font-weight:700}
@@ -1715,6 +1721,10 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
         <div id="mixQuickNav" style="display:none;background:var(--azul-light);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px"></div>
         <div class="mix-layout">
           <div class="mix-prod-panel">
+            <div class="mix-mini-progress" id="mixMiniProgress">
+              <span class="mini-lbl" id="mixMiniLbl">0 g / —</span>
+              <div class="mini-bar"><div class="mini-fill" id="mixMiniFill" style="width:0%"></div></div>
+            </div>
             <div class="mix-cat-tabs-wrap">
               <div class="mix-cat-tabs" id="mixCatTabs"></div>
             </div>
@@ -1760,6 +1770,10 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
         <div id="granolaQuickNav" style="display:none;background:#fdefd8;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px"></div>
         <div class="mix-layout">
           <div class="mix-prod-panel">
+            <div class="mix-mini-progress" id="granolaMiniProgress">
+              <span class="mini-lbl" id="granolaMiniLbl">0 g / —</span>
+              <div class="mini-bar"><div class="mini-fill" id="granolaMiniFill" style="width:0%"></div></div>
+            </div>
             <div class="mix-cat-tabs-wrap">
               <div class="mix-cat-tabs" id="granolaCatTabs"></div>
             </div>
@@ -3455,6 +3469,34 @@ function mixRenderCatTabs(){
 }
 
 function mixSetCat(id){mixActiveCat=id;mixRenderCatTabs();mixRenderProdList();}
+window._scrollMixProductoTop=function(catId,pid){
+  if(mixActiveCat!==catId){mixSetCat(catId);}
+  setTimeout(function(){
+    var btn=document.querySelector('.prod-step-btn[onclick*="mixIncProd('+pid+',"]');
+    if(!btn)return;
+    var row=btn.closest('.mix-prod-row');
+    if(!row)return;
+    var list=document.getElementById('mixProdList');
+    // En desktop: list tiene overflow propio. En mobile: scrollea el modal entero.
+    var listScrollable=list && list.scrollHeight>list.clientHeight;
+    if(listScrollable){
+      list.scrollTo({top:row.offsetTop-list.offsetTop,behavior:'smooth'});
+    }else{
+      // Scrollear el modal/page; calcular offset por la mini progress sticky
+      var miniBar=document.getElementById('mixMiniProgress');
+      var miniH=miniBar && getComputedStyle(miniBar).display!=='none'?miniBar.offsetHeight:0;
+      var headerH=document.querySelector('#mixModal .mix-modal-header').offsetHeight;
+      var modal=document.getElementById('mixModal');
+      var scrollEl=modal.querySelector('.mix-modal-body')||modal;
+      var top=row.getBoundingClientRect().top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(headerH+miniH+8);
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    }
+    // Highlight breve para indicar dónde quedó
+    row.style.transition='background .3s';
+    row.style.background='rgba(122,79,42,.12)';
+    setTimeout(function(){row.style.background='';},900);
+  },80);
+};
 
 function _mixQuickNav(){
   const ings=Object.entries(mixIngreds).filter(([,v])=>v&&v.g>0);
@@ -3466,9 +3508,9 @@ function _mixQuickNav(){
     ings.map(([pid,v])=>{
       const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
       return`<div class="ing-qn-row">
-        <span class="ing-qn-name">${p[2]}</span>
+        <span class="ing-qn-name">${_capName(p[2])}</span>
         <span class="ing-qn-g">${_gLabel(v.g)}</span>
-        <button class="ing-qn-btn" onclick="mixSetCat('${p[1]}');setTimeout(()=>{const btn=document.querySelector('.prod-step-btn[onclick*=\'mixIncProd(${p[0]},\']');if(btn){btn.closest('.mix-prod-row').scrollIntoView({behavior:'smooth',block:'center'});}},80)">Ver</button>
+        <button class="ing-qn-btn" onclick="_scrollMixProductoTop('${p[1]}',${p[0]})">Ver</button>
       </div>`;
     }).join('');
 }
@@ -3487,7 +3529,7 @@ function mixRenderProdList(){
     const usedG2=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
     const canAdd=usedG2<mixSelSize.g;
     return`<div class="mix-prod-row">
-      <div class="mix-prod-name">${p[2]}</div>
+      <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper${isOver?' over':''}">
         <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="mixDecProd(${p[0]},${pxkg})" aria-label="Restar 100g">−</button>
@@ -3552,6 +3594,7 @@ function mixSetGrams(pid,val,pxkg){
 }
 
 function mixGLabel(g){return g>=1000?(g%1000===0?(g/1000)+' kg':(g/1000).toFixed(1)+' kg'):g+' g'}
+function _capName(s){return (s||'').toLowerCase().replace(/(^|\s|\-|\/)([a-záéíóúñ])/g,(m,p,c)=>p+c.toUpperCase());}
 
 function mixRenderSummary(){
   if(!mixSelSize)return;
@@ -3564,6 +3607,11 @@ function mixRenderSummary(){
   document.getElementById('mixFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('mixFillLbl').textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);
   document.getElementById('mixSumHead').textContent='Tu bolsón de '+mixGLabel(mixSelSize.g);
+  // Mini progress bar (mobile sticky)
+  var mf=document.getElementById('mixMiniFill');
+  var ml=document.getElementById('mixMiniLbl');
+  if(mf){mf.style.cssText='width:'+pct+'%;background:'+fillColor;}
+  if(ml){ml.textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);}
   const hint=document.getElementById('mixFillHint');
   const rem=mixSelSize.g-usedG;
   if(over){hint.textContent='⚠ Excedés por '+mixGLabel(usedG-mixSelSize.g);hint.style.color='#e8633a';}
@@ -3577,7 +3625,7 @@ function mixRenderSummary(){
     ingEl.innerHTML=ings.map(([pid,v])=>{
       const p=PRODS.find(x=>x[0]===+pid);
       const sub=Math.round(v.pxkg*(v.g/1000));
-      return`<div class="mix-ing-row"><span class="mix-ing-name">${p?p[2]:'?'}</span><span class="mix-ing-detail">${mixGLabel(v.g)} · $${fmt(sub)}</span></div>`;
+      return`<div class="mix-ing-row"><span class="mix-ing-name">${p?_capName(p[2]):'?'}</span><span class="mix-ing-detail">${mixGLabel(v.g)} · $${fmt(sub)}</span></div>`;
     }).join('');
   }
   const total=ings.reduce((a,[,v])=>a+Math.round(v.pxkg*(v.g/1000)),0);
@@ -3800,6 +3848,31 @@ function granolaRenderCatTabs(){
   ).join('');
 }
 function granolaSetCat(id){granolaActiveCat=id;granolaRenderCatTabs();granolaRenderProdList();}
+window._scrollGranolaProductoTop=function(grpId,pid){
+  if(granolaActiveCat!==grpId){granolaSetCat(grpId);}
+  setTimeout(function(){
+    var btn=document.querySelector('.prod-step-btn[onclick*="granolaIncProd('+pid+',"]');
+    if(!btn)return;
+    var row=btn.closest('.granola-prod-row');
+    if(!row)return;
+    var list=document.getElementById('granolaProdList');
+    var listScrollable=list && list.scrollHeight>list.clientHeight;
+    if(listScrollable){
+      list.scrollTo({top:row.offsetTop-list.offsetTop,behavior:'smooth'});
+    }else{
+      var miniBar=document.getElementById('granolaMiniProgress');
+      var miniH=miniBar && getComputedStyle(miniBar).display!=='none'?miniBar.offsetHeight:0;
+      var headerH=document.querySelector('#granolaModal .granola-modal-header').offsetHeight;
+      var modal=document.getElementById('granolaModal');
+      var scrollEl=modal.querySelector('.granola-modal-body')||modal;
+      var top=row.getBoundingClientRect().top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(headerH+miniH+8);
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    }
+    row.style.transition='background .3s';
+    row.style.background='rgba(74,124,57,.12)';
+    setTimeout(function(){row.style.background='';},900);
+  },80);
+};
 
 function _granolaQuickNav(){
   const ings=Object.entries(granolaIngreds).filter(([,v])=>v&&v.g>0);
@@ -3812,9 +3885,9 @@ function _granolaQuickNav(){
       const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
       const grp=_granolaGroup(p[1]);
       return`<div class="ing-qn-row">
-        <span class="ing-qn-name">${p[2]}</span>
+        <span class="ing-qn-name">${_capName(p[2])}</span>
         <span class="ing-qn-g">${_gLabel(v.g)}</span>
-        <button class="granola-ing-qn-btn" onclick="granolaSetCat('${grp}');setTimeout(()=>{const btn=document.querySelector('.prod-step-btn[onclick*=\'granolaIncProd(${p[0]},\']');if(btn){btn.closest('.granola-prod-row').scrollIntoView({behavior:'smooth',block:'center'});}},80)">Ver</button>
+        <button class="granola-ing-qn-btn" onclick="_scrollGranolaProductoTop('${grp}',${p[0]})">Ver</button>
       </div>`;
     }).join('');
 }
@@ -3834,7 +3907,7 @@ function granolaRenderProdList(){
     const gTrashBtn=cur>0?`<button onclick="granolaRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     const canAddG=usedG<granolaSelSize.g;
     return`<div class="granola-prod-row">
-      <div class="granola-prod-name">${p[2]}</div>
+      <div class="granola-prod-name">${_capName(p[2])}</div>
       <div class="granola-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper granola-stepper${isOver?' over':''}">
         <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="granolaDecProd(${p[0]},${pxkg})" aria-label="Restar 100g">−</button>
@@ -3862,10 +3935,15 @@ function granolaRenderSummary(){
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   const pct=Math.min(100,(usedG/granolaSelSize.g)*100);
   const full=usedG===granolaSelSize.g,over=usedG>granolaSelSize.g;
-  const fillColor=over?'#e8633a':full?'#16a34a':'#b87040';
+  const fillColor=over?'#e8633a':full?'#16a34a':'#4a7c39';
   document.getElementById('granolaFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('granolaFillLbl').textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);
   document.getElementById('granolaSumHead').textContent='Tu granola de '+_gLabel(granolaSelSize.g);
+  // Mini progress bar (mobile sticky)
+  var gmf=document.getElementById('granolaMiniFill');
+  var gml=document.getElementById('granolaMiniLbl');
+  if(gmf){gmf.style.cssText='width:'+pct+'%;background:'+fillColor;}
+  if(gml){gml.textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);}
   const hint=document.getElementById('granolaFillHint');
   const rem=granolaSelSize.g-usedG;
   if(over){hint.textContent='Excedés por '+_gLabel(usedG-granolaSelSize.g);hint.style.color='#e8633a';}
@@ -3873,7 +3951,7 @@ function granolaRenderSummary(){
   else{hint.textContent='Faltan '+_gLabel(rem);hint.style.color='var(--muted-fg)';}
   const ingEl=document.getElementById('granolaIngList');
   if(!ings.length){ingEl.innerHTML='<div style="padding:10px 0;font-size:13px;color:var(--muted-fg);text-align:center">Aún vacío</div>';}
-  else{ingEl.innerHTML=ings.map(([pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);const sub=Math.round(v.pxkg*(v.g/1000));return`<div class="granola-ing-row"><span class="granola-ing-name">${p?p[2]:'?'}</span><span class="granola-ing-detail">${_gLabel(v.g)} · $${fmt(sub)}</span></div>`;}).join('');}
+  else{ingEl.innerHTML=ings.map(([pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);const sub=Math.round(v.pxkg*(v.g/1000));return`<div class="granola-ing-row"><span class="granola-ing-name">${p?_capName(p[2]):'?'}</span><span class="granola-ing-detail">${_gLabel(v.g)} · $${fmt(sub)}</span></div>`;}).join('');}
   const total=ings.reduce((a,[,v])=>a+Math.round(v.pxkg*(v.g/1000)),0);
   document.getElementById('granolaIngCount').textContent=ings.length;
   document.getElementById('granolaTotal').textContent='$'+fmt(total);
