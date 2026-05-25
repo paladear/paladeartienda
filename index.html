@@ -1098,10 +1098,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
-.modal-icon-mix,.modal-icon-granola{flex-shrink:0;background-repeat:no-repeat;background-size:auto 100%;background-position:right top;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));align-self:center;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.modal-icon-mix{width:17px;height:54px;background-image:url('sprite-mix.png')}
-.modal-icon-granola{width:25px;height:54px;background-image:url('sprite-granola.png')}
-@media(max-width:480px){.modal-icon-mix{width:14px;height:44px}.modal-icon-granola{width:20px;height:44px}}
+.modal-icon-mix,.modal-icon-granola{flex-shrink:0;background-repeat:no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));align-self:center;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* Mix: frame 120x382, dibujo (bolsa) ocupa aprox y=180-382 (mitad inferior). Escalado factor 0.4 (frame visible 48 wide). Sprite escalado 240x152.8. Position x=-192 (último), y=-72 (recortar tope vacío) */
+.modal-icon-mix{width:48px;height:60px;background-image:url('sprite-mix.png');background-size:240px auto;background-position:-192px -72px}
+/* Granola: frame 120x260, dibujo (tazón) ocupa aprox y=80-260 (parte inferior). Escalado factor 0.42 (frame visible 50 wide). Sprite escalado 252x109. Position x=-202 (último), y=-34 (recortar tope vacío) */
+.modal-icon-granola{width:50px;height:62px;background-image:url('sprite-granola.png');background-size:252px auto;background-position:-202px -34px}
+@media(max-width:480px){.modal-icon-mix{width:40px;height:50px;background-size:200px auto;background-position:-160px -60px}.modal-icon-granola{width:42px;height:52px;background-size:210px auto;background-position:-168px -28px}}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
 @media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}}
 
@@ -1117,7 +1119,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal.hidden{display:none}
 .granola-modal-bg{display:none}
 .granola-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
-.granola-modal-header{background:#8faf9b;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:60px}
+.granola-modal-header{background:#8faf9b;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:70px}
 .granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
 .granola-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .granola-modal-back:hover,.granola-modal-back:active{background:rgba(255,255,255,.32)}
@@ -1262,7 +1264,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-bg{display:none}
 .mix-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
 @keyframes slideInModal{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
-.mix-modal-header{background:#7a4f2a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:60px}
+.mix-modal-header{background:#7a4f2a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:70px}
 .mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
 .mix-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .mix-modal-back:hover,.mix-modal-back:active{background:rgba(255,255,255,.32)}
@@ -1302,10 +1304,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .prod-step-btn:active:not(:disabled){transform:scale(.9)}
 .prod-step-btn:disabled{opacity:.35;cursor:not-allowed}
 .prod-step-val{min-width:48px;text-align:center;font-size:13px;font-weight:700;color:var(--azul-dark);padding:0 4px}
-.prod-trash-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:#b34a2a;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;padding:5px 8px;border-radius:8px;transition:background .15s,color .15s;white-space:nowrap}
+.prod-trash-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:none;color:rgba(0,0,0,.35);cursor:pointer;padding:4px;border-radius:6px;transition:background .15s,color .15s}
 .prod-trash-btn:hover,.prod-trash-btn:active{background:rgba(232,99,58,.12);color:#e8633a}
-.prod-trash-lbl{display:none}
-@media(max-width:520px){.prod-trash-lbl{display:inline}}
 .prod-stepper.over .prod-step-val{color:#e8633a}
 .granola-stepper{background:#e8f0ea}
 .granola-stepper .prod-step-btn{color:var(--azul-dark)}
@@ -3564,7 +3564,7 @@ function mixRenderProdList(){
         <span class="prod-step-val">${cur ? cur+' g' : '0 g'}</span>
         <button class="prod-step-btn" ${!canAdd?'disabled':''} onclick="mixIncProd(${p[0]},${pxkg})" aria-label="Sumar 100g">+</button>
       </div>
-      ${cur>0?`<button class="prod-trash-btn" onclick="mixRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span class="prod-trash-lbl">Quitar</span></button>`:''}
+      ${cur>0?`<button class="prod-trash-btn" onclick="mixRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>`:''}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
@@ -3977,7 +3977,7 @@ function granolaRenderProdList(){
         <span class="prod-step-val">${cur ? cur+' g' : '0 g'}</span>
         <button class="prod-step-btn" ${!canAddG?'disabled':''} onclick="granolaIncProd(${p[0]},${pxkg})" aria-label="Sumar 100g">+</button>
       </div>
-      ${cur>0?`<button class="prod-trash-btn" onclick="granolaRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span class="prod-trash-lbl">Quitar</span></button>`:''}
+      ${cur>0?`<button class="prod-trash-btn" onclick="granolaRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>`:''}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
