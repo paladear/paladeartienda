@@ -1838,11 +1838,9 @@ const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos',ic:'🥜'},'DESHID
 let CATS=[],PRODS=[],searchTerm='',activeCatId=null,miniCartTimer=null;
 
 /* ── CARRITO: empieza vacío cada sesión; sólo se guarda el ÚLTIMO pedido enviado ── */
-function _saveCart(){/* no-op: ya no persistimos el carrito entre sesiones */}
+function _saveCart(){try{localStorage.setItem('paladear_cart_v2',JSON.stringify(cart));}catch(e){}}
 function _loadCart(){
-  // Limpieza única de versiones viejas que guardaban el carrito
-  try{localStorage.removeItem('paladear_cart');}catch(e){}
-  return [];
+  try{const s=localStorage.getItem('paladear_cart_v2');return s?JSON.parse(s):[];}catch(e){return [];}
 }
 function _guardarUltimoPedido(){try{if(cart && cart.length)localStorage.setItem('paladear_ultimo_pedido',JSON.stringify(cart));}catch(e){}}
 function _cargarUltimoPedido(){try{const s=localStorage.getItem('paladear_ultimo_pedido');return s?JSON.parse(s):null;}catch(e){return null;}}
@@ -5580,6 +5578,9 @@ function coEnviar() {
 
   // Guardar el último pedido (minorista) para poder repetirlo después
   if (isMin) _guardarUltimoPedido();
+
+  // Limpiar el carrito (el pedido quedó guardado en "último pedido")
+  if (isMin) { cart=[]; updateCartCount(); try{localStorage.removeItem('paladear_cart_v2');}catch(e){} }
 
   cerrarCheckout();
   if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
