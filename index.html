@@ -1098,6 +1098,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
+.modal-icon-mix,.modal-icon-granola{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:100% 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.modal-icon-mix{width:26px;aspect-ratio:120/382;background-image:url('sprite-mix.png');margin:-28px 0}
+.modal-icon-granola{width:34px;aspect-ratio:120/260;background-image:url('sprite-granola.png');margin:-18px 0}
+@media(max-width:480px){.modal-icon-mix{width:22px;margin:-25px 0}.modal-icon-granola{width:30px;margin:-16px 0}}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
 @media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}}
 
@@ -1113,8 +1117,8 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal.hidden{display:none}
 .granola-modal-bg{display:none}
 .granola-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
-.granola-modal-header{background:#4a7c39;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
-.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
+.granola-modal-header{background:#8faf9b;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
+.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
 .granola-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .granola-modal-back:hover,.granola-modal-back:active{background:rgba(255,255,255,.32)}
 .granola-modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;font-size:24px;line-height:1}
@@ -1126,15 +1130,15 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* granola reuses mix inner styles but with amber accents */
 .granola-cat-tab{flex-shrink:0;padding:8px 16px;border-radius:999px;border:none;background:var(--tab-color,#4d7d8a);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;transition:all .2s;opacity:.7}
 .granola-cat-tab:hover:not(.active){opacity:.9}
-.granola-cat-tab.active{opacity:1;background:#fff!important;color:#4a7c39!important;box-shadow:0 0 0 2.5px #4a7c39,0 2px 8px rgba(0,0,0,.18)}
-.granola-sum-head{background:#e0eed7;padding:10px 14px;font-size:13px;font-weight:700;color:#365e29}
+.granola-cat-tab.active{opacity:1;background:#fff!important;color:#8faf9b!important;box-shadow:0 0 0 2.5px #8faf9b,0 2px 8px rgba(0,0,0,.18)}
+.granola-sum-head{background:#e8f0ea;padding:10px 14px;font-size:13px;font-weight:700;color:#4a7a60}
 .granola-size-btn{flex:1;min-width:90px;padding:12px 10px;border-radius:12px;border:2px solid var(--border);background:var(--card);cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;color:var(--muted-fg)}
-.granola-size-btn:hover{border-color:#4a7c39;color:#4a7c39}
-.granola-size-btn.sel{border-color:#4a7c39;background:#e0eed7;color:#4a7c39}
+.granola-size-btn:hover{border-color:#8faf9b;color:#8faf9b}
+.granola-size-btn.sel{border-color:#8faf9b;background:#e8f0ea;color:#8faf9b}
 .granola-size-btn strong{display:block;font-size:17px;font-weight:800;color:inherit}
 .granola-size-btn span{font-size:12px;opacity:.8}
-.granola-add-btn{width:100%;margin-top:10px;background:#4a7c39;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
-.granola-add-btn:hover{background:#365e29}
+.granola-add-btn{width:100%;margin-top:10px;background:#8faf9b;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.granola-add-btn:hover{background:#4a7a60}
 .granola-add-btn:disabled{background:var(--muted);color:var(--muted-fg);cursor:not-allowed}
 
 
@@ -1183,20 +1187,20 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .ing-quicknav.open .qn-toggle .qn-arrow{transform:rotate(180deg)}
 .qn-list{max-height:0;overflow:hidden;transition:max-height .25s ease-out}
 .ing-quicknav.open .qn-list{max-height:180px;overflow-y:auto;padding:0 14px 10px;border-top:1px solid rgba(0,0,0,.06)}
-.granola-quicknav{background:#e0eed7}
-.granola-quicknav .qn-toggle{color:#365e29}
-.granola-quicknav .qn-count{background:#4a7c39}
+.granola-quicknav{background:#e8f0ea}
+.granola-quicknav .qn-toggle{color:#4a7a60}
+.granola-quicknav .qn-count{background:#8faf9b}
 .ing-qn-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(77,125,138,.15)}
 .ing-qn-row:last-child{border-bottom:none}
 .ing-qn-name{flex:1;font-weight:600;color:var(--fg);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ing-qn-g{font-size:12px;color:var(--muted-fg);white-space:nowrap;margin-right:4px}
 .ing-qn-btn{background:var(--azul);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .ing-qn-btn:hover{background:var(--azul-dark)}
-.granola-ing-qn-btn{background:#4a7c39;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
-.granola-ing-qn-btn:hover{background:#365e29}
+.granola-ing-qn-btn{background:#8faf9b;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.granola-ing-qn-btn:hover{background:#4a7a60}
 .granola-cats-wrap{position:relative;margin-bottom:16px}
 .granola-cat-tabs::-webkit-scrollbar{display:none}
-.granola-cat-tab.active{opacity:1;background:#fff!important;color:#4a7c39!important;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.granola-cat-tab.active{opacity:1;background:#fff!important;color:#8faf9b!important;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 /* granola prod list same as mix */
 .granola-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
 .granola-prod-list{max-height:260px;overflow-y:auto}
@@ -1204,7 +1208,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-prod-row:last-child{border-bottom:none}
 .granola-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .granola-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
-@media(max-width:520px){.granola-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row > button[onclick*="granolaRemoveProd"]{position:absolute;display:none}}
+@media(max-width:520px){.granola-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row > button[onclick*="granolaRemoveProd"]{display:none!important}}
 .granola-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:#7a4f2a;text-align:center;outline:none;background:var(--card)}
 .granola-prod-input:focus{border-color:#b87040}
 .granola-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1265,7 +1269,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
 @keyframes slideInModal{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
 .mix-modal-header{background:#7a4f2a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5}
-.mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
+.mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
 .mix-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .mix-modal-back:hover,.mix-modal-back:active{background:rgba(255,255,255,.32)}
 .mix-modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;font-size:24px;line-height:1}
@@ -1293,7 +1297,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-prod-row:last-child{border-bottom:none}
 .mix-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .mix-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
-@media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row > button[onclick*="mixRemoveProd"]{display:none}}
+@media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row > button[onclick*="mixRemoveProd"]{display:none!important}}
 .mix-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--azul-dark);text-align:center;outline:none;background:var(--card)}
 .mix-prod-input:focus{border-color:var(--azul)}
 .mix-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1304,7 +1308,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .prod-step-btn:disabled{opacity:.35;cursor:not-allowed}
 .prod-step-val{min-width:48px;text-align:center;font-size:13px;font-weight:700;color:var(--azul-dark);padding:0 4px}
 .prod-stepper.over .prod-step-val{color:#e8633a}
-.granola-stepper{background:#e0eed7}
+.granola-stepper{background:#e8f0ea}
 .granola-stepper .prod-step-btn{color:var(--azul-dark)}
 .granola-stepper .prod-step-val{color:var(--azul-dark)}
 .granola-stepper.over{background:#ffe0d4}
@@ -1317,7 +1321,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-mini-progress .mini-total{color:var(--azul-dark);font-size:14px}
 .mix-mini-progress .mini-bar{height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
 .mix-mini-progress .mini-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .25s ease-out,background .2s}
-.mix-mini-progress.granola-mini-progress .mini-lbl,.mix-mini-progress.granola-mini-progress .mini-total{color:#365e29}
+.mix-mini-progress.granola-mini-progress .mini-lbl,.mix-mini-progress.granola-mini-progress .mini-total{color:#4a7a60}
 .mix-sum-panel{align-self:start}
 @media(max-width:600px){.mix-sum-panel{position:static}}
 .mix-sum-head{background:var(--azul-light);padding:10px 14px;font-size:13px;font-weight:700;color:var(--azul-dark)}
@@ -1716,7 +1720,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="mix-modal-box">
     <div class="mix-modal-header">
       <button class="mix-modal-back" onclick="closeMix()" aria-label="Volver"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <h2>🥜 Armá tu mix personalizado</h2>
+      <h2><span class="modal-icon-mix" aria-hidden="true"></span> Armá tu mix personalizado</h2>
       <button class="mix-modal-close" onclick="closeMix()" aria-label="Cerrar">×</button>
     </div>
     <div class="mix-mini-progress" id="mixMiniProgress" style="display:none">
@@ -1768,7 +1772,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="granola-modal-box">
     <div class="granola-modal-header">
       <button class="granola-modal-back" onclick="closeGranola()" aria-label="Volver"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <h2>🥣 Creá tu propia granola</h2>
+      <h2><span class="modal-icon-granola" aria-hidden="true"></span> Creá tu propia granola</h2>
       <button class="granola-modal-close" onclick="closeGranola()" aria-label="Cerrar">×</button>
     </div>
     <div class="mix-mini-progress granola-mini-progress" id="granolaMiniProgress" style="display:none">
@@ -3460,8 +3464,21 @@ function mixRenderSizes(){
 function mixPickSize(g){
   mixSelSize=MIX_SIZES.find(s=>s.g===g);
   mixIngreds={};
+  // Asegurar que el primer rubro esté seleccionado para que la lista aparezca con productos
+  const cats=mixGranelCats();
+  if(cats.length) mixActiveCat=cats[0].id;
   document.getElementById('mixBuilderArea').style.display='block';
-  mixRenderSizes();mixRenderProdList();mixRenderSummary();
+  mixRenderSizes();mixRenderCatTabs();mixRenderProdList();mixRenderSummary();
+  // Scrollear suavemente al paso 2 para que el usuario vea inmediatamente la lista de productos
+  setTimeout(function(){
+    var area=document.getElementById('mixBuilderArea');
+    var modal=document.getElementById('mixModal');
+    var scrollEl=modal.querySelector('.mix-modal-body')||modal;
+    if(area && scrollEl){
+      var top=area.getBoundingClientRect().top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-8;
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    }
+  },120);
 }
 
 const MIX_ALLOWED_CATS=['frutos','semillas','deshidratados'];
@@ -3845,8 +3862,25 @@ function granolaRenderSizes(){
 function granolaPickSize(g){
   granolaSelSize=GRANOLA_SIZES.find(s=>s.g===g);
   granolaIngreds={};
+  // Asegurar que el primer rubro esté seleccionado
+  const availCats=new Set(granolaGranelProds().map(p=>p[1]));
+  const availGroups=GRANOLA_GROUPS.filter(g=>{
+    if(g.cats)return g.cats.some(c=>availCats.has(c));
+    return [...availCats].some(c=>_granolaGroup(c)==='otros');
+  });
+  if(availGroups.length) granolaActiveCat=availGroups[0].id;
   document.getElementById('granolaBuilderArea').style.display='block';
-  granolaRenderSizes();granolaRenderProdList();granolaRenderSummary();
+  granolaRenderSizes();granolaRenderCatTabs();granolaRenderProdList();granolaRenderSummary();
+  // Scrollear al paso 2
+  setTimeout(function(){
+    var area=document.getElementById('granolaBuilderArea');
+    var modal=document.getElementById('granolaModal');
+    var scrollEl=modal.querySelector('.granola-modal-body')||modal;
+    if(area && scrollEl){
+      var top=area.getBoundingClientRect().top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-8;
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    }
+  },120);
 }
 
 function granolaGranelProds(){return PRODS.filter(p=>p[4]==='kg'&&p[10]===true);}
@@ -3898,7 +3932,7 @@ window._scrollGranolaProductoTop=function(grpId,pid){
       scrollEl.scrollTo({top:top,behavior:'smooth'});
     }
     row.style.transition='background .3s';
-    row.style.background='rgba(74,124,57,.12)';
+    row.style.background='rgba(143,175,155,.25)';
     setTimeout(function(){row.style.background='';},900);
   },80);
 };
@@ -3964,7 +3998,7 @@ function granolaRenderSummary(){
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   const pct=Math.min(100,(usedG/granolaSelSize.g)*100);
   const full=usedG===granolaSelSize.g,over=usedG>granolaSelSize.g;
-  const fillColor=over?'#e8633a':full?'#16a34a':'#4a7c39';
+  const fillColor=over?'#e8633a':full?'#16a34a':'#8faf9b';
   document.getElementById('granolaFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('granolaFillLbl').textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);
   document.getElementById('granolaSumHead').textContent='Tu granola de '+_gLabel(granolaSelSize.g);
