@@ -8,9 +8,6 @@ layout: null
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="google-site-verification" content="jZAof6C7e-min-6NmCVtqpdcvkP1vfr2s_rP7np4HEs" />
   
 <!-- ══════════ FAVICON ══════════ -->
@@ -216,6 +213,8 @@ layout: null
 }
 </script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
@@ -755,7 +754,6 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .receta-modal-hero img{width:100%;height:auto;display:block;object-fit:contain}
 .receta-modal-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .receta-modal-time{font-size:13px;color:var(--muted-fg)}
-.receta-ig-btn{display:none} /* ya no se usa */
 .receta-ig-link{display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:13px 20px;margin-top:16px;border-radius:12px;letter-spacing:.01em}
 .receta-ig-link:active{opacity:.85}
 /* Badge "Tiene receta" en cards de producto */
@@ -1098,12 +1096,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
-.modal-icon-mix,.modal-icon-granola{flex-shrink:0;background-repeat:no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));align-self:center;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-/* Mix: frame 120x382, dibujo (bolsa) ocupa aprox y=180-382 (mitad inferior). Escalado factor 0.4 (frame visible 48 wide). Sprite escalado 240x152.8. Position x=-192 (último), y=-72 (recortar tope vacío) */
-.modal-icon-mix{width:48px;height:60px;background-image:url('sprite-mix.png');background-size:240px auto;background-position:-192px -72px}
-/* Granola: frame 120x260, dibujo (tazón) ocupa aprox y=80-260 (parte inferior). Escalado factor 0.42 (frame visible 50 wide). Sprite escalado 252x109. Position x=-202 (último), y=-34 (recortar tope vacío) */
-.modal-icon-granola{width:50px;height:62px;background-image:url('sprite-granola.png');background-size:252px auto;background-position:-202px -34px}
-@media(max-width:480px){.modal-icon-mix{width:40px;height:50px;background-size:200px auto;background-position:-160px -60px}.modal-icon-granola{width:42px;height:52px;background-size:210px auto;background-position:-168px -28px}}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
 @media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}}
 
@@ -1120,7 +1112,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-bg{display:none}
 .granola-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
 .granola-modal-header{background:#8faf9b;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:70px}
-.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
+.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
 .granola-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .granola-modal-back:hover,.granola-modal-back:active{background:rgba(255,255,255,.32)}
 .granola-modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;font-size:24px;line-height:1}
@@ -1205,9 +1197,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .granola-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
 @media(max-width:520px){.granola-prod-row,.granola-prod-row.has-trash{grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name name" "price trash stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row .prod-trash-btn{grid-area:trash;justify-self:start;align-self:center}}
-.granola-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:#7a4f2a;text-align:center;outline:none;background:var(--card)}
-.granola-prod-input:focus{border-color:#b87040}
-.granola-prod-input.over{border-color:#e8633a;color:#e8633a}
 /* granola summary */
 .granola-layout{display:grid;grid-template-columns:1fr 240px;gap:16px}
 @media(max-width:600px){.granola-layout{grid-template-columns:1fr}}
@@ -1265,7 +1254,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-modal-box{position:relative;z-index:10;width:100%;height:100%;max-width:none;max-height:none;background:var(--card);border-radius:0;display:flex;flex-direction:column;overflow:hidden;animation:slideInModal .25s ease-out}
 @keyframes slideInModal{from{transform:translateX(16px);opacity:0}to{transform:translateX(0);opacity:1}}
 .mix-modal-header{background:#7a4f2a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:5;min-height:70px}
-.mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;gap:10px}
+.mix-modal-header h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;flex:1;text-align:center;margin:0}
 .mix-modal-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;padding:0}
 .mix-modal-back:hover,.mix-modal-back:active{background:rgba(255,255,255,.32)}
 .mix-modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;font-size:24px;line-height:1}
@@ -1295,9 +1284,6 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .mix-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
 @media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row,.mix-prod-row.has-trash{grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name name" "price trash stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row .prod-trash-btn{grid-area:trash;justify-self:start;align-self:center}}
-.mix-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--azul-dark);text-align:center;outline:none;background:var(--card)}
-.mix-prod-input:focus{border-color:var(--azul)}
-.mix-prod-input.over{border-color:#e8633a;color:#e8633a}
 .prod-stepper{display:inline-flex;align-items:center;background:var(--muted);border-radius:999px;padding:3px;gap:2px;user-select:none}
 .prod-stepper.over{background:#ffe0d4}
 .prod-step-btn{width:30px;height:30px;border:none;border-radius:50%;background:var(--card);color:var(--azul-dark);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;transition:transform .1s,background .15s;padding:0}
@@ -1719,7 +1705,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="mix-modal-box">
     <div class="mix-modal-header">
       <button class="mix-modal-back" onclick="closeMix()" aria-label="Volver"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <h2><span class="modal-icon-mix" aria-hidden="true"></span> Armá tu mix personalizado</h2>
+      <h2>Armá tu mix personalizado</h2>
       <button class="mix-modal-close" onclick="closeMix()" aria-label="Cerrar">×</button>
     </div>
     <div class="mix-mini-progress" id="mixMiniProgress" style="display:none">
@@ -1771,7 +1757,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="granola-modal-box">
     <div class="granola-modal-header">
       <button class="granola-modal-back" onclick="closeGranola()" aria-label="Volver"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <h2><span class="modal-icon-granola" aria-hidden="true"></span> Creá tu propia granola</h2>
+      <h2>Creá tu propia granola</h2>
       <button class="granola-modal-close" onclick="closeGranola()" aria-label="Cerrar">×</button>
     </div>
     <div class="mix-mini-progress granola-mini-progress" id="granolaMiniProgress" style="display:none">
@@ -3546,16 +3532,13 @@ function mixRenderProdList(){
   if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';_mixQuickNav();return;}
   const prods=mixGranelProds().filter(p=>p[1]===mixActiveCat);
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
-  const remG=mixSelSize.g-usedG;
   document.getElementById('mixProdList').innerHTML=prods.map(p=>{
     const opts=Object.keys(p[7]);
     const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
     const pxkg=p[7][refOpt][0];
     const cur=(mixIngreds[p[0]]&&mixIngreds[p[0]].g)||0;
     const isOver=usedG>mixSelSize.g;
-    const trashBtn=cur>0?`<button onclick="mixRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
-    const usedG2=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
-    const canAdd=usedG2<mixSelSize.g;
+    const canAdd=usedG<mixSelSize.g;
     return`<div class="mix-prod-row${cur>0?' has-trash':''}">
       <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
@@ -3607,21 +3590,6 @@ function granolaDecProd(pid,pxkg){
 }
 window.mixIncProd=mixIncProd;window.mixDecProd=mixDecProd;
 window.granolaIncProd=granolaIncProd;window.granolaDecProd=granolaDecProd;
-function mixSetGrams(pid,val,pxkg){
-  let raw=parseInt(val)||0;
-  if(raw<=0){delete mixIngreds[pid];}
-  else{
-    // redondear al múltiplo de 100 más cercano, mínimo 100g
-    let g=Math.max(100,Math.round(raw/100)*100);
-    mixIngreds[pid]={g,pxkg};
-  }
-  mixRenderSummary();_mixQuickNav();
-  const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
-  document.querySelectorAll('#mixProdList .prod-stepper').forEach(s=>{
-    s.classList.toggle('over',usedG>mixSelSize.g);
-  });
-}
-
 function mixGLabel(g){return g>=1000?(g%1000===0?(g/1000)+' kg':(g/1000).toFixed(1)+' kg'):g+' g'}
 function _capName(s){return (s||'').toLowerCase().replace(/(^|\s|\-|\/)([a-záéíóúñ])/g,(m,p,c)=>p+c.toUpperCase());}
 
@@ -3967,7 +3935,6 @@ function granolaRenderProdList(){
     const pxkg=p[7][refOpt][0];
     const cur=granolaIngreds[p[0]]?granolaIngreds[p[0]].g:0;
     const isOver=usedG>granolaSelSize.g;
-    const gTrashBtn=cur>0?`<button onclick="granolaRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     const canAddG=usedG<granolaSelSize.g;
     return`<div class="granola-prod-row${cur>0?' has-trash':''}">
       <div class="granola-prod-name">${_capName(p[2])}</div>
@@ -3982,15 +3949,6 @@ function granolaRenderProdList(){
   }).join('');
   if(!prods.length)document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
   _granolaQuickNav();
-}
-
-function granolaSetGrams(pid,val,pxkg){
-  let raw=parseInt(val)||0;
-  if(raw<=0){delete granolaIngreds[pid];}
-  else{let g=Math.max(100,Math.round(raw/100)*100);granolaIngreds[pid]={g,pxkg};}
-  granolaRenderSummary();_granolaQuickNav();
-  const usedG=Object.values(granolaIngreds).reduce((a,v)=>a+(v.g||0),0);
-  document.querySelectorAll('#granolaProdList .prod-stepper').forEach(s=>{s.classList.toggle('over',usedG>granolaSelSize.g);});
 }
 
 function granolaRenderSummary(){
@@ -5220,8 +5178,6 @@ window.mixSetCat=mixSetCat;
 window.mixAgregarAlCarrito=mixAgregarAlCarrito;
 window.granolaSetCat=granolaSetCat;
 window.granolaAgregarAlCarrito=granolaAgregarAlCarrito;
-window.granolaSetGrams=granolaSetGrams;
-window.mixSetGrams=mixSetGrams;
 window.onSearch=onSearch;
 window.cartDel=cartDel;
 window.cartQty=cartQty;
@@ -5716,7 +5672,6 @@ var RECETAS = [];
 var _recetasCargadas = false;
 var _recetasFiltroActivo = '';
 var _ultimaCatRecetas = '';
-var _instagramEmbedScriptLoaded = false;
 
 // URL de la hoja "inspiracion" — usa gviz/tq para resolver por nombre
 const RECETAS_URL = 'https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=inspiracion';
@@ -6185,26 +6140,6 @@ function cerrarProductoReceta() {
   document.body.style.overflow = '';
 }
 window.cerrarProductoReceta = cerrarProductoReceta;
-
-function _loadInstagramEmbedScript() {
-  if (_instagramEmbedScriptLoaded && window.instgrm) {
-    window.instgrm.Embeds.process();
-    return;
-  }
-  if (document.getElementById('instagramEmbedScript')) {
-    if (window.instgrm) window.instgrm.Embeds.process();
-    return;
-  }
-  const sc = document.createElement('script');
-  sc.id = 'instagramEmbedScript';
-  sc.async = true;
-  sc.src = 'https://www.instagram.com/embed.js';
-  sc.onload = function() {
-    _instagramEmbedScriptLoaded = true;
-    if (window.instgrm) window.instgrm.Embeds.process();
-  };
-  document.body.appendChild(sc);
-}
 
 // Mostrar/ocultar sección recetas + cargar si es la primera vez
 function _mostrarRecetas() {
