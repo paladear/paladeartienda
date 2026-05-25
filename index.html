@@ -1124,16 +1124,17 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* cat tabs scroll hint mobile */
 .mix-cat-tabs-wrap{position:relative}
 /* granola reuses mix inner styles but with amber accents */
-.granola-cat-tab{flex-shrink:0;padding:9px 14px;font-size:13px;cursor:pointer;border:none;border-bottom:2.5px solid transparent;color:var(--muted-fg);background:none;font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s}
-.granola-cat-tab.active{color:#7a4f1e;border-bottom-color:#b07030}
-.granola-sum-head{background:#fdefd8;padding:10px 14px;font-size:13px;font-weight:700;color:#7a4f1e}
+.granola-cat-tab{flex-shrink:0;padding:8px 16px;border-radius:999px;border:none;background:var(--tab-color,#4d7d8a);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;transition:all .2s;opacity:.7}
+.granola-cat-tab:hover:not(.active){opacity:.9}
+.granola-cat-tab.active{opacity:1;background:#fff!important;color:#4a7c39!important;box-shadow:0 0 0 2.5px #4a7c39,0 2px 8px rgba(0,0,0,.18)}
+.granola-sum-head{background:#e0eed7;padding:10px 14px;font-size:13px;font-weight:700;color:#365e29}
 .granola-size-btn{flex:1;min-width:90px;padding:12px 10px;border-radius:12px;border:2px solid var(--border);background:var(--card);cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;color:var(--muted-fg)}
-.granola-size-btn:hover{border-color:#b07030;color:#7a4f1e}
-.granola-size-btn.sel{border-color:#b07030;background:#fdefd8;color:#7a4f1e}
+.granola-size-btn:hover{border-color:#4a7c39;color:#4a7c39}
+.granola-size-btn.sel{border-color:#4a7c39;background:#e0eed7;color:#4a7c39}
 .granola-size-btn strong{display:block;font-size:17px;font-weight:800;color:inherit}
 .granola-size-btn span{font-size:12px;opacity:.8}
-.granola-add-btn{width:100%;margin-top:10px;background:#b07030;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
-.granola-add-btn:hover{background:#7a4f1e}
+.granola-add-btn{width:100%;margin-top:10px;background:#4a7c39;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.granola-add-btn:hover{background:#365e29}
 .granola-add-btn:disabled{background:var(--muted);color:var(--muted-fg);cursor:not-allowed}
 
 
@@ -1173,29 +1174,29 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-modal-bg{position:absolute;inset:0;background:rgba(26,55,64,.55);animation:fadeIn .2s}
 .granola-modal-box{position:relative;z-index:10;margin:auto;width:100%;max-width:860px;max-height:92vh;background:var(--card);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .22s;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media(max-width:767px){.granola-modal-box{margin-top:auto;border-radius:18px 18px 0 0;max-height:95vh}}
-.granola-modal-header{background:linear-gradient(135deg,#7a4f2a,#b87040);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.granola-modal-header h2{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700}
-.granola-modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
-.granola-modal-close:hover{background:rgba(255,255,255,.35)}
 .granola-modal-body{flex:1;overflow-y:auto;padding:20px 22px}
 /* ── GRANOLA CAT TABS con scroll y hint ── */
-.ing-quicknav{background:var(--azul-light);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px}
-.ing-quicknav-title{font-weight:700;color:var(--azul-dark);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.ing-quicknav{background:var(--azul-light);border-radius:10px;padding:0;margin-bottom:12px;font-size:13px}
+.qn-toggle{width:100%;display:flex;align-items:center;gap:8px;background:transparent;border:none;font-family:inherit;font-weight:700;color:var(--azul-dark);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;cursor:pointer;text-align:left}
+.qn-count{display:inline-flex;justify-content:center;align-items:center;min-width:20px;height:20px;padding:0 6px;background:var(--azul);color:#fff;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0}
+.qn-toggle .qn-arrow{margin-left:auto;transition:transform .2s;font-size:10px}
+.ing-quicknav.open .qn-toggle .qn-arrow{transform:rotate(180deg)}
+.qn-list{max-height:0;overflow:hidden;transition:max-height .25s ease-out}
+.ing-quicknav.open .qn-list{max-height:180px;overflow-y:auto;padding:0 14px 10px;border-top:1px solid rgba(0,0,0,.06)}
+.granola-quicknav{background:#e0eed7}
+.granola-quicknav .qn-toggle{color:#365e29}
+.granola-quicknav .qn-count{background:#4a7c39}
 .ing-qn-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(77,125,138,.15)}
 .ing-qn-row:last-child{border-bottom:none}
 .ing-qn-name{flex:1;font-weight:600;color:var(--fg);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ing-qn-g{font-size:12px;color:var(--muted-fg);white-space:nowrap;margin-right:4px}
 .ing-qn-btn{background:var(--azul);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .ing-qn-btn:hover{background:var(--azul-dark)}
-.granola-ing-qn-btn{background:#b87040;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
-.granola-ing-qn-btn:hover{background:#7a4f2a}
+.granola-ing-qn-btn{background:#4a7c39;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.granola-ing-qn-btn:hover{background:#365e29}
 .granola-cats-wrap{position:relative;margin-bottom:16px}
-.granola-cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch}
 .granola-cat-tabs::-webkit-scrollbar{display:none}
-.granola-cat-tab{flex-shrink:0;padding:8px 16px;border-radius:999px;border:none;background:var(--tab-color,#b87040);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;transition:all .2s;opacity:.7}
-.granola-cat-tab.active{opacity:1;box-shadow:0 0 0 2.5px #fff,0 2px 8px rgba(0,0,0,.2)}
-.granola-cat-tab:hover:not(.active){opacity:.9}
-.granola-scroll-hint{position:absolute;right:0;top:0;bottom:4px;width:40px;background:linear-gradient(to right,transparent,var(--card));pointer-events:none;border-radius:0 8px 8px 0}
+.granola-cat-tab.active{opacity:1;background:#fff!important;color:#4a7c39!important;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 /* granola prod list same as mix */
 .granola-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
 .granola-prod-list{max-height:260px;overflow-y:auto}
@@ -1286,7 +1287,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
 .mix-cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:10px 14px;-webkit-overflow-scrolling:touch}
 .mix-cat-tab{flex-shrink:0;padding:9px 16px;font-size:13px;cursor:pointer;border:none;border-radius:999px;color:#fff;background:var(--tab-color,var(--azul));font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s;opacity:.7}
-.mix-cat-tab.active{opacity:1;box-shadow:0 0 0 2.5px #fff,0 2px 8px rgba(0,0,0,.2)}
+.mix-cat-tab.active{opacity:1;background:#fff!important;color:#7a4f2a!important;box-shadow:0 0 0 2.5px #7a4f2a,0 2px 8px rgba(0,0,0,.18)}
 .mix-prod-list{max-height:320px;overflow-y:auto;overflow-x:hidden}
 .mix-prod-row{display:grid;grid-template-columns:1fr 90px 130px 24px;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
 .mix-prod-row:last-child{border-bottom:none}
@@ -1309,11 +1310,16 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-stepper.over{background:#ffe0d4}
 .granola-stepper.over .prod-step-val{color:#e8633a}
 .mix-sum-panel{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;align-self:start;position:sticky;top:0}
-.mix-mini-progress{display:none;position:sticky;top:0;background:var(--card);padding:10px 14px;border-bottom:1.5px solid var(--border);z-index:4;align-items:center;gap:10px}
-.mix-mini-progress .mini-bar{flex:1;height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
-.mix-mini-progress .mini-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .2s,background .2s}
-.mix-mini-progress .mini-lbl{font-size:12px;font-weight:700;color:var(--azul-dark);white-space:nowrap}
-@media(max-width:600px){.mix-mini-progress{display:flex}.mix-sum-panel{position:static}}
+.mix-mini-progress{display:none;flex-direction:column;gap:6px;background:var(--card);padding:10px 16px 12px;border-bottom:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);flex-shrink:0;animation:miniIn .25s ease-out}
+@keyframes miniIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.mix-mini-progress .mini-info{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.mix-mini-progress .mini-lbl{color:var(--azul-dark)}
+.mix-mini-progress .mini-total{color:var(--azul-dark);font-size:14px}
+.mix-mini-progress .mini-bar{height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
+.mix-mini-progress .mini-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .25s ease-out,background .2s}
+.mix-mini-progress.granola-mini-progress .mini-lbl,.mix-mini-progress.granola-mini-progress .mini-total{color:#365e29}
+.mix-sum-panel{align-self:start}
+@media(max-width:600px){.mix-sum-panel{position:static}}
 .mix-sum-head{background:var(--azul-light);padding:10px 14px;font-size:13px;font-weight:700;color:var(--azul-dark)}
 .mix-fill-wrap{padding:12px 14px 10px}
 .mix-fill-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;font-weight:700}
@@ -1713,18 +1719,21 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
       <h2>🥜 Armá tu mix personalizado</h2>
       <button class="mix-modal-close" onclick="closeMix()" aria-label="Cerrar">×</button>
     </div>
+    <div class="mix-mini-progress" id="mixMiniProgress" style="display:none">
+      <div class="mini-info">
+        <span class="mini-lbl" id="mixMiniLbl">0 g / —</span>
+        <span class="mini-total" id="mixMiniTotal">$0</span>
+      </div>
+      <div class="mini-bar"><div class="mini-fill" id="mixMiniFill" style="width:0%"></div></div>
+    </div>
     <div class="mix-modal-body">
       <div class="mix-step-label">1. Elegí el tamaño del bolsón</div>
       <div class="mix-sizes" id="mixSizes"></div>
       <div id="mixBuilderArea" style="display:none">
         <div class="mix-step-label step-active" style="margin-top:12px">👆 Paso 2 — Seleccioná los ingredientes de la lista</div>
-        <div id="mixQuickNav" style="display:none;background:var(--azul-light);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px"></div>
+        <div id="mixQuickNav" class="ing-quicknav" style="display:none"></div>
         <div class="mix-layout">
           <div class="mix-prod-panel">
-            <div class="mix-mini-progress" id="mixMiniProgress">
-              <span class="mini-lbl" id="mixMiniLbl">0 g / —</span>
-              <div class="mini-bar"><div class="mini-fill" id="mixMiniFill" style="width:0%"></div></div>
-            </div>
             <div class="mix-cat-tabs-wrap">
               <div class="mix-cat-tabs" id="mixCatTabs"></div>
             </div>
@@ -1762,18 +1771,21 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
       <h2>🥣 Creá tu propia granola</h2>
       <button class="granola-modal-close" onclick="closeGranola()" aria-label="Cerrar">×</button>
     </div>
+    <div class="mix-mini-progress granola-mini-progress" id="granolaMiniProgress" style="display:none">
+      <div class="mini-info">
+        <span class="mini-lbl" id="granolaMiniLbl">0 g / —</span>
+        <span class="mini-total" id="granolaMiniTotal">$0</span>
+      </div>
+      <div class="mini-bar"><div class="mini-fill" id="granolaMiniFill" style="width:0%"></div></div>
+    </div>
     <div class="granola-modal-body">
       <div class="mix-step-label">1. Elegí el tamaño del bolsón</div>
       <div class="mix-sizes" id="granolaSizes"></div>
       <div id="granolaBuilderArea" style="display:none">
         <div class="mix-step-label step-active" style="margin-top:12px">👆 Paso 2 — Seleccioná los ingredientes de la lista</div>
-        <div id="granolaQuickNav" style="display:none;background:#fdefd8;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px"></div>
+        <div id="granolaQuickNav" class="ing-quicknav granola-quicknav" style="display:none"></div>
         <div class="mix-layout">
           <div class="mix-prod-panel">
-            <div class="mix-mini-progress" id="granolaMiniProgress">
-              <span class="mini-lbl" id="granolaMiniLbl">0 g / —</span>
-              <div class="mini-bar"><div class="mini-fill" id="granolaMiniFill" style="width:0%"></div></div>
-            </div>
             <div class="mix-cat-tabs-wrap">
               <div class="mix-cat-tabs" id="granolaCatTabs"></div>
             </div>
@@ -3504,15 +3516,15 @@ function _mixQuickNav(){
   if(!el)return;
   if(!ings.length){el.style.display='none';return;}
   el.style.display='block';
-  el.innerHTML='<div class="ing-quicknav-title">Tus ingredientes actuales</div>'+
-    ings.map(([pid,v])=>{
+  el.innerHTML='<button class="qn-toggle" onclick="this.parentNode.classList.toggle(\'open\')">📋 Mis ingredientes <span class="qn-count">'+ings.length+'</span><span class="qn-arrow">▼</span></button>'+
+    '<div class="qn-list">'+ings.map(([pid,v])=>{
       const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
       return`<div class="ing-qn-row">
         <span class="ing-qn-name">${_capName(p[2])}</span>
         <span class="ing-qn-g">${_gLabel(v.g)}</span>
         <button class="ing-qn-btn" onclick="_scrollMixProductoTop('${p[1]}',${p[0]})">Ver</button>
       </div>`;
-    }).join('');
+    }).join('')+'</div>';
 }
 function mixRenderProdList(){
   if(!mixSelSize){document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';_mixQuickNav();return;}
@@ -3607,9 +3619,11 @@ function mixRenderSummary(){
   document.getElementById('mixFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('mixFillLbl').textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);
   document.getElementById('mixSumHead').textContent='Tu bolsón de '+mixGLabel(mixSelSize.g);
-  // Mini progress bar (mobile sticky)
+  // Mini progress bar (sticky en top del modal): se muestra al elegir tamaño y oculta al completar
+  var mp=document.getElementById('mixMiniProgress');
   var mf=document.getElementById('mixMiniFill');
   var ml=document.getElementById('mixMiniLbl');
+  var mt=document.getElementById('mixMiniTotal');
   if(mf){mf.style.cssText='width:'+pct+'%;background:'+fillColor;}
   if(ml){ml.textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);}
   const hint=document.getElementById('mixFillHint');
@@ -3631,13 +3645,28 @@ function mixRenderSummary(){
   const total=ings.reduce((a,[,v])=>a+Math.round(v.pxkg*(v.g/1000)),0);
   document.getElementById('mixIngCount').textContent=ings.length;
   document.getElementById('mixTotal').textContent='$'+fmt(total);
+  if(mt) mt.textContent='$'+fmt(total);
   const btn=document.getElementById('mixAddBtn');
   if(full&&ings.length>0){
     btn.disabled=false;btn.textContent='🛒 Agregar mix al carrito';
-    if(window.innerWidth<768)setTimeout(()=>btn.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+    // Bolsón completo: ocultar mini bar y scrollear al botón de agregar
+    if(mp){mp.style.display='none';}
+    setTimeout(function(){
+      var modal=document.getElementById('mixModal');
+      var scrollEl=modal.querySelector('.mix-modal-body')||modal;
+      var rect=btn.getBoundingClientRect();
+      var top=rect.top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(window.innerHeight-rect.height-24);
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    },150);
   }
-  else if(over){btn.disabled=true;btn.textContent='Excedés el peso del bolsón';}
-  else{btn.disabled=true;btn.textContent=ings.length?'Faltan '+mixGLabel(rem):'Agregar a tu carrito';}
+  else if(over){
+    btn.disabled=true;btn.textContent='Excedés el peso del bolsón';
+    if(mp){mp.style.display='flex';}
+  }
+  else{
+    btn.disabled=true;btn.textContent=ings.length?'Faltan '+mixGLabel(rem):'Agregar a tu carrito';
+    if(mp){mp.style.display='flex';}
+  }
 }
 
 function mixAgregarAlCarrito(){
@@ -3880,8 +3909,8 @@ function _granolaQuickNav(){
   if(!el)return;
   if(!ings.length){el.style.display='none';return;}
   el.style.display='block';
-  el.innerHTML='<div class="ing-quicknav-title">Tus ingredientes actuales</div>'+
-    ings.map(([pid,v])=>{
+  el.innerHTML='<button class="qn-toggle" onclick="this.parentNode.classList.toggle(\'open\')">📋 Mis ingredientes <span class="qn-count">'+ings.length+'</span><span class="qn-arrow">▼</span></button>'+
+    '<div class="qn-list">'+ings.map(([pid,v])=>{
       const p=PRODS.find(x=>x[0]===+pid);if(!p)return'';
       const grp=_granolaGroup(p[1]);
       return`<div class="ing-qn-row">
@@ -3889,7 +3918,7 @@ function _granolaQuickNav(){
         <span class="ing-qn-g">${_gLabel(v.g)}</span>
         <button class="granola-ing-qn-btn" onclick="_scrollGranolaProductoTop('${grp}',${p[0]})">Ver</button>
       </div>`;
-    }).join('');
+    }).join('')+'</div>';
 }
 function granolaRenderProdList(){
   if(!granolaSelSize){document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">Elegí primero el tamaño del bolsón</div>';_granolaQuickNav();return;}
@@ -3939,9 +3968,11 @@ function granolaRenderSummary(){
   document.getElementById('granolaFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('granolaFillLbl').textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);
   document.getElementById('granolaSumHead').textContent='Tu granola de '+_gLabel(granolaSelSize.g);
-  // Mini progress bar (mobile sticky)
+  // Mini progress bar (sticky en top del modal): se muestra al elegir tamaño y oculta al completar
+  var gmp=document.getElementById('granolaMiniProgress');
   var gmf=document.getElementById('granolaMiniFill');
   var gml=document.getElementById('granolaMiniLbl');
+  var gmt=document.getElementById('granolaMiniTotal');
   if(gmf){gmf.style.cssText='width:'+pct+'%;background:'+fillColor;}
   if(gml){gml.textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);}
   const hint=document.getElementById('granolaFillHint');
@@ -3955,13 +3986,27 @@ function granolaRenderSummary(){
   const total=ings.reduce((a,[,v])=>a+Math.round(v.pxkg*(v.g/1000)),0);
   document.getElementById('granolaIngCount').textContent=ings.length;
   document.getElementById('granolaTotal').textContent='$'+fmt(total);
+  if(gmt) gmt.textContent='$'+fmt(total);
   const btn=document.getElementById('granolaAddBtn');
   if(full&&ings.length>0){
     btn.disabled=false;btn.textContent='Agregar granola al carrito';
-    if(window.innerWidth<768)setTimeout(()=>btn.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+    if(gmp){gmp.style.display='none';}
+    setTimeout(function(){
+      var modal=document.getElementById('granolaModal');
+      var scrollEl=modal.querySelector('.granola-modal-body')||modal;
+      var rect=btn.getBoundingClientRect();
+      var top=rect.top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(window.innerHeight-rect.height-24);
+      scrollEl.scrollTo({top:top,behavior:'smooth'});
+    },150);
   }
-  else if(over){btn.disabled=true;btn.textContent='Excedés el peso del bolsón';}
-  else{btn.disabled=true;btn.textContent=ings.length?'Faltan '+_gLabel(rem):'Agregar a tu carrito';}
+  else if(over){
+    btn.disabled=true;btn.textContent='Excedés el peso del bolsón';
+    if(gmp){gmp.style.display='flex';}
+  }
+  else{
+    btn.disabled=true;btn.textContent=ings.length?'Faltan '+_gLabel(rem):'Agregar a tu carrito';
+    if(gmp){gmp.style.display='flex';}
+  }
 }
 
 function granolaAgregarAlCarrito(){
