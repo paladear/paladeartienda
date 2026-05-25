@@ -1098,10 +1098,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
-.modal-icon-mix,.modal-icon-granola{flex-shrink:0;width:52px;height:52px;background-repeat:no-repeat;background-size:500% auto;background-position:100% center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));align-self:center}
-.modal-icon-mix{background-image:url('sprite-mix.png')}
-.modal-icon-granola{background-image:url('sprite-granola.png')}
-@media(max-width:480px){.modal-icon-mix,.modal-icon-granola{width:42px;height:42px}}
+.modal-icon-mix,.modal-icon-granola{flex-shrink:0;background-repeat:no-repeat;background-size:auto 100%;background-position:right top;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));align-self:center;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.modal-icon-mix{width:17px;height:54px;background-image:url('sprite-mix.png')}
+.modal-icon-granola{width:25px;height:54px;background-image:url('sprite-granola.png')}
+@media(max-width:480px){.modal-icon-mix{width:14px;height:44px}.modal-icon-granola{width:20px;height:44px}}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
 @media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}}
 
@@ -1197,11 +1197,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 /* granola prod list same as mix */
 .granola-prod-panel{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
 .granola-prod-list{max-height:260px;overflow-y:auto}
-.granola-prod-row{display:grid;grid-template-columns:1fr 90px auto;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.granola-prod-row{display:grid;grid-template-columns:1fr 90px 130px;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.granola-prod-row.has-trash{grid-template-columns:1fr 90px 130px auto}
 .granola-prod-row:last-child{border-bottom:none}
 .granola-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .granola-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
-@media(max-width:520px){.granola-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row > button[onclick*="granolaRemoveProd"]{display:none!important}.granola-prod-row .prod-stepper button[onclick*="granolaRemoveProd"]{display:flex!important}}
+@media(max-width:520px){.granola-prod-row,.granola-prod-row.has-trash{grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name name" "price trash stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.granola-prod-name{grid-area:name;font-size:14px}.granola-prod-price{grid-area:price;text-align:left;align-self:center}.granola-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.granola-prod-row .prod-trash-btn{grid-area:trash;justify-self:start;align-self:center}}
 .granola-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:#7a4f2a;text-align:center;outline:none;background:var(--card)}
 .granola-prod-input:focus{border-color:#b87040}
 .granola-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1286,11 +1287,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-cat-tab{flex-shrink:0;padding:9px 16px;font-size:13px;cursor:pointer;border:none;border-radius:999px;color:#fff;background:var(--tab-color,var(--azul));font-family:inherit;white-space:nowrap;font-weight:600;transition:all .2s;opacity:.7}
 .mix-cat-tab.active{opacity:1;background:#fff!important;color:#7a4f2a!important;box-shadow:0 0 0 2.5px #7a4f2a,0 2px 8px rgba(0,0,0,.18)}
 .mix-prod-list{max-height:320px;overflow-y:auto;overflow-x:hidden}
-.mix-prod-row{display:grid;grid-template-columns:1fr 90px auto;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.mix-prod-row{display:grid;grid-template-columns:1fr 90px 130px;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.mix-prod-row.has-trash{grid-template-columns:1fr 90px 130px auto}
 .mix-prod-row:last-child{border-bottom:none}
 .mix-prod-name{font-size:13px;font-weight:600;color:var(--fg);min-width:0;overflow-wrap:break-word}
 .mix-prod-price{font-size:12px;color:var(--muted-fg);white-space:nowrap;text-align:right}
-@media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row{grid-template-columns:1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name" "price stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row > button[onclick*="mixRemoveProd"]{display:none!important}.mix-prod-row .prod-stepper button[onclick*="mixRemoveProd"]{display:flex!important}}
+@media(max-width:520px){.mix-prod-list{max-height:none}.mix-prod-row,.mix-prod-row.has-trash{grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;grid-template-areas:"name name name" "price trash stepper";column-gap:10px;row-gap:6px;padding:11px 12px}.mix-prod-name{grid-area:name;font-size:14px}.mix-prod-price{grid-area:price;text-align:left;align-self:center}.mix-prod-row .prod-stepper{grid-area:stepper;justify-self:end}.mix-prod-row .prod-trash-btn{grid-area:trash;justify-self:start;align-self:center}}
 .mix-prod-input{width:72px;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--azul-dark);text-align:center;outline:none;background:var(--card)}
 .mix-prod-input:focus{border-color:var(--azul)}
 .mix-prod-input.over{border-color:#e8633a;color:#e8633a}
@@ -1300,8 +1302,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .prod-step-btn:active:not(:disabled){transform:scale(.9)}
 .prod-step-btn:disabled{opacity:.35;cursor:not-allowed}
 .prod-step-val{min-width:48px;text-align:center;font-size:13px;font-weight:700;color:var(--azul-dark);padding:0 4px}
-.prod-step-trash{width:28px;height:28px;border:none;background:transparent;color:#b34a2a;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:50%;margin-left:2px;transition:background .15s,color .15s;padding:0}
-.prod-step-trash:hover,.prod-step-trash:active{background:rgba(232,99,58,.15);color:#e8633a}
+.prod-trash-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:#b34a2a;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;padding:5px 8px;border-radius:8px;transition:background .15s,color .15s;white-space:nowrap}
+.prod-trash-btn:hover,.prod-trash-btn:active{background:rgba(232,99,58,.12);color:#e8633a}
+.prod-trash-lbl{display:none}
+@media(max-width:520px){.prod-trash-lbl{display:inline}}
 .prod-stepper.over .prod-step-val{color:#e8633a}
 .granola-stepper{background:#e8f0ea}
 .granola-stepper .prod-step-btn{color:var(--azul-dark)}
@@ -3552,15 +3556,15 @@ function mixRenderProdList(){
     const trashBtn=cur>0?`<button onclick="mixRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     const usedG2=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
     const canAdd=usedG2<mixSelSize.g;
-    return`<div class="mix-prod-row">
+    return`<div class="mix-prod-row${cur>0?' has-trash':''}">
       <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper${isOver?' over':''}">
         <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="mixDecProd(${p[0]},${pxkg})" aria-label="Restar 100g">−</button>
         <span class="prod-step-val">${cur ? cur+' g' : '0 g'}</span>
         <button class="prod-step-btn" ${!canAdd?'disabled':''} onclick="mixIncProd(${p[0]},${pxkg})" aria-label="Sumar 100g">+</button>
-        ${cur>0?`<button class="prod-step-trash" onclick="mixRemoveProd(${p[0]})" aria-label="Quitar producto" title="Quitar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:''}
       </div>
+      ${cur>0?`<button class="prod-trash-btn" onclick="mixRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span class="prod-trash-lbl">Quitar</span></button>`:''}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('mixProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
@@ -3965,15 +3969,15 @@ function granolaRenderProdList(){
     const isOver=usedG>granolaSelSize.g;
     const gTrashBtn=cur>0?`<button onclick="granolaRemoveProd(${p[0]})" title="Quitar" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.3);padding:0 2px;display:flex;align-items:center;transition:color .2s" onmouseover="this.style.color='#e8633a'" onmouseout="this.style.color='rgba(0,0,0,.3)'"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
     const canAddG=usedG<granolaSelSize.g;
-    return`<div class="granola-prod-row">
+    return`<div class="granola-prod-row${cur>0?' has-trash':''}">
       <div class="granola-prod-name">${_capName(p[2])}</div>
       <div class="granola-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper granola-stepper${isOver?' over':''}">
         <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="granolaDecProd(${p[0]},${pxkg})" aria-label="Restar 100g">−</button>
         <span class="prod-step-val">${cur ? cur+' g' : '0 g'}</span>
         <button class="prod-step-btn" ${!canAddG?'disabled':''} onclick="granolaIncProd(${p[0]},${pxkg})" aria-label="Sumar 100g">+</button>
-        ${cur>0?`<button class="prod-step-trash" onclick="granolaRemoveProd(${p[0]})" aria-label="Quitar producto" title="Quitar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:''}
       </div>
+      ${cur>0?`<button class="prod-trash-btn" onclick="granolaRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span class="prod-trash-lbl">Quitar</span></button>`:''}
     </div>`;
   }).join('');
   if(!prods.length)document.getElementById('granolaProdList').innerHTML='<div style="padding:16px;font-size:13px;color:var(--muted-fg);text-align:center">No hay productos a granel en esta categoría</div>';
