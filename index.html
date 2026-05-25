@@ -265,8 +265,10 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* ── HEADER DROPDOWNS ── */
 .header-dropdowns{display:flex;gap:7px;flex-shrink:0;justify-content:flex-end;flex-wrap:nowrap;align-items:center;min-width:0;overflow:visible;order:3;margin-left:auto}
 .hdrop{position:relative;flex-shrink:0}
-.hdrop-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:inherit;white-space:nowrap;line-height:1.2;background:rgba(255,255,255,.92);color:var(--azul-dark)}
-.hdrop-btn:hover{background:#fff!important;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.22)}
+.hdrop-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:inherit;white-space:nowrap;line-height:1.2;background:var(--azul-dark);color:#fff}
+.hdrop-btn.may-btn{background:#2a4361}
+.hdrop-btn:hover{background:#1a3050!important;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.22)}
+.hdrop-btn.may-btn:hover{background:#13243d!important}
 .hdrop-btn .arrow{font-size:9px;transition:transform .2s;display:inline-block;opacity:.75}
 .hdrop.open .arrow{transform:rotate(180deg)}
 /* Mobile: mostrar solo emoji en pantallas muy chicas */
@@ -1328,7 +1330,9 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mayorista-banner-promo .may-promo-text p{font-size:13px;opacity:.9}
 .may-nav-btn{background:var(--azul);color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .may-nav-btn:hover{background:var(--azul-dark);transform:translateY(-1px)}
-.tabs-zone{background:var(--azul);padding:0;margin:0}
+.tabs-zone{background:var(--azul);padding:0;margin:0;overflow:hidden}
+.tabs-zone .may-tab,.tabs-zone .may-tab.active,.tabs-zone .may-tab:focus,.tabs-zone .may-tab:focus-visible,.tabs-zone .may-tab:active{outline:none!important;box-shadow:none!important;border:none!important;text-decoration:none!important;-webkit-tap-highlight-color:transparent}
+.tabs-pill{box-shadow:none!important;border:none!important}
 .may-tabs-wrap{display:flex;gap:0;margin:0 auto;max-width:1100px;position:relative;padding:0 16px}
 .tabs-pill{position:absolute;top:0;bottom:0;left:var(--pill-x,0);width:var(--pill-w,0);background:var(--bg);border-radius:24px 24px 0 0;z-index:1;pointer-events:none}
 .tabs-pill::before,.tabs-pill::after{content:'';position:absolute;bottom:0;width:28px;height:28px;pointer-events:none}
@@ -1808,8 +1812,8 @@ window._repetirUltimoPedido=function(){
   const u=_cargarUltimoPedido();
   if(!u||!u.length){return;}
   cart=u.slice();
+  if(typeof updateCartCount==='function')updateCartCount();
   if(typeof renderCart==='function')renderCart();
-  if(typeof updateCartBadge==='function')updateCartBadge();
 };
 let cart=_loadCart();
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
@@ -5847,16 +5851,12 @@ function abrirReceta(idx, skipHistory) {
     html += '</div>';
   }
 
-  // Instagram — link al reel/post (Instagram NO permite reproducir reels inline, así que un botón limpio es lo más útil)
+  // Instagram — link al perfil de Paladear (los reels no se pueden reproducir inline, así que redirigimos al perfil)
   if (r.urlIG) {
-    const igUrl = _normalizeInstagramUrl(r.urlIG);
-    const isReel = r.urlIG.includes('/reel/');
-    if (igUrl) {
-      html += '<a class="receta-ig-link" href="' + igUrl + '" target="_blank" rel="noopener noreferrer">'
-        + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>'
-        + (isReel ? 'Ver el reel en Instagram' : 'Ver el post en Instagram')
-        + '</a>';
-    }
+    html += '<a class="receta-ig-link" href="https://www.instagram.com/palade.ar" target="_blank" rel="noopener noreferrer">'
+      + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>'
+      + 'Seguinos en Instagram @palade.ar'
+      + '</a>';
   }
 
   document.getElementById('recetaModalTitle').textContent = r.titulo;
