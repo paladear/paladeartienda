@@ -1852,6 +1852,7 @@ window._repetirUltimoPedido=function(){
   if(typeof renderCart==='function')renderCart();
 };
 let cart=_loadCart();
+if(cart.length)updateCartCount();
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
 let _loaderHidden=false;
@@ -4204,6 +4205,7 @@ let CATS_MAY = [];
 function _saveCartMay(){try{localStorage.setItem('paladear_cart_may_v2',JSON.stringify(cartMay));}catch(e){}}
 function _loadCartMay(){try{const s=localStorage.getItem('paladear_cart_may_v2');return s?JSON.parse(s):[];}catch(e){return [];}}
 let cartMay = _loadCartMay();
+if(cartMay.length)updateCartMayCount();
 let activeCatIdMay = null;
 let searchTermMay = '';
 let _searchTimerMay = null;
