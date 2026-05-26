@@ -5003,7 +5003,8 @@ function renderCartMay() {
     return;
   }
   const total  = cartMay.reduce((a, i) => a + i.l1 * i.c, 0);
-  const totalMinoristaEquiv = cartMay.reduce((a, i) => a + _itemMayMinoristaEquiv(i), 0);
+  // Si el producto no tiene equivalente minorista (artId no vinculado), se asume 35% más caro
+  const totalMinoristaEquiv = cartMay.reduce((a, i) => { const r=_itemMayMinoristaEquiv(i); return a+(r>0?r:Math.round(i.l1*i.c*1.35)); }, 0);
   const ahorro = Math.max(0, totalMinoristaEquiv - total);
   const ahorroPct = totalMinoristaEquiv > 0 ? Math.round((ahorro / totalMinoristaEquiv) * 100) : 0;
   const cumple = total >= MIN_COMPRA_MAYORISTA;
