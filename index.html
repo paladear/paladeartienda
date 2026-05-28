@@ -1430,6 +1430,36 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="loading-text">Cargando Paladear...</div>
 </div>
 
+<script>
+/* Watchdog anti-cuelgue: si la pantalla de carga sigue visible tras 12s,
+   algo quedó trabado (SW o cache corrupto). Auto-recuperamos UNA sola vez:
+   desregistramos el Service Worker, limpiamos los caches y recargamos.
+   El flag en sessionStorage evita bucles de recarga. En una carga normal
+   el loader se oculta antes de los 12s, así que esto nunca se dispara. */
+(function(){
+  setTimeout(function(){
+    var ov=document.getElementById('loadingOverlay');
+    var visible=ov && !ov.classList.contains('hidden') && ov.parentNode;
+    if(!visible)return;
+    try{ if(sessionStorage.getItem('paladear_autoheal'))return; sessionStorage.setItem('paladear_autoheal','1'); }catch(e){}
+    var reload=function(){ try{location.reload();}catch(e){} };
+    var jobs=[];
+    if('serviceWorker' in navigator){
+      jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){
+        return Promise.all(rs.map(function(r){return r.unregister();}));
+      }).catch(function(){}));
+    }
+    if(window.caches){
+      jobs.push(caches.keys().then(function(ks){
+        return Promise.all(ks.map(function(k){return caches.delete(k);}));
+      }).catch(function(){}));
+    }
+    Promise.all(jobs).then(reload).catch(reload);
+    setTimeout(reload,1800);
+  },12000);
+})();
+</script>
+
 <header class="header">
 <div class="header-inner">
   <div class="logo-wrap">
