@@ -1882,7 +1882,11 @@ window._repetirUltimoPedido=function(){
   if(typeof renderCart==='function')renderCart();
 };
 let cart=_loadCart();
-if(cart.length)updateCartCount();
+// Reflejar el número en el badge al cargar. OJO: NO llamar updateCartCount() acá
+// porque depende de _wasMay (declarada más abajo con let). Llamarla en este punto
+// rompía todo el script cuando había productos guardados → pantalla de carga
+// infinita. Actualizamos el badge a mano; updateCartCount() corre normal después.
+try{if(cart.length){var _badge0=document.getElementById('cartCount');if(_badge0)_badge0.textContent=cart.length;}}catch(e){}
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
 let _loaderHidden=false;
