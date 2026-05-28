@@ -2009,7 +2009,7 @@ function _matchScore(q,t){
   return score;
 }
 function _imgZoomGoBack(){if(history.state&&history.state.modal==='imgZoom')history.back();else{const z=document.getElementById('imgZoom');if(z)z.remove();}}
-function zoomImg(el){const src=el.dataset.src||'';if(!src)return;const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<button class="zoom-close" onclick="_imgZoomGoBack()">×</button><img src="${src}" alt="">`;document.body.appendChild(z);history.pushState({modal:'imgZoom'},'');}
+function zoomImg(el){let src=el.dataset.src||'';if(!src)return;src=src.replace(/=w\d+/,'=w1200');const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<button class="zoom-close" onclick="_imgZoomGoBack()">×</button><img src="${src}" alt="">`;document.body.appendChild(z);history.pushState({modal:'imgZoom'},'');}
 window.addEventListener('popstate',function(e){const z=document.getElementById('imgZoom');if(z){z.remove();e.stopImmediatePropagation();}});
 
 /* ── CARRUSELES ── */
@@ -2989,7 +2989,10 @@ function _driveToImg(raw){
   if(!m)m=raw.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
   const hoy=new Date();
   const bust=hoy.getFullYear()+''+('0'+(hoy.getMonth()+1)).slice(-2)+''+('0'+hoy.getDate()).slice(-2);
-  return m?'https://lh3.googleusercontent.com/d/'+m[1]+'?v='+bust:raw;
+  // =w600: pedimos a Google la imagen redimensionada a 600px de ancho (nítida en
+  // tarjetas y modal) en vez del original de ~200KB. Reduce el peso a la mitad.
+  // El zoom (zoomImg) sube la resolución a w1200 bajo demanda para verla grande.
+  return m?'https://lh3.googleusercontent.com/d/'+m[1]+'=w600?v='+bust:raw;
 }
 
 // Parsea "250g/500g/1kg" o "1 unidad" y devuelve array de claves de opciones válidas
