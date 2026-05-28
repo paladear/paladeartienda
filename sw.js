@@ -1,9 +1,25 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.3  |  Bump cache para destrabar PWA colgadas en splash
+// Versión: 1.4
+//
+// CAMBIO CLAVE (arregla "no carga si no borrás el historial" y
+// "tarda muchísimo en cargar"):
+//
+//   1. Ya NO cacheamos las llamadas a datos (Google Sheets / Apps
+//      Script). Esas URLs llevan timestamp + random y son únicas en
+//      cada visita, así que el Cache Storage crecía sin límite hasta
+//      agotar la cuota del navegador y romper la carga. Los datos ya
+//      se guardan en localStorage por la propia app, así que el modo
+//      offline sigue funcionando.
+//
+//   2. El shell estático (HTML, íconos, imágenes propias) ahora se
+//      sirve con estrategia stale-while-revalidate: carga al instante
+//      desde el cache y se actualiza en segundo plano. Antes era
+//      network-first, que en redes lentas hacía esperar la red en
+//      cada carga.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v4';
+const CACHE_VERSION = 'paladear-v5';
 
 const SHELL_FILES = [
   '/paladeartienda/',
@@ -25,56 +41,46 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// ── ACTIVATE: limpiar caches viejos ────────────────────
+// ── ACTIVATE: borrar caches viejos (incluye el v4 inflado) ──
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(k => k !== CACHE_VERSION)
-          .map(k => {
-            console.log('[SW] Eliminando cache viejo:', k);
-            return caches.delete(k);
-          })
-      )
-    )
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// ── FETCH: network-first para todo ─────────────────────
-//
-// Con internet  → sirve datos frescos y actualiza el caché.
-// Sin internet  → sirve los últimos datos cacheados.
-//
-// IMPORTANTE: los datos del Sheet vienen via JSONP (<script>
-// cross-origin), lo que produce respuestas "opacas" con
-// status=0 en el SW. Por eso cacheamos también response.type
-// === 'opaque' y no solo status === 200.
-//
+// ── FETCH ───────────────────────────────────────────────
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
+  let url;
+  try { url = new URL(event.request.url); } catch (e) { return; }
+
+  // DATOS y recursos externos (Google Sheets, Apps Script, imágenes
+  // de Google, fuentes, etc.): NO los interceptamos. Van directo a la
+  // red y, si corresponde, los maneja el cache HTTP normal del
+  // navegador. Así el Cache Storage nunca se infla con URLs únicas.
+  if (url.origin !== self.location.origin) return;
+
+  // SHELL del mismo origen: stale-while-revalidate.
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Cachear respuestas exitosas normales Y respuestas opacas
-        // (las opacas son los JSONP de Google Apps Script)
-        const cacheable = response && (response.status === 200 || response.type === 'opaque');
-        if (cacheable) {
-          const clone = response.clone();
-          caches.open(CACHE_VERSION)
-            .then(cache => cache.put(event.request, clone))
-            .catch(() => {});
-        }
-        return response;
+    caches.open(CACHE_VERSION).then(cache =>
+      cache.match(event.request).then(cached => {
+        const network = fetch(event.request)
+          .then(response => {
+            if (response && response.status === 200) {
+              cache.put(event.request, response.clone()).catch(() => {});
+            }
+            return response;
+          })
+          .catch(() => cached || caches.match('/paladeartienda/index.html'));
+        // Servimos el cache al instante si existe; si no, esperamos la red.
+        return cached || network;
       })
-      .catch(() => {
-        return caches.match(event.request).then(cached => {
-          if (cached) return cached;
-          return caches.match('/paladeartienda/index.html');
-        });
-      })
+    )
   );
 });
 
