@@ -1507,6 +1507,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
         <div class="hdrop-title">📦 Ventas Mayoristas</div>
         <div class="hdrop-row"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg></span><div><strong>Contacto</strong>+549 261 598 3065</div></div>
         <div class="hdrop-row"><span class="ic">🕗</span><div><strong>Horario</strong>Lunes a Viernes · 08:00 a 16:00 hs<br>Sábados · 08:00 a 13:00 hs</div></div>
+        <div class="hdrop-row"><span class="ic">📍</span><div><strong>Depósito mayorista</strong>Ruta Provincial 50 Nº 13080, KM 8 — Guaymallén, Mendoza · <a href="https://maps.app.goo.gl/wXF3iur1SQbWvsvY7" target="_blank" rel="noopener noreferrer" style="color:var(--azul);font-weight:600;text-decoration:underline">Ver en mapa</a></div></div>
         <div class="hdrop-row"><span class="ic">🏷️</span><div><strong>Condición de venta</strong>Ventas mayores a $250.000 por bulto cerrado</div></div>
         <div class="hdrop-row"><span class="ic">🚚</span><div><strong>Envíos</strong>Consultá por nuestros canales de venta al por mayor</div></div>
         <button class="hdrop-cta min-cta" onclick="closeAllHdrops();window.open('https://wa.me/5492615983065','_blank')">💬 Contactar por WhatsApp</button>
@@ -2865,11 +2866,11 @@ function responderChat(msg){
   if(/metodo.*pago|medio.*pago|como.*pagar|abonar|pagar|transferencia|efectivo|tarjeta|mercado.*pago|mp|qr/.test(t)||t==='¿qué métodos de pago aceptan?')
     return '💳 Métodos de pago\n\n📍 En el local:\n• Efectivo (5% de descuento)\n• Tarjetas de crédito y débito\n• Mercado Pago o MODO\n\n🚚 Envíos a domicilio:\n• Transferencia bancaria (pedinos el ALIAS)\n• Tarjeta de crédito/débito via link de Mercado Pago\n\nEl descuento en efectivo se aplica sobre el total del pedido.';
   if(/horario|hora|abren|abrir|cuando|dias|abre|cierra/.test(t))
-    return 'Nuestros horarios son:\n\n🛒 Venta Minorista:\nLunes a Sábados · 10:00 a 20:00 hs\nPueyrredón 588, Mendoza\n\n📦 Venta Mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nTambién podés hacer tu pedido online las 24hs por este catálogo.';
+    return 'Nuestros horarios son:\n\n🛒 Venta Minorista:\nLunes a Sábados · 10:00 a 20:00 hs\nPueyrredón 588, Mendoza\n\n📦 Venta Mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\nDepósito: Ruta Provincial 50 Nº 13080, KM 8 — Guaymallén\n\nTambién podés hacer tu pedido online las 24hs por este catálogo.';
   if(/direccion|ubicacion|donde|local|tienda|lugar|mapa/.test(t))
-    return 'Estamos en Pueyrredón 588, esquina Paso de los Andes 📍\nQuinta Sección, Ciudad de Mendoza.\n\nHorario minorista: Lunes a Sábados de 10:00 a 20:00 hs.\nPodés encontrarnos en Google Maps como "Paladear Mercado de Sabores".';
+    return '📍 Tenemos dos direcciones:\n\n🛒 Local minorista:\nPueyrredón 588, esq. Paso de los Andes — Quinta Sección, Ciudad de Mendoza.\nLunes a Sábados de 10:00 a 20:00 hs.\n(En Google Maps: "Paladear Mercado de Sabores")\n\n📦 Depósito mayorista:\nRuta Provincial 50 Nº 13080, KM 8 — Guaymallén, Mendoza.\nLunes a Viernes de 08:00 a 16:00 hs · Sábados de 08:00 a 13:00 hs.\nMapa: https://maps.app.goo.gl/wXF3iur1SQbWvsvY7';
   if(/mayorista|mayor|precio mayor|lista mayor|lista 2|250000|250\.000/.test(t))
-    return '📦 Lista Mayorista\n\nContamos con una lista mayorista con precios especiales para compras en volumen.\n\nCondición: Ventas mayores a $250.000 por bulto cerrado.\n\nHorario de atención mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\nContacto mayorista: +549 261 598 3065\n\nPodés acceder desde la pestaña "Lista Mayorista" en el catálogo.';
+    return '📦 Lista Mayorista\n\nContamos con una lista mayorista con precios especiales para compras en volumen.\n\nCondición: Ventas mayores a $250.000 por bulto cerrado.\n\n🕗 Horario de atención mayorista:\nLunes a Viernes · 08:00 a 16:00 hs\nSábados · 08:00 a 13:00 hs\n\n📍 Depósito mayorista:\nRuta Provincial 50 Nº 13080, KM 8 — Guaymallén, Mendoza.\nMapa: https://maps.app.goo.gl/wXF3iur1SQbWvsvY7\n\n📞 Contacto mayorista: +549 261 598 3065\n\nPodés acceder desde la pestaña "Lista Mayorista" en el catálogo.';
   if(/precio|cuanto.*cuesta|valor|kilo|kg|como.*se.*expresa|descuento|80000|80\.000/.test(t))
     return '💰 Precios\n\nLos precios están publicados por kilogramo en la Lista Minorista.\n\n🏷️ Descuento por cantidad: En compras minoristas que superen los $80.000 se aplica automáticamente un descuento. El precio en azul en cada producto es el precio con descuento.\n\n📦 Lista Mayorista: Para compras mayores a $250.000 por bulto cerrado. Accedé desde la pestaña correspondiente en el catálogo.';
   if(/pedido|como comprar|como pedir|comprar|hacer pedido|proceso|paso a paso/.test(t))
@@ -2919,7 +2920,7 @@ function responderChat(msg){
   if(/vegano|vegana|plant based/.test(t))
     return 'Muchos de nuestros productos son aptos para veganos 🌱\nFrutos secos, semillas, harinas, legumbres, especias y más. Si querés saber sobre un producto específico, consultanos.';
   if(/retiro|retirar|buscar|paso a buscar/.test(t))
-    return 'Podés retirar tu pedido en el local sin problema 🏠\nEstamos en Pueyrredón 588, Mendoza.\nHorario: lunes a sábado de 10:00 a 20:00 hs.';
+    return 'Podés retirar tu pedido sin problema 🏠\n\n🛒 Pedidos minoristas:\nPueyrredón 588, Mendoza · Lunes a Sábados de 10:00 a 20:00 hs.\n\n📦 Pedidos mayoristas:\nDepósito en Ruta Provincial 50 Nº 13080, KM 8 — Guaymallén.\nLunes a Viernes de 08:00 a 16:00 hs · Sábados de 08:00 a 13:00 hs.\nMapa: https://maps.app.goo.gl/wXF3iur1SQbWvsvY7';
   if(/^(hola|buen|buenas|saludos|hey|hi|buenos dias|buenas tardes|buenas noches)/.test(t))
     return '¡Hola! 👋 Bienvenido a Paladear Mercado de Sabores.\n¿En qué te puedo ayudar?';
   if(/gracias|muchas gracias|genial|perfecto|excelente|ok gracias/.test(t))
@@ -5283,6 +5284,23 @@ window.toggleHdrop=toggleHdrop;
 window.closeAllHdrops=closeAllHdrops;
 
 // ═══ CHECKOUT — ENTREGA Y DATOS ═══
+// Direcciones de retiro según el tipo de venta. Minorista retira en Pueyrredón
+// (Quinta Sección); mayorista retira en el depósito de Guaymallén.
+var _RETIRO = {
+  minorista: {
+    dirCorta: 'Pueyrredón 588, Mendoza',
+    dirLarga: 'Pueyrredón 588, esq. Paso de los Andes — Quinta Sección, Mendoza',
+    horarioCorto: 'Lun–Sáb 10 a 20hs',
+    horarioLargo: 'Lunes a Sábados 10:00 a 20:00hs'
+  },
+  mayorista: {
+    dirCorta: 'Ruta Prov. 50 Nº 13080, KM 8 — Guaymallén',
+    dirLarga: 'Ruta Provincial 50 Nº 13080, KM 8 — Guaymallén, Mendoza',
+    horarioCorto: 'Lun–Vie 8 a 16 · Sáb 8 a 13hs',
+    horarioLargo: 'Lunes a Viernes 08:00 a 16:00hs · Sábados 08:00 a 13:00hs',
+    mapa: 'https://maps.app.goo.gl/wXF3iur1SQbWvsvY7'
+  }
+};
 var _coVenta = 'minorista';
 var _coEntrega = null;
 var _coMap = null, _coMarker = null, _leafletReady = false;
@@ -5332,6 +5350,12 @@ window.coBorrarPerfil = function() {
 function abrirCheckout(venta) {
   _coVenta = venta || 'minorista';
   _coEntrega = null;
+  // Textos de retiro según minorista (Pueyrredón) o mayorista (depósito Guaymallén)
+  var _ret = _RETIRO[_coVenta] || _RETIRO.minorista;
+  var _subEl = document.getElementById('coRetiroSub');
+  if (_subEl) _subEl.textContent = _ret.dirCorta + ' · ' + _ret.horarioCorto;
+  var _hintEl = document.getElementById('coRetiroHint');
+  if (_hintEl) _hintEl.textContent = 'Horarios del local: ' + _ret.horarioLargo;
   document.getElementById('coStep1').classList.remove('hidden');
   document.getElementById('coStep2Retiro').classList.add('hidden');
   document.getElementById('coStep2Dom').classList.add('hidden');
@@ -5520,9 +5544,11 @@ function coEnviar() {
     nombre = (document.getElementById('coNombre').value || '').trim();
     if (!nombre) { _coMarkRequired('coNombre'); return; }
     horario = (document.getElementById('coHorarioRetiro').value || '').trim();
+    var _retM = _RETIRO[_coVenta] || _RETIRO.minorista;
     deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
     deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
-    deliveryMsg += '\n📍 Pueyrredón 588, Mendoza';
+    deliveryMsg += '\n📍 ' + _retM.dirLarga;
+    if (_retM.mapa) deliveryMsg += '\n🗺️ ' + _retM.mapa;
     var pagoElR = document.querySelector('input[name="coPago"]:checked');
     if (pagoElR) {
       var pagoTxtR = pagoElR.value === 'efectivo' ? 'Efectivo'
@@ -6735,7 +6761,7 @@ window.copiarLinkParaNavegador = function() {
         <div class="checkout-delivery-opts">
           <button class="checkout-delivery-btn" onclick="coElegirEntrega('retiro')">
             <span class="checkout-delivery-ic">🏪</span>
-            <div class="checkout-delivery-txt"><b>Retiro en el local</b><small>Pueyrredón 588, Mendoza · Lun–Sáb 10 a 20hs</small></div>
+            <div class="checkout-delivery-txt"><b>Retiro en el local</b><small id="coRetiroSub">Pueyrredón 588, Mendoza · Lun–Sáb 10 a 20hs</small></div>
             <span class="checkout-delivery-arr">›</span>
           </button>
           <button class="checkout-delivery-btn" onclick="coElegirEntrega('domicilio')">
@@ -6754,7 +6780,7 @@ window.copiarLinkParaNavegador = function() {
         <div class="co-field">
           <label>Horario preferido de retiro <span class="opt-lbl">(opcional)</span></label>
           <input type="text" id="coHorarioRetiro" placeholder="Ej: entre 10 y 12hs" class="co-input">
-          <span class="co-hint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
+          <span class="co-hint" id="coRetiroHint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
         </div>
         <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
         <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
