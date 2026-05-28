@@ -1886,14 +1886,8 @@ if(cart.length)updateCartCount();
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
 let _loaderHidden=false;
-function hideLoader(){if(_loaderHidden)return;
-  // MODO PRUEBA (temporal): con ?testhang en la URL dejamos el loader trabado
-  // a propósito para ver actuar al watchdog. Tras la auto-recuperación (flag
-  // paladear_autoheal seteado) vuelve a comportarse normal. No afecta a nadie
-  // que entre sin ese parámetro.
-  if(location.search.indexOf('testhang')>=0 && !sessionStorage.getItem('paladear_autoheal'))return;
-  _loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
-// Timeout de seguridad: máximo 8s de espera
+function hideLoader(){if(_loaderHidden)return;_loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
+// Timeout de seguridad: máximo 6s de espera
 setTimeout(hideLoader,6000);
 
 // ── EFECTO RIPPLE EN BOTONES ──
@@ -3330,21 +3324,11 @@ window.addEventListener('popstate',function(e){
     : '¿Querés salir de Paladear?';
   if(confirm(msg)){
     // El usuario confirma salir: dejamos que el navegador navegue hacia atrás normalmente
-    window._exitConfirmed=true; // evitar el doble aviso del beforeunload
     history.back();
   } else {
     // Quedarse: re-insertar el estado home para que el próximo "atrás" vuelva a pasar por aquí
     history.pushState({view:'home'},'');
   }
-});
-
-// Aviso nativo al recargar o cerrar la pestaña con un pedido en curso.
-// (El botón "atrás" se maneja arriba en el popstate.) El flag _exitConfirmed
-// evita que aparezca un segundo aviso cuando ya confirmaron salir con "atrás".
-window.addEventListener('beforeunload',function(e){
-  if(window._exitConfirmed)return;
-  const tieneItems=(cart&&cart.length>0)||(cartMay&&cartMay.length>0);
-  if(tieneItems){ e.preventDefault(); e.returnValue=''; return ''; }
 });
 
 // ═══ PERSISTENCIA DE ESTADO (sobrevive al reload) ═══
