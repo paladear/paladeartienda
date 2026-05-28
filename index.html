@@ -1886,7 +1886,13 @@ if(cart.length)updateCartCount();
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
 let _loaderHidden=false;
-function hideLoader(){if(_loaderHidden)return;_loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
+function hideLoader(){if(_loaderHidden)return;
+  // MODO PRUEBA (temporal): con ?testhang en la URL dejamos el loader trabado
+  // a propósito para ver actuar al watchdog. Tras la auto-recuperación (flag
+  // paladear_autoheal seteado) vuelve a comportarse normal. No afecta a nadie
+  // que entre sin ese parámetro.
+  if(location.search.indexOf('testhang')>=0 && !sessionStorage.getItem('paladear_autoheal'))return;
+  _loaderHidden=true;const o=document.getElementById('loadingOverlay');if(o){o.classList.add('hidden');setTimeout(()=>{if(o.parentNode)o.remove()},500)}}
 // Timeout de seguridad: máximo 8s de espera
 setTimeout(hideLoader,6000);
 
