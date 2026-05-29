@@ -3245,14 +3245,14 @@ window.addEventListener('popstate',function(e){
   // 0c. Si un modal de mix/granola está abierto → cerrarlo
   const mixModal=document.getElementById('mixModal');
   if(mixModal && !mixModal.classList.contains('hidden')){
-    if(typeof closeMixModal==='function')closeMixModal();
+    if(typeof closeMix==='function')closeMix();
     else mixModal.classList.add('hidden');
     history.pushState({view:'home'},'');
     return;
   }
   const granolaModal=document.getElementById('granolaModal');
   if(granolaModal && !granolaModal.classList.contains('hidden')){
-    if(typeof closeGranolaModal==='function')closeGranolaModal();
+    if(typeof closeGranola==='function')closeGranola();
     else granolaModal.classList.add('hidden');
     history.pushState({view:'home'},'');
     return;
