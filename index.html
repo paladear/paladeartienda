@@ -3172,6 +3172,10 @@ function sincronizarDesdeSheets(){
 sincronizarDesdeSheets();
 
 // ── MANEJO DEL BOTÓN "ATRÁS" ──
+// ¿El usuario llegó desde otra página? Si hay algo atrás en el historial, el
+// botón "Salir" puede volver ahí. Si entró directo en una pestaña nueva (típico
+// de incógnito), el navegador NO permite que una web cierre la pestaña sola.
+var _hayPaginaAnterior = history.length > 1;
 // Seed: estado inicial = home
 history.replaceState({view:'home'},'');
 // Entrada "red de contención": una entrada extra en el historial para que el
@@ -3213,8 +3217,15 @@ function _salirConfirmar(){
   var m=document.getElementById('exitModal');
   if(m)m.classList.add('hidden');
   _salirPermitir=true;        // que el popstate no nos vuelva a atrapar
-  history.go(-2);             // home(actual) → home → página externa (salir)
-  setTimeout(function(){_salirPermitir=false;},700);
+  if(_hayPaginaAnterior){
+    history.go(-2);           // volver más atrás de home → salir del sitio (1 toque)
+  }else{
+    // Entrada directa (pestaña nueva / incógnito): el navegador no deja que una
+    // web cierre la pestaña. Soltamos la "trampa" para no quedar en loop; así el
+    // próximo "atrás" cierra la pestaña (en el cel) sin volver a preguntar.
+    history.back();
+  }
+  setTimeout(function(){_salirPermitir=false;},1200);
 }
 window._salirQuedarse=_salirQuedarse;
 window._salirConfirmar=_salirConfirmar;
