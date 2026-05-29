@@ -5430,9 +5430,9 @@ function coElegirEntrega(tipo) {
   document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
   document.getElementById('coBtnBack').style.display = '';
   if (tipo === 'domicilio') _coLoadLeaflet();
-  // Efectivo solo se muestra para venta minorista
+  // Efectivo disponible para minorista y mayorista
   var efWrap = document.getElementById('coRadioEfectivoWrap');
-  if (efWrap) efWrap.style.display = _coVenta === 'minorista' ? '' : 'none';
+  if (efWrap) efWrap.style.display = '';
 }
 window.coElegirEntrega = coElegirEntrega;
 
