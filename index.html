@@ -3220,10 +3220,12 @@ function _salirConfirmar(){
   if(_hayPaginaAnterior){
     history.go(-2);           // volver más atrás de home → salir del sitio (1 toque)
   }else{
-    // Entrada directa (pestaña nueva / incógnito): el navegador no deja que una
-    // web cierre la pestaña. Soltamos la "trampa" para no quedar en loop; así el
-    // próximo "atrás" cierra la pestaña (en el cel) sin volver a preguntar.
-    history.back();
+    // Entrada directa (pestaña nueva / incógnito): intentamos CERRAR la pestaña.
+    // El navegador solo permite cerrarla si la abriste directo (no venís de otra
+    // página); como toda nuestra navegación es del mismo documento, suele
+    // permitirlo. Si no la cierra, soltamos la trampa para no quedar en loop.
+    window.close();
+    setTimeout(function(){ history.back(); }, 150);
   }
   setTimeout(function(){_salirPermitir=false;},1200);
 }
