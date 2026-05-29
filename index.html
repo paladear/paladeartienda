@@ -395,17 +395,6 @@ button{cursor:pointer;border:none;font-family:inherit}
 /* Modal App Install */
 .app-install-modal{max-width:420px;width:calc(100% - 32px);border-radius:20px;padding:24px 20px;position:relative;max-height:92vh;overflow-y:auto;background:var(--card);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .modal-close-btn{position:absolute;top:14px;right:14px;background:var(--muted);border:none;border-radius:50%;width:30px;height:30px;font-size:15px;cursor:pointer;color:var(--fg);display:flex;align-items:center;justify-content:center;font-family:inherit}
-/* ── MODAL SALIR (botón atrás del sistema) ── */
-#exitModal{position:fixed;inset:0;z-index:10110;display:flex;align-items:center;justify-content:center;background:rgba(26,55,64,.55);animation:fadeIn .18s;padding:24px}
-.exit-modal-box{background:var(--card);border-radius:18px;padding:24px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:fadeIn .2s}
-.exit-modal-box h2{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:var(--azul-dark);margin:0 0 8px}
-.exit-modal-box p{font-size:14px;color:var(--muted-fg);margin:0 0 20px;line-height:1.45}
-.exit-modal-actions{display:flex;flex-direction:column;gap:10px}
-.exit-btn{width:100%;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s}
-.exit-btn-stay{background:var(--azul);color:#fff}
-.exit-btn-stay:hover{background:var(--azul-dark)}
-.exit-btn-leave{background:transparent;color:var(--muted-fg);border:1.5px solid var(--border)}
-.exit-btn-leave:hover{background:var(--muted)}
 /* ── CHECKOUT MODAL ── */
 .checkout-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:10002;display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:600px){.checkout-overlay{align-items:center}}
@@ -3172,69 +3161,13 @@ function sincronizarDesdeSheets(){
 sincronizarDesdeSheets();
 
 // ── MANEJO DEL BOTÓN "ATRÁS" ──
-// ¿El usuario llegó desde otra página? Si hay algo atrás en el historial, el
-// botón "Salir" puede volver ahí. Si entró directo en una pestaña nueva (típico
-// de incógnito), el navegador NO permite que una web cierre la pestaña sola.
-var _hayPaginaAnterior = history.length > 1;
-// Seed: estado inicial = home
+// Seed: estado inicial = home. Cada modal/vista que se abre agrega su propia
+// entrada al historial (pushState), así el botón "atrás" del sistema cierra
+// primero lo que esté abierto. En la home, "atrás" sale de la página como en
+// cualquier sitio: NO interceptamos la salida (el carrito queda guardado igual).
 history.replaceState({view:'home'},'');
-// Entrada "red de contención": una entrada extra en el historial para que el
-// botón "atrás" del sistema (Android/iOS) dispare popstate en vez de cerrar
-// la página de una.
-// IMPORTANTE: Chrome en Android IGNORA ("skippable") las entradas de historial
-// agregadas sin una interacción real del usuario (History Manipulation
-// Intervention). Por eso NO la armamos al cargar, sino en el primer
-// toque/click/tecla, que el navegador cuenta como "user activation" válida.
-var _redSalidaArmada = false;
-function _armarRedSalida(){
-  if(_redSalidaArmada) return;
-  _redSalidaArmada = true;
-  history.pushState({view:'home'},'');
-}
-['pointerdown','touchstart','mousedown','keydown'].forEach(function(ev){
-  window.addEventListener(ev, _armarRedSalida, {once:true, passive:true, capture:true});
-});
-
-// ── MODAL PROPIO DE "SALIR" ──
-// El confirm() nativo NO se renderiza en Android dentro de popstate, por eso
-// usamos un modal HTML. Mientras está abierto seguimos "atrapados" en home.
-var _salirPermitir=false;
-function _mostrarSalir(){
-  var tieneItems=(typeof cart!=='undefined'&&cart&&cart.length>0)||(typeof cartMay!=='undefined'&&cartMay&&cartMay.length>0);
-  var sub=document.getElementById('exitModalSub');
-  if(sub){
-    if(tieneItems){sub.textContent='Tenés productos en tu carrito. Quedan guardados para la próxima.';sub.style.display='';}
-    else{sub.textContent='';sub.style.display='none';}
-  }
-  var m=document.getElementById('exitModal');
-  if(m)m.classList.remove('hidden');
-}
-function _salirQuedarse(){
-  var m=document.getElementById('exitModal');
-  if(m)m.classList.add('hidden');
-}
-function _salirConfirmar(){
-  var m=document.getElementById('exitModal');
-  if(m)m.classList.add('hidden');
-  _salirPermitir=true;        // que el popstate no nos vuelva a atrapar
-  if(_hayPaginaAnterior){
-    history.go(-2);           // volver más atrás de home → salir del sitio (1 toque)
-  }else{
-    // Entrada directa (pestaña nueva / incógnito): intentamos CERRAR la pestaña.
-    // El navegador solo permite cerrarla si la abriste directo (no venís de otra
-    // página); como toda nuestra navegación es del mismo documento, suele
-    // permitirlo. Si no la cierra, soltamos la trampa para no quedar en loop.
-    window.close();
-    setTimeout(function(){ history.back(); }, 150);
-  }
-  setTimeout(function(){_salirPermitir=false;},1200);
-}
-window._salirQuedarse=_salirQuedarse;
-window._salirConfirmar=_salirConfirmar;
 
 window.addEventListener('popstate',function(e){
-  // Si el usuario confirmó salir con el modal propio, no interceptamos.
-  if(_salirPermitir)return;
   const st=e.state||{view:'home'};
 
   // 0. Si el overlay de búsqueda mobile está abierto → cerrarlo
@@ -3400,12 +3333,9 @@ window.addEventListener('popstate',function(e){
     return;
   }
 
-  // 4. Estamos en home y el usuario presiona atrás → mostramos el modal propio
-  // de salida y re-armamos la red de contención (volvemos a poner un estado
-  // home adelante) para seguir interceptando el botón atrás. El confirm()
-  // nativo NO funciona acá en Android, por eso el modal es HTML.
-  _mostrarSalir();
-  history.pushState({view:'home'},'');
+  // 4. Estamos en home y el usuario presiona atrás → NO interceptamos: dejamos
+  // que el navegador salga de la página normalmente, como en cualquier sitio.
+  // El carrito queda guardado igual, así que no se pierde el pedido.
 });
 
 // ═══ PERSISTENCIA DE ESTADO (sobrevive al reload) ═══
@@ -6642,18 +6572,6 @@ window.copiarLinkParaNavegador = function() {
     <div style="font-size:12px;color:rgba(255,255,255,0.92);text-align:center;line-height:1.4;margin-bottom:12px">Estás viendo el sitio dentro de una app (Instagram, WhatsApp, etc.). Para instalar Paladear, abrilo en <b>Safari</b> o <b>Chrome</b>.</div>
     <button onclick="copiarLinkParaNavegador()" style="width:100%;background:#fff;color:#547692;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px">📋 Copiar el link</button>
     <button onclick="dismissIAB()" style="width:100%;background:transparent;color:rgba(255,255,255,0.85);border:none;padding:6px;font-size:12px;cursor:pointer;font-family:inherit">Ahora no</button>
-  </div>
-</div>
-
-<!-- ═══ MODAL SALIR (botón atrás del sistema) ═══ -->
-<div id="exitModal" class="hidden">
-  <div class="exit-modal-box">
-    <h2>¿Querés salir de Paladear?</h2>
-    <p id="exitModalSub"></p>
-    <div class="exit-modal-actions">
-      <button class="exit-btn exit-btn-stay" onclick="_salirQuedarse()">Seguir comprando</button>
-      <button class="exit-btn exit-btn-leave" onclick="_salirConfirmar()">Salir</button>
-    </div>
   </div>
 </div>
 
