@@ -3163,6 +3163,11 @@ sincronizarDesdeSheets();
 // ── MANEJO DEL BOTÓN "ATRÁS" ──
 // Seed: estado inicial = home
 history.replaceState({view:'home'},'');
+// Entrada "red de contención": agregamos una entrada extra al historial
+// para que el botón "atrás" del sistema (Android/iOS) SIEMPRE dispare
+// popstate en vez de cerrar la página de una. Sin esto, al entrar directo
+// a la home y tocar atrás, el navegador salía sin preguntar nada.
+history.pushState({view:'home'},'');
 
 window.addEventListener('popstate',function(e){
   const st=e.state||{view:'home'};
