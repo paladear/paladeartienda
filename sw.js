@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.4
+// Versión: 1.5
 //
 // CAMBIO CLAVE (arregla "no carga si no borrás el historial" y
 // "tarda muchísimo en cargar"):
@@ -12,14 +12,17 @@
 //      se guardan en localStorage por la propia app, así que el modo
 //      offline sigue funcionando.
 //
-//   2. El shell estático (HTML, íconos, imágenes propias) ahora se
-//      sirve con estrategia stale-while-revalidate: carga al instante
-//      desde el cache y se actualiza en segundo plano. Antes era
-//      network-first, que en redes lentas hacía esperar la red en
-//      cada carga.
+//   2. index.html (la página): NETWORK-FIRST. Siempre se pide la
+//      versión más reciente a la red, así los cambios publicados se
+//      ven en la primera visita sin tener que borrar el historial.
+//      Si no hay red, cae al cache (sigue abriendo offline).
+//
+//   3. Resto del shell (íconos, imágenes propias): stale-while-
+//      revalidate. Cargan al instante desde el cache y se actualizan
+//      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v5';
+const CACHE_VERSION = 'paladear-v6';
 
 const SHELL_FILES = [
   '/paladeartienda/',
@@ -65,7 +68,36 @@ self.addEventListener('fetch', event => {
   // navegador. Así el Cache Storage nunca se infla con URLs únicas.
   if (url.origin !== self.location.origin) return;
 
-  // SHELL del mismo origen: stale-while-revalidate.
+  // index.html (la página en sí): NETWORK-FIRST. Siempre pedimos la
+  // versión más reciente a la red para que los cambios se vean en la
+  // primera visita (sin tener que borrar el historial). Si no hay red,
+  // caemos al cache para que la página siga abriendo offline.
+  const _path = url.pathname;
+  const _esPagina = _path === '/paladeartienda/' ||
+                    _path === '/paladeartienda/index.html';
+
+  if (_esPagina) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            caches.open(CACHE_VERSION)
+              .then(cache => cache.put(event.request, response.clone()))
+              .catch(() => {});
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(event.request)
+            .then(cached => cached || caches.match('/paladeartienda/index.html'))
+        )
+    );
+    return;
+  }
+
+  // Resto del shell del mismo origen (íconos, imágenes propias):
+  // stale-while-revalidate. Cargan al instante desde el cache y se
+  // actualizan en segundo plano. Estos archivos casi no cambian.
   event.respondWith(
     caches.open(CACHE_VERSION).then(cache =>
       cache.match(event.request).then(cached => {
