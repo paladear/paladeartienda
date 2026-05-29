@@ -3163,11 +3163,22 @@ sincronizarDesdeSheets();
 // ── MANEJO DEL BOTÓN "ATRÁS" ──
 // Seed: estado inicial = home
 history.replaceState({view:'home'},'');
-// Entrada "red de contención": agregamos una entrada extra al historial
-// para que el botón "atrás" del sistema (Android/iOS) SIEMPRE dispare
-// popstate en vez de cerrar la página de una. Sin esto, al entrar directo
-// a la home y tocar atrás, el navegador salía sin preguntar nada.
-history.pushState({view:'home'},'');
+// Entrada "red de contención": una entrada extra en el historial para que el
+// botón "atrás" del sistema (Android/iOS) dispare popstate en vez de cerrar
+// la página de una.
+// IMPORTANTE: Chrome en Android IGNORA ("skippable") las entradas de historial
+// agregadas sin una interacción real del usuario (History Manipulation
+// Intervention). Por eso NO la armamos al cargar, sino en el primer
+// toque/click/tecla, que el navegador cuenta como "user activation" válida.
+var _redSalidaArmada = false;
+function _armarRedSalida(){
+  if(_redSalidaArmada) return;
+  _redSalidaArmada = true;
+  history.pushState({view:'home'},'');
+}
+['pointerdown','touchstart','mousedown','keydown'].forEach(function(ev){
+  window.addEventListener(ev, _armarRedSalida, {once:true, passive:true, capture:true});
+});
 
 window.addEventListener('popstate',function(e){
   const st=e.state||{view:'home'};
