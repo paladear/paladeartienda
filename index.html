@@ -9,6 +9,14 @@ layout: null
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light">
 <meta name="google-site-verification" content="jZAof6C7e-min-6NmCVtqpdcvkP1vfr2s_rP7np4HEs" />
+<!-- Microsoft Clarity (métricas: grabaciones, mapas de calor y embudo) -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "x1k2nmx9oy");
+</script>
   
 <!-- ══════════ FAVICON ══════════ -->
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -2339,8 +2347,12 @@ function selOpt(id,opt,p1,p2){const el=document.getElementById(id);el.querySelec
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
 
+// Métricas: marca un evento del embudo en Clarity (no rompe si Clarity no cargó)
+function _track(ev){try{if(window.clarity)clarity('event',ev);}catch(e){}}
+
 function showInfo(pid){
   const p=PRODS.find(x=>x[0]===pid);if(!p||!p[8])return;
+  _track('producto_abierto');
   const old=document.getElementById('infoModal');if(old)old.remove();
   const m=document.createElement('div');
   m.id='infoModal';
@@ -2388,6 +2400,7 @@ function _reRenderCard(pid){
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
   const el=document.getElementById(elId);if(!el)return;
+  _track('agrego_carrito');
   const opts=_sortOpts(Object.keys(p[7]));
   const opt=el.dataset.opt||opts[0];
   const sabores=p[9];
@@ -2512,6 +2525,7 @@ function updateCartCount(){
 }
 
 function openCart(){
+  _track('abrio_carrito');
   document.getElementById('cartOverlay').classList.add('open');
   document.getElementById('cartPanel').classList.add('open');
   document.body.classList.add('cart-open');
@@ -4746,6 +4760,7 @@ window.chgQtyMay = chgQtyMay;
 function addToCartMay(pid, elId) {
   const p = PRODS_MAY.find(x => x[0] === pid);
   if (!p) return;
+  _track('agrego_carrito_may');
   const qty = parseInt(document.getElementById(elId + '_q').textContent) || 1;
   const sabSelect = document.getElementById(elId + '_sab');
   const sabor = sabSelect ? sabSelect.value : '';
@@ -4940,6 +4955,7 @@ function updateCartMayCount() {
 }
 
 function openCartMay() {
+  _track('abrio_carrito_may');
   document.getElementById('cartOverlayMay').classList.add('open');
   document.getElementById('cartPanelMay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5637,6 +5653,7 @@ function coEnviar() {
   if (!isMin) { cartMay=[]; updateCartMayCount(); try{localStorage.removeItem('paladear_cart_may_v2');}catch(e){} }
 
   cerrarCheckout();
+  _track(isMin ? 'pedido_enviado' : 'pedido_enviado_may');
   if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
   window.open(url, '_blank');
 }
