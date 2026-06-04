@@ -3031,7 +3031,7 @@ function _cargarInfo(){
         if(idx===0||cols.length<1)return;
         const nombre=(cols[0]||'').replace(/^"|"$/g,'').trim();
         if(!nombre)return;
-        const id=(cols[6]||'').replace(/^"|"$/g,'').trim().replace(/[,.]00$/,'');
+        const id=(cols[6]||'').replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(/,.*$/,'');
         const k=id||_norm(nombre);
         const entrada={
           nombre:nombre,
@@ -3083,7 +3083,7 @@ function sincronizarDesdeSheets(){
         const nombre=cols[2].replace(/^"|"$/g,'');
         const p1=_precio(cols[3]),p2=_precio(cols[4]);
         const rubro=(cols[5]||'').replace(/^"|"$/g,'').trim().toUpperCase();
-        const productId=(cols[6]||'').replace(/^"|"$/g,'').trim().replace(/[,.]00$/,'');
+        const productId=(cols[6]||'').replace(/^"|"$/g,'').trim().replace(/\./g,'').replace(/,.*$/,'');
         const imgPrecios=_driveToImg((cols[7]||'').replace(/^"|"$/g,'').trim());
         if(!nombre||!p1||!p2||!rubro)return;
         const cat=RUBRO_MAP[rubro];if(!cat)return;
