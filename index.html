@@ -6880,5 +6880,124 @@ window.copiarLinkParaNavegador = function() {
 
 <!-- checkout script moved into main script -->
 
+<!-- ═══ MODAL BIENVENIDA / TUTORIAL (1 vez por dispositivo) ═══ -->
+<style>
+  #tutbOverlay{position:fixed;inset:0;background:rgba(26,48,80,.58);display:none;align-items:center;justify-content:center;padding:12px;z-index:10300}
+  #tutbOverlay.tutb-show{display:flex}
+  .tutb-modal{background:#fff;border-radius:20px;max-width:430px;width:100%;padding:18px 18px 16px;box-shadow:0 20px 50px rgba(26,48,80,.35);position:relative;font-family:'Montserrat',sans-serif;animation:tutbPop .25s ease}
+  @keyframes tutbPop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .tutb-close{position:absolute;top:11px;right:14px;background:none;border:none;font-size:23px;color:#bbb;cursor:pointer;line-height:1;z-index:2}
+  .tutb-head{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:13px}
+  .tutb-logo{width:42px;height:42px;border-radius:50%;margin-bottom:7px;box-shadow:0 2px 8px rgba(84,118,146,.3)}
+  .tutb-head h2{font-size:18px;font-weight:800;color:#1a3050;line-height:1.15}
+  .tutb-head .tutb-sub{font-size:12.5px;color:#5a7088;font-weight:500;margin-top:3px}
+  .tutb-opt{border-radius:14px;padding:12px 13px;margin-bottom:10px;border:2px solid;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  .tutb-opt:active{transform:scale(.99)}
+  .tutb-min{background:#eef4f9;border-color:#547692}
+  .tutb-min:hover{box-shadow:0 4px 14px rgba(84,118,146,.25)}
+  .tutb-may{background:#faf2ec;border-color:#e3c0a8}
+  .tutb-may:hover{box-shadow:0 4px 14px rgba(192,118,74,.22)}
+  .tutb-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .tutb-ic{width:23px;height:23px;object-fit:contain}
+  .tutb-name{font-size:15px;font-weight:800;color:#1a3050}
+  .tutb-go{font-size:12px;font-weight:800;margin-left:auto;display:flex;align-items:center;gap:4px}
+  .tutb-min .tutb-go{color:#547692}
+  .tutb-may .tutb-go{color:#c0764a}
+  .tutb-note{font-size:12px;color:#54677d;font-weight:600;margin-bottom:9px}
+  .tutb-mlabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .tutb-cnt{font-size:16px;font-weight:800;color:#1a3050;font-variant-numeric:tabular-nums}
+  .tutb-goal{font-size:11px;font-weight:600;color:#8a9bad}
+  .tutb-track{height:11px;background:#dde6ee;border-radius:7px;overflow:hidden}
+  .tutb-may .tutb-track{background:#ecdfd4}
+  .tutb-fill{height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#547692,#6fa3c4)}
+  .tutb-may .tutb-fill{background:linear-gradient(90deg,#c0764a,#d99a6f)}
+  .tutb-reward{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;opacity:0;transform:translateY(5px);transition:all .4s;min-height:19px}
+  .tutb-reward.tutb-on{opacity:1;transform:none}
+  .tutb-rmin{color:#1c9d63}.tutb-rmay{color:#c0764a}
+  .tutb-pill{font-size:10.5px;padding:2px 8px;border-radius:20px;color:#fff;white-space:nowrap}
+  .tutb-rmin .tutb-pill{background:#1c9d63}.tutb-rmay .tutb-pill{background:#c0764a}
+  .tutb-steps{background:#f5f8fb;border-radius:12px;padding:10px 12px;margin-top:12px}
+  .tutb-steps-title{font-size:11px;font-weight:800;color:#547692;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;text-align:center}
+  .tutb-steps-row{display:flex;justify-content:space-between;gap:4px}
+  .tutb-step{flex:1;text-align:center}
+  .tutb-step .tutb-n{width:21px;height:21px;border-radius:50%;background:#547692;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 4px}
+  .tutb-step .tutb-em{font-size:15px;display:block;margin-bottom:1px}
+  .tutb-step .tutb-t{font-size:10.5px;color:#3a4d63;font-weight:600;line-height:1.25}
+  .tutb-step-arrow{color:#b8c6d4;font-size:14px;align-self:center;margin-top:-10px}
+</style>
+<div id="tutbOverlay">
+  <div class="tutb-modal">
+    <button class="tutb-close" onclick="cerrarTutorial()" aria-label="Cerrar">×</button>
+    <div class="tutb-head">
+      <img class="tutb-logo" src="android-chrome-192x192.png" alt="Paladear">
+      <h2>¿Cómo comprar en Paladear?</h2>
+      <div class="tutb-sub">Tocá tu lista para empezar 👇</div>
+    </div>
+    <div class="tutb-opt tutb-min" onclick="tutorialIr('minorista')">
+      <div class="tutb-top">
+        <img class="tutb-ic" src="icon-minorista.png" alt="">
+        <span class="tutb-name">Minorista</span>
+        <span class="tutb-go">Para uso personal →</span>
+      </div>
+      <div class="tutb-note">Sin mínimo de compra · comprás lo que quieras</div>
+      <div class="tutb-mlabel"><span class="tutb-cnt" id="tutbCntMin">$0</span><span class="tutb-goal">Meta: $80.000</span></div>
+      <div class="tutb-track"><div class="tutb-fill" id="tutbFillMin"></div></div>
+      <div class="tutb-reward tutb-rmin" id="tutbRwMin"><span class="tutb-pill">20% OFF</span> ¡Descuento por cantidad activado!</div>
+    </div>
+    <div class="tutb-opt tutb-may" onclick="tutorialIr('mayorista')">
+      <div class="tutb-top">
+        <img class="tutb-ic" src="icon-mayorista.png" alt="">
+        <span class="tutb-name">Mayorista</span>
+        <span class="tutb-go">Para revendedores →</span>
+      </div>
+      <div class="tutb-note">Solo por bulto cerrado · para reventa</div>
+      <div class="tutb-mlabel"><span class="tutb-cnt" id="tutbCntMay">$0</span><span class="tutb-goal">Mínimo: $250.000</span></div>
+      <div class="tutb-track"><div class="tutb-fill" id="tutbFillMay"></div></div>
+      <div class="tutb-reward tutb-rmay" id="tutbRwMay"><span class="tutb-pill">✓ LISTO</span> Mínimo alcanzado, ya podés comprar</div>
+    </div>
+    <div class="tutb-steps">
+      <div class="tutb-steps-title">Y comprar es así de fácil</div>
+      <div class="tutb-steps-row">
+        <div class="tutb-step"><span class="tutb-n">1</span><span class="tutb-em">🔎</span><span class="tutb-t">Elegí productos</span></div>
+        <div class="tutb-step-arrow">→</div>
+        <div class="tutb-step"><span class="tutb-n">2</span><span class="tutb-em">🛒</span><span class="tutb-t">Se suman al carrito</span></div>
+        <div class="tutb-step-arrow">→</div>
+        <div class="tutb-step"><span class="tutb-n">3</span><span class="tutb-em">📲</span><span class="tutb-t">Enviás por WhatsApp</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var FLAG='pld_tutorial_v1';
+  function animMeter(cntId,fillId,rwId,target,dur){
+    var cnt=document.getElementById(cntId),fill=document.getElementById(fillId),rw=document.getElementById(rwId),start=null,crossed=false;
+    function step(ts){if(!start)start=ts;var t=Math.min((ts-start)/dur,1),e=1-Math.pow(1-t,3);
+      cnt.textContent='$'+Math.round(e*target).toLocaleString('es-AR');fill.style.width=(e*100)+'%';
+      if(t>=1&&!crossed){crossed=true;rw.classList.add('tutb-on');}if(t<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  }
+  window.cerrarTutorial=function(){
+    document.getElementById('tutbOverlay').classList.remove('tutb-show');
+    try{localStorage.setItem(FLAG,'1');}catch(e){}
+  };
+  window.tutorialIr=function(tab){
+    try{if(typeof switchTab==='function')switchTab(tab);}catch(e){}
+    cerrarTutorial();
+  };
+  function mostrar(){
+    try{if(localStorage.getItem(FLAG))return;}catch(e){}
+    var ov=document.getElementById('tutbOverlay');
+    if(!ov)return;
+    ov.classList.add('tutb-show');
+    setTimeout(function(){animMeter('tutbCntMin','tutbFillMin','tutbRwMin',80000,1700);},350);
+    setTimeout(function(){animMeter('tutbCntMay','tutbFillMay','tutbRwMay',250000,1700);},850);
+  }
+  // Mostrar apenas carga la página (1 vez por dispositivo)
+  if(document.readyState==='complete') setTimeout(mostrar,500);
+  else window.addEventListener('load',function(){setTimeout(mostrar,500);});
+})();
+</script>
+
 </body>
 </html>
