@@ -867,10 +867,10 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .cat-list-btn .nm{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:.2px}
 
 /* ── PRODUCTOS ── */
-.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-@media(min-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:960px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1200px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
+.prod-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media(min-width:640px){.prod-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.prod-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1200px){.prod-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .pcard{background:var(--card);border-radius:14px;overflow:visible;box-shadow:0 2px 10px rgba(0,0,0,.09);border:2px solid transparent;transition:all .2s;display:flex;flex-direction:column}
 .pcard.highlight-card{border-color:var(--azul);box-shadow:0 0 0 3px rgba(77,110,144,.25),0 6px 20px rgba(77,110,144,.35);animation:pulseHighlight 2.2s ease-out}
 @keyframes pulseHighlight{0%{box-shadow:0 0 0 0 rgba(77,125,138,.55),0 6px 20px rgba(77,125,138,.4)}50%{box-shadow:0 0 0 10px rgba(77,125,138,0),0 6px 20px rgba(77,110,144,.35)}100%{box-shadow:0 0 0 3px rgba(77,110,144,.25),0 6px 20px rgba(77,110,144,.35)}}
@@ -934,7 +934,7 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 }
 .price-min{font-size:18px;font-weight:800}
 .price-may{font-size:15px;font-weight:800;color:#1a4d5e;background:#9eccd8;padding:3px 10px;border-radius:8px}
-.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .qty-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--azul);background:transparent;color:var(--azul);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .qty-btn:hover{background:var(--azul);color:#fff}
 .qty-val{font-size:18px;font-weight:800;min-width:28px;text-align:center}
@@ -1036,6 +1036,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .cart-item-name{flex:1;font-size:14px;font-weight:700;line-height:1.3}
 .cart-item-opt{font-size:12px;color:var(--muted-fg);font-weight:400;display:block}
 .cart-item-price{font-size:14px;font-weight:700;min-width:78px;text-align:right;white-space:nowrap}
+.cart-price-desc{color:var(--azul-dark);font-weight:800;display:block;line-height:1.15}
 .cart-item-del{background:transparent;color:rgba(0,0,0,.25);padding:0 5px;transition:color .2s;cursor:pointer;display:flex;align-items:center;border:none}
 .cart-item-del:hover{color:var(--destructive)}
 .cart-footer{padding:16px;border-top:2px solid var(--border);flex-shrink:0}
@@ -2111,7 +2112,7 @@ function calcWeight(opc,qty){let m=opc.match(/^(\d+)g$/i);if(m){let t=parseInt(m
 function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
 function _bultoLabel(n,unidad){const s=String(n).replace('.',',');if(unidad==='kg')return s+' Kg';return n===1?'1 Unidad':s+' Unidades';}
-function _tc(s){return(s||'').toLowerCase().replace(/(^|[\s\-\/])(\S)/g,function(_,b,c){return b+c.toUpperCase();});}
+function _tc(s){return(s||'').toLowerCase().replace(/[^\s\-\/(]+/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1);});}
 const _STOPWORDS=new Set(['DE','DEL','LA','EL','LOS','LAS','UN','UNA','Y','O','CON','EN','X','POR']);
 function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));const tn=_norm(t);if(!qn.length)return false;return qn.some(w=>tn.includes(w))}
 function _levenshtein(a,b){
@@ -2695,8 +2696,13 @@ function renderCart(){
     body.innerHTML='<div class="cart-empty"><span class="big">🛒</span><div style="font-size:16px;font-weight:600;margin-bottom:6px">Tu carrito está vacío</div><div style="font-size:14px;color:var(--muted-fg)">Agregá productos para armar tu pedido</div>'+_ultBtn+'</div>';
     footer.classList.add('hidden');return}
   let h='';
+  const _esMayCart=cart.reduce((a,i)=>a+_itemMin(i),0)>=80000;
   cart.forEach(it=>{
     const sMin=_itemMin(it);
+    const sMay=_itemMay(it);
+    const priceHTML=_esMayCart
+      ?`<div class="cart-item-price"><span class="precio-tachado-sm">$${fmt(sMin)}</span><span class="cart-price-desc">$${fmt(sMay)}</span></div>`
+      :`<div class="cart-item-price">$${fmt(sMin)}</div>`;
     const isMix=it.unidad==='mix';
     const qLabel=isMix?_gLabel(it.totalG):_itemCount(it);
     const subLabel=isMix
@@ -2707,7 +2713,7 @@ function renderCart(){
       :`<div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div>`;
     const trashSvg='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
     const editBtn=isMix?`<button onclick="editBuilder('${it.key}')" title="Editar" style="background:none;border:1.5px solid var(--azul);color:var(--azul-dark);border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:4px;white-space:nowrap">✏ Editar</button>`:'';
-    h+=`<div class="cart-item"><div class="cart-item-name">${_tc(it.n)}${subLabel}</div>${controls}${editBtn}<div class="cart-item-price">$${fmt(sMin)}</div><button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
+    h+=`<div class="cart-item"><div class="cart-item-name">${_tc(it.n)}${subLabel}</div>${controls}${editBtn}${priceHTML}<button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
@@ -2897,9 +2903,20 @@ function _doSearch(val){
     document.getElementById('mobileProdsArea').innerHTML='';
     document.getElementById('desktopProdsArea').innerHTML='';
   } else {
-    document.getElementById('desktopProdsArea').innerHTML=h;
+    const _area=document.getElementById('desktopProdsArea');
+    _area.innerHTML=h;
     document.getElementById('mobileProdsArea').innerHTML='';
     if(srMobile){srMobile.classList.remove('active');srMobile.innerHTML='';}
+    // Scroll hasta los resultados (solo si no están ya arriba, para no re-scrollear en cada tecla)
+    requestAnimationFrame(()=>{
+      const header=document.querySelector('.header');
+      const hh=header?header.offsetHeight:0;
+      const rect=_area.getBoundingClientRect();
+      if(Math.abs(rect.top-hh)>40){
+        const y=rect.top+window.pageYOffset-hh-12;
+        window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+      }
+    });
   }
 }
 
@@ -5911,10 +5928,18 @@ function coEnviar() {
     var esMay = totalMin >= 80000;
     var tot = 0;
     var lines = '🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
-    cart.forEach(function(it){
+    var items = cart.slice().sort(function(a,b){ return _tc(a.n).localeCompare(_tc(b.n),'es'); });
+    items.forEach(function(it){
       var s = esMay ? _itemMay(it) : _itemMinConOferta(it); tot += s;
-      var q = it.unidad==='mix' ? _gLabel(it.totalG)+' — '+it.mixDetalle : it.unidad==='kg' ? _gLabel(it.totalG) : (it.c>1?it.o+' x'+it.c:it.o);
-      lines += '• ' + it.n + ' (' + q + ') — $' + fmt(s) + '\n';
+      var qty = it.unidad==='und' ? String(it.c) : _gLabel(it.totalG).replace(/ g$/,' gr');
+      if (it.unidad==='mix') {
+        var nombreMix = _tc(it.n).replace(/\s*\([^)]*\)\s*$/,'');
+        lines += '*' + qty + '* - ' + nombreMix + '\n';
+        if (it.mixDetalle) lines += '   ' + _tc(it.mixDetalle) + '\n';
+        lines += '   $' + fmt(s) + '\n';
+      } else {
+        lines += '*' + qty + '* - ' + _tc(it.n) + '\n   $' + fmt(s) + '\n';
+      }
     });
     var huboOferta = !esMay && cart.some(function(it){ return _getOfertaPct(it.pid)>0; });
     lines += '\n*TOTAL: $' + fmt(tot) + '*' + (esMay?'\n_(Descuento por volumen aplicado)_':'') + (huboOferta?'\n_(Ofertas del mes aplicadas)_':'');
