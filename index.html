@@ -431,6 +431,24 @@ button{cursor:pointer;border:none;font-family:inherit}
 .co-field .opt-lbl{font-weight:400;color:var(--muted-fg);font-size:12px}
 .co-input{width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid var(--muted);border-radius:10px;font-size:15px;font-family:inherit;color:var(--fg);background:var(--card);transition:border-color .2s;-webkit-appearance:none}
 .co-input:focus{outline:none;border-color:var(--azul)}
+.co-dir-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.co-dir-opt,.co-field label.co-dir-opt{display:flex;align-items:center;gap:10px;border:2px solid var(--muted);border-radius:10px;padding:11px 13px;cursor:pointer;font-size:14px;font-weight:400;margin-bottom:0;background:var(--card);transition:border-color .15s,background .15s}
+.co-dir-opt-txt{display:block}
+.co-dir-opt.on{border-color:var(--azul);background:var(--azul-light)}
+.co-dir-opt input{accent-color:var(--azul);width:17px;height:17px;flex-shrink:0;margin:0}
+.co-dir-opt span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--fg)}
+.co-dir-opt.otra span{color:var(--azul-dark)}
+.co-dir-opt-txt{flex:1;min-width:0}
+.co-dir-opt-txt span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--fg)}
+.co-dir-opt-sub{display:block;font-size:12px;color:var(--muted-fg);font-weight:400;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.co-nombre-mini{font-size:14px;color:var(--fg);background:var(--azul-light);border-radius:10px;padding:11px 13px;margin-bottom:16px}
+.co-nombre-mini a{color:var(--azul);font-weight:700;text-decoration:none}
+.co-pago-nota{font-size:13.5px;line-height:1.45;color:var(--fg);background:var(--azul-light);border-radius:10px;padding:11px 13px;margin:4px 0 12px}
+.co-dir-det-note{font-size:13px;font-weight:600;color:var(--azul-dark);margin:2px 0 10px}
+/* iOS: evitar el auto-zoom al tocar un campo (Safari hace zoom si la letra es <16px) */
+@media(max-width:767px){
+  .co-input,.cta-input,.cta-dir-in,#coStep2Dom input,#coStep2Dom textarea,#coStep2Retiro input,input[type="text"],input[type="search"],input[type="tel"],input[type="email"],input[type="number"],textarea,select{font-size:16px!important}
+}
 .co-hint{display:block;font-size:11px;color:var(--muted-fg);margin-top:4px;line-height:1.4}
 .co-saved-hint{text-align:center;font-size:11px;color:var(--muted-fg);margin-top:10px;line-height:1.5}
 .co-saved-hint a{color:var(--muted-fg);text-decoration:underline}
@@ -1040,6 +1058,73 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .cart-item-del{background:transparent;color:rgba(0,0,0,.25);padding:0 5px;transition:color .2s;cursor:pointer;display:flex;align-items:center;border:none}
 .cart-item-del:hover{color:var(--destructive)}
 .cart-footer{padding:16px;border-top:2px solid var(--border);flex-shrink:0}
+/* ── MI CUENTA ── */
+.cta-perfil{background:var(--azul-light);border-radius:14px;padding:15px;margin-bottom:2px}
+.cta-perfil-row{display:flex;align-items:center;gap:13px}
+.cta-mono{width:48px;height:48px;border-radius:50%;background:#fff;color:var(--azul);border:2.5px solid var(--azul);box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;flex-shrink:0;box-shadow:0 0 0 3px #fff,0 5px 10px rgba(12,30,48,.3)}
+.cta-perfil-info{flex:1;min-width:0}
+.cta-hola{font-size:18px;font-weight:800;color:var(--azul-dark);line-height:1.2}
+.cta-perfil-sub{font-size:12.5px;color:var(--muted-fg);margin-top:3px;line-height:1.35}
+.cta-edit-ic{flex-shrink:0;width:38px;height:38px;border-radius:50%;border:none;background:#fff;color:var(--azul-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2.5px 6px rgba(12,30,48,.22);transition:background .15s,transform .15s}
+.cta-edit-ic:hover{background:var(--card);transform:translateY(-1px)}
+.cta-dirs-view{margin-top:13px;display:flex;flex-direction:column;gap:6px}
+.cta-dir-chip{display:flex;align-items:center;gap:8px;background:#fff;border-radius:9px;padding:8px 11px;font-size:13px;color:var(--azul-dark);font-weight:600;box-shadow:0 2.5px 6px rgba(12,30,48,.22)}
+.cta-dir-chip svg{flex-shrink:0;opacity:.75}
+.cta-dir-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cta-completar{margin-top:14px;width:100%;background:var(--azul);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.cta-completar:hover{background:var(--azul-dark)}
+.cta-sec{margin-top:22px}
+.cta-sec-title{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;color:var(--azul-dark);margin:0 0 11px;text-transform:uppercase;letter-spacing:.6px}
+.cta-sec-title::after{content:"";flex:1;height:1.5px;background:var(--border);border-radius:1px}
+.cta-vacio{text-align:center;color:var(--muted-fg);font-size:13.5px;line-height:1.55;padding:26px 14px;background:var(--card);border:1.5px dashed var(--border);border-radius:13px}
+.cta-vacio svg{display:block;margin:0 auto 10px;opacity:.4}
+.cta-pedidos{display:flex;flex-direction:column;gap:9px}
+.cta-pedido{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:12px 13px;cursor:pointer;font-family:inherit;transition:border-color .15s,box-shadow .15s,transform .12s}
+.cta-pedido:hover{border-color:var(--azul-mid);box-shadow:0 3px 12px rgba(0,0,0,.07)}
+.cta-pedido:active{transform:scale(.985)}
+.cta-pedido-ic{width:40px;height:40px;border-radius:11px;background:var(--azul-light);color:var(--azul-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cta-pedido-ic img{width:24px;height:24px;object-fit:contain;display:block}
+.cta-pedido-mid{flex:1;min-width:0}
+.cta-pedido-mid b{display:block;font-size:14.5px;color:var(--azul-dark);font-weight:800}
+.cta-pedido-meta{display:block;font-size:12px;color:var(--muted-fg);margin-top:1px}
+.cta-pedido-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.cta-pedido-total{font-size:14.5px;font-weight:800;color:var(--azul-dark)}
+.cta-pedido-right svg{color:var(--muted-fg)}
+.cta-form{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px}
+.cta-form[hidden]{display:none}
+.cta-label{display:block;font-size:12px;font-weight:700;color:var(--azul-dark);text-transform:uppercase;letter-spacing:.4px;margin:2px 0 5px}
+.cta-input,.cta-dir-in{width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-size:15px;font-family:inherit}
+.cta-input:focus,.cta-dir-in:focus{outline:none;border-color:var(--azul)}
+.cta-field{margin-bottom:12px}
+.cta-dir-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.cta-dir-in{flex:1}
+.cta-dir-del{flex-shrink:0;width:34px;height:40px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted-fg);cursor:pointer;font-size:15px}
+.cta-dir-del:hover{border-color:#e8633a;color:#e8633a;background:#fff5f3}
+.cta-add-dir{background:none;border:none;color:var(--azul);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;padding:4px 0;margin-top:2px}
+.cta-form-actions{display:flex;gap:9px;margin-top:14px}
+.cta-btn-sec{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted-fg);border-radius:9px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.cta-btn-pri{flex:1;background:var(--azul);border:none;color:#fff;border-radius:9px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.cta-btn-pri:hover{background:var(--azul-dark)}
+.cta-pmodal{position:fixed;inset:0;z-index:10020;display:none}
+.cta-pmodal.open{display:block}
+.cta-pmodal-ov{position:absolute;inset:0;background:rgba(26,55,64,.55)}
+.cta-pmodal-panel{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:460px;max-width:100vw;max-height:86vh;background:var(--card);border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:0 -6px 32px rgba(0,0,0,.25)}
+@media(min-width:560px){.cta-pmodal-panel{bottom:auto;top:50%;transform:translate(-50%,-50%);border-radius:16px;max-height:80vh}}
+.cta-pmodal-head{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1.5px solid var(--border);flex-shrink:0}
+.cta-pmodal-head b{font-size:17px;color:var(--azul-dark);font-weight:800}
+.cta-pmodal-body{padding:14px 18px;overflow-y:auto;flex:1}
+.cta-pmodal-foot{padding:14px 18px;border-top:1.5px solid var(--border);flex-shrink:0}
+.cta-reorder{width:100%;background:var(--azul);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.cta-reorder:hover{background:var(--azul-dark)}
+.cta-reorder:disabled{opacity:.5;cursor:default}
+.cpm-fecha{font-size:13px;color:var(--muted-fg);margin-bottom:12px}
+.cpm-item{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.cpm-item-name{flex:1;font-size:14px;font-weight:600}
+.cpm-item-q{font-size:12.5px;color:var(--muted-fg);white-space:nowrap;align-self:center}
+.cpm-item-sub{font-size:14px;font-weight:700;color:var(--azul-dark);white-space:nowrap;min-width:66px;text-align:right}
+.cpm-total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:17px;font-weight:700}
+.cpm-total b{color:var(--azul);font-weight:800}
+.cpm-dir{margin-top:12px;font-size:13px;background:var(--azul-light);border-radius:9px;padding:10px 12px;line-height:1.4}
 .may-badge{border-radius:10px;padding:12px;margin-bottom:14px;font-size:14px;font-weight:600;text-align:center}
 .may-active{background:var(--azul);color:#fff}
 .may-inactive{background:var(--azul-light);color:var(--azul-dark);border:1px solid rgba(77,125,138,.2)}
@@ -1514,6 +1599,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
       .cats-burger-btn:hover{background:#1a3050;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.22)}
       @media(max-width:600px){.cats-burger-btn{width:36px;height:36px}}
     </style>
+    <button class="cats-burger-btn cuenta-btn" onclick="openCuenta()" title="Mi cuenta" aria-label="Mi cuenta"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg></button>
     <button class="cats-burger-btn" onclick="toggleCatsDropdown()" title="Categorías" aria-label="Ver categorías"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
 
   </div>
@@ -1525,6 +1611,9 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="compact-inner">
     <img class="compact-logo" src="android-chrome-192x192.png" alt="Paladear" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">
     <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value)" aria-label="Buscar productos">
+    <button class="compact-hamb" onclick="openCuenta()" aria-label="Mi cuenta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>
+    </button>
     <button class="compact-hamb" onclick="compactOpenCats()" aria-label="Categorías">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
     </button>
@@ -1984,6 +2073,22 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="cart-header"><h2><img class="head-icon" src="icon-carrito.png" alt="">Tu pedido</h2><div class="cart-header-actions"><button class="cart-chat-btn" onclick="toggleChat()" title="Consultar" aria-label="Consultar">💬</button><button class="close-btn" onclick="closeCart()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
   <div class="cart-body" id="cartBody"></div>
   <div class="cart-footer hidden" id="cartFooter"></div>
+</div>
+
+<!-- ═══════════ MI CUENTA ═══════════ -->
+<div class="cart-overlay" id="cuentaOverlay" onclick="closeCuenta()"></div>
+<div class="cart-panel cuenta-panel" id="cuentaPanel">
+  <div class="cart-header"><h2>Mi cuenta</h2><div class="cart-header-actions"><button class="close-btn" onclick="closeCuenta()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
+  <div class="cart-body" id="cuentaBody"></div>
+</div>
+<!-- Modal detalle de un pedido -->
+<div class="cta-pmodal" id="cuentaPedidoModal">
+  <div class="cta-pmodal-ov" onclick="_cuentaCerrarPedido()"></div>
+  <div class="cta-pmodal-panel">
+    <div class="cta-pmodal-head"><b id="cuentaPedidoTitle">Pedido</b><button class="close-btn" onclick="_cuentaCerrarPedido()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="cta-pmodal-body" id="cuentaPedidoBody"></div>
+    <div class="cta-pmodal-foot"><button class="cta-reorder" id="cuentaReorderBtn" onclick="_cuentaVolverAPedir()">🔄 Volver a pedir</button></div>
+  </div>
 </div>
 
 
@@ -2662,6 +2767,167 @@ function closeCart(){
   document.body.style.overflow='';
 }
 
+/* ═══════════ MI CUENTA (perfil + direcciones + historial de pedidos, todo local) ═══════════ */
+var _PALADEAR_PEDIDOS_KEY='paladear_pedidos_v1';
+function _ctaEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function _cuentaCargarPedidos(){try{var a=JSON.parse(localStorage.getItem(_PALADEAR_PEDIDOS_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+function _cuentaGuardarPedidos(a){try{localStorage.setItem(_PALADEAR_PEDIDOS_KEY,JSON.stringify(a));}catch(e){}}
+// Direcciones como OBJETOS {dir, piso, tipo, entre, indic, lat, lng}. Migra formatos viejos
+// (strings; la 1ª hereda los detalles sueltos que antes vivían en el perfil).
+function _cuentaDirecciones(p){
+  p=p||_coCargarPerfil();
+  var raw=Array.isArray(p.direcciones)?p.direcciones.filter(Boolean):(p.direccion?[p.direccion]:[]);
+  return raw.map(function(d,i){
+    if(typeof d==='string'){
+      var o={dir:d};
+      if(i===0){if(p.pisoDepto)o.piso=p.pisoDepto;if(p.tipoViv)o.tipo=p.tipoViv;if(p.entreCalles)o.entre=p.entreCalles;if(p.indicaciones)o.indic=p.indicaciones;}
+      return o;
+    }
+    return (d&&d.dir)?d:null;
+  }).filter(Boolean);
+}
+// Guarda un pedido en el historial (lo llama el checkout al enviar). snap = copia del carrito con subtotal efectivo.
+function _cuentaGuardarPedido(cartArr,esMay,total,direccion){
+  try{
+    var snap=(cartArr||[]).map(function(it){var o=JSON.parse(JSON.stringify(it));o._sub=esMay?_itemMay(it):_itemMinConOferta(it);return o;});
+    if(!snap.length)return;
+    var hist=_cuentaCargarPedidos();
+    var n=(parseInt(localStorage.getItem('paladear_pedido_n')||'0',10)||0)+1;
+    localStorage.setItem('paladear_pedido_n',String(n));
+    var d=new Date();
+    var fecha=('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
+    hist.unshift({n:n,fecha:fecha,total:total,count:snap.length,direccion:direccion||'',cart:snap});
+    if(hist.length>50)hist=hist.slice(0,50);
+    _cuentaGuardarPedidos(hist);
+  }catch(e){}
+}
+window._cuentaGuardarPedido=_cuentaGuardarPedido;
+function openCuenta(){
+  document.getElementById('cuentaOverlay').classList.add('open');
+  document.getElementById('cuentaPanel').classList.add('open');
+  document.body.style.overflow='hidden';
+  renderCuenta();
+  try{history.pushState({view:'cuenta'},'');}catch(e){}
+}
+window.openCuenta=openCuenta;
+function closeCuenta(){
+  document.getElementById('cuentaOverlay').classList.remove('open');
+  document.getElementById('cuentaPanel').classList.remove('open');
+  document.body.style.overflow='';
+}
+window.closeCuenta=closeCuenta;
+function renderCuenta(){
+  var p=_coCargarPerfil();
+  var nombre=(p.nombre||'').trim();
+  var dirs=_cuentaDirecciones(p);
+  var tienePerfil=!!(nombre||dirs.length);
+  var pinSvg='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+  var editSvg='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+  var personSvg='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>';
+  var inicial=nombre?nombre.charAt(0).toUpperCase():'';
+  var h='<div class="cta-perfil"><div class="cta-perfil-row">';
+  h+='<div class="cta-mono">'+(inicial?_ctaEsc(inicial):personSvg)+'</div>';
+  h+='<div class="cta-perfil-info"><div class="cta-hola">'+(nombre?('Hola, '+_ctaEsc(nombre)):'Tu cuenta')+'</div>';
+  h+='<div class="cta-perfil-sub">'+(tienePerfil?'Tus datos quedan guardados en este dispositivo':'Guardá tus datos y pedí más rápido')+'</div></div>';
+  if(tienePerfil)h+='<button class="cta-edit-ic" onclick="_cuentaAbrirForm()" title="Editar mis datos" aria-label="Editar mis datos">'+editSvg+'</button>';
+  h+='</div>';
+  if(dirs.length)h+='<div class="cta-dirs-view">'+dirs.map(function(d){return '<div class="cta-dir-chip">'+pinSvg+'<span>'+_ctaEsc(d.dir)+'</span></div>';}).join('')+'</div>';
+  if(!tienePerfil)h+='<button class="cta-completar" onclick="_cuentaAbrirForm()">Completar mis datos</button>';
+  h+='</div>';
+  h+=_cuentaFormHTML(p,dirs);
+  var boxSvg='<img src="icon-minorista.png" alt="" loading="lazy">';
+  var chevSvg='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+  var ped=_cuentaCargarPedidos();
+  h+='<div class="cta-sec"><h3 class="cta-sec-title">Mis pedidos</h3>';
+  if(!ped.length){
+    h+='<div class="cta-vacio"><img src="icon-minorista.png" alt="" loading="lazy" style="width:34px;height:34px;object-fit:contain;display:block;margin:0 auto 10px;opacity:.55">Todavía no hiciste pedidos.<br>Cuando envíes uno por WhatsApp, va a quedar guardado acá.</div>';
+  }else{
+    h+='<div class="cta-pedidos">';
+    ped.forEach(function(pe,i){
+      h+='<button class="cta-pedido" onclick="_cuentaAbrirPedido('+i+')">'
+        +'<div class="cta-pedido-ic">'+boxSvg+'</div>'
+        +'<div class="cta-pedido-mid"><b>Pedido #'+pe.n+'</b><span class="cta-pedido-meta">'+pe.count+' '+(pe.count===1?'producto':'productos')+' · '+_ctaEsc(pe.fecha)+'</span></div>'
+        +'<div class="cta-pedido-right"><span class="cta-pedido-total">$'+fmt(pe.total)+'</span>'+chevSvg+'</div>'
+        +'</button>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('cuentaBody').innerHTML=h;
+}
+function _cuentaFormHTML(p,dirs){
+  var list=(dirs&&dirs.length)?dirs:[{dir:''}];
+  var rows=list.map(function(d,i){return '<div class="cta-dir-row" data-oi="'+i+'"><input type="text" class="cta-dir-in" placeholder="Calle, número, ciudad" autocomplete="street-address" value="'+_ctaEsc(d.dir)+'"><button type="button" class="cta-dir-del" onclick="_cuentaDelDir(this)" aria-label="Quitar dirección">✕</button></div>';}).join('');
+  return '<form class="cta-form" id="cuentaForm" hidden onsubmit="return _cuentaGuardarForm(event)">'
+    +'<div class="cta-field"><label class="cta-label">Nombre</label><input type="text" id="ctaNombre" class="cta-input" placeholder="Tu nombre" value="'+_ctaEsc(p.nombre||'')+'"></div>'
+    +'<label class="cta-label">Direcciones</label><div id="ctaDirs">'+rows+'</div>'
+    +'<button type="button" class="cta-add-dir" onclick="_cuentaAddDir()">+ Agregar otra dirección</button>'
+    +'<div class="cta-form-actions"><button type="button" class="cta-btn-sec" onclick="_cuentaCerrarForm()">Cancelar</button><button type="submit" class="cta-btn-pri">Guardar</button></div>'
+    +'</form>';
+}
+function _cuentaAbrirForm(){var f=document.getElementById('cuentaForm');if(f){f.hidden=false;var n=document.getElementById('ctaNombre');if(n)n.focus();}}
+window._cuentaAbrirForm=_cuentaAbrirForm;
+function _cuentaCerrarForm(){var f=document.getElementById('cuentaForm');if(f)f.hidden=true;}
+window._cuentaCerrarForm=_cuentaCerrarForm;
+function _cuentaAddDir(){var w=document.getElementById('ctaDirs');if(!w)return;var d=document.createElement('div');d.className='cta-dir-row';d.setAttribute('data-oi','-1');d.innerHTML='<input type="text" class="cta-dir-in" placeholder="Calle, número, ciudad" autocomplete="street-address"><button type="button" class="cta-dir-del" onclick="_cuentaDelDir(this)" aria-label="Quitar dirección">✕</button>';w.appendChild(d);d.querySelector('input').focus();}
+window._cuentaAddDir=_cuentaAddDir;
+function _cuentaDelDir(btn){var w=document.getElementById('ctaDirs');var row=btn.closest('.cta-dir-row');if(row)row.remove();if(w&&!w.querySelector('.cta-dir-row'))_cuentaAddDir();}
+window._cuentaDelDir=_cuentaDelDir;
+function _cuentaGuardarForm(e){
+  e.preventDefault();
+  var p=_coCargarPerfil();
+  var n=document.getElementById('ctaNombre');
+  p.nombre=(n?n.value:'').trim();
+  // Reconstruir el array preservando los detalles de cada dirección original (data-oi)
+  var orig=_cuentaDirecciones(p);
+  var dirs=[].slice.call(document.querySelectorAll('#ctaDirs .cta-dir-row')).map(function(row){
+    var v=(row.querySelector('.cta-dir-in').value||'').trim();
+    if(!v)return null;
+    var oi=parseInt(row.getAttribute('data-oi'),10);
+    var base=(oi>=0&&orig[oi])?orig[oi]:{};
+    var o={};for(var k in base)o[k]=base[k];
+    o.dir=v;
+    return o;
+  }).filter(Boolean);
+  p.direcciones=dirs;
+  if(dirs.length)p.direccion=dirs[0].dir;else delete p.direccion;
+  _coGuardarPerfil(p);
+  _cuentaCerrarForm();
+  renderCuenta();
+  return false;
+}
+window._cuentaGuardarForm=_cuentaGuardarForm;
+var _cuentaPedidoActual=null;
+function _cuentaAbrirPedido(i){
+  var ped=_cuentaCargarPedidos();var pe=ped[i];if(!pe)return;
+  _cuentaPedidoActual=pe;
+  var h='<div class="cpm-fecha">'+_ctaEsc(pe.fecha)+'</div>';
+  (pe.cart||[]).forEach(function(it){
+    var sub=(it._sub!=null)?it._sub:_itemMin(it);
+    var q=it.unidad==='und'?(it.c+'×'):_gLabel(it.totalG).replace(/ g$/,' gr');
+    h+='<div class="cpm-item"><div class="cpm-item-name">'+_tc(it.n)+'</div><div class="cpm-item-q">'+q+'</div><div class="cpm-item-sub">$'+fmt(sub)+'</div></div>';
+  });
+  h+='<div class="cpm-total"><span>Total</span><b>$'+fmt(pe.total)+'</b></div>';
+  if(pe.direccion)h+='<div class="cpm-dir"><b>Enviado a:</b> '+_ctaEsc(pe.direccion)+'</div>';
+  document.getElementById('cuentaPedidoTitle').textContent='Pedido #'+pe.n;
+  document.getElementById('cuentaPedidoBody').innerHTML=h;
+  var rb=document.getElementById('cuentaReorderBtn');if(rb)rb.disabled=!(pe.cart&&pe.cart.length);
+  document.getElementById('cuentaPedidoModal').classList.add('open');
+}
+window._cuentaAbrirPedido=_cuentaAbrirPedido;
+function _cuentaCerrarPedido(){document.getElementById('cuentaPedidoModal').classList.remove('open');}
+window._cuentaCerrarPedido=_cuentaCerrarPedido;
+function _cuentaVolverAPedir(){
+  var pe=_cuentaPedidoActual;if(!pe||!pe.cart||!pe.cart.length)return;
+  cart=pe.cart.map(function(it){var o=JSON.parse(JSON.stringify(it));delete o._sub;return o;});
+  if(typeof updateCartCount==='function')updateCartCount();
+  if(typeof renderCart==='function')renderCart();
+  _cuentaCerrarPedido();
+  closeCuenta();
+  if(typeof openCart==='function')openCart();
+}
+window._cuentaVolverAPedir=_cuentaVolverAPedir;
+
 // Formatea gramos: 1500g → "1.5 kg", 500 → "500 g"
 function _gLabel(g){return g>=1000?(g/1000)%1===0?(g/1000)+' kg':(g/1000).toFixed(2).replace(/\.?0+$/,'')+' kg':g+' g'}
 // Precio total de un item (maneja kg unificados y unidades)
@@ -2746,7 +3012,7 @@ function renderCart(){
   if(esMay)fh+=`<div class="total-row disc"><span>Descuento por volumen</span><span>−$${fmt(ahorroMay)}</span></div>`;
 
   fh+=`<div class="total-row main"><span>Total a pagar</span><span>$${fmt(totalConApp)}</span></div></div>`;
-  fh+='<button class="wa-btn" onclick="pedirWA()">💬 Pedir por WhatsApp</button>';
+  fh+='<button class="wa-btn" onclick="pedirWA()"><svg viewBox="0 0 24 24" width="19" height="19" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg> Pedir por WhatsApp</button>';
   footer.innerHTML=fh;footer.classList.remove('hidden');
 }
 function cartQty(key,d){
@@ -5653,27 +5919,96 @@ function _coAutocompletar() {
   _coSet('coNombre', p.nombre);
   _coSet('coNombreDom', p.nombre);
   _coSet('coHorarioRetiro', p.horarioRetiro);
-  _coSet('coDireccion', p.direccion);
-  _coSet('coPisoDepto', p.pisoDepto);
-  _coSet('coEntreCalles', p.entreCalles);
-  _coSet('coIndicaciones', p.indicaciones);
-  if (p.tipoViv) {
-    var rt = document.querySelector('input[name="coTipo"][value="' + p.tipoViv + '"]');
-    if (rt) rt.checked = true;
-  }
-  if (p.pagoPref) {
-    var rp = document.querySelector('input[name="coPago"][value="' + p.pagoPref + '"]');
-    if (rp) rp.checked = true;
-  }
+  // Los detalles de la dirección (piso, tipo, entre calles, indicaciones) viven en cada
+  // dirección guardada; los campos quedan vacíos para cargar una dirección nueva.
 }
 window.coBorrarPerfil = function() {
   if (!confirm('¿Borrar tus datos guardados (nombre, dirección, etc.)?')) return;
   try { localStorage.removeItem(_PALADEAR_PERFIL_KEY); } catch(e) {}
-  ['coNombre','coNombreDom','coHorarioRetiro','coDireccion','coPisoDepto','coEntreCalles','coIndicaciones'].forEach(function(id){
+  ['coNombre','coNombreDom','coHorarioRetiro','coCalle','coNumero','coLocalidad','coPisoDepto','coEntreCalles','coIndicaciones'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.value = '';
   });
   document.querySelectorAll('input[name="coTipo"],input[name="coPago"]').forEach(function(r){ r.checked = false; });
+  var _pv = document.getElementById('coProvincia'); if (_pv) _pv.value = 'Mendoza';
+  _coBuildDirOpts();
+  _coNombreCompacto();
+};
+
+// Direcciones guardadas en el checkout: radios para elegir rápido + "otra dirección".
+// Los detalles (piso, tipo, entre calles, indicaciones, mapa) solo se piden al cargar una
+// dirección NUEVA y quedan guardados con ella.
+var _coDirsCache=[];
+function _coBuildDirOpts(){
+  var wrap=document.getElementById('coDirOpts');
+  var inp=document.getElementById('coDirNueva');
+  var det=document.getElementById('coDirDetalles');
+  if(!wrap||!inp)return;
+  _coDirsCache=_cuentaDirecciones(_coCargarPerfil());
+  var dirs=_coDirsCache;
+  if(!dirs.length){wrap.style.display='none';wrap.innerHTML='';inp.style.display='';if(det)det.style.display='';return;}
+  var h='';
+  dirs.forEach(function(d,i){
+    var extras=[];
+    if(d.tipo)extras.push(d.tipo==='depto'?'Depto':'Casa');
+    if(d.piso)extras.push(d.piso);
+    if(d.entre)extras.push('entre '+d.entre);
+    var sub=extras.length?'<span class="co-dir-opt-sub">'+_ctaEsc(extras.join(' · '))+'</span>':'';
+    h+='<label class="co-dir-opt'+(i===0?' on':'')+'"><input type="radio" name="coDirSel" value="'+i+'"'+(i===0?' checked':'')+'><span class="co-dir-opt-txt"><span>'+_ctaEsc(d.dir)+'</span>'+sub+'</span></label>';
+  });
+  h+='<label class="co-dir-opt otra"><input type="radio" name="coDirSel" value="__otra"><span>➕ Usar otra dirección…</span></label>';
+  wrap.innerHTML=h;
+  wrap.style.display='';
+  inp.style.display='none';
+  if(det)det.style.display='none';
+  wrap.onchange=function(){
+    var sel=wrap.querySelector('input[name="coDirSel"]:checked');
+    wrap.querySelectorAll('.co-dir-opt').forEach(function(l){l.classList.toggle('on',sel&&l.contains(sel));});
+    if(sel&&sel.value==='__otra'){inp.style.display='';if(det)det.style.display='';var c=document.getElementById('coCalle');if(c)c.focus();}
+    else{inp.style.display='none';if(det)det.style.display='none';}
+  };
+}
+// Dirección efectiva como OBJETO: la elegida en los radios, o una nueva armada con los campos.
+// Para direcciones nuevas: calle, número, localidad y provincia son OBLIGATORIOS.
+function _coDirObjActual(){
+  var sel=document.querySelector('#coDirOpts input[name="coDirSel"]:checked');
+  if(sel&&sel.value!=='__otra'){var d=_coDirsCache[parseInt(sel.value,10)];if(d)return d;}
+  var calle=(document.getElementById('coCalle').value||'').trim();
+  var num=(document.getElementById('coNumero').value||'').trim();
+  var loc=(document.getElementById('coLocalidad').value||'').trim();
+  var prov=(document.getElementById('coProvincia').value||'').trim();
+  if(!calle){_coMarkRequired('coCalle');return null;}
+  if(!num){_coMarkRequired('coNumero');return null;}
+  if(!loc){_coMarkRequired('coLocalidad');return null;}
+  if(!prov){_coMarkRequired('coProvincia');return null;}
+  var tipoEl=document.querySelector('input[name="coTipo"]:checked');
+  var o={dir:calle+' '+num+', '+loc+', '+prov,
+    calle:calle,num:num,loc:loc,prov:prov,
+    piso:(document.getElementById('coPisoDepto').value||'').trim(),
+    tipo:tipoEl?tipoEl.value:'',
+    entre:(document.getElementById('coEntreCalles').value||'').trim(),
+    indic:(document.getElementById('coIndicaciones').value||'').trim()};
+  return o;
+}
+function _coDireccionActual(){var d=_coDirObjActual();return d?d.dir:'';}
+window._coDireccionActual=_coDireccionActual;
+// Nombre compacto: si ya lo tenemos guardado, mostrar "A nombre de X · Cambiar" en vez del campo
+function _coNombreCompacto(){
+  var nom=(_coCargarPerfil().nombre||'').trim();
+  [['coNombreField','coNombreMiniR','coNombreTxtR'],['coNombreDomField','coNombreMiniDom','coNombreTxtDom']].forEach(function(ids){
+    var f=document.getElementById(ids[0]),m=document.getElementById(ids[1]),t=document.getElementById(ids[2]);
+    if(!f||!m||!t)return;
+    if(nom){f.classList.add('hidden');t.textContent=nom;m.classList.remove('hidden');}
+    else{f.classList.remove('hidden');m.classList.add('hidden');}
+  });
+}
+window.coCambiarNombre=function(which){
+  var f=document.getElementById(which==='R'?'coNombreField':'coNombreDomField');
+  var m=document.getElementById(which==='R'?'coNombreMiniR':'coNombreMiniDom');
+  if(f)f.classList.remove('hidden');
+  if(m)m.classList.add('hidden');
+  var inp=document.getElementById(which==='R'?'coNombre':'coNombreDom');
+  if(inp)inp.focus();
 };
 
 function abrirCheckout(venta) {
@@ -5694,6 +6029,8 @@ function abrirCheckout(venta) {
   document.getElementById('checkoutOverlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   _coAutocompletar();
+  _coBuildDirOpts();
+  _coNombreCompacto();
   if (!history.state || history.state.view !== 'checkout') {
     history.pushState({view:'checkout'}, '');
   }
@@ -5749,16 +6086,6 @@ function coElegirEntrega(tipo) {
   document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
   document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
   document.getElementById('coBtnBack').style.display = '';
-  if (tipo === 'domicilio') _coLoadLeaflet();
-  // Efectivo SOLO en retiro por el local; en envío a domicilio se paga por transferencia o link de pago
-  var efWrap = document.getElementById('coRadioEfectivoWrap');
-  if (efWrap) {
-    efWrap.style.display = (tipo === 'domicilio') ? 'none' : '';
-    if (tipo === 'domicilio') {
-      var efRadio = efWrap.querySelector('input[name="coPago"]');
-      if (efRadio && efRadio.checked) efRadio.checked = false;
-    }
-  }
 }
 window.coElegirEntrega = coElegirEntrega;
 
@@ -5823,10 +6150,11 @@ function coCerrarUbicacion() {
 window.coCerrarUbicacion = coCerrarUbicacion;
 
 function coBuscarMapa() {
-  var addr = (document.getElementById('coDireccion').value || '').trim();
+  var addr = _coDireccionActual();
   if (!addr) {
-    alert('Primero escribí tu dirección arriba.');
-    document.getElementById('coDireccion').focus();
+    alert('Primero completá calle, número y localidad arriba.');
+    var _c = document.getElementById('coCalle');
+    if (_c) _c.focus();
     return;
   }
   if (!window.L || !_coMap) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
@@ -5880,44 +6208,33 @@ function coEnviar() {
     if (!nombre) { _coMarkRequired('coNombre'); return; }
     horario = (document.getElementById('coHorarioRetiro').value || '').trim();
     var _retM = _RETIRO[_coVenta] || _RETIRO.minorista;
-    deliveryMsg = '\n\n🏪 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
+    deliveryMsg = '\n\n🏬 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
     deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
     deliveryMsg += '\n📍 ' + _retM.dirLarga;
     if (_retM.mapa) deliveryMsg += '\n🗺️ ' + _retM.mapa;
-    var pagoElR = document.querySelector('input[name="coPago"]:checked');
-    if (pagoElR) {
-      var pagoTxtR = pagoElR.value === 'efectivo' ? 'Efectivo'
-        : pagoElR.value === 'transferencia' ? 'Transferencia bancaria'
-        : 'Tarjeta de débito/crédito';
-      deliveryMsg += '\n💳 Pago: ' + pagoTxtR;
-    }
+    deliveryMsg += '\n💳 Pago: a definir en el local';
   } else {
     nombre = (document.getElementById('coNombreDom').value || '').trim();
-    direccion = (document.getElementById('coDireccion').value || '').trim();
-    var pisoDepto = (document.getElementById('coPisoDepto').value || '').trim();
-    var tipoVivEl = document.querySelector('input[name="coTipo"]:checked');
-    var tipoViv = tipoVivEl ? tipoVivEl.value : '';
-    var entreCalles = (document.getElementById('coEntreCalles').value || '').trim();
-    var indicaciones = (document.getElementById('coIndicaciones').value || '').trim();
-    var pagoEl = document.querySelector('input[name="coPago"]:checked');
     if (!nombre) { _coMarkRequired('coNombreDom'); return; }
-    if (!direccion) { _coMarkRequired('coDireccion'); return; }
-    if (!pagoEl) { alert('Por favor seleccioná un medio de pago.'); return; }
-    var pagoTxt = pagoEl.value === 'efectivo'
-      ? 'Efectivo'
-      : pagoEl.value === 'transferencia'
-      ? 'Transferencia bancaria'
-      : 'Tarjeta de débito/crédito';
+    var dirObj = _coDirObjActual();
+    if (!dirObj) return; // _coDirObjActual ya marcó el campo obligatorio que falta
+    direccion = dirObj.dir;
+    // Si marcó el pin del mapa en esta sesión, queda guardado con la dirección elegida
+    if (_coCoords && !(dirObj.lat && dirObj.lng)) { dirObj.lat = _coCoords.lat; dirObj.lng = _coCoords.lng; }
     deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
     deliveryMsg += '\n📍 ' + direccion;
-    if (pisoDepto) deliveryMsg += '\n🏠 Piso/Depto: ' + pisoDepto;
-    if (tipoViv) deliveryMsg += '\n🏢 Tipo: ' + (tipoViv === 'casa' ? 'Casa' : 'Departamento');
-    if (entreCalles) deliveryMsg += '\n↔️ Entre calles: ' + entreCalles;
-    if (indicaciones) deliveryMsg += '\n📝 Indicaciones: ' + indicaciones;
-    if (_coCoords) {
-      deliveryMsg += '\n📌 Ubicación en mapa: https://maps.google.com/?q=' + _coCoords.lat + ',' + _coCoords.lng;
+    if (dirObj.piso) deliveryMsg += '\n🏠 Piso/Depto: ' + dirObj.piso;
+    if (dirObj.tipo) deliveryMsg += '\n🏢 Tipo: ' + (dirObj.tipo === 'casa' ? 'Casa' : 'Departamento');
+    if (dirObj.entre) deliveryMsg += '\n↔️ Entre calles: ' + dirObj.entre;
+    if (dirObj.indic) deliveryMsg += '\n📝 Indicaciones: ' + dirObj.indic;
+    // Link de Google Maps SIEMPRE: pin exacto si lo tiene, sino búsqueda por la dirección escrita
+    if (dirObj.lat && dirObj.lng) {
+      deliveryMsg += '\n📌 Ubicación exacta: https://maps.google.com/?q=' + dirObj.lat + ',' + dirObj.lng;
+    } else {
+      var _q = /mendoza/i.test(direccion) ? direccion : direccion + ', Mendoza, Argentina';
+      deliveryMsg += '\n🗺️ Ver en Google Maps: https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(_q);
     }
-    deliveryMsg += '\n💳 Pago: ' + pagoTxt;
+    deliveryMsg += '\n💳 Pago: Transferencia bancaria';
   }
 
   var isMin = _coVenta === 'minorista';
@@ -5961,17 +6278,20 @@ function coEnviar() {
     if (horario) _perfil.horarioRetiro = horario;
   } else {
     _perfil.direccion = direccion;
-    if (pisoDepto) _perfil.pisoDepto = pisoDepto;
-    if (tipoViv) _perfil.tipoViv = tipoViv;
-    if (entreCalles) _perfil.entreCalles = entreCalles;
-    if (indicaciones) _perfil.indicaciones = indicaciones;
+    // La dirección usada (objeto con sus detalles) va al frente, sin duplicados, máx 6
+    var _dl = direccion.trim().toLowerCase();
+    var _dirsArr = _cuentaDirecciones(_perfil).filter(function(d){ return d.dir.trim().toLowerCase() !== _dl; });
+    _dirsArr.unshift(dirObj);
+    _perfil.direcciones = _dirsArr.slice(0, 6);
+    // Los detalles sueltos viejos ya viven dentro de cada dirección
+    delete _perfil.pisoDepto; delete _perfil.tipoViv; delete _perfil.entreCalles; delete _perfil.indicaciones;
   }
-  var _pagoSel = document.querySelector('input[name="coPago"]:checked');
-  if (_pagoSel) _perfil.pagoPref = _pagoSel.value;
   _coGuardarPerfil(_perfil);
 
   // Guardar el último pedido (minorista) para poder repetirlo después
   if (isMin) _guardarUltimoPedido();
+  // Guardar el pedido en el historial de "Mi cuenta"
+  if (isMin) { try { _cuentaGuardarPedido(cart, (typeof esMay!=='undefined'&&esMay), (typeof tot!=='undefined'?tot:0), (typeof direccion!=='undefined'?direccion:'')); } catch(e){} }
 
   // Limpiar el carrito (el pedido quedó guardado en "último pedido")
   if (isMin) { cart=[]; updateCartCount(); try{localStorage.removeItem('paladear_cart_v2');}catch(e){} }
@@ -7104,7 +7424,7 @@ window.copiarLinkParaNavegador = function() {
         <p class="checkout-step-lbl">¿Cómo querés recibir tu pedido?</p>
         <div class="checkout-delivery-opts">
           <button class="checkout-delivery-btn" onclick="coElegirEntrega('retiro')">
-            <span class="checkout-delivery-ic">🏪</span>
+            <span class="checkout-delivery-ic">🏬</span>
             <div class="checkout-delivery-txt"><b>Retiro en el local</b><small id="coRetiroSub">Pueyrredón 588, Mendoza · Lun–Sáb 10 a 20hs</small></div>
             <span class="checkout-delivery-arr">›</span>
           </button>
@@ -7117,28 +7437,56 @@ window.copiarLinkParaNavegador = function() {
       </div>
       <!-- Step 2: Retiro -->
       <div id="coStep2Retiro" class="hidden">
-        <div class="co-field">
+        <div class="co-field" id="coNombreField">
           <label>Nombre y apellido <span style="color:#e53935">*</span></label>
           <input type="text" id="coNombre" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
         </div>
+        <div class="co-nombre-mini hidden" id="coNombreMiniR">👤 A nombre de <b id="coNombreTxtR"></b> · <a href="#" onclick="coCambiarNombre('R');return false">Cambiar</a></div>
         <div class="co-field">
           <label>Horario preferido de retiro <span class="opt-lbl">(opcional)</span></label>
           <input type="text" id="coHorarioRetiro" placeholder="Ej: entre 10 y 12hs" class="co-input">
           <span class="co-hint" id="coRetiroHint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
         </div>
-        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+        <div class="co-pago-nota">💳 En el local podés pagar con <b>efectivo, transferencia o tarjeta</b>.</div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()"><svg viewBox="0 0 24 24" width="19" height="19" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg> Enviar pedido por WhatsApp</button>
         <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
       </div>
       <!-- Step 2: Domicilio -->
       <div id="coStep2Dom" class="hidden">
-        <div class="co-field">
+        <div class="co-field" id="coNombreDomField">
           <label>Nombre y apellido <span style="color:#e53935">*</span></label>
           <input type="text" id="coNombreDom" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
         </div>
+        <div class="co-nombre-mini hidden" id="coNombreMiniDom">👤 A nombre de <b id="coNombreTxtDom"></b> · <a href="#" onclick="coCambiarNombre('Dom');return false">Cambiar</a></div>
         <div class="co-field">
           <label>Dirección <span style="color:#e53935">*</span></label>
-          <input type="text" id="coDireccion" placeholder="Calle, número, ciudad" class="co-input" autocomplete="street-address">
+          <div id="coDirOpts" class="co-dir-opts" style="display:none"></div>
+          <div id="coDirNueva">
+            <div class="co-field-row">
+              <div class="co-field" style="flex:2;margin-bottom:0">
+                <label>Calle <span style="color:#e53935">*</span></label>
+                <input type="text" id="coCalle" placeholder="Ej: San Martín" class="co-input" autocomplete="address-line1">
+              </div>
+              <div class="co-field" style="flex:1;margin-bottom:0">
+                <label>Número <span style="color:#e53935">*</span></label>
+                <input type="text" id="coNumero" placeholder="Ej: 1234" class="co-input" inputmode="numeric">
+              </div>
+            </div>
+            <div class="co-field-row" style="margin-top:10px">
+              <div class="co-field" style="flex:1.3;margin-bottom:0">
+                <label>Localidad <span style="color:#e53935">*</span></label>
+                <input type="text" id="coLocalidad" placeholder="Ej: Godoy Cruz" class="co-input" autocomplete="address-level2">
+              </div>
+              <div class="co-field" style="flex:1;margin-bottom:0">
+                <label>Provincia <span style="color:#e53935">*</span></label>
+                <input type="text" id="coProvincia" value="Mendoza" class="co-input" autocomplete="address-level1">
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- Detalles de la dirección: solo al cargar una dirección NUEVA (quedan guardados con ella) -->
+        <div id="coDirDetalles">
+        <div class="co-dir-det-note">Contanos cómo llegar <span class="opt-lbl">(opcional — queda guardado con esta dirección)</span></div>
         <div class="co-field-row">
           <div class="co-field" style="flex:1">
             <label>Piso / Depto <span class="opt-lbl">(opcional)</span></label>
@@ -7160,43 +7508,9 @@ window.copiarLinkParaNavegador = function() {
           <label>Indicaciones para llegar <span class="opt-lbl">(opcional)</span></label>
           <textarea id="coIndicaciones" placeholder="Ej: casa rosada, tocar timbre 2 veces" class="co-input" rows="2"></textarea>
         </div>
-        <!-- Ubicación opcional -->
-        <div class="co-ubicacion-box">
-          <div class="co-ubic-header">
-            <div>
-              <div class="co-ubic-title">📍 Ubicación exacta <span class="opt-lbl">(opcional)</span></div>
-              <div class="co-ubic-desc">Compartila para que el envío llegue más rápido</div>
-            </div>
-            <button class="co-ubic-btn" id="coUbicBtn" onclick="coAbrirUbicacion()">Compartir</button>
-          </div>
-          <div id="coUbicacionPanel" class="hidden">
-            <div id="coMap"></div>
-            <div class="co-ubic-actions">
-              <button class="co-loc-btn" onclick="coUsarUbicacion()" style="flex:1;justify-content:center;margin:0">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-                Mi ubicación actual
-              </button>
-              <button class="co-loc-btn" onclick="coBuscarMapa()" style="flex:1;justify-content:center;margin:0">
-                🔍 Buscar mi dirección
-              </button>
-            </div>
-            <div class="co-ubic-hint">Podés arrastrar el pin para ajustar la ubicación exacta.</div>
-            <button class="co-ubic-close" onclick="coCerrarUbicacion()">Quitar ubicación</button>
-          </div>
-          <div id="coUbicConfirm" class="co-ubic-confirm hidden">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="#2e7d32" style="flex-shrink:0"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            <span>Ubicación confirmada — se enviará junto al pedido</span>
-          </div>
-        </div>
-        <div class="co-field" style="margin-top:18px">
-          <label>Medio de pago <span style="color:#e53935">*</span></label>
-          <div class="co-pago-opts">
-            <label class="co-radio co-pago-efectivo" id="coRadioEfectivoWrap"><input type="radio" name="coPago" value="efectivo"><span>💵 Efectivo</span></label>
-            <label class="co-radio"><input type="radio" name="coPago" value="transferencia"><span>🏦 Transferencia bancaria</span></label>
-            <label class="co-radio"><input type="radio" name="coPago" value="tarjeta"><span>💳 Tarjeta de débito/crédito</span></label>
-          </div>
-        </div>
-        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()">💬 Enviar pedido por WhatsApp</button>
+        </div><!-- /coDirDetalles -->
+        <div class="co-pago-nota">💳 El pedido se abona por <b>transferencia bancaria</b> — te pasamos el alias por WhatsApp.<br>🚚 <b>Envío gratis</b> en compras desde <b>$40.000</b> en Gran Mendoza (si es menor, el envío se abona aparte).</div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()"><svg viewBox="0 0 24 24" width="19" height="19" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg> Enviar pedido por WhatsApp</button>
         <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
       </div>
     </div>
