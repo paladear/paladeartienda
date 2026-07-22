@@ -1332,6 +1332,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 @media(max-width:600px){.may-toast-imgsrc{max-width:92vw}}
 .may-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 .may-toast.hide{transform:translate(-50%,-50%) scale(.85);opacity:0}
+/* El aviso de descuento entra sin escalar: evita la sensación de zoom al superar $80.000. */
+.may-toast.may-toast-img{transform:translate(-50%,calc(-50% + 10px));transition:transform .18s ease-out,opacity .18s ease-out}
+.may-toast.may-toast-img.show{transform:translate(-50%,-50%);opacity:1}
+.may-toast.may-toast-img.hide{transform:translate(-50%,calc(-50% - 8px));opacity:0}
 
 .may-cone{width:54px;height:54px;flex-shrink:0;overflow:visible;position:relative;z-index:1}
 .may-cone svg{overflow:visible;width:54px;height:54px}
@@ -1405,7 +1409,12 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .granola-stepper .prod-step-val{color:var(--azul-dark)}
 .granola-stepper.over{background:#ffe0d4}
 .granola-stepper.over .prod-step-val{color:#e8633a}
-.mix-sum-panel{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;align-self:start;position:sticky;top:0}
+.mix-final-column{align-self:start;position:sticky;top:0;min-width:0}
+.mix-step-final{margin:0 0 10px;padding:8px 12px;border-radius:8px;background:var(--azul-light);color:var(--azul-dark);transition:background .18s,color .18s,box-shadow .18s}
+.mix-step-final.ready{background:var(--azul);color:#fff;box-shadow:0 3px 10px rgba(58,99,112,.22)}
+.granola-step-final{background:#e8f0ea;color:#4a7a60}
+.granola-step-final.ready{background:#6f9b7f;color:#fff;box-shadow:0 3px 10px rgba(74,122,96,.22)}
+.mix-sum-panel{border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
 .mix-mini-progress{display:none;flex-direction:column;gap:6px;background:var(--card);padding:10px 16px 12px;border-bottom:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);flex-shrink:0;animation:miniIn .25s ease-out}
 @keyframes miniIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .mix-mini-progress .mini-info{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:700}
@@ -1414,8 +1423,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-mini-progress .mini-bar{height:8px;background:var(--muted);border-radius:4px;overflow:hidden}
 .mix-mini-progress .mini-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .25s ease-out,background .2s}
 .mix-mini-progress.granola-mini-progress .mini-lbl,.mix-mini-progress.granola-mini-progress .mini-total{color:#4a7a60}
-.mix-sum-panel{align-self:start}
-@media(max-width:600px){.mix-sum-panel{position:static}}
+@media(max-width:600px){.mix-final-column{position:static}}
 .mix-sum-head{background:var(--azul-light);padding:10px 14px;font-size:13px;font-weight:700;color:var(--azul-dark)}
 .mix-fill-wrap{padding:12px 14px 10px}
 .mix-fill-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;font-weight:700}
@@ -1469,13 +1477,13 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .tabs-pill::before,.tabs-pill::after{content:'';position:absolute;bottom:0;width:28px;height:28px;pointer-events:none;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .tabs-pill::before{left:-28px;background:radial-gradient(circle at 0% 0%,transparent 28px,var(--bg) 29px)}
 .tabs-pill::after{right:-28px;background:radial-gradient(circle at 100% 0%,transparent 28px,var(--bg) 29px)}
-.tabs-pill.sliding{animation:pillSlide .45s forwards}
+.tabs-pill.sliding{animation:pillSlide .32s forwards}
 @keyframes pillSlide{0%{transform:translateX(var(--pill-dx,0));animation-timing-function:cubic-bezier(.2,.6,.35,1)}60%{transform:translateX(calc(var(--pill-dx,0) * -0.05));animation-timing-function:ease-in-out}80%{transform:translateX(calc(var(--pill-dx,0) * 0.02));animation-timing-function:ease-out}100%{transform:translateX(0)}}
 .may-tab{cursor:pointer;padding:8px 12px 18px;border-radius:0;font-weight:700;font-size:15px;transition:color .2s;border:none;background:transparent;color:rgba(255,255,255,.78);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;z-index:2;font-family:inherit;line-height:1.1}
 .may-tab-icon{width:36px;height:36px;object-fit:contain;display:block;flex-shrink:0;transform-origin:center center;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .may-tab.active{color:var(--azul-dark);position:relative;z-index:3}
 .may-tab.active .may-tab-icon{transform:scale(1.04)}
-.may-tab-icon.nav-icon-bounce,.bnav a,.bnav button img.nav-icon-bounce{animation:iconBounce .35s ease-out forwards}
+.may-tab-icon.nav-icon-bounce,.bnav a,.bnav button img.nav-icon-bounce{animation:iconBounce .28s ease-out forwards}
 @keyframes iconBounce{0%{transform:scale(.92)}60%{transform:scale(1.08)}100%{transform:scale(1.04)}}
 .may-tab:hover:not(.active){color:#fff}
 @media(max-width:767px){.may-tab{padding:6px 6px 12px;font-size:13px;gap:2px}.may-tab-icon{width:32px;height:32px}}
@@ -1926,9 +1934,9 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
 /* ═══ Barra inferior (mobile) ═══ */
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:none;background:var(--azul);border-top:0;padding-bottom:calc(env(safe-area-inset-bottom) + 10px);box-shadow:0 -4px 20px rgba(61,90,114,.18);isolation:isolate}
 /* Cápsula cerrada: deja visible el azul alrededor del botón activo. */
-.bnav-pill{position:absolute;top:2px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:63px;background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(38,67,91,.18);z-index:0;pointer-events:none;transition:width .3s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
+.bnav-pill{position:absolute;top:2px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:63px;background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(38,67,91,.18);z-index:0;pointer-events:none;transition:width .22s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
 .bnav-pill.instant{transition:none}
-.bnav-pill.bouncing{animation:bnavPillBounce .45s forwards}
+.bnav-pill.bouncing{animation:bnavPillBounce .32s forwards}
 @keyframes bnavPillBounce{0%{transform:translateX(var(--bnav-pill-dx,0));animation-timing-function:cubic-bezier(.2,.6,.35,1)}60%{transform:translateX(calc(var(--bnav-pill-dx,0) * -.05));animation-timing-function:ease-in-out}80%{transform:translateX(calc(var(--bnav-pill-dx,0) * .02));animation-timing-function:ease-out}100%{transform:translateX(0)}}
 .bnav a,.bnav button{position:relative;z-index:2;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 8px;color:rgba(255,255,255,.92);font-size:10.5px;font-weight:650;text-decoration:none;cursor:pointer;transition:color .2s;background:none;border:none;font-family:inherit}
 .bnav a,.bnav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2206,7 +2214,9 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
             </div>
             <div class="mix-prod-list" id="mixProdList"></div>
           </div>
-          <div class="mix-sum-panel">
+          <div class="mix-final-column">
+            <div class="mix-step-label mix-step-final" id="mixStep3">Paso 3 — Agregá al carrito</div>
+            <div class="mix-sum-panel">
             <div class="mix-sum-head" id="mixSumHead">Tu bolsón</div>
             <div class="mix-fill-wrap">
               <div class="mix-fill-label">
@@ -2222,6 +2232,7 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
               <div class="mix-total-row main"><span>Total</span><span id="mixTotal">$0</span></div>
               <button class="mix-add-btn" id="mixAddBtn" disabled onclick="mixAgregarAlCarrito()">Agregar a tu carrito</button>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -2258,7 +2269,9 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
             </div>
             <div class="mix-prod-list" id="granolaProdList"></div>
           </div>
-          <div class="mix-sum-panel">
+          <div class="mix-final-column">
+            <div class="mix-step-label mix-step-final granola-step-final" id="granolaStep3">Paso 3 — Agregá al carrito</div>
+            <div class="mix-sum-panel">
             <div class="granola-sum-head" id="granolaSumHead">Tu granola</div>
             <div class="mix-fill-wrap">
               <div class="mix-fill-label">
@@ -2274,6 +2287,7 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
               <div class="mix-total-row main"><span>Total</span><span id="granolaTotal">$0</span></div>
               <button class="granola-add-btn" id="granolaAddBtn" disabled onclick="granolaAgregarAlCarrito()">Agregar a tu carrito</button>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -2508,6 +2522,9 @@ window.addEventListener('popstate',function(e){const z=document.getElementById('
 /* ── CARRUSELES ── */
 let _carRotationInterval=null;
 const _carState={}; // {cid:{prods:[...],cursor:0}}
+var _catalogRenderMode=null;
+var _catalogRenderedProds=null;
+var _catalogRenderedCats=null;
 
 function _sortOpts(opts){
   // kg first: order by weight descending (1kg > 500g > 100g > und)
@@ -2649,6 +2666,7 @@ function selectCat(catId,productId,navOpts){
   const area=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
   if(isMobile)area.classList.remove('hidden');
   area.innerHTML=html;
+  area.dataset.catalogView='category';
   if(trackHistory)_palPushPageState({view:'cat',tab:'minorista',catId:catId,productId:productId||null});
   if(productId!=null){
     setTimeout(()=>{
@@ -3399,10 +3417,12 @@ function _doSearch(val){
     srMobile.scrollTop=0;
     document.body.style.overflow='hidden';
     document.getElementById('mobileProdsArea').innerHTML='';
+    document.getElementById('mobileProdsArea').dataset.catalogView='search';
     document.getElementById('desktopProdsArea').innerHTML='';
   } else {
     const _area=document.getElementById('desktopProdsArea');
     _area.innerHTML=h;
+    _area.dataset.catalogView='search';
     document.getElementById('mobileProdsArea').innerHTML='';
     if(srMobile){srMobile.classList.remove('active');srMobile.innerHTML='';}
     // Scroll hasta los resultados (solo si no están ya arriba, para no re-scrollear en cada tecla)
@@ -4230,6 +4250,17 @@ window.mixIncProd=mixIncProd;window.mixDecProd=mixDecProd;
 window.granolaIncProd=granolaIncProd;window.granolaDecProd=granolaDecProd;
 function mixGLabel(g){return g>=1000?(g%1000===0?(g/1000)+' kg':(g/1000).toFixed(1)+' kg'):g+' g'}
 function _capName(s){return (s||'').toLowerCase().replace(/(^|\s|\-|\/)([a-záéíóúñ])/g,(m,p,c)=>p+c.toUpperCase());}
+function _builderFinalStep(stepId,ready){
+  const step=document.getElementById(stepId);
+  if(step)step.classList.toggle('ready',!!ready);
+}
+function _scrollBuilderToBottom(modalId){
+  const modal=document.getElementById(modalId);if(!modal)return;
+  const scrollEl=modal.querySelector('.mix-modal-body,.granola-modal-body')||modal;
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){scrollEl.scrollTo({top:scrollEl.scrollHeight,behavior:'smooth'});});
+  });
+}
 
 function mixRenderSummary(){
   if(!mixSelSize)return;
@@ -4238,6 +4269,7 @@ function mixRenderSummary(){
   const pct=Math.min(100,(usedG/mixSelSize.g)*100);
   const full=usedG===mixSelSize.g;
   const over=usedG>mixSelSize.g;
+  _builderFinalStep('mixStep3',full&&ings.length>0);
   const fillColor=over?'#e8633a':full?'#16a34a':'var(--azul)';
   document.getElementById('mixFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('mixFillLbl').textContent=mixGLabel(usedG)+' / '+mixGLabel(mixSelSize.g);
@@ -4274,13 +4306,7 @@ function mixRenderSummary(){
     btn.disabled=false;btn.textContent='🛒 Agregar mix al carrito';
     // Bolsón completo: ocultar mini bar y scrollear al botón de agregar
     if(mp){mp.style.display='none';}
-    setTimeout(function(){
-      var modal=document.getElementById('mixModal');
-      var scrollEl=modal.querySelector('.mix-modal-body')||modal;
-      var rect=btn.getBoundingClientRect();
-      var top=rect.top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(window.innerHeight-rect.height-24);
-      scrollEl.scrollTo({top:top,behavior:'smooth'});
-    },150);
+    setTimeout(function(){_scrollBuilderToBottom('mixModal');},100);
   }
   else if(over){
     btn.disabled=true;btn.textContent='Excedés el peso del bolsón';
@@ -4574,6 +4600,7 @@ function granolaRenderSummary(){
   const usedG=ings.reduce((a,[,v])=>a+v.g,0);
   const pct=Math.min(100,(usedG/granolaSelSize.g)*100);
   const full=usedG===granolaSelSize.g,over=usedG>granolaSelSize.g;
+  _builderFinalStep('granolaStep3',full&&ings.length>0);
   const fillColor=over?'#e8633a':full?'#16a34a':'#8faf9b';
   document.getElementById('granolaFillFill').style.cssText=`width:${pct}%;background:${fillColor}`;
   document.getElementById('granolaFillLbl').textContent=_gLabel(usedG)+' / '+_gLabel(granolaSelSize.g);
@@ -4601,13 +4628,7 @@ function granolaRenderSummary(){
   if(full&&ings.length>0){
     btn.disabled=false;btn.textContent='Agregar granola al carrito';
     if(gmp){gmp.style.display='none';}
-    setTimeout(function(){
-      var modal=document.getElementById('granolaModal');
-      var scrollEl=modal.querySelector('.granola-modal-body')||modal;
-      var rect=btn.getBoundingClientRect();
-      var top=rect.top-scrollEl.getBoundingClientRect().top+scrollEl.scrollTop-(window.innerHeight-rect.height-24);
-      scrollEl.scrollTo({top:top,behavior:'smooth'});
-    },150);
+    setTimeout(function(){_scrollBuilderToBottom('granolaModal');},100);
   }
   else if(over){
     btn.disabled=true;btn.textContent='Excedés el peso del bolsón';
@@ -5074,7 +5095,7 @@ function _restartNavIcon(img){
   img.classList.remove('nav-icon-bounce');
   void img.offsetWidth;
   img.classList.add('nav-icon-bounce');
-  setTimeout(function(){img.classList.remove('nav-icon-bounce');},420);
+  setTimeout(function(){img.classList.remove('nav-icon-bounce');},340);
 }
 function _bnavMovePill(btn,animate){
   var pill=document.getElementById('bnavPill');
@@ -5207,6 +5228,7 @@ function _bnavActiveTab(){
     var tFavx=document.getElementById('tabFavoritos'); if(tFavx) tFavx.classList.remove('active');
     _prev(tab);
     if(resetCatalog)volverInicio();
+    else if(tab==='minorista'&&!activeCatId&&!searchTerm)renderCarruseles();
     try{ var act=document.querySelector('#mainTabs .may-tab.active'); if(act) _setPill(act); }catch(e){}
     _bnavSet(tab==='recetas' ? 'recetas' : 'minorista');
   };
@@ -5270,11 +5292,24 @@ function renderCarruseles(){
   try{ hvRenderOfertas(); }catch(e){}
   if(document.body.classList.contains('hv-ofertas'))try{renderOfertasView();}catch(e){}
   if(document.body.classList.contains('hv-favoritos'))try{renderWishlistView();}catch(e){}
+  var desktopArea=document.getElementById('desktopProdsArea');
+  var mobileArea=document.getElementById('mobileProdsArea');
   if(!PRODS.length){
-    document.getElementById('desktopProdsArea').innerHTML='';
-    document.getElementById('mobileProdsArea').innerHTML='';
+    desktopArea.innerHTML='';
+    mobileArea.innerHTML='';
+    _catalogRenderMode=null;_catalogRenderedProds=null;_catalogRenderedCats=null;
     return;
   }
+  var isMobile=window.innerWidth<768;
+  var mode=isMobile?'mobile':'desktop';
+  var activeArea=isMobile?mobileArea:desktopArea;
+  var inactiveArea=isMobile?desktopArea:mobileArea;
+  if(_catalogRenderMode===mode&&_catalogRenderedProds===PRODS&&_catalogRenderedCats===CATS&&activeArea.dataset.catalogView==='all'&&activeArea.childElementCount){
+    mobileArea.classList.remove('hidden');
+    return;
+  }
+  var grouped=Object.create(null);
+  PRODS.forEach(function(p){(grouped[p[1]]||(grouped[p[1]]=[])).push(p);});
   function buildAll(prefix){
     let h=`<div class="catalog-intro">
       <div>
@@ -5285,7 +5320,7 @@ function renderCarruseles(){
     </div>`;
     const catsAlpha=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
     catsAlpha.forEach(cat=>{
-      const prods=PRODS.filter(p=>p[1]===cat.id).sort((a,b)=>a[2].localeCompare(b[2],'es'));
+      const prods=(grouped[cat.id]||[]).slice().sort((a,b)=>a[2].localeCompare(b[2],'es'));
       if(!prods.length)return;
       h+=`<section class="allcat-sec" id="catalogo-${prefix}-${cat.id}">
         <div class="allcat-head">
@@ -5298,10 +5333,40 @@ function renderCarruseles(){
     });
     return h;
   }
-  document.getElementById('desktopProdsArea').innerHTML=buildAll('dt')||'<div></div>';
-  document.getElementById('mobileProdsArea').innerHTML=buildAll('mb')||'<div></div>';
-  document.getElementById('mobileProdsArea').classList.remove('hidden');
+  activeArea.innerHTML=buildAll(isMobile?'mb':'dt')||'<div></div>';
+  activeArea.dataset.catalogView='all';
+  inactiveArea.innerHTML='';
+  inactiveArea.removeAttribute('data-catalog-view');
+  _catalogRenderMode=mode;
+  _catalogRenderedProds=PRODS;
+  _catalogRenderedCats=CATS;
+  mobileArea.classList.remove('hidden');
 };
+
+// Al cruzar el breakpoint se construye solo la versión que pasa a ser visible.
+(function(){
+  var wasMobile=window.innerWidth<768;
+  var resizeTimer=null;
+  window.addEventListener('resize',function(){
+    var isMobile=window.innerWidth<768;
+    if(isMobile===wasMobile)return;
+    wasMobile=isMobile;
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){
+      if(currentTab!=='minorista'||document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')||searchTerm)return;
+      if(!activeCatId){renderCarruseles();return;}
+      var cat=CATS.find(function(c){return c.id===activeCatId;});
+      if(!cat)return;
+      var activeArea=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
+      var inactiveArea=isMobile?document.getElementById('desktopProdsArea'):document.getElementById('mobileProdsArea');
+      activeArea.innerHTML=renderProdsHTML(cat,PRODS.filter(function(p){return p[1]===activeCatId;}),isMobile?'mb':'dt');
+      activeArea.dataset.catalogView='category';
+      inactiveArea.innerHTML='';
+      inactiveArea.removeAttribute('data-catalog-view');
+      document.getElementById('mobileProdsArea').classList.remove('hidden');
+    },100);
+  },{passive:true});
+})();
 
 // Cargar datos mayorista desde Apps Script (referencia la hoja por nombre, no GID)
 function cargarMayorista() {
