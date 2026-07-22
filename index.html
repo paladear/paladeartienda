@@ -1650,9 +1650,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
       <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value)" onblur="_hideSuggestionsDelayed()" aria-label="Buscar productos">
       <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
-    <button class="compact-hamb" onclick="openCuenta()" aria-label="Mi cuenta">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>
-    </button>
     <button class="compact-hamb" onclick="compactOpenCats()" aria-label="Categorías">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
     </button>
@@ -1916,7 +1913,7 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
 /* ═══ Barra inferior (mobile) ═══ */
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:none;background:var(--azul);border-top:0;padding-bottom:calc(env(safe-area-inset-bottom) + 10px);box-shadow:0 -4px 20px rgba(61,90,114,.18);isolation:isolate}
 /* Cápsula cerrada: deja visible el azul alrededor del botón activo. */
-.bnav-pill{position:absolute;top:3px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:54px;background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(38,67,91,.18);z-index:0;pointer-events:none;transition:width .3s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
+.bnav-pill{position:absolute;top:2px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:63px;background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(38,67,91,.18);z-index:0;pointer-events:none;transition:width .3s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
 .bnav-pill.instant{transition:none}
 .bnav-pill.bouncing{animation:bnavPillBounce .45s forwards}
 @keyframes bnavPillBounce{0%{transform:translateX(var(--bnav-pill-dx,0));animation-timing-function:cubic-bezier(.2,.6,.35,1)}60%{transform:translateX(calc(var(--bnav-pill-dx,0) * -.05));animation-timing-function:ease-in-out}80%{transform:translateX(calc(var(--bnav-pill-dx,0) * .02));animation-timing-function:ease-out}100%{transform:translateX(0)}}
