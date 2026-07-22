@@ -5036,7 +5036,17 @@ function hvRenderOfertas(){
     var of=(PRODS||[]).filter(function(p){ return p[12] && p[12].oferta>0; });
     if(!of.length){ box.style.display='none'; return; }
     box.style.display='';
-    var minis=of.slice().sort(function(a,b){return b[12].oferta-a[12].oferta;}).slice(0,6).map(function(p){
+    // Al menos 1 producto de cada rubro con oferta, hasta 6 en total. Por rubro se
+    // elige el de mayor descuento; si hay más de 6 rubros con oferta, se priorizan
+    // los rubros con el descuento más fuerte.
+    var porRubro={};
+    of.forEach(function(p){
+      var rid=p[1];
+      if(!porRubro[rid]||p[12].oferta>porRubro[rid][12].oferta) porRubro[rid]=p;
+    });
+    var seleccion=Object.keys(porRubro).map(function(k){return porRubro[k];})
+      .sort(function(a,b){return b[12].oferta-a[12].oferta;}).slice(0,6);
+    var minis=seleccion.map(function(p){
       var opts=_sortOpts(Object.keys(p[7]));
       var precio=opts.length?p[7][opts[0]][0]:0;
       var pct=p[12].oferta;
