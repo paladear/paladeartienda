@@ -1710,7 +1710,10 @@ body.hv-home #mayoristaSection{display:none!important}
 .hv-cta .arr svg{width:17px;height:17px}
 @media(max-width:767px){
   #homeView{padding-left:10px;padding-right:10px}
-  .hv-hero{margin-top:12px;min-height:clamp(320px,92vw,470px);padding:18px 14px;border-radius:15px;background-color:#3b506c;background-image:url('herobannerazul.PNG'),linear-gradient(180deg,#3b506c 0%,#3b506c 14%,#415674 86%,#415674 100%);background-size:100% auto,100% 100%;background-position:center center,center;background-repeat:no-repeat,no-repeat;align-items:center}
+  /* Sin relleno azul de fondo: el box mide justo lo que mide la imagen (aspect-ratio real
+     1341x1173), sin bandas de color arriba/abajo. El espacio que ese relleno ocupaba pasa
+     a ser aire real arriba (margin-top), así el hero sigue quedando a la misma altura. */
+  .hv-hero{margin-top:46px;aspect-ratio:1341/1173;min-height:0;padding:18px 14px;border-radius:15px;background-color:transparent;background-image:url('herobannerazul.PNG');background-size:100% auto;background-position:center;background-repeat:no-repeat;align-items:center;box-shadow:0 16px 28px -10px rgba(15,28,42,.35)}
   .hv-hero::after{background:linear-gradient(90deg,rgba(27,50,74,.48) 0%,rgba(27,50,74,.18) 45%,transparent 59%)}
   .hv-hero-copy{width:48%;max-width:192px}
   .hv-hero h1{font-size:21px;line-height:1.08;letter-spacing:-.02em;text-wrap:initial}
@@ -1719,6 +1722,14 @@ body.hv-home #mayoristaSection{display:none!important}
   .hv-cta{font-size:12.5px;padding:9px 11px 9px 17px;margin-top:13px;gap:7px;box-shadow:0 5px 14px rgba(15,34,52,.22)}
   .hv-cta .arr{width:26px;height:26px}
   .hv-cta .arr svg{width:15px;height:15px}
+  /* Sombra por abajo para que los banners se vean flotando sobre la página.
+     !important porque más abajo en el archivo hay declaraciones completas de
+     estos mismos selectores (misma especificidad, orden posterior) que si no
+     pisarían este box-shadow. */
+  .mix-banner{box-shadow:0 4px 18px rgba(120,80,40,.35),0 14px 24px -10px rgba(15,28,42,.32)!important}
+  .granola-banner{box-shadow:0 4px 18px rgba(80,130,100,.35),0 14px 24px -10px rgba(15,28,42,.32)!important}
+  #homeView .hv-ofertas{box-shadow:0 5px 18px rgba(158,66,37,.13),0 14px 24px -10px rgba(15,28,42,.32)!important}
+  .descb-banner{box-shadow:0 4px 16px rgba(84,118,146,.16),0 14px 24px -10px rgba(15,28,42,.32)!important}
 }
 #hvCats{padding:40px 0}
 .hv-sec-head{display:flex;flex-direction:column;align-items:center;gap:9px;margin:4px 0 26px}
