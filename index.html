@@ -1498,7 +1498,13 @@ button:focus-visible,a:focus-visible{outline:2.5px solid var(--terra,#b87040);ou
 body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 .compact-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:8px 16px;min-height:56px;position:relative;z-index:2}
 .compact-logo{width:48px;height:48px;border-radius:50%;background:#fff;padding:2px;object-fit:contain;flex-shrink:0;box-shadow:0 4px 9px rgba(12,30,48,.4)}
-.compact-search{flex:1;background:rgba(255,255,255,.95);border:none;border-radius:22px;padding:9px 16px;font-size:14px;color:var(--fg);outline:none;font-family:inherit;min-width:0;transition:background .2s,box-shadow .2s}
+.search-wrap-compact{flex:1;position:relative;min-width:0}
+.compact-search{width:100%;background:rgba(255,255,255,.95);border:none;border-radius:22px;padding:9px 16px;font-size:14px;color:var(--fg);outline:none;font-family:inherit;min-width:0;transition:background .2s,box-shadow .2s;box-sizing:border-box}
+.search-suggestions{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(15,28,42,.25);z-index:5;max-height:260px;overflow-y:auto;padding:6px}
+.search-suggestions.active{display:block}
+.search-suggestion-item{padding:9px 12px;font-size:14px;color:var(--muted-fg);cursor:pointer;border-radius:9px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-suggestion-item:hover{background:var(--muted);color:var(--fg)}
+.search-suggestion-item .sug-icon{flex-shrink:0;opacity:.55;font-size:13px}
 .compact-search::placeholder{color:#90a0b0}
 .compact-search:focus{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.32)}
 .compact-hamb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s,transform .15s;padding:0}
@@ -1640,7 +1646,10 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 <div class="compact-header" id="compactHeader">
   <div class="compact-inner">
     <img class="compact-logo" src="android-chrome-192x192.png" alt="Paladear" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">
-    <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value)" aria-label="Buscar productos">
+    <div class="search-wrap-compact">
+      <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value)" onblur="_hideSuggestionsDelayed()" aria-label="Buscar productos">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
     <button class="compact-hamb" onclick="openCuenta()" aria-label="Mi cuenta">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>
     </button>
@@ -2456,7 +2465,11 @@ function _levenshtein(a,b){
   return dp[m][n];
 }
 function _wordScore(qw,tw){
-  // coincidencia exacta de subcadena
+  // el texto ENTERO empieza con la palabra buscada (máxima prioridad)
+  if(tw.startsWith(qw))return qw.length>=3?20:14;
+  // alguna palabra DEL TEXTO empieza con la palabra buscada (ej "tr" en "mix tradicional")
+  if(tw.split(' ').some(w=>w.startsWith(qw)))return qw.length>=3?16:11;
+  // coincidencia exacta de subcadena en cualquier posición
   if(tw.includes(qw))return qw.length>=3?12:8;
   // si la palabra es muy corta no hacer fuzzy
   if(qw.length<3)return 0;
@@ -3244,6 +3257,54 @@ function onSearch(val){
   _searchTimer=setTimeout(()=>_doSearch(val),300);
 }
 
+// Sugerencias tipo Google mientras se escribe (nombres de productos que empiezan
+// con lo tipeado tienen prioridad sobre los que solo lo contienen en el medio).
+function _updateSuggestions(value){
+  const box=document.getElementById('searchSuggestions');
+  if(!box)return;
+  const term=(value||'').trim();
+  if(term.length<2){box.classList.remove('active');box.innerHTML='';return;}
+  const tab=(typeof currentTab!=='undefined')?currentTab:'minorista';
+  const list=(tab==='mayorista'&&typeof PRODS_MAY!=='undefined')?PRODS_MAY:PRODS;
+  const qn=_norm(term);
+  const scored=(list||[]).map(p=>{
+    const tn=_norm(p[2]);
+    let score=0;
+    if(tn.startsWith(qn))score=3;
+    else if(tn.split(' ').some(w=>w.startsWith(qn)))score=2;
+    else if(tn.includes(qn))score=1;
+    return{p,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+  const seen=new Set();
+  const top=[];
+  for(const{p}of scored){
+    const nombre=_tc(p[2]);
+    if(seen.has(nombre))continue;
+    seen.add(nombre);
+    top.push(nombre);
+    if(top.length>=6)break;
+  }
+  if(!top.length){box.classList.remove('active');box.innerHTML='';return;}
+  box.innerHTML=top.map(n=>`<div class="search-suggestion-item" onmousedown="_pickSuggestion('${n.replace(/'/g,"\\'")}')"><span class="sug-icon">🔍</span>${n}</div>`).join('');
+  box.classList.add('active');
+}
+window._updateSuggestions=_updateSuggestions;
+function _pickSuggestion(nombre){
+  const box=document.getElementById('searchSuggestions');
+  if(box){box.classList.remove('active');box.innerHTML='';}
+  const inp=document.getElementById('compactSearchInput');
+  if(inp)inp.value=nombre;
+  if(typeof window.compactOnSearch==='function')window.compactOnSearch(nombre);
+}
+window._pickSuggestion=_pickSuggestion;
+function _hideSuggestionsDelayed(){
+  setTimeout(()=>{
+    const box=document.getElementById('searchSuggestions');
+    if(box)box.classList.remove('active');
+  },150);
+}
+window._hideSuggestionsDelayed=_hideSuggestionsDelayed;
+
 function _onSearchFocus(){
   if(window.innerWidth>=768)return;
   // Colapsar header, banner y tabs en mobile para ganar espacio
@@ -3319,22 +3380,11 @@ function _doSearch(val){
   if(!results.length){
     h+='<div style="text-align:center;padding:44px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   } else {
-    h+='<div class="search-results">';
-    results.forEach(p=>{
-      const opts=Object.keys(p[7]);
-      const precio=opts.length?p[7][opts[0]][0]:0;
-      const hasSrc=p[6]&&p[6].startsWith('http');
-      const cat=CATS.find(c=>c.id===p[1]);
-      h+=`<div class="search-item" onclick="irAProducto(${p[0]})">
-        <div class="search-item-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:(cat?cat.ic:'🌿')}</div>
-        <div class="search-item-body">
-          <div class="search-item-name">${_tc(p[2])}</div>
-          <div class="search-item-cat">${cat?cat.n:''}</div>
-          <div class="search-item-price">Desde $${fmt(precio)}</div>
-        </div>
-        <div class="search-item-arrow">›</div>
-      </div>`;
-    });
+    // Tarjetas completas (igual que el catálogo): se puede agregar al carrito acá mismo,
+    // sin salir de los resultados de búsqueda.
+    const prefix=isMobile?'mb':'dt';
+    h+='<div class="prod-grid">';
+    results.forEach(p=>{h+=renderCard(p,prefix);});
     h+='</div>';
   }
 
