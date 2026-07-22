@@ -53,6 +53,23 @@ layout: null
 <link rel="canonical" href="https://paladear.github.io/paladeartienda/">
 <link rel="alternate" hreflang="es-AR" href="https://paladear.github.io/paladeartienda/">
 <link rel="alternate" hreflang="x-default" href="https://paladear.github.io/paladeartienda/">
+<script>
+// Las rutas SEO usan la misma tienda. Ajustar el canonical desde el primer
+// render evita que Google confunda una categoría/producto con la portada.
+(function(){
+  try{
+    var q=new URLSearchParams(location.search),key=q.has('producto')?'producto':(q.has('categoria')?'categoria':'');
+    var value=key?q.get(key):'';
+    if(!key||!value)return;
+    var url='https://paladear.github.io/paladeartienda/?'+key+'='+encodeURIComponent(value);
+    var canonical=document.querySelector('link[rel="canonical"]');
+    if(canonical)canonical.href=url;
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(function(link){link.href=url;});
+    var ogUrl=document.querySelector('meta[property="og:url"]');
+    if(ogUrl)ogUrl.content=url;
+  }catch(e){}
+})();
+</script>
 
 <!-- ══════════ OPEN GRAPH (WhatsApp / Facebook / LinkedIn) ══════════ -->
 <meta property="og:type" content="business.business">
@@ -889,6 +906,7 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .pcard:hover{box-shadow:0 6px 20px rgba(0,0,0,.13);border-color:var(--azul-mid)}
 .pcard-img{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:52px;background:#fff;border-bottom:1px solid var(--border);cursor:zoom-in;overflow:hidden;border-radius:12px 12px 0 0}
 .pcard-img img{width:100%;height:100%;object-fit:contain;padding:10px}
+.seo-catalog-link,.seo-product-link{color:inherit;text-decoration:none}
 .pcard-body{padding:14px;flex:1;display:flex;flex-direction:column}
 .pcard-name{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
 .pcard-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:2px}
@@ -2481,6 +2499,165 @@ function _norm(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').
 function _precio(s){const clean=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(clean);return isNaN(n)?0:Math.round(n)}
 function _bultoLabel(n,unidad){const s=String(n).replace('.',',');if(unidad==='kg')return s+' Kg';return n===1?'1 Unidad':s+' Unidades';}
 function _tc(s){return(s||'').toLowerCase().replace(/[^\s\-\/(]+/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1);});}
+
+/* ── RUTAS SEO DE CATEGORÍAS Y PRODUCTOS ──
+   Mantienen una única interfaz visual, pero dan a Google URLs rastreables y
+   metadatos propios. Las cards normales no se convierten en otra pantalla. */
+const _SEO_BASE_URL='https://paladear.github.io/paladeartienda/';
+const _SEO_DEFAULT_TITLE='Paladear Mercado de Sabores | Dietética, Frutos Secos y más en Mendoza';
+const _SEO_DEFAULT_DESCRIPTION='Paladear Mercado de Sabores en Mendoza. Frutos secos, deshidratados, semillas, especias, harinas, productos sin TACC, granola y mix personalizado. Precios con descuento por cantidad en compras desde $80.000, sin mínimo de compra. Envíos a todo el país.';
+const _SEO_DEFAULT_OG_TITLE='Paladear Mercado de Sabores | Dietética en Mendoza';
+const _SEO_DEFAULT_OG_DESCRIPTION='Frutos secos, deshidratados, semillas, harinas, sin TACC, granola y mix. Precios con descuento por cantidad desde $80.000, sin mínimo de compra. Envíos a todo el país.';
+let _seoActiveProductId=null;
+
+function _seoSlug(value){
+  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').replace(/-{2,}/g,'-');
+}
+function _seoCategorySlug(cat){return _seoSlug(cat&&cat.n);}
+function _seoStableProductId(p){return String(p&&p[12]&&p[12].productId?p[12].productId:(p?p[0]:''));}
+function _seoProductSlug(p){
+  var base=_seoSlug(p&&p[2])||'producto';
+  var stable=_seoSlug(_seoStableProductId(p));
+  return stable?base+'-'+stable:base;
+}
+function _seoCategoryHref(cat){return '?categoria='+encodeURIComponent(_seoCategorySlug(cat));}
+function _seoProductHref(p){return '?producto='+encodeURIComponent(_seoProductSlug(p));}
+function _seoCategoryUrl(cat){return _SEO_BASE_URL+'?categoria='+encodeURIComponent(_seoCategorySlug(cat));}
+function _seoProductUrl(p){return _SEO_BASE_URL+'?producto='+encodeURIComponent(_seoProductSlug(p));}
+function _seoFindCategory(token){
+  token=_seoSlug(token);
+  return CATS.find(function(c){return _seoCategorySlug(c)===token||_seoSlug(c.id)===token;})||null;
+}
+function _seoFindProduct(token){
+  token=_seoSlug(token);
+  return PRODS.find(function(p){
+    var stable=_seoSlug(_seoStableProductId(p));
+    return _seoProductSlug(p)===token||stable===token||(stable&&token.endsWith('-'+stable));
+  })||null;
+}
+function _seoRouteFromLocation(){
+  try{
+    var q=new URLSearchParams(location.search);
+    if(q.get('producto'))return{type:'product',token:q.get('producto')};
+    if(q.get('categoria'))return{type:'category',token:q.get('categoria')};
+  }catch(e){}
+  return null;
+}
+function _seoEscapeAttr(value){
+  return String(value||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function _seoPlainText(value){
+  var d=document.createElement('div');d.innerHTML=String(value||'');
+  return (d.textContent||'').replace(/\s+/g,' ').trim();
+}
+function _seoClip(value,max){
+  value=_seoPlainText(value);max=max||155;
+  if(value.length<=max)return value;
+  return value.slice(0,max-1).replace(/\s+\S*$/,'')+'…';
+}
+function _seoSetMeta(selector,value){var el=document.querySelector(selector);if(el)el.setAttribute('content',value);}
+function _seoSetCanonical(url){
+  var canonical=document.querySelector('link[rel="canonical"]');if(canonical)canonical.href=url;
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(function(link){link.href=url;});
+  _seoSetMeta('meta[property="og:url"]',url);
+}
+function _seoSetRouteSchema(data){
+  var old=document.getElementById('seoRouteSchema');if(old)old.remove();
+  if(!data)return;
+  var script=document.createElement('script');script.type='application/ld+json';script.id='seoRouteSchema';
+  script.textContent=JSON.stringify(data);document.head.appendChild(script);
+}
+function _seoApplyDefaultMeta(){
+  document.title=_SEO_DEFAULT_TITLE;
+  _seoSetMeta('meta[name="description"]',_SEO_DEFAULT_DESCRIPTION);
+  _seoSetMeta('meta[name="robots"]','index, follow, max-image-preview:large');
+  _seoSetMeta('meta[name="googlebot"]','index, follow');
+  _seoSetMeta('meta[property="og:type"]','business.business');
+  _seoSetMeta('meta[property="og:title"]',_SEO_DEFAULT_OG_TITLE);
+  _seoSetMeta('meta[property="og:description"]',_SEO_DEFAULT_OG_DESCRIPTION);
+  _seoSetMeta('meta[property="og:image"]',_SEO_BASE_URL+'og-image.jpg');
+  _seoSetMeta('meta[name="twitter:title"]',_SEO_DEFAULT_OG_TITLE);
+  _seoSetMeta('meta[name="twitter:description"]',_SEO_DEFAULT_OG_DESCRIPTION);
+  _seoSetMeta('meta[name="twitter:image"]',_SEO_BASE_URL+'og-image.jpg');
+  _seoSetCanonical(_SEO_BASE_URL);
+  _seoSetRouteSchema(null);
+}
+function _seoApplyCategoryMeta(cat,prods){
+  if(!cat)return;
+  prods=prods||[];
+  var title=cat.n+' en Mendoza | Paladear';
+  var description=_seoClip('Encontrá '+cat.n.toLowerCase()+' en Paladear Mercado de Sabores, Mendoza. Explorá '+prods.length+' productos, presentaciones y precios. Envíos a todo el país.',158);
+  var url=_seoCategoryUrl(cat);
+  document.title=title;
+  _seoSetMeta('meta[name="description"]',description);
+  _seoSetMeta('meta[name="robots"]','index, follow, max-image-preview:large');
+  _seoSetMeta('meta[name="googlebot"]','index, follow');
+  _seoSetMeta('meta[property="og:type"]','website');
+  _seoSetMeta('meta[property="og:title"]',title);
+  _seoSetMeta('meta[property="og:description"]',description);
+  _seoSetMeta('meta[property="og:image"]',_SEO_BASE_URL+'cat-'+cat.id+'.png');
+  _seoSetMeta('meta[name="twitter:title"]',title);
+  _seoSetMeta('meta[name="twitter:description"]',description);
+  _seoSetMeta('meta[name="twitter:image"]',_SEO_BASE_URL+'cat-'+cat.id+'.png');
+  _seoSetCanonical(url);
+  _seoSetRouteSchema({
+    '@context':'https://schema.org','@type':'CollectionPage','@id':url+'#collection',
+    name:title,description:description,url:url,inLanguage:'es-AR',
+    isPartOf:{'@id':_SEO_BASE_URL+'#website'},
+    mainEntity:{'@type':'ItemList',numberOfItems:prods.length,itemListElement:prods.slice(0,100).map(function(p,i){
+      return{'@type':'ListItem',position:i+1,name:_tc(p[2]),url:_seoProductUrl(p)};
+    })}
+  });
+}
+function _seoApplyProductMeta(p,cat){
+  if(!p)return;
+  cat=cat||CATS.find(function(c){return c.id===p[1];});
+  var productName=_tc(p[2]);
+  var title=_seoClip(productName+' | Paladear',62);
+  var description=_seoClip(p[8]||('Comprá '+productName+' en Paladear Mercado de Sabores, Mendoza. Consultá presentaciones y precios.'),158);
+  var url=_seoProductUrl(p),image=p[6]&&p[6].indexOf('http')===0?p[6]:_SEO_BASE_URL+'og-image.jpg';
+  document.title=title;
+  _seoSetMeta('meta[name="description"]',description);
+  _seoSetMeta('meta[name="robots"]','index, follow, max-image-preview:large');
+  _seoSetMeta('meta[name="googlebot"]','index, follow');
+  _seoSetMeta('meta[property="og:type"]','product');
+  _seoSetMeta('meta[property="og:title"]',title);
+  _seoSetMeta('meta[property="og:description"]',description);
+  _seoSetMeta('meta[property="og:image"]',image);
+  _seoSetMeta('meta[name="twitter:title"]',title);
+  _seoSetMeta('meta[name="twitter:description"]',description);
+  _seoSetMeta('meta[name="twitter:image"]',image);
+  _seoSetCanonical(url);
+  var oferta=p[12]&&p[12].oferta?p[12].oferta:0;
+  var offers=_sortOpts(Object.keys(p[7]||{})).map(function(opt){
+    var price=p[7][opt][0];if(oferta)price=Math.round(price*(1-oferta/100));
+    return{'@type':'Offer',name:opt,url:url,priceCurrency:'ARS',price:String(price),availability:'https://schema.org/InStock',itemCondition:'https://schema.org/NewCondition',seller:{'@type':'Store','@id':_SEO_BASE_URL+'#store',name:'Paladear Mercado de Sabores'}};
+  });
+  _seoSetRouteSchema({
+    '@context':'https://schema.org','@type':'Product','@id':url+'#product',
+    name:productName,description:description,url:url,image:[image],sku:_seoStableProductId(p),
+    category:cat?cat.n:undefined,offers:offers
+  });
+}
+function _seoMarkMissingRoute(){
+  document.title='Producto o categoría no disponible | Paladear';
+  _seoSetMeta('meta[name="robots"]','noindex, follow');
+  _seoSetMeta('meta[name="googlebot"]','noindex, follow');
+  _seoSetRouteSchema(null);
+}
+function _seoUrlForState(st){
+  st=st||{};
+  if(st.tab==='minorista'&&st.view==='productSeo'){
+    var p=PRODS.find(function(x){return x[0]===st.productId;});
+    if(p)return location.pathname+_seoProductHref(p);
+  }
+  if(st.tab==='minorista'&&st.catId){
+    var cat=CATS.find(function(c){return c.id===st.catId;});
+    if(cat)return location.pathname+_seoCategoryHref(cat);
+  }
+  return location.pathname;
+}
 const _STOPWORDS=new Set(['DE','DEL','LA','EL','LOS','LAS','UN','UNA','Y','O','CON','EN','X','POR']);
 function _fuzzyMatch(q,t){const qn=_norm(q).split(' ').filter(w=>w.length>1&&!_STOPWORDS.has(w));const tn=_norm(t);if(!qn.length)return false;return qn.some(w=>tn.includes(w))}
 function _levenshtein(a,b){
@@ -2550,7 +2727,7 @@ function _cardHTML(p, xopts){
     ? `<div class="carousel-card-price"><span class="precio-tachado">$${fmt(precio)}</span> <span class="precio-oferta">$${fmt(precioOferta)}</span></div>`
     : `<div class="carousel-card-price">$${fmt(precio)}</div>`;
   const onclick=opts2.onclick||`selectCat('${p[1]}',${p[0]})`;
-  return `<div class="carousel-card" onclick="${onclick}">
+  return `<a class="carousel-card seo-catalog-link" href="${_seoProductHref(p)}" onclick="${onclick};return false">
     ${ofertaBadge}
     <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
     <div class="carousel-card-body">
@@ -2558,7 +2735,7 @@ function _cardHTML(p, xopts){
       <div class="carousel-card-cat">${cat?cat.n:''}</div>
       ${precioHTML}
     </div>
-  </div>`;
+  </a>`;
 }
 
 function renderCarruseles(){
@@ -2590,7 +2767,7 @@ function renderCarruseles(){
     _carState[cid]={prods:shuffled,cursor:0};
     const visibles=shuffled.slice(0,4);
     htmlDesktop+=`<div class="carousel-section">
-      <button class="carousel-title carousel-title-btn" onclick="selectCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
+      <a class="carousel-title carousel-title-btn seo-catalog-link" href="${_seoCategoryHref(cat)}" onclick="selectCat('${cat.id}');return false">${cat.n} <span style="font-size:16px;opacity:.7">›</span></a>
       <div class="carousel-wrap">
         <div class="carousel-track" id="${cid}">${visibles.map(_cardHTML).join('')}</div>
       </div>
@@ -2599,7 +2776,7 @@ function renderCarruseles(){
     // MOBILE: todos los productos del rubro en el track scrolleable
     const cidM='carM'+i;
     htmlMobile+=`<div class="carousel-section">
-      <button class="carousel-title carousel-title-btn" onclick="selectCat('${cat.id}')">${cat.n} <span style="font-size:16px;opacity:.7">›</span></button>
+      <a class="carousel-title carousel-title-btn seo-catalog-link" href="${_seoCategoryHref(cat)}" onclick="selectCat('${cat.id}');return false">${cat.n} <span style="font-size:16px;opacity:.7">›</span></a>
       <div class="carousel-wrap">
         <div class="carousel-track" id="${cidM}">${prods.map(_cardHTML).join('')}</div>
       </div>
@@ -2642,11 +2819,11 @@ function renderCatsUI(){
 
   // Desktop sidebar
   const sl=document.getElementById('catsSidebarList');
-  if(sl)sl.innerHTML=`<button class="cat-list-btn${allActive?' active':''}" style="background:var(--azul-dark)" onclick="volverInicio()"><div class="nm">Todos los productos</div></button>`+sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
+  if(sl)sl.innerHTML=`<a class="cat-list-btn seo-catalog-link${allActive?' active':''}" href="./" style="background:var(--azul-dark)" onclick="volverInicio();return false"><div class="nm">Todos los productos</div></a>`+sortedCats.map((c,i)=>`<a class="cat-list-btn seo-catalog-link${activeCatId===c.id?' active':''}" href="${_seoCategoryHref(c)}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}');return false"><div class="nm">${c.n}</div></a>`).join('');
 
   // Dropdown grid mobile
   const dg=document.getElementById('catsDropdownGrid');
-  if(dg)dg.innerHTML=`<button class="cats-dd-btn" style="background:var(--azul-dark)" onclick="window.switchTab('minorista');volverInicio();closeCatsDropdown()"><span class="cats-dd-thumb all"><img src="icon-minorista.png" alt="" aria-hidden="true"></span><div class="nm">Todos los productos</div></button>`+sortedCats.map((c,i)=>`<button class="cats-dd-btn" style="background:var(--cat${i%4})" onclick="hvGoCat('${c.id}');closeCatsDropdown()"><span class="cats-dd-thumb"><img src="cat-${c.id}.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.display='none'"></span><div class="nm">${c.n}</div></button>`).join('');
+  if(dg)dg.innerHTML=`<a class="cats-dd-btn seo-catalog-link" href="./" style="background:var(--azul-dark)" onclick="window.switchTab('minorista');volverInicio({history:false});closeCatsDropdown();return false"><span class="cats-dd-thumb all"><img src="icon-minorista.png" alt="" aria-hidden="true"></span><div class="nm">Todos los productos</div></a>`+sortedCats.map((c,i)=>`<a class="cats-dd-btn seo-catalog-link" href="${_seoCategoryHref(c)}" style="background:var(--cat${i%4})" onclick="hvGoCat('${c.id}');closeCatsDropdown();return false"><span class="cats-dd-thumb"><img src="cat-${c.id}.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.display='none'"></span><div class="nm">${c.n}</div></a>`).join('');
 }
 
 /* ── SELECCIONAR CATEGORÍA ── */
@@ -2658,9 +2835,11 @@ function selectCat(catId,productId,navOpts){
   if(!activeCatId){try{sessionStorage.setItem('paladear_home_scrollY',String(window.scrollY));}catch(e){}}
   if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
   activeCatId=catId;
+  _seoActiveProductId=null;
   renderCatsUI();
   _saveAppState();
   const cat=CATS.find(c=>c.id===catId);
+  if(!cat)return;
   const prods=PRODS.filter(p=>p[1]===catId);
   const isMobile=window.innerWidth<768;
   const prefix=isMobile?'mb':'dt';
@@ -2669,6 +2848,7 @@ function selectCat(catId,productId,navOpts){
   if(isMobile)area.classList.remove('hidden');
   area.innerHTML=html;
   area.dataset.catalogView='category';
+  _seoApplyCategoryMeta(cat,prods);
   if(trackHistory)_palPushPageState({view:'cat',tab:'minorista',catId:catId,productId:productId||null});
   if(productId!=null){
     setTimeout(()=>{
@@ -2686,22 +2866,76 @@ function selectCat(catId,productId,navOpts){
   }
 }
 
+// Vista profunda para una entrada desde Google o un enlace compartido.
+// Reutiliza la card existente y no cambia lo que ocurre al recorrer el catálogo.
+function selectSeoProduct(product,navOpts){
+  navOpts=navOpts||{};
+  if(!product)return;
+  var cat=CATS.find(function(c){return c.id===product[1];});
+  if(!cat)return;
+  var trackHistory=navOpts.history!==false&&!_palHistoryApplying;
+  if(trackHistory)_palReplacePageState();
+  if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
+  activeCatId=cat.id;
+  _seoActiveProductId=product[0];
+  renderCatsUI();
+  _saveAppState();
+  var isMobile=window.innerWidth<768;
+  var prefix=isMobile?'mb':'dt';
+  var area=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
+  if(isMobile)area.classList.remove('hidden');
+  area.innerHTML=renderProdsHTML(cat,[product],prefix,{title:_tc(product[2])});
+  area.dataset.catalogView='product';
+  _seoApplyProductMeta(product,cat);
+  if(trackHistory)_palPushPageState({view:'productSeo',tab:'minorista',catId:cat.id,productId:product[0]});
+  setTimeout(function(){
+    area.scrollIntoView({behavior:navOpts.instant?'instant':'smooth',block:'start'});
+    var card=document.getElementById(prefix+'_'+product[0]);
+    if(card){card.classList.add('highlight-card');setTimeout(function(){card.classList.remove('highlight-card');},2200);}
+  },60);
+}
+window.selectSeoProduct=selectSeoProduct;
+
+// Los datos y las recetas se actualizan en segundo plano. Al re-renderizar,
+// conservar la URL profunda actual en vez de convertir un producto en categoría.
+function _seoRefreshCurrentCatalogView(){
+  var route=_seoRouteFromLocation();
+  var product=null;
+  var cat=null;
+  if(route&&route.type==='product')product=_seoFindProduct(route.token);
+  if(!product&&_seoActiveProductId!=null){
+    product=PRODS.find(function(p){return String(p[0])===String(_seoActiveProductId);});
+  }
+  if(product){selectSeoProduct(product,{history:false,instant:true});return true;}
+  if(route&&route.type==='category')cat=_seoFindCategory(route.token);
+  if(!cat&&activeCatId)cat=CATS.find(function(c){return c.id===activeCatId;});
+  if(cat){selectCat(cat.id,null,{history:false});return true;}
+  return false;
+}
+
 let _activeOfertasMes=false;
 
 
-function volverInicio(){
+function volverInicio(navOpts){
+  navOpts=navOpts||{};
+  var trackHistory=navOpts.history!==false&&!_palHistoryApplying;
+  if(trackHistory)_palReplacePageState();
   _activeOfertasMes=false;
   activeCatId=null;
+  _seoActiveProductId=null;
   renderCatsUI();
   renderCarruseles();
+  _seoApplyDefaultMeta();
   if(typeof _bnavSet==='function')_bnavSet('minorista');
+  if(trackHistory)_palPushPageState({view:'tab',tab:'minorista'});
   const area=window.innerWidth<768?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
   if(area)setTimeout(()=>area.scrollIntoView({behavior:'smooth',block:'start'}),40);
 }
 
-function renderProdsHTML(cat,prods,prefix){
-  let h='<button class="back-btn" onclick="volverInicio()">← Volver a todos los productos</button>';
-  h+=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat.n}</h2>`;
+function renderProdsHTML(cat,prods,prefix,viewOpts){
+  viewOpts=viewOpts||{};
+  let h='<a class="back-btn seo-catalog-link" href="./" onclick="volverInicio();return false">← Volver a todos los productos</a>';
+  h+=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${viewOpts.title||cat.n}</h2>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   h+='<div class="prod-grid">';
   prods.forEach(p=>{h+=renderCard(p,prefix)});
@@ -2740,7 +2974,7 @@ function renderCard(p,prefix){
   let h=`<div class="pcard" id="${id}" data-pid="${p[0]}">`;
   h+=`<button type="button" class="fav-btn${favOn?' active':''}" data-fav-pid="${p[0]}" onclick="return toggleFavorite(${p[0]})" aria-label="${favOn?'Quitar de favoritos':'Agregar a favoritos'}" aria-pressed="${favOn?'true':'false'}" title="${favOn?'Quitar de favoritos':'Agregar a favoritos'}"><span class="fav-heart" aria-hidden="true"></span></button>`;
   if(oferta>0)h+=`<div class="oferta-badge oferta-badge-lg">−${oferta}% OFF</div>`;
-  h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</div>`;
+  h+=`<a class="pcard-img seo-product-link" href="${_seoProductHref(p)}" onclick="zoomImg(this);return false" data-src="${hasSrc?_seoEscapeAttr(p[6]):''}">${hasSrc?`<img src="${_seoEscapeAttr(p[6])}" alt="${_seoEscapeAttr(p[2])}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</a>`;
   h+=`<div class="pcard-body">`;
   h+=`<div class="pcard-head"><div class="pcard-name">${_tc(p[2])}</div>`;
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
@@ -3374,8 +3608,10 @@ function _doSearch(val){
     // Limpiar resultados mobile
     if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
     if(bannersWrap)bannersWrap.style.display='';
-    if(activeCatId)selectCat(activeCatId);
-    else{renderCarruseles();document.getElementById('mobileProdsArea').classList.remove('hidden');}
+    if(!_seoRefreshCurrentCatalogView()){
+      renderCarruseles();
+      document.getElementById('mobileProdsArea').classList.remove('hidden');
+    }
     return;
   }
   // Guardar posición de scroll al abrir el overlay por primera vez
@@ -3797,7 +4033,18 @@ function sincronizarDesdeSheets(){
       try{localStorage.setItem('paladear_min_v1',JSON.stringify({cats:CATS,prods:PRODS,ts:Date.now()}));}catch(e){}
       console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
       renderCatsUI();
-      renderCarruseles();
+      // Si la URL representa una categoría o producto, conservar esa vista al
+      // reemplazar el caché por los datos frescos de la planilla.
+      var route=_seoRouteFromLocation();
+      if(route&&route.type==='product'){
+        var routedProduct=_seoFindProduct(route.token);
+        if(routedProduct)selectSeoProduct(routedProduct,{history:false,instant:true});else renderCarruseles();
+      }else if(route&&route.type==='category'){
+        var routedCategory=_seoFindCategory(route.token);
+        if(routedCategory)selectCat(routedCategory.id,null,{history:false});else renderCarruseles();
+      }else if(activeCatId){
+        selectCat(activeCatId,null,{history:false});
+      }else renderCarruseles();
       hideLoader();
       // Cargar recetas en background (no bloquea la UI)
       if (typeof cargarRecetas === 'function') {
@@ -3805,7 +4052,7 @@ function sincronizarDesdeSheets(){
           // Re-render del catálogo si hay recetas (para mostrar badges)
           if (RECETAS && RECETAS.length && typeof renderCatsUI === 'function') {
             renderCatsUI();
-            if (activeCatId && typeof selectCat === 'function') selectCat(activeCatId);
+            _seoRefreshCurrentCatalogView();
           }
         });
       }
@@ -3855,24 +4102,26 @@ function _palVisibleTab(){
 function _palBuildPageState(extra){
   var tab=_palVisibleTab();
   var st={paladear:true,view:'tab',tab:tab,scrollY:Math.max(0,Math.round(window.scrollY||window.pageYOffset||0))};
-  if(tab==='minorista'&&typeof activeCatId!=='undefined'&&activeCatId){st.view='cat';st.catId=activeCatId;}
+  if(tab==='minorista'&&typeof _seoActiveProductId!=='undefined'&&_seoActiveProductId!=null){
+    st.view='productSeo';st.catId=activeCatId;st.productId=_seoActiveProductId;
+  }else if(tab==='minorista'&&typeof activeCatId!=='undefined'&&activeCatId){st.view='cat';st.catId=activeCatId;}
   if(tab==='mayorista'&&typeof activeCatIdMay!=='undefined'&&activeCatIdMay){st.view='catMay';st.catId=activeCatIdMay;}
   if(extra)Object.assign(st,extra);
   return st;
 }
 function _palReplacePageState(){
   if(_palHistoryApplying)return;
-  try{history.replaceState(_palBuildPageState(),'');}catch(e){}
+  try{var st=_palBuildPageState();history.replaceState(st,'',_seoUrlForState(st));}catch(e){}
 }
 function _palPushPageState(extra){
   if(_palHistoryApplying)return;
-  try{history.pushState(_palBuildPageState(extra),'');}catch(e){}
+  try{var st=_palBuildPageState(extra);history.pushState(st,'',_seoUrlForState(st));}catch(e){}
 }
 function _palPushOverlay(view,extra){
   if(_palHistoryApplying)return;
   try{
     var cur=history.state||{};
-    if(cur.view==='tab'||cur.view==='cat'||cur.view==='catMay'||!cur.paladear)_palReplacePageState();
+    if(cur.view==='tab'||cur.view==='cat'||cur.view==='productSeo'||cur.view==='catMay'||!cur.paladear)_palReplacePageState();
     history.pushState(Object.assign({paladear:true,view:view,tab:_palVisibleTab()},extra||{}),'');
   }catch(e){}
 }
@@ -3922,11 +4171,12 @@ function _palApplyHistoryState(st,done){
     else if(st.view==='wishlist')tab='favoritos';
     else if(st.view==='ofertasMes')tab='ofertas';
     else if(st.view==='cat')tab='minorista';
+    else if(st.view==='productSeo')tab='minorista';
     else if(st.view==='catMay')tab='mayorista';
   }
   if(!tab){done();return;}
   window.switchTab(tab);
-  var catId=(st.view==='cat'||st.view==='catMay')?st.catId:null;
+  var catId=(st.view==='cat'||st.view==='catMay'||st.view==='productSeo')?st.catId:null;
   if(catId){
     var tries=0;
     var wait=setInterval(function(){
@@ -3934,7 +4184,13 @@ function _palApplyHistoryState(st,done){
       var ready=tab==='mayorista'?(typeof PRODS_MAY!=='undefined'&&PRODS_MAY.length):(typeof PRODS!=='undefined'&&PRODS.length);
       if(ready||tries>80){
         clearInterval(wait);
-        if(ready){if(tab==='mayorista')selectMayCat(catId,null,{history:false});else selectCat(catId,null,{history:false});}
+        if(ready){
+          if(tab==='mayorista')selectMayCat(catId,null,{history:false});
+          else if(st.view==='productSeo'){
+            var product=PRODS.find(function(p){return p[0]===st.productId;});
+            if(product)selectSeoProduct(product,{history:false,instant:true});else selectCat(catId,null,{history:false});
+          }else selectCat(catId,null,{history:false});
+        }
         _palRestoreScroll(st.scrollY);
         done();
       }
@@ -3974,7 +4230,7 @@ function _writeAppState(syncHistory){
   try{sessionStorage.setItem('paladear_view_state',JSON.stringify(_appStateSnapshot()));}catch(e){}
   if(syncHistory&&!_palHistoryApplying){
     var st=history.state||{};
-    if(st.view==='tab'||st.view==='cat'||st.view==='catMay'||!st.paladear)_palReplacePageState();
+    if(st.view==='tab'||st.view==='cat'||st.view==='productSeo'||st.view==='catMay'||!st.paladear)_palReplacePageState();
   }
 }
 function _saveAppState() {
@@ -3995,7 +4251,38 @@ window.addEventListener('beforeunload',function(){_writeAppState(true);});
 window.addEventListener('pagehide',function(){_writeAppState(true);});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')_writeAppState(false);});
 
+function _seoRestoreInitialRoute(route){
+  _palHistoryApplying=true;
+  var attempts=0;
+  var wait=setInterval(function(){
+    attempts++;
+    if(PRODS&&PRODS.length){
+      clearInterval(wait);
+      window.switchTab('minorista');
+      var found=null;
+      if(route.type==='product'){
+        found=_seoFindProduct(route.token);
+        if(found)selectSeoProduct(found,{history:false,instant:true});
+      }else{
+        found=_seoFindCategory(route.token);
+        if(found)selectCat(found.id,null,{history:false});
+      }
+      if(found){
+        try{var st=_palBuildPageState();history.replaceState(st,'',_seoUrlForState(st));}catch(e){}
+      }else{
+        _seoMarkMissingRoute();
+        try{history.replaceState({paladear:true,view:'tab',tab:'minorista',scrollY:0},'',location.pathname+location.search);}catch(e){}
+      }
+      setTimeout(function(){_palHistoryApplying=false;_writeAppState(false);},300);
+    }else if(attempts>100){
+      clearInterval(wait);_seoMarkMissingRoute();_palHistoryApplying=false;
+    }
+  },100);
+}
+
 function _restoreAppState() {
+  var seoRoute=_seoRouteFromLocation();
+  if(seoRoute){_seoRestoreInitialRoute(seoRoute);return;}
   _palHistoryApplying=true;
   let state;
   try {
@@ -4922,6 +5209,10 @@ function _setPill(btn) {
 let currentTab = document.body.classList.contains('hv-home') ? 'home' : 'minorista';
 function switchTab(tab) {
   currentTab = tab;
+  if(tab!=='minorista'){
+    _seoActiveProductId=null;
+    _seoApplyDefaultMeta();
+  }
   const minSection = document.getElementById('mainContainer');
   const maySection = document.getElementById('mayoristaSection');
   const recSection = document.getElementById('recetasSection');
@@ -5012,7 +5303,7 @@ function hvRenderCats(){
   if(!w1||w1.childElementCount) return;
   var h='';
   Object.keys(RUBRO_MAP).map(function(k){return RUBRO_MAP[k];}).sort(function(a,b){return a.n.localeCompare(b.n,'es',{sensitivity:'base'});}).forEach(function(c){
-    h+='<button class="hv-cat" data-cat="'+c.id+'" onclick="hvGoCat(\''+c.id+'\')"><span class="bub"><img src="cat-'+c.id+'.png" alt="" loading="lazy" onerror="this.parentNode.textContent=\''+c.ic+'\'"></span><span>'+c.n+'</span></button>';
+    h+='<a class="hv-cat seo-catalog-link" href="'+_seoCategoryHref(c)+'" data-cat="'+c.id+'" onclick="hvGoCat(\''+c.id+'\');return false"><span class="bub"><img src="cat-'+c.id+'.png" alt="" loading="lazy" onerror="this.parentNode.textContent=\''+c.ic+'\'"></span><span>'+c.n+'</span></a>';
   });
   w1.innerHTML=h; w2.innerHTML=h;
 }
@@ -5245,7 +5536,7 @@ function _bnavActiveTab(){
     var tOfx=document.getElementById('tabOfertas'); if(tOfx) tOfx.classList.remove('active');
     var tFavx=document.getElementById('tabFavoritos'); if(tFavx) tFavx.classList.remove('active');
     _prev(tab);
-    if(resetCatalog)volverInicio();
+    if(resetCatalog)volverInicio({history:false});
     else if(tab==='minorista'&&!activeCatId&&!searchTerm)renderCarruseles();
     try{ var act=document.querySelector('#mainTabs .may-tab.active'); if(act) _setPill(act); }catch(e){}
     _bnavSet(tab==='recetas' ? 'recetas' : 'minorista');
@@ -5372,16 +5663,8 @@ function renderCarruseles(){
     clearTimeout(resizeTimer);
     resizeTimer=setTimeout(function(){
       if(currentTab!=='minorista'||document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')||searchTerm)return;
-      if(!activeCatId){renderCarruseles();return;}
-      var cat=CATS.find(function(c){return c.id===activeCatId;});
-      if(!cat)return;
-      var activeArea=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
-      var inactiveArea=isMobile?document.getElementById('desktopProdsArea'):document.getElementById('mobileProdsArea');
-      activeArea.innerHTML=renderProdsHTML(cat,PRODS.filter(function(p){return p[1]===activeCatId;}),isMobile?'mb':'dt');
-      activeArea.dataset.catalogView='category';
-      inactiveArea.innerHTML='';
-      inactiveArea.removeAttribute('data-catalog-view');
-      document.getElementById('mobileProdsArea').classList.remove('hidden');
+      if(_seoRefreshCurrentCatalogView())return;
+      renderCarruseles();
     },100);
   },{passive:true});
 })();

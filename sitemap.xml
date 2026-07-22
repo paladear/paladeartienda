@@ -2,8 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://paladear.github.io/paladeartienda/</loc>
-    <lastmod>2026-05-23</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=aceites-y-vinagres</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=aceitunas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=azucar-cacao-y-reposteria</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=bebidas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=cereales</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=congelados</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=deshidratados</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=dulces-miel-y-chocolates</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=encurtidos</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=especias</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=frutos-secos</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=granos-y-legumbres</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=harinas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=infusiones-y-hierbas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=linea-gourmet</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=mantecas-y-pastas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=paladear-home</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=productos-de-frio</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=semillas</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=sin-tacc</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=snacks</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=suplementos</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=tomate</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://paladear.github.io/paladeartienda/?categoria=vinos-y-licores</loc><lastmod>2026-07-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
