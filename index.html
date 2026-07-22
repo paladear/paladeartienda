@@ -1713,13 +1713,13 @@ body.hv-home #mayoristaSection{display:none!important}
 @media(min-width:1024px){
   #homeView,#mainContainer,#recetasSection{padding-left:56px!important;padding-right:56px!important}
 }
-.hv-hero{position:relative;margin-top:16px;min-height:clamp(560px,72vh,680px);padding:48px 54px 58px 70px;overflow:hidden;border-radius:22px;background:#304d6b url('herobannerazul.PNG') center/cover no-repeat;display:flex;align-items:stretch;text-align:left;isolation:isolate}
+.hv-hero{position:relative;margin-top:16px;min-height:clamp(560px,72vh,680px);padding:78px 54px 58px 70px;overflow:hidden;border-radius:22px;background:#304d6b url('herobannerazul.PNG') center/cover no-repeat;display:flex;align-items:stretch;text-align:left;isolation:isolate}
 .hv-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(28,51,76,.36) 0%,rgba(28,51,76,.12) 43%,transparent 62%);pointer-events:none}
 .hv-hero-copy{width:min(52%,540px);display:flex;flex-direction:column}
-.hv-hero h1{font-size:clamp(38px,4.3vw,56px);font-weight:850;color:#fff;line-height:1.04;letter-spacing:-.025em;margin:0;width:max-content;max-width:none;text-shadow:0 2px 12px rgba(16,35,54,.24)}
-/* Triángulo invertido equilibrado: cada línea se centra respecto de la primera. */
-.hv-hero h1 span.hv-l1,.hv-hero h1 span.hv-l2,.hv-hero h1 span.hv-l3{display:block;width:max-content;margin-left:auto;margin-right:auto}
-.hv-hero h1 .hv-l1{font-size:1.12em;white-space:nowrap}
+.hv-hero h1{font-size:clamp(40px,4.3vw,56px);font-weight:850;color:#fff;line-height:1.04;letter-spacing:-.025em;margin:0;width:max-content;max-width:none;text-shadow:0 2px 12px rgba(16,35,54,.24)}
+/* Composición editorial: una sola alineación izquierda y jerarquía por tipografía. */
+.hv-hero h1 span.hv-l1,.hv-hero h1 span.hv-l2,.hv-hero h1 span.hv-l3{display:block;width:max-content;margin-left:0;margin-right:0}
+.hv-hero h1 .hv-l1{font-size:1em;white-space:nowrap}
 .hv-hero h1 .hv-l2{font-size:1em;white-space:nowrap}
 .hv-hero h1 .hv-l3{font-size:1em;margin-top:12px;line-height:1}
 .hv-brand-word{display:inline-flex;height:1.85em;vertical-align:-.22em;line-height:0;filter:drop-shadow(0 2px 6px rgba(16,35,54,.28))}
@@ -1734,11 +1734,11 @@ body.hv-home #mayoristaSection{display:none!important}
   /* Sin relleno azul de fondo: el box mide justo lo que mide la imagen (aspect-ratio real
      1341x1173), sin bandas de color arriba/abajo. El espacio que ese relleno ocupaba pasa
      a ser aire real arriba (margin-top), así el hero sigue quedando a la misma altura. */
-  .hv-hero{margin-top:46px;aspect-ratio:1341/1173;min-height:0;padding:18px 14px 18px 20px;border-radius:15px;background-color:transparent;background-image:url('herobannerazul.PNG');background-size:100% auto;background-position:center;background-repeat:no-repeat;align-items:stretch;box-shadow:0 16px 28px -10px rgba(15,28,42,.35)}
+  .hv-hero{margin-top:46px;aspect-ratio:1341/1173;min-height:0;padding:clamp(28px,9vw,40px) 14px 18px 20px;border-radius:15px;background-color:transparent;background-image:url('herobannerazul.PNG');background-size:100% auto;background-position:center;background-repeat:no-repeat;align-items:stretch;box-shadow:0 16px 28px -10px rgba(15,28,42,.35)}
   .hv-hero::after{background:linear-gradient(90deg,rgba(27,50,74,.48) 0%,rgba(27,50,74,.18) 45%,transparent 59%)}
   .hv-hero-copy{width:50%;max-width:198px}
   .hv-hero h1{font-size:22px;line-height:1.04;letter-spacing:-.02em}
-  .hv-hero h1 .hv-l1{font-size:1.08em}
+  .hv-hero h1 .hv-l1{font-size:1em}
   .hv-hero h1 .hv-l2{font-size:1em}
   .hv-hero h1 .hv-l3{font-size:1em;margin-top:8px}
   .hv-brand-word{height:1.95em}
@@ -1754,6 +1754,12 @@ body.hv-home #mayoristaSection{display:none!important}
   .granola-banner{box-shadow:0 4px 18px rgba(80,130,100,.35),0 14px 24px -10px rgba(15,28,42,.32)!important}
   #homeView .hv-ofertas{box-shadow:0 5px 18px rgba(158,66,37,.13),0 14px 24px -10px rgba(15,28,42,.32)!important}
   .descb-banner{box-shadow:0 4px 16px rgba(84,118,146,.16),0 14px 24px -10px rgba(15,28,42,.32)!important}
+}
+@media(max-width:340px){
+  .hv-hero{padding-top:24px}
+  .hv-hero h1{font-size:20px}
+  .hv-brand-word{height:1.85em}
+  .hv-hero p{font-size:10.5px;line-height:1.28}
 }
 #hvCats{padding:40px 0}
 .hv-sec-head{display:flex;flex-direction:column;align-items:center;gap:9px;margin:4px 0 26px}
