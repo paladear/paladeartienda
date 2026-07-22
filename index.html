@@ -1713,14 +1713,19 @@ body.hv-home #mayoristaSection{display:none!important}
 @media(min-width:1024px){
   #homeView,#mainContainer,#recetasSection{padding-left:56px!important;padding-right:56px!important}
 }
-.hv-hero{position:relative;margin-top:16px;min-height:clamp(560px,72vh,680px);padding:58px 54px;overflow:hidden;border-radius:22px;background:#304d6b url('herobannerazul.PNG') center/cover no-repeat;display:flex;align-items:center;text-align:left;isolation:isolate}
+.hv-hero{position:relative;margin-top:16px;min-height:clamp(560px,72vh,680px);padding:58px 54px;overflow:hidden;border-radius:22px;background:#304d6b url('herobannerazul.PNG') center/cover no-repeat;display:flex;align-items:stretch;text-align:left;isolation:isolate}
 .hv-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(28,51,76,.36) 0%,rgba(28,51,76,.12) 43%,transparent 62%);pointer-events:none}
-.hv-hero-copy{width:min(49%,510px)}
-.hv-hero h1{font-size:clamp(36px,4.1vw,53px);font-weight:850;color:#fff;line-height:1.07;letter-spacing:-.025em;margin:0;text-wrap:balance;text-shadow:0 2px 12px rgba(16,35,54,.24)}
+.hv-hero-copy{width:min(49%,510px);display:flex;flex-direction:column}
+.hv-hero h1{font-size:clamp(36px,4.1vw,53px);font-weight:850;color:#fff;line-height:1.07;letter-spacing:-.025em;margin:0;text-shadow:0 2px 12px rgba(16,35,54,.24)}
+/* Forma de triángulo invertido: cada línea más chica que la anterior, hasta llegar a Paladear */
+.hv-hero h1 span.hv-l1,.hv-hero h1 span.hv-l2,.hv-hero h1 span.hv-l3{display:block}
+.hv-hero h1 .hv-l1{font-size:1.22em}
+.hv-hero h1 .hv-l2{font-size:1em}
+.hv-hero h1 .hv-l3{font-size:.8em;margin-top:.1em}
 .hv-brand-word{display:inline-flex;height:1.18em;vertical-align:-.22em;line-height:0;filter:drop-shadow(0 2px 6px rgba(16,35,54,.28))}
 .hv-brand-word img{display:block;width:auto;height:100%;object-fit:contain}
-.hv-hero p{font-size:15px;color:rgba(255,255,255,.94);margin:17px 0 0;max-width:43ch;line-height:1.48;font-weight:500;text-shadow:0 1px 8px rgba(16,35,54,.30)}
-.hv-cta{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--azul-dark);font-weight:800;font-size:15px;border-radius:999px;padding:13px 16px 13px 23px;margin-top:23px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(15,34,52,.24);transition:transform .18s,background .2s}
+.hv-hero p{font-size:17px;color:rgba(255,255,255,.94);margin:17px 0 0;max-width:43ch;line-height:1.48;font-weight:500;text-shadow:0 1px 8px rgba(16,35,54,.30)}
+.hv-cta{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--azul-dark);font-weight:800;font-size:15px;border-radius:999px;padding:13px 16px 13px 23px;margin-top:auto;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(15,34,52,.24);transition:transform .18s,background .2s;align-self:flex-start}
 .hv-cta:hover{background:#edf7fa;transform:translateY(-1px)}
 .hv-cta .arr{width:30px;height:30px;border-radius:50%;background:var(--azul-light);display:grid;place-items:center}
 .hv-cta .arr svg{width:17px;height:17px}
@@ -1729,13 +1734,16 @@ body.hv-home #mayoristaSection{display:none!important}
   /* Sin relleno azul de fondo: el box mide justo lo que mide la imagen (aspect-ratio real
      1341x1173), sin bandas de color arriba/abajo. El espacio que ese relleno ocupaba pasa
      a ser aire real arriba (margin-top), así el hero sigue quedando a la misma altura. */
-  .hv-hero{margin-top:46px;aspect-ratio:1341/1173;min-height:0;padding:18px 14px;border-radius:15px;background-color:transparent;background-image:url('herobannerazul.PNG');background-size:100% auto;background-position:center;background-repeat:no-repeat;align-items:center;box-shadow:0 16px 28px -10px rgba(15,28,42,.35)}
+  .hv-hero{margin-top:46px;aspect-ratio:1341/1173;min-height:0;padding:18px 14px;border-radius:15px;background-color:transparent;background-image:url('herobannerazul.PNG');background-size:100% auto;background-position:center;background-repeat:no-repeat;align-items:stretch;box-shadow:0 16px 28px -10px rgba(15,28,42,.35)}
   .hv-hero::after{background:linear-gradient(90deg,rgba(27,50,74,.48) 0%,rgba(27,50,74,.18) 45%,transparent 59%)}
   .hv-hero-copy{width:48%;max-width:192px}
-  .hv-hero h1{font-size:21px;line-height:1.08;letter-spacing:-.02em;text-wrap:initial}
+  .hv-hero h1{font-size:21px;line-height:1.08;letter-spacing:-.02em}
+  .hv-hero h1 .hv-l1{font-size:1.15em}
+  .hv-hero h1 .hv-l2{font-size:1em}
+  .hv-hero h1 .hv-l3{font-size:.82em;margin-top:.1em}
   .hv-brand-word{height:1.44em}
-  .hv-hero p{font-size:11px;line-height:1.34;margin-top:9px;max-width:100%;font-weight:550}
-  .hv-cta{font-size:12.5px;padding:9px 11px 9px 17px;margin-top:13px;gap:7px;box-shadow:0 5px 14px rgba(15,34,52,.22)}
+  .hv-hero p{font-size:12.5px;line-height:1.34;margin-top:9px;max-width:100%;font-weight:550}
+  .hv-cta{font-size:12.5px;padding:9px 11px 9px 17px;margin-top:auto;gap:7px;box-shadow:0 5px 14px rgba(15,34,52,.22);align-self:flex-start}
   .hv-cta .arr{width:26px;height:26px}
   .hv-cta .arr svg{width:15px;height:15px}
   /* Sombra por abajo para que los banners se vean flotando sobre la página.
@@ -1940,7 +1948,7 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
   <!-- HERO -->
   <section class="hv-hero" aria-label="Bienvenida">
     <div class="hv-hero-copy">
-      <h1>El placer de elegir,<br>descubrir y <span class="hv-brand-word"><img src="paladear-wordmark.png" alt="Paladear"></span></h1>
+      <h1><span class="hv-l1">El placer de elegir,</span><span class="hv-l2">descubrir y</span><span class="hv-l3"><span class="hv-brand-word"><img src="paladear-wordmark.png" alt="Paladear"></span></span></h1>
       <p>Recorré todos nuestros productos y convertí cada elección en una nueva experiencia de sabor.</p>
       <button class="hv-cta" onclick="switchTab('minorista')">Ver productos <span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
     </div>
@@ -2728,13 +2736,6 @@ function renderCard(p,prefix){
   const acumInfo=acumLbl?`<span class="acum-badge">🛒 ${acumLbl} · $${fmt(acumSub)}</span>`:'';
   h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button>${acumInfo}</div>`;
   h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">🛒 Agregar al pedido</button>`;
-  // Badge "Ver receta" si el producto está vinculado a alguna receta
-  if (typeof _productoTieneReceta === 'function') {
-    const recInfo = _productoTieneReceta(p[0], p[1]);
-    if (recInfo) {
-      h += `<div class="receta-badge-prod" onclick="event.stopPropagation();abrirReceta(${recInfo.idx})" title="Ver receta">🍴 Ver receta: ${recInfo.receta.titulo}</div>`;
-    }
-  }
   // Trash + edit buttons — only shown when item is in cart
   const cartItem=cart.find(i=>i.pid===p[0]);
   if(cartItem){
