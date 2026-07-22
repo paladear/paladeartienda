@@ -1692,6 +1692,11 @@ body.hv-home #recetasSection{display:none!important}
 body.hv-home #mayoristaSection{display:none!important}
 .may-tab-emoji{font-size:30px;line-height:36px;height:36px;display:block;filter:drop-shadow(0 2px 2.5px rgba(0,0,0,.22))}
 #homeView{max-width:1100px;margin:0 auto;padding:6px 20px 18px}
+/* Un poco más de aire a los costados en pantallas grandes: los banners (hero,
+   mix/granola, ofertas, etc.) se veían demasiado anchos pegados al viewport. */
+@media(min-width:1024px){
+  #homeView,#mainContainer,#recetasSection{padding-left:56px!important;padding-right:56px!important}
+}
 .hv-hero{position:relative;margin-top:16px;min-height:clamp(560px,72vh,680px);padding:58px 54px;overflow:hidden;border-radius:22px;background:#304d6b url('herobannerazul.PNG') center/cover no-repeat;display:flex;align-items:center;text-align:left;isolation:isolate}
 .hv-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(28,51,76,.36) 0%,rgba(28,51,76,.12) 43%,transparent 62%);pointer-events:none}
 .hv-hero-copy{width:min(49%,510px)}
