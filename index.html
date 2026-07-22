@@ -861,7 +861,7 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 .main-layout{display:block}
 @media(min-width:768px){
   .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
-  .cats-sidebar{position:sticky;top:80px;padding-right:6px;max-height:calc(100vh - 100px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(84,118,146,.35) transparent}
+  .cats-sidebar{position:sticky;top:165px;padding-right:6px;max-height:calc(100vh - 185px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(84,118,146,.35) transparent}
   .cats-sidebar::-webkit-scrollbar{width:6px}
   .cats-sidebar::-webkit-scrollbar-track{background:transparent}
   .cats-sidebar::-webkit-scrollbar-thumb{background:rgba(84,118,146,.3);border-radius:3px}
@@ -1508,6 +1508,16 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 .compact-wave{display:block;width:100%;height:16px;margin-top:-1px;position:relative;z-index:1}
 .compact-wave path{fill:#547692}
 @media(min-width:768px){.compact-inner{padding:10px 24px;min-height:64px;gap:14px}.compact-logo{width:48px;height:48px}.compact-hamb{width:44px;height:44px}.compact-search{font-size:15px;padding:10px 18px}}
+/* Desktop: las pills quedan pegadas (sticky) apenas se scrollea, así siempre hay forma
+   rápida de cambiar de pestaña. Se pegan justo debajo de la barra que esté visible arriba
+   (el header real al principio, la barra compacta con el buscador una vez que aparece).
+   El sticky va en .tabs-zone (el contenedor con el fondo azul) y no en #mainTabs directo
+   porque .tabs-zone tiene overflow:hidden — puesto ahí, ancla el sticky a sí mismo en vez
+   de a la ventana. */
+@media(min-width:768px){
+  .tabs-zone{position:sticky;top:82px;z-index:290;transition:top .2s}
+  body.compact-on .tabs-zone{top:83px}
+}
 .may-pcard .pcard-name-may{font-weight:700;font-size:15px;line-height:1.35;margin-bottom:4px}
 .may-qty-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 
