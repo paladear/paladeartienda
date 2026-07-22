@@ -5179,7 +5179,12 @@ setTimeout(function(){
 }, 700);
 
 /* ═══ TESTER2: catálogo = TODOS los productos por rubro (alfabético) ═══ */
-renderCarruseles = function(){
+// Declaración de función (no asignación): así el hoisting hace que ESTA versión
+// gane siempre, incluso cuando se llama desde el render instantáneo por caché
+// (sincronizarDesdeSheets) que ocurre más arriba en el archivo, antes de que el
+// código llegue a esta línea. Con "renderCarruseles = function(){...}" esa
+// llamada temprana usaba la versión vieja (carruseles por rubro) por un instante.
+function renderCarruseles(){
   if(_carRotationInterval){clearInterval(_carRotationInterval);_carRotationInterval=null;}
   for(const k in _carState)delete _carState[k];
   try{ hvRenderOfertas(); }catch(e){}
