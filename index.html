@@ -1206,9 +1206,10 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
-.sprite-blend{width:64px;aspect-ratio:1672/4705;background-image:url('sprite-blend.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
+.sprite-blend{width:82px;height:156px;background-image:url('sprite-blend.png');background-size:500% auto;animation:spriteBlendCycle 2.5s steps(5,jump-none) infinite;filter:hue-rotate(8deg) saturate(.62) brightness(1.03) drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
-@media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}.sprite-blend{width:50px}}
+@keyframes spriteBlendCycle{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+@media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}.sprite-blend{width:66px;height:136px}}
 
 .granola-banner{background:linear-gradient(135deg,#7a4f1e 0%,#b07030 100%);border-radius:16px;padding:18px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(160,100,30,.35);flex-wrap:wrap}
 .granola-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(160,100,30,.45)}
@@ -2115,9 +2116,9 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
     <!-- Banner 3: Blend de té -->
     <div class="banner-slide">
       <div class="blend-banner">
-        <div class="sprite-icon sprite-blend" aria-label="Ícono blend de té"></div>
+        <div class="sprite-icon sprite-blend" aria-hidden="true"></div>
         <div class="blend-banner-text" style="flex:1">
-          <h3>Preparé tu blend de té</h3>
+          <h3>Prepará tu blend de té</h3>
           <p>Combiná especias e infusiones y armá tu propia mezcla</p>
         </div>
         <button class="blend-banner-btn" onclick="openBlend()">Armar blend →</button>
@@ -4847,7 +4848,7 @@ function editBuilder(key){
 }
 
 /* ── BLEND DE TÉ BUILDER ── */
-const BLEND_SIZES=[{g:100,lbl:'100 g'},{g:250,lbl:'250 g'},{g:500,lbl:'500 g'},{g:1000,lbl:'1 kg'}];
+const BLEND_SIZES=[{g:50,lbl:'50 g'},{g:100,lbl:'100 g'},{g:250,lbl:'250 g'}];
 let blendSelSize=null,blendActiveCat=null,blendIngreds={},blendCounter=0,blendEditKey=null,blendEditLabel=null;
 const BLEND_ALLOWED_CATS=['especias','infusiones'];
 
@@ -4970,9 +4971,9 @@ function blendRenderProdList(){
       <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper${isOver?' over':''}">
-        <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="blendDecProd(${p[0]},${pxkg})" aria-label="Restar 25g">−</button>
+        <button class="prod-step-btn" ${cur<=0?'disabled':''} onclick="blendDecProd(${p[0]},${pxkg})" aria-label="Restar 10 g">−</button>
         <span class="prod-step-val">${cur ? cur+' g' : '0 g'}</span>
-        <button class="prod-step-btn" ${!canAdd?'disabled':''} onclick="blendIncProd(${p[0]},${pxkg})" aria-label="Sumar 25g">+</button>
+        <button class="prod-step-btn" ${!canAdd?'disabled':''} onclick="blendIncProd(${p[0]},${pxkg})" aria-label="Sumar 10 g">+</button>
       </div>
       ${cur>0?`<button class="prod-trash-btn" onclick="blendRemoveProd(${p[0]})" aria-label="Quitar" title="Quitar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>`:''}
     </div>`;
@@ -4988,14 +4989,14 @@ function blendIncProd(pid,pxkg){
   const usedG=Object.values(blendIngreds).reduce((a,v)=>a+(v.g||0),0);
   const remG=blendSelSize.g-usedG;
   if(remG<=0)return;
-  const step=blendSelSize.g<=250?25:100;
+  const step=10;
   const newG=cur+Math.min(step,remG);
   blendIngreds[pid]={g:newG,pxkg};
   blendRenderProdList();blendRenderSummary();
 }
 function blendDecProd(pid,pxkg){
   const cur=(blendIngreds[pid]&&blendIngreds[pid].g)||0;
-  const step=blendSelSize&&blendSelSize.g<=250?25:100;
+  const step=10;
   if(cur<=step){delete blendIngreds[pid];}
   else{blendIngreds[pid]={g:cur-step,pxkg};}
   blendRenderProdList();blendRenderSummary();
