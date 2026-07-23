@@ -1206,7 +1206,7 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 .sprite-mix{width:54px;aspect-ratio:120/382;background-image:url('sprite-mix.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
 .sprite-granola{width:72px;aspect-ratio:120/260;background-image:url('sprite-granola.png');animation:spriteCycle 2.5s steps(5,jump-none) infinite}
-.sprite-blend{width:82px;height:156px;background-image:url('sprite-blend.png');background-size:500% auto;animation:spriteBlendCycle 2.5s steps(5,jump-none) infinite;filter:hue-rotate(8deg) saturate(.62) brightness(1.03) drop-shadow(0 2px 3px rgba(0,0,0,.2))}
+.sprite-blend{width:82px;height:156px;background-image:url('sprite-blend.png');background-size:500% auto;animation:spriteBlendCycle 2.5s steps(5,jump-none) infinite;filter:drop-shadow(0 1px 1px rgba(0,0,0,.10))}
 @keyframes spriteCycle{0%{background-position:0% 0}100%{background-position:100% 0}}
 @keyframes spriteBlendCycle{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 @media(max-width:480px){.sprite-mix{width:44px}.sprite-granola{width:58px}.sprite-blend{width:66px;height:136px}}
@@ -4850,7 +4850,7 @@ function editBuilder(key){
 /* ── BLEND DE TÉ BUILDER ── */
 const BLEND_SIZES=[{g:50,lbl:'50 g'},{g:100,lbl:'100 g'},{g:250,lbl:'250 g'}];
 let blendSelSize=null,blendActiveCat=null,blendIngreds={},blendCounter=0,blendEditKey=null,blendEditLabel=null;
-const BLEND_ALLOWED_CATS=['especias','infusiones'];
+const BLEND_ALLOWED_CATS=['infusiones','especias'];
 
 function openBlend(){
   document.getElementById('blendModal').classList.remove('hidden');
@@ -4902,7 +4902,7 @@ window.blendPickSize=blendPickSize;
 function blendGranelProds(){return PRODS.filter(p=>p[4]==='kg'&&p[10]===true&&BLEND_ALLOWED_CATS.includes(p[1]));}
 function blendGranelCats(){
   const catIds=[...new Set(blendGranelProds().map(p=>p[1]))];
-  return CATS.filter(c=>catIds.includes(c.id));
+  return BLEND_ALLOWED_CATS.map(id=>CATS.find(c=>c.id===id)).filter(c=>c&&catIds.includes(c.id));
 }
 function blendRenderCatTabs(){
   const cats=blendGranelCats();

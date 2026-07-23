@@ -22,7 +22,7 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v8';
+const CACHE_VERSION = 'paladear-v9';
 
 const SHELL_FILES = [
   '/paladeartienda/android-chrome-192x192.png',
