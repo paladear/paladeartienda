@@ -1657,7 +1657,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 
     <!-- MINORISTA -->
     <div class="hdrop" id="hdropMin">
-      <button class="hdrop-btn min-btn" onclick="toggleHdrop('Min')">
+      <button class="hdrop-btn min-btn header-info-btn" onclick="toggleHdrop('Min')" title="Información" aria-label="Información">
         <span class="btn-info-icon" aria-hidden="true">i</span><span class="btn-txt">Info</span> <span class="arrow">▼</span>
       </button>
       <div class="hdrop-panel">
@@ -1673,11 +1673,14 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
     <style>
       .cats-burger-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;border:none;cursor:pointer;background:var(--azul-dark);color:#fff;transition:background .2s,transform .2s,box-shadow .2s;flex-shrink:0}
       .cats-burger-btn:hover{background:#1a3050;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.22)}
+      .header-info-btn{width:36px;height:36px;padding:0;justify-content:center}
+      .header-info-btn .btn-txt,.header-info-btn .arrow{display:none}
       @media(max-width:600px){.cats-burger-btn{width:32px;height:32px;position:relative}.hdrop-btn{width:32px;height:32px;padding:0;justify-content:center}.btn-info-icon{font-size:21px}
     /* A 32px el botón queda chico para el dedo: agrandamos el área de toque invisible (no el círculo visual) */
     .cats-burger-btn::before,.hdrop-btn::before{content:"";position:absolute;inset:-6px}
   }
     </style>
+    <button class="cats-burger-btn header-search-btn" onclick="openHeaderSearch()" title="Buscar productos" aria-label="Buscar productos"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m15.6 15.6 4.5 4.5"/></svg></button>
     <button class="cats-burger-btn cuenta-btn" onclick="openCuenta()" title="Mi cuenta" aria-label="Mi cuenta"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg></button>
 
   </div>
@@ -1689,7 +1692,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
   <div class="compact-inner">
     <img class="compact-logo" src="android-chrome-192x192.png" alt="Paladear" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">
     <div class="search-wrap-compact">
-      <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value)" onblur="_hideSuggestionsDelayed()" aria-label="Buscar productos">
+      <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value)" onblur="_hideSuggestionsDelayed();compactSearchBlur()" aria-label="Buscar productos">
       <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
     <button class="compact-hamb" onclick="compactOpenCats()" aria-label="Categorías">
@@ -2536,11 +2539,23 @@ document.addEventListener('pointerdown',function(e){
   function _updateCompact(){
     const y=window.scrollY||window.pageYOffset||0;
     const tab=(typeof currentTab!=='undefined')?currentTab:'minorista';
-    const searchActive=!!((document.getElementById('compactSearchInput')||{}).value);
+    const searchInput=document.getElementById('compactSearchInput');
+    const searchActive=!!((searchInput||{}).value)||document.activeElement===searchInput;
     const show=(y>THRESHOLD||searchActive)&&(tab==='minorista'||tab==='mayorista');
     document.body.classList.toggle('compact-on',show);
     ticking=false;
   }
+  window.openHeaderSearch=function(){
+    if(typeof closeAllHdrops==='function')closeAllHdrops();
+    const input=document.getElementById('compactSearchInput');
+    if(!input)return;
+    document.body.classList.add('compact-on');
+    try{input.focus({preventScroll:true});}catch(e){input.focus();}
+    if(input.value)input.select();
+  };
+  window.compactSearchBlur=function(){
+    setTimeout(_updateCompact,180);
+  };
   window.addEventListener('scroll',function(){
     if(!ticking){requestAnimationFrame(_updateCompact);ticking=true;}
   },{passive:true});
