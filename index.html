@@ -1551,8 +1551,6 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 .search-suggestion-item.sug-cat{background:var(--azul-light);color:var(--azul-dark);font-weight:700;margin-bottom:2px}
 .search-suggestion-item.sug-cat:hover{background:var(--azul);color:#fff}
 .search-suggestion-item.sug-cat .sug-icon{opacity:1;font-size:15px}
-.search-suggestion-item.sug-cat .sug-badge{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;background:var(--azul-dark);color:#fff;padding:2px 7px;border-radius:999px;flex-shrink:0;white-space:nowrap}
-.search-suggestion-item.sug-cat:hover .sug-badge{background:#fff;color:var(--azul-dark)}
 .compact-search::placeholder{color:#90a0b0}
 .compact-search:focus{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.32)}
 .compact-hamb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s,transform .15s;padding:0}
@@ -3447,7 +3445,7 @@ function _updateSuggestions(value){
   }
   if(!top.length&&!catMatches.length){box.classList.remove('active');box.innerHTML='';return;}
   const catHTML=catMatches.map(c=>
-    `<div class="search-suggestion-item sug-cat" onmousedown="_pickCategorySuggestion('${c.id}')"><span class="sug-icon">${c.ic}</span>${c.n}<span class="sug-badge">Rubro</span></div>`
+    `<div class="search-suggestion-item sug-cat" onmousedown="_pickCategorySuggestion('${c.id}')"><span class="sug-icon">${c.ic}</span>${c.n}</div>`
   ).join('');
   const prodHTML=top.map(n=>`<div class="search-suggestion-item" onmousedown="_pickSuggestion('${n.replace(/'/g,"\\'")}')"><span class="sug-icon">🔍</span>${n}</div>`).join('');
   box.innerHTML=catHTML+prodHTML;
