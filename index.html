@@ -5682,7 +5682,13 @@ window.selectOfertasMes=selectOfertasMes;
 (function(){
   if(typeof window.compactOnSearch==='function'){
     var _o=window.compactOnSearch;
-    window.compactOnSearch=function(v){ if((document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')) && v && String(v).trim()) window.switchTab('minorista'); _o(v); };
+    window.compactOnSearch=function(v){
+      // Inspiración ("recetas") no tiene clase propia en <body> como sí tienen Home/Ofertas/Favoritos,
+      // por eso se detecta con currentTab en vez de una clase.
+      var _tab=(typeof currentTab!=='undefined')?currentTab:'';
+      if((document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')||_tab==='recetas') && v && String(v).trim()) window.switchTab('minorista');
+      _o(v);
+    };
   }
 })();
 hvRenderCats();
