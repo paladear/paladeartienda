@@ -1548,6 +1548,11 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 .search-suggestion-item{padding:9px 12px;font-size:14px;color:var(--muted-fg);cursor:pointer;border-radius:9px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-suggestion-item:hover{background:var(--muted);color:var(--fg)}
 .search-suggestion-item .sug-icon{flex-shrink:0;opacity:.55;font-size:13px}
+.search-suggestion-item.sug-cat{background:var(--azul-light);color:var(--azul-dark);font-weight:700;margin-bottom:2px}
+.search-suggestion-item.sug-cat:hover{background:var(--azul);color:#fff}
+.search-suggestion-item.sug-cat .sug-icon{opacity:1;font-size:15px}
+.search-suggestion-item.sug-cat .sug-badge{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;background:var(--azul-dark);color:#fff;padding:2px 7px;border-radius:999px;flex-shrink:0;white-space:nowrap}
+.search-suggestion-item.sug-cat:hover .sug-badge{background:#fff;color:var(--azul-dark)}
 .compact-search::placeholder{color:#90a0b0}
 .compact-search:focus{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.32)}
 .compact-hamb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s,transform .15s;padding:0}
@@ -3408,6 +3413,21 @@ function _updateSuggestions(value){
   const tab=(typeof currentTab!=='undefined')?currentTab:'minorista';
   const list=(tab==='mayorista'&&typeof PRODS_MAY!=='undefined')?PRODS_MAY:PRODS;
   const qn=_norm(term);
+
+  // Rubros que matchean el término (hasta 2), para saltar directo a la categoría.
+  // Solo aplica en minorista: mayorista tiene su propio mecanismo de categorías.
+  let catMatches=[];
+  if(tab!=='mayorista'&&typeof CATS!=='undefined'){
+    catMatches=CATS.map(c=>{
+      const cn=_norm(c.n);
+      let score=0;
+      if(cn.startsWith(qn))score=3;
+      else if(cn.split(' ').some(w=>w.startsWith(qn)))score=2;
+      else if(cn.includes(qn))score=1;
+      return{c,score};
+    }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,2).map(x=>x.c);
+  }
+
   const scored=(list||[]).map(p=>{
     const tn=_norm(p[2]);
     let score=0;
@@ -3425,8 +3445,12 @@ function _updateSuggestions(value){
     top.push(nombre);
     if(top.length>=6)break;
   }
-  if(!top.length){box.classList.remove('active');box.innerHTML='';return;}
-  box.innerHTML=top.map(n=>`<div class="search-suggestion-item" onmousedown="_pickSuggestion('${n.replace(/'/g,"\\'")}')"><span class="sug-icon">🔍</span>${n}</div>`).join('');
+  if(!top.length&&!catMatches.length){box.classList.remove('active');box.innerHTML='';return;}
+  const catHTML=catMatches.map(c=>
+    `<div class="search-suggestion-item sug-cat" onmousedown="_pickCategorySuggestion('${c.id}')"><span class="sug-icon">${c.ic}</span>${c.n}<span class="sug-badge">Rubro</span></div>`
+  ).join('');
+  const prodHTML=top.map(n=>`<div class="search-suggestion-item" onmousedown="_pickSuggestion('${n.replace(/'/g,"\\'")}')"><span class="sug-icon">🔍</span>${n}</div>`).join('');
+  box.innerHTML=catHTML+prodHTML;
   box.classList.add('active');
 }
 window._updateSuggestions=_updateSuggestions;
@@ -3438,6 +3462,32 @@ function _pickSuggestion(nombre){
   if(typeof window.compactOnSearch==='function')window.compactOnSearch(nombre);
 }
 window._pickSuggestion=_pickSuggestion;
+
+// Click en una sugerencia de RUBRO: a diferencia de un producto, no busca —
+// cierra el buscador y va directo a la categoría (mismo cierre que irAProducto).
+function _pickCategorySuggestion(catId){
+  const box=document.getElementById('searchSuggestions');
+  if(box){box.classList.remove('active');box.innerHTML='';}
+  const inp=document.getElementById('compactSearchInput');
+  if(inp){inp.value='';inp.blur();}
+  searchTerm='';
+  clearTimeout(_searchTimer);
+  const header=document.querySelector('.header');
+  const banner=document.querySelector('.banner');
+  const tabs=document.getElementById('mainTabs');
+  if(header)header.classList.remove('collapsed');
+  if(banner)banner.classList.remove('collapsed');
+  if(tabs)tabs.classList.remove('collapsed');
+  document.body.style.overflow='';
+  _searchOverlayOpen=false;_searchPreScrollY=0;
+  const srMobile=document.getElementById('searchResultsMobile');
+  if(srMobile){srMobile.classList.remove('active');srMobile.classList.add('hidden');srMobile.innerHTML='';}
+  const bannersWrap=document.getElementById('bannersTrackWrap');
+  if(bannersWrap)bannersWrap.style.display='';
+  if(typeof window.switchTab==='function')window.switchTab('minorista');
+  selectCat(catId);
+}
+window._pickCategorySuggestion=_pickCategorySuggestion;
 function _hideSuggestionsDelayed(){
   setTimeout(()=>{
     const box=document.getElementById('searchSuggestions');
