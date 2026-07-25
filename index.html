@@ -5376,8 +5376,14 @@ function switchTab(tab) {
   }
   var _at = document.querySelector('#mainTabs .may-tab.active');
   if (_at) _setPill(_at);
-  // Quitar foco del botón para evitar el focus ring de Chrome Android (línea fina debajo de la pill)
-  try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(e){}
+  // Quitar foco del botón para evitar el focus ring de Chrome Android (línea fina debajo de la pill).
+  // OJO: no tocar inputs/textarea. Cuando se busca desde el Home, switchTab('minorista') se dispara
+  // con el input de búsqueda enfocado; hacerle blur cerraba el teclado en móvil y cortaba lo escrito
+  // (quedaba solo la 1ª letra). Solo blureamos botones/tabs, no campos de texto.
+  try {
+    var _ae = document.activeElement;
+    if (_ae && _ae.blur && _ae.tagName !== 'INPUT' && _ae.tagName !== 'TEXTAREA') _ae.blur();
+  } catch(e){}
 }
 window.switchTab = switchTab;
 // Hook: guardar estado cuando cambia el tab + resetear scroll a top
