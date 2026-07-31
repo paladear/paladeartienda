@@ -4513,7 +4513,7 @@ function _builderFinalStep(stepId,ready){
 }
 function _scrollBuilderToBottom(modalId){
   const modal=document.getElementById(modalId);if(!modal)return;
-  const scrollEl=modal.querySelector('.mix-modal-body,.granola-modal-body')||modal;
+  const scrollEl=modal.querySelector('.mix-modal-body,.granola-modal-body,.blend-modal-body')||modal;
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){scrollEl.scrollTo({top:scrollEl.scrollHeight,behavior:'smooth'});});
   });
@@ -7162,6 +7162,25 @@ function _coShowConfirm() {
   document.getElementById('coUbicConfirm').classList.remove('hidden');
 }
 
+// Ingredientes de un mix/granola/blend como líneas sueltas (una por ingrediente), para que
+// en el mensaje de WhatsApp no queden todos apelotonados en un renglón separados por comas.
+// Se arma desde mixIngreds (estructurado); mixDetalle es el respaldo para pedidos viejos.
+// esMay: si el pedido alcanzó el descuento por volumen, cada ingrediente se cotiza con la
+// lista 2 — la misma que usa el total del item, así los subtotales suman exacto.
+function _mixIngredLineas(it,esMay){
+  var li=esMay?1:0;
+  if(it.mixIngreds&&it.mixIngreds.length){
+    return it.mixIngreds.map(function(ing){
+      var p=PRODS.find(function(x){return x[0]===ing.pid;});
+      var nom=p?_tc(p[2]):'Producto';
+      var g=_gLabel(ing.g).replace(/ g$/,' gr');
+      if(!p)return nom+' '+g;
+      return nom+' '+g+' — $'+fmt(Math.round(_precioKg(p,li)*(ing.g/1000)));
+    });
+  }
+  return (it.mixDetalle||'').split(',').map(function(s){return _tc(s.trim());}).filter(Boolean);
+}
+
 function coEnviar() {
   var tipo = _coEntrega;
   var nombre, horario, direccion, pago, deliveryMsg;
@@ -7215,7 +7234,8 @@ function coEnviar() {
       if (it.unidad==='mix') {
         var nombreMix = _tc(it.n).replace(/\s*\([^)]*\)\s*$/,'');
         lines += '*' + qty + '* - ' + nombreMix + '\n';
-        if (it.mixDetalle) lines += '   ' + _tc(it.mixDetalle) + '\n';
+        var ings = _mixIngredLineas(it, esMay);
+        if (ings.length) lines += ings.map(function(t){ return '   • ' + t; }).join('\n') + '\n';
         lines += '   $' + fmt(s) + '\n';
       } else {
         lines += '*' + qty + '* - ' + _tc(it.n) + '\n   $' + fmt(s) + '\n';
