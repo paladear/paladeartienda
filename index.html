@@ -2652,9 +2652,8 @@ var _catalogRenderedCats=null;
 function _sortOpts(opts){
   // kg first: order by weight descending (1kg > 500g > 100g > und)
   function _optWeight(o){
-    const mkg=o.match(/^(\d[\d,.]*)\s*kg$/i);if(mkg)return parseFloat(mkg[1].replace(',','.'))*1000;
-    const mg=o.match(/^(\d+)\s*g$/i);if(mg)return parseInt(mg[1]);
-    return -1; // unidades al final
+    const g=_optToG(o); // misma interpretación de pesos en toda la app
+    return g>0?g:-1;    // unidades al final
   }
   return [...opts].sort((a,b)=>_optWeight(b)-_optWeight(a));
 }
@@ -2937,9 +2936,25 @@ function showInfo(pid){
 
 // Convierte una opción (ej "500g","1 kg","250g") a gramos
 function _optToG(opt){
-  const mkg=opt.match(/^(\d[\d,.]*)\s*kg$/i);if(mkg)return parseFloat(mkg[1].replace(',','.'))*1000;
-  const mg=opt.match(/^(\d+)\s*g$/i);if(mg)return parseInt(mg[1]);
+  // Acepta variantes de cómo se escribe el kilo en la planilla: "1KG", "1 KG", "1K", "1 KILO".
+  // (ROOIBOS venía cargado como "1K" y no se reconocía como kilo → precio mal calculado.)
+  const mkg=opt.match(/^(\d[\d,.]*)\s*(?:kgs?|kilos?|k)$/i);if(mkg)return parseFloat(mkg[1].replace(',','.'))*1000;
+  const mg=opt.match(/^(\d+)\s*(?:grs?|gr|g)$/i);if(mg)return parseInt(mg[1]);
   return 0; // unidades: no es kg
+}
+// Precio POR KILO de un producto a granel (li: 0 = lista 1, 1 = lista 2).
+// Si no hay una opción de 1 kg, escala la más grande disponible (ej. 250G × 4).
+// Los armadores de mix/granola/blend antes tomaban el precio de la opción tal cual, sin
+// escalar: si el producto no tenía una opción llamada exactamente "1KG", terminaban
+// cobrando el precio de 50g o 250g como si fuera el del kilo.
+function _precioKg(p,li){
+  li=li||0;
+  const opts=_sortOpts(Object.keys(p[7]));
+  if(!opts.length)return 0;
+  const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
+  const refG=_optToG(refOpt);
+  const base=p[7][refOpt][li];
+  return refG>0?Math.round(base*(1000/refG)):base;
 }
 // Dado un item unificado (gramos totales), elige el precio unitario x kg más apropiado
 function _precioXG(p,totalG,nivel){
@@ -4435,9 +4450,7 @@ function mixRenderProdList(){
   const prods=mixGranelProds().filter(p=>p[1]===mixActiveCat);
   const usedG=Object.values(mixIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.getElementById('mixProdList').innerHTML=prods.map(p=>{
-    const opts=Object.keys(p[7]);
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    const pxkg=p[7][refOpt][0];
+    const pxkg=_precioKg(p,0);
     const cur=(mixIngreds[p[0]]&&mixIngreds[p[0]].g)||0;
     const isOver=usedG>mixSelSize.g;
     const canAdd=usedG<mixSelSize.g;
@@ -4579,15 +4592,11 @@ function mixAgregarAlCarrito(){
   // Calcular precio total del mix (suma proporcional de cada ingrediente)
   const totalL1=ings.reduce((a,[pid,v])=>{
     const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
-    const opts=_sortOpts(Object.keys(p[7]));
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    return a+Math.round(p[7][refOpt][0]*(v.g/1000));
+    return a+Math.round(_precioKg(p,0)*(v.g/1000));
   },0);
   const totalL2=ings.reduce((a,[pid,v])=>{
     const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
-    const opts=_sortOpts(Object.keys(p[7]));
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    return a+Math.round(p[7][refOpt][1]*(v.g/1000));
+    return a+Math.round(_precioKg(p,1)*(v.g/1000));
   },0);
   // Un solo item en el carrito representando el mix completo
   cart.push({
@@ -4817,9 +4826,7 @@ function granolaRenderProdList(){
     :false);
   const usedG=Object.values(granolaIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.getElementById('granolaProdList').innerHTML=prods.map(p=>{
-    const opts=_sortOpts(Object.keys(p[7]));
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    const pxkg=p[7][refOpt][0];
+    const pxkg=_precioKg(p,0);
     const cur=granolaIngreds[p[0]]?granolaIngreds[p[0]].g:0;
     const isOver=usedG>granolaSelSize.g;
     const canAddG=usedG<granolaSelSize.g;
@@ -4893,8 +4900,8 @@ function granolaAgregarAlCarrito(){
   if(granolaEditKey){granolaId=granolaEditKey;granolaLabel=granolaEditLabel;granolaEditKey=null;granolaEditLabel=null;}
   else{granolaCounter++;granolaId='granola'+granolaCounter;granolaLabel='Granola #'+granolaCounter+' ('+_gLabel(granolaSelSize.g)+')';}
   const ingDetails=ings.map(([pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);return p?p[2]+' '+_gLabel(v.g):'?';}).join(', ');
-  const totalL1=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;const opts=_sortOpts(Object.keys(p[7]));const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];return a+Math.round(p[7][refOpt][0]*(v.g/1000));},0);
-  const totalL2=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;const opts=_sortOpts(Object.keys(p[7]));const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\ s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];return a+Math.round(p[7][refOpt][1]*(v.g/1000));},0);
+  const totalL1=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;return a+Math.round(_precioKg(p,0)*(v.g/1000));},0);
+  const totalL2=ings.reduce((a,[pid,v])=>{const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;return a+Math.round(_precioKg(p,1)*(v.g/1000));},0);
   cart.push({key:granolaId,pid:-2,n:granolaLabel,o:granolaId,totalG:granolaSelSize.g,unidad:'mix',sabor:'',l1:totalL1,l2:totalL2,mixDetalle:ingDetails,mixIngreds:ings.map(([pid,v])=>({pid:+pid,g:v.g}))});
   updateCartCount();
   granolaIngreds={};granolaSelSize=null;
@@ -4919,9 +4926,7 @@ function editBuilder(key){
     granolaIngreds={};
     (it.mixIngreds||[]).forEach(({pid,g})=>{
       const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-      const opts=_sortOpts(Object.keys(p[7]));
-      const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-      granolaIngreds[pid]={g,pxkg:p[7][refOpt][0]};
+      granolaIngreds[pid]={g,pxkg:_precioKg(p,0)};
     });
     granolaEditKey=origKey;granolaEditLabel=origLabel;
     openGranola();
@@ -4935,9 +4940,7 @@ function editBuilder(key){
     blendIngreds={};
     (it.mixIngreds||[]).forEach(({pid,g})=>{
       const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-      const opts=_sortOpts(Object.keys(p[7]));
-      const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-      blendIngreds[pid]={g,pxkg:p[7][refOpt][0]};
+      blendIngreds[pid]={g,pxkg:_precioKg(p,0)};
     });
     blendEditKey=origKey;blendEditLabel=origLabel;
     openBlend();
@@ -4951,9 +4954,7 @@ function editBuilder(key){
     mixIngreds={};
     (it.mixIngreds||[]).forEach(({pid,g})=>{
       const p=PRODS.find(x=>x[0]===pid);if(!p)return;
-      const opts=_sortOpts(Object.keys(p[7]));
-      const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-      mixIngreds[pid]={g,pxkg:p[7][refOpt][0]};
+      mixIngreds[pid]={g,pxkg:_precioKg(p,0)};
     });
     mixEditKey=origKey;mixEditLabel=origLabel;
     openMix();
@@ -5078,9 +5079,7 @@ function blendRenderProdList(){
   const prods=blendGranelProds().filter(p=>p[1]===blendActiveCat);
   const usedG=Object.values(blendIngreds).reduce((a,v)=>a+(v.g||0),0);
   document.getElementById('blendProdList').innerHTML=prods.map(p=>{
-    const opts=Object.keys(p[7]);
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    const pxkg=p[7][refOpt][0];
+    const pxkg=_precioKg(p,0);
     const cur=(blendIngreds[p[0]]&&blendIngreds[p[0]].g)||0;
     const isOver=usedG>blendSelSize.g;
     const canAdd=usedG<blendSelSize.g;
@@ -5187,15 +5186,11 @@ function blendAgregarAlCarrito(){
   }).join(', ');
   const totalL1=ings.reduce((a,[pid,v])=>{
     const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
-    const opts=_sortOpts(Object.keys(p[7]));
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    return a+Math.round(p[7][refOpt][0]*(v.g/1000));
+    return a+Math.round(_precioKg(p,0)*(v.g/1000));
   },0);
   const totalL2=ings.reduce((a,[pid,v])=>{
     const p=PRODS.find(x=>x[0]===+pid);if(!p)return a;
-    const opts=_sortOpts(Object.keys(p[7]));
-    const refOpt=opts.find(o=>{const m=o.match(/^(\d[\d,.]*)\s*kg$/i);return m&&parseFloat(m[1])==1;})||opts[0];
-    return a+Math.round(p[7][refOpt][1]*(v.g/1000));
+    return a+Math.round(_precioKg(p,1)*(v.g/1000));
   },0);
   cart.push({
     key:blendId,
