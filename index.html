@@ -1394,6 +1394,14 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 .mix-mini-progress.blend-mini-progress .mini-lbl,.mix-mini-progress.blend-mini-progress .mini-total{color:#8a641f}
 .blend-ing-qn-btn{background:#a8752e;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .blend-ing-qn-btn:hover{background:#7a5a1e}
+/* Ingrediente YA agregado al armado: se resalta con el color de su propio banner.
+   Se scopea por el id de cada lista porque blend reusa la clase .mix-prod-row de mix. */
+#mixProdList .mix-prod-row.is-sel{background:rgba(122,79,42,.08);box-shadow:inset 3px 0 0 #7a4f2a}
+#mixProdList .mix-prod-row.is-sel .mix-prod-name{color:#7a4f2a}
+#granolaProdList .granola-prod-row.is-sel{background:rgba(74,122,96,.10);box-shadow:inset 3px 0 0 #8faf9b}
+#granolaProdList .granola-prod-row.is-sel .granola-prod-name{color:#4a7a60}
+#blendProdList .mix-prod-row.is-sel{background:rgba(168,117,46,.10);box-shadow:inset 3px 0 0 #a8752e}
+#blendProdList .mix-prod-row.is-sel .mix-prod-name{color:#8a641f}
 /* ── MIX MODAL ── */
 .mix-modal{position:fixed;inset:0;z-index:9200;display:flex;flex-direction:column;background:var(--card)}
 .mix-modal.hidden{display:none}
@@ -4454,7 +4462,7 @@ function mixRenderProdList(){
     const cur=(mixIngreds[p[0]]&&mixIngreds[p[0]].g)||0;
     const isOver=usedG>mixSelSize.g;
     const canAdd=usedG<mixSelSize.g;
-    return`<div class="mix-prod-row${cur>0?' has-trash':''}">
+    return`<div class="mix-prod-row${cur>0?' has-trash is-sel':''}">
       <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper${isOver?' over':''}">
@@ -4830,7 +4838,7 @@ function granolaRenderProdList(){
     const cur=granolaIngreds[p[0]]?granolaIngreds[p[0]].g:0;
     const isOver=usedG>granolaSelSize.g;
     const canAddG=usedG<granolaSelSize.g;
-    return`<div class="granola-prod-row${cur>0?' has-trash':''}">
+    return`<div class="granola-prod-row${cur>0?' has-trash is-sel':''}">
       <div class="granola-prod-name">${_capName(p[2])}</div>
       <div class="granola-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper granola-stepper${isOver?' over':''}">
@@ -5083,7 +5091,7 @@ function blendRenderProdList(){
     const cur=(blendIngreds[p[0]]&&blendIngreds[p[0]].g)||0;
     const isOver=usedG>blendSelSize.g;
     const canAdd=usedG<blendSelSize.g;
-    return`<div class="mix-prod-row${cur>0?' has-trash':''}">
+    return`<div class="mix-prod-row${cur>0?' has-trash is-sel':''}">
       <div class="mix-prod-name">${_capName(p[2])}</div>
       <div class="mix-prod-price">$${fmt(pxkg)}/kg</div>
       <div class="prod-stepper${isOver?' over':''}">
@@ -7233,10 +7241,11 @@ function coEnviar() {
       var qty = it.unidad==='und' ? String(it.c) : _gLabel(it.totalG).replace(/ g$/,' gr');
       if (it.unidad==='mix') {
         var nombreMix = _tc(it.n).replace(/\s*\([^)]*\)\s*$/,'');
-        lines += '*' + qty + '* - ' + nombreMix + '\n';
+        // El total del armado va en el título: si fuera abajo, después del desglose,
+        // se confundiría con un ingrediente más.
+        lines += '*' + qty + '* - ' + nombreMix + ' — $' + fmt(s) + '\n';
         var ings = _mixIngredLineas(it, esMay);
         if (ings.length) lines += ings.map(function(t){ return '   • ' + t; }).join('\n') + '\n';
-        lines += '   $' + fmt(s) + '\n';
       } else {
         lines += '*' + qty + '* - ' + _tc(it.n) + '\n   $' + fmt(s) + '\n';
       }
