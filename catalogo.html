@@ -8,117 +8,177 @@ layout: null
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light only">
 <title>Lista de Precios | Paladear Mercado de Sabores</title>
-<meta name="description" content="Lista de precios completa de Paladear Mercado de Sabores. Frutos secos, especias, infusiones, harinas y más. Pedí por WhatsApp.">
+<meta name="description" content="Lista de precios completa de Paladear Mercado de Sabores. Precios por menor y mayorista. Pedí por WhatsApp.">
 <link rel="icon" href="favicon-32x32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--azul-mid:#6d90aa;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted:#e3e8ed;--muted-fg:#5a6b7d;--oferta:#d4543c;--whatsapp:#25d366}
+:root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted-fg:#5a6b7d;--menor:#2d5f8a;--mayor:#15803d;--mayor-bg:#eaf7ee;--oferta:#c2410c;--oferta-bg:#fff3ea;--whatsapp:#25d366;
+/* anchos de columna: los mismos en toda la pagina para que todo quede alineado */
+--cPre:86px;--cCant:112px;--cDel:30px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--fg);padding-bottom:96px;font-size:16px}
+body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--fg);padding-bottom:24px;font-size:16px}
 
-/* ── Encabezado ── */
+/* ══ Encabezado ══ */
 .top{position:sticky;top:0;z-index:50;background:var(--azul);box-shadow:0 2px 14px rgba(26,48,80,.25)}
-.top-in{max-width:1000px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px}
-.logo{width:46px;height:46px;border-radius:50%;background:#fff;flex-shrink:0;object-fit:contain;padding:2px}
-.top-t{color:#fff;font-weight:800;font-size:17px;line-height:1.15}
-.top-t small{display:block;font-weight:500;font-size:12px;opacity:.9}
-.btn-print{margin-left:auto;background:rgba(255,255,255,.16);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:13px;padding:9px 13px;border-radius:10px;cursor:pointer;white-space:nowrap}
-.btn-print:hover{background:rgba(255,255,255,.28)}
-.buscador{max-width:1000px;margin:0 auto;padding:0 14px 11px;display:flex;gap:8px}
-.buscador input{flex:1;border:none;border-radius:12px;padding:14px 16px;font-size:16px;font-family:inherit;font-weight:600;color:var(--fg);outline:none;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.buscador input::placeholder{color:#93a5b5;font-weight:500}
-.btn-x{background:rgba(255,255,255,.16);border:none;color:#fff;font-size:20px;width:46px;border-radius:12px;cursor:pointer;display:none}
-.btn-x.on{display:block}
+.top-in{max-width:1080px;margin:0 auto;padding:9px 12px;display:flex;align-items:center;gap:9px}
+.logo{width:42px;height:42px;border-radius:50%;background:#fff;flex-shrink:0;object-fit:contain;padding:2px}
+.top-t{color:#fff;font-weight:800;font-size:16px;line-height:1.15}
+.top-t small{display:block;font-weight:500;font-size:11.5px;opacity:.9}
+.btn-print{margin-left:auto;background:rgba(255,255,255,.16);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:13px;padding:9px 12px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.btn-print:hover{background:rgba(255,255,255,.3)}
+.fila-busq{max-width:1080px;margin:0 auto;padding:0 12px 10px;display:flex;gap:8px;align-items:center}
+/* Botón hamburguesa + "Categorías" */
+.btn-cat{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:13.5px;padding:11px 14px;border-radius:12px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.btn-cat:hover{background:rgba(255,255,255,.3)}
+.ham{display:flex;flex-direction:column;gap:3px}
+.ham i{display:block;width:17px;height:2.5px;background:#fff;border-radius:2px}
+.busq-wrap{position:relative;flex:1;min-width:0}
+.busq-wrap input{width:100%;border:none;border-radius:12px;padding:13px 15px;font-size:16px;font-family:inherit;font-weight:600;color:var(--fg);outline:none;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.busq-wrap input::placeholder{color:#93a5b5;font-weight:500}
+/* Sugerencias predictivas */
+.sug{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 10px 28px rgba(15,28,42,.3);z-index:60;max-height:300px;overflow-y:auto;padding:5px}
+.sug.on{display:block}
+.sug-it{padding:10px 12px;font-size:14px;font-weight:600;color:var(--fg);cursor:pointer;border-radius:9px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug-it:hover{background:var(--azul-light)}
+.sug-it .ic{opacity:.5;flex-shrink:0}
+.sug-it.rubro{background:var(--azul-light);color:var(--azul-dark);font-weight:800;margin-bottom:2px}
+.sug-it.rubro:hover{background:var(--azul);color:#fff}
 
-/* ── Chips de rubros ── */
-.chips{background:var(--azul-dark);overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--topH,120px);z-index:49}
-.chips::-webkit-scrollbar{display:none}
-.chips-in{display:flex;gap:7px;padding:9px 14px;max-width:1000px;margin:0 auto;width:max-content;min-width:100%}
-.chip{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:999px;padding:8px 14px;font-family:inherit;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
-.chip:hover,.chip.on{background:#fff;color:var(--azul-dark)}
+/* ══ Panel de categorías ══ */
+.cat-ov{position:fixed;inset:0;background:rgba(15,28,42,.55);z-index:80;display:none}
+.cat-ov.on{display:block}
+.cat-panel{position:fixed;top:0;left:0;bottom:0;width:280px;max-width:86vw;background:var(--card);z-index:81;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column}
+.cat-panel.on{transform:none}
+.cat-h{background:var(--azul);color:#fff;padding:15px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.cat-h h2{font-size:16px;font-weight:800;flex:1}
+.cat-x{background:rgba(255,255,255,.18);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+.cat-list{overflow-y:auto;padding:8px}
+.cat-b{display:block;width:100%;text-align:left;background:none;border:none;border-radius:10px;padding:12px 13px;font-family:inherit;font-size:14.5px;font-weight:700;color:var(--fg);cursor:pointer}
+.cat-b:hover{background:var(--azul-light)}
+.cat-b span{float:right;font-size:12px;font-weight:600;color:var(--muted-fg)}
 
-/* ── Contenido ── */
-.wrap{max-width:1000px;margin:0 auto;padding:14px}
-.aviso{background:#fff8e6;border:1.5px solid #f0d089;border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;color:#8a6a1f;margin-bottom:14px;line-height:1.5}
-.rubro{margin-bottom:22px;scroll-margin-top:190px}
-.rubro-h{display:flex;align-items:center;gap:9px;background:var(--azul-dark);color:#fff;padding:11px 15px;border-radius:12px 12px 0 0;font-size:16px;font-weight:800;position:relative}
-.rubro-h .n{margin-left:auto;font-size:12px;font-weight:600;opacity:.85}
-.tabla{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
-.fila{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+/* ══ Contenido ══ */
+.wrap{max-width:1080px;margin:0 auto;padding:12px}
+.ayuda{background:#fff8e6;border:1.5px solid #f0d089;border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600;color:#7a5f18;margin-bottom:13px;line-height:1.55}
+.ayuda b{color:#5c4610}
+.rubro{margin-bottom:20px;scroll-margin-top:170px}
+/* Título del rubro: sin emoji, letra grande y ancha */
+.rubro-h{background:var(--azul-dark);color:#fff;padding:11px 14px;border-radius:11px 11px 0 0;font-size:17px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center}
+.rubro-h .n{margin-left:auto;font-size:11.5px;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none}
+.tabla{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
+/* Grid: mismas columnas en encabezado y filas => todo alineado */
+.hdr,.fila{display:grid;grid-template-columns:1fr var(--cPre) var(--cPre) var(--cCant) var(--cDel);align-items:center;gap:7px;padding:8px 11px}
+.hdr{background:#eef4f9;border-bottom:1.5px solid var(--border);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted-fg)}
+.hdr .c{text-align:center}
+.hdr .c.menor{color:var(--menor)}
+.hdr .c.mayor{color:var(--mayor)}
+.fila{border-bottom:1px solid var(--border);font-size:13.5px}
 .fila:last-child{border-bottom:none}
 .fila:nth-child(even){background:#fafcfe}
 .fila.tiene{background:#eef7f0}
-.nom{flex:1;min-width:145px;font-size:14.5px;font-weight:700;line-height:1.3}
-.nom .of{display:inline-block;background:var(--oferta);color:#fff;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:5px;margin-left:5px;vertical-align:middle}
-.precios{display:flex;gap:6px;flex-wrap:wrap}
-/* Botón de precio: tocarlo agrega al pedido */
-.pb{border:2px solid var(--azul-light);background:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-family:inherit;text-align:center;min-width:84px;transition:all .15s;position:relative}
-.pb:hover{border-color:var(--azul);background:#f2f7fb}
-.pb .med{display:block;font-size:11px;font-weight:700;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.3px}
-.pb .val{display:block;font-size:15px;font-weight:800;color:var(--azul-dark);line-height:1.2}
-.pb .antes{display:block;font-size:11px;color:#95a5b5;text-decoration:line-through;line-height:1.1}
-.pb.of .val{color:var(--oferta)}
-.pb.sel{border-color:#16a34a;background:#eaf7ee}
-.pb .cnt{position:absolute;top:-9px;right:-9px;background:#16a34a;color:#fff;font-size:11.5px;font-weight:800;min-width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.nom{font-weight:700;line-height:1.28;min-width:0;overflow-wrap:break-word}
+.badge-of{display:inline-block;background:var(--oferta);color:#fff;font-size:9.5px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle;white-space:nowrap}
+/* Columnas de precio, cada una con su color */
+.pr{text-align:center;font-weight:800;font-size:14px;border-radius:8px;padding:5px 3px;line-height:1.2}
+.pr.menor{color:var(--menor);background:#eef4fa}
+.pr.mayor{color:var(--mayor);background:var(--mayor-bg)}
+.pr.of{color:var(--oferta);background:var(--oferta-bg)}
+.pr .tach{display:block;font-size:10px;color:#9aa8b6;text-decoration:line-through;font-weight:600;line-height:1}
+/* Cantidad: número + unidad */
+.cant{display:flex;gap:4px;align-items:center}
+.cant input{width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 5px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
+.cant input:focus{border-color:var(--azul)}
+.cant input.lleno{border-color:#16a34a;background:#f2fbf5}
+.cant select{border:2px solid var(--border);border-radius:8px;padding:7px 1px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
+.cant select:focus{border-color:var(--azul)}
+.cant .und{font-size:11.5px;font-weight:700;color:var(--muted-fg);white-space:nowrap}
+/* Tachito: la columna existe siempre, solo se muestra u oculta => nada se mueve */
+.del{width:var(--cDel);height:28px;border:none;background:none;color:#c8d2dc;cursor:pointer;font-size:16px;padding:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
+.del.on{visibility:visible;color:#d9776a}
+.del:hover{color:var(--oferta)}
+.sub{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--mayor);padding-top:2px;display:none}
+.fila.tiene .sub{display:block}
 .vacio{text-align:center;padding:50px 20px;color:var(--muted-fg);font-size:16px;font-weight:600}
 .cargando{text-align:center;padding:60px 20px;color:var(--muted-fg);font-weight:700}
 
-/* ── Barra de pedido ── */
-.barra{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;box-shadow:0 -3px 18px rgba(26,48,80,.22);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:none}
+/* ══ Barra del pedido ══ */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;box-shadow:0 -3px 18px rgba(26,48,80,.22);padding:9px 12px;padding-bottom:calc(9px + env(safe-area-inset-bottom));display:none}
 .barra.on{display:block}
-.barra-in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.barra-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:9px}
 .barra-info{flex:1;min-width:0}
-.barra-c{font-size:12.5px;font-weight:700;color:var(--muted-fg)}
-.barra-t{font-size:21px;font-weight:800;color:var(--azul-dark);line-height:1.15}
-.b-ver{background:var(--azul-light);color:var(--azul-dark);border:none;border-radius:11px;padding:12px 15px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}
-.b-wa{background:var(--whatsapp);color:#fff;border:none;border-radius:11px;padding:13px 17px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.barra-c{font-size:12px;font-weight:700;color:var(--muted-fg)}
+.barra-t{font-size:20px;font-weight:800;color:var(--azul-dark);line-height:1.15}
+.barra-t small{font-size:11px;font-weight:700;color:var(--mayor);display:block;line-height:1.3}
+.b-ver{background:var(--azul-light);color:var(--azul-dark);border:none;border-radius:11px;padding:11px 14px;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap}
+.b-wa{background:var(--whatsapp);color:#fff;border:none;border-radius:11px;padding:12px 16px;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;white-space:nowrap}
 
-/* ── Panel del pedido ── */
-.ov{position:fixed;inset:0;background:rgba(15,28,42,.55);z-index:70;display:none}
+/* ══ Panel del pedido ══ */
+.ov{position:fixed;inset:0;background:rgba(15,28,42,.55);z-index:71;display:none}
 .ov.on{display:block}
-.panel{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--bg);border-radius:18px 18px 0 0;max-height:85vh;display:none;flex-direction:column}
+.panel{position:fixed;left:0;right:0;bottom:0;z-index:72;background:var(--bg);border-radius:18px 18px 0 0;max-height:86vh;display:none;flex-direction:column}
 .panel.on{display:flex}
-.panel-h{background:var(--azul);color:#fff;padding:14px 16px;border-radius:18px 18px 0 0;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.panel-h h2{font-size:17px;font-weight:800;flex:1}
-.panel-x{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:21px;cursor:pointer;line-height:1}
-.panel-b{overflow-y:auto;padding:12px 14px;flex:1}
-.it{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
-.it-n{flex:1;min-width:0;font-size:14px;font-weight:700;line-height:1.3}
-.it-n small{display:block;font-weight:600;color:var(--muted-fg);font-size:12.5px;margin-top:2px}
-.it-q{display:flex;align-items:center;gap:6px}
-.qb{width:34px;height:34px;border-radius:9px;border:2px solid var(--azul);background:#fff;color:var(--azul);font-size:19px;font-weight:800;cursor:pointer;line-height:1}
-.qb:hover{background:var(--azul);color:#fff}
-.it-c{font-size:16px;font-weight:800;min-width:26px;text-align:center}
-.it-s{font-size:14.5px;font-weight:800;color:var(--azul-dark);min-width:76px;text-align:right}
-.panel-f{border-top:1.5px solid var(--border);padding:13px 14px;padding-bottom:calc(13px + env(safe-area-inset-bottom));background:#fff;flex-shrink:0}
-.tot{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px}
-.tot span:first-child{font-size:15px;font-weight:700}
-.tot span:last-child{font-size:25px;font-weight:800;color:var(--azul-dark)}
-.b-wa-full{width:100%;justify-content:center}
-.nota{font-size:12px;color:var(--muted-fg);text-align:center;margin-top:9px;line-height:1.45}
+.panel-h{background:var(--azul);color:#fff;padding:13px 15px;border-radius:18px 18px 0 0;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.panel-h h2{font-size:16.5px;font-weight:800;flex:1}
+.panel-x{background:rgba(255,255,255,.18);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+.panel-b{overflow-y:auto;padding:11px 13px;flex:1}
+.it{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:9px}
+.it-n{flex:1;min-width:0;font-size:13.5px;font-weight:700;line-height:1.3}
+.it-n small{display:block;font-weight:600;color:var(--muted-fg);font-size:12px;margin-top:2px}
+.it-s{font-size:14px;font-weight:800;color:var(--azul-dark);text-align:right;white-space:nowrap}
+.it-x{background:none;border:none;color:#d9776a;font-size:17px;cursor:pointer;padding:2px 4px}
+.panel-f{border-top:1.5px solid var(--border);padding:12px 13px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:#fff;flex-shrink:0}
+.tot{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.tot span:first-child{font-size:14.5px;font-weight:700}
+.tot span:last-child{font-size:24px;font-weight:800;color:var(--azul-dark)}
+.aviso-may{background:var(--mayor-bg);border:1.5px solid #86efac;border-radius:10px;padding:9px 11px;font-size:12.5px;font-weight:700;color:var(--mayor);text-align:center;margin:8px 0;line-height:1.45}
+.b-wa-full{width:100%;justify-content:center;padding:14px}
+.nota{font-size:11.5px;color:var(--muted-fg);text-align:center;margin-top:8px;line-height:1.45}
 
-@media(min-width:700px){
-  .nom{font-size:15px}
-  .rubro{scroll-margin-top:170px}
+/* ══ Celular: todo en un renglón, más compacto ══ */
+@media(max-width:640px){
+  :root{--cPre:60px;--cCant:86px;--cDel:24px}
+  body{font-size:15px}
+  .wrap{padding:9px}
+  .hdr,.fila{gap:5px;padding:7px 8px;font-size:12px}
+  .hdr{font-size:9px;letter-spacing:.2px}
+  .nom{font-size:12.2px;line-height:1.25}
+  .pr{font-size:12.2px;padding:4px 1px}
+  .pr .tach{font-size:8.5px}
+  .cant input{padding:6px 2px;font-size:13px}
+  .cant select{padding:6px 0;font-size:11px}
+  .cant{gap:3px}
+  .del{height:24px;font-size:14px}
+  .rubro-h{font-size:14.5px;letter-spacing:.8px;padding:9px 11px}
+  .badge-of{font-size:8.5px;padding:1px 4px}
+  .sub{font-size:11px}
 }
-/* ── Impresión: sábana en papel, sin botones ── */
+/* ══ Impresión: sábana prolija y alineada ══ */
 @media print{
-  body{background:#fff;padding:0;font-size:11px}
-  .top,.chips,.barra,.ov,.panel,.btn-print,.buscador,.aviso{display:none!important}
+  @page{margin:11mm 9mm}
+  body{background:#fff;padding:0;font-size:9pt}
+  .top,.barra,.ov,.panel,.cat-ov,.cat-panel,.ayuda,.sug{display:none!important}
   .wrap{max-width:none;padding:0}
-  .rubro{margin-bottom:9px;break-inside:avoid}
-  .rubro-h{background:#e8eff5!important;color:#1a3050!important;border-radius:0;padding:5px 8px;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .tabla{border:1px solid #bbb;border-radius:0}
-  .fila{padding:3px 8px;gap:6px}
-  .fila.tiene{background:#fff}
-  .nom{font-size:10.5px}
-  .pb{border:none;padding:0 4px;min-width:0}
-  .pb .cnt{display:none}
-  .pb .med{font-size:8.5px}
-  .pb .val{font-size:10.5px}
-  .print-h{display:block!important;text-align:center;margin-bottom:8px}
+  .print-h{display:block!important;text-align:center;margin-bottom:7mm;border-bottom:2px solid #3d5a72;padding-bottom:3mm}
+  .print-h h1{font-size:15pt;font-weight:900;letter-spacing:1px;color:#1a3050}
+  .print-h div{font-size:8.5pt;color:#555;margin-top:1mm}
+  .rubro{margin-bottom:4mm;break-inside:auto}
+  .rubro-h{background:#3d5a72!important;color:#fff!important;border-radius:0;padding:2mm 3mm;font-size:10pt;letter-spacing:.8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
+  .rubro-h .n{display:none}
+  .tabla{border:.4pt solid #999;border-radius:0}
+  /* En papel no hay cantidad ni tachito: solo producto y precios, bien alineados */
+  .hdr,.fila{grid-template-columns:1fr 24mm 24mm;gap:0;padding:1.1mm 3mm;break-inside:avoid}
+  .hdr{background:#eef4f9!important;font-size:7.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-bottom:.4pt solid #999}
+  .fila{font-size:9pt;border-bottom:.3pt solid #ddd}
+  .fila:nth-child(even){background:#f7fafc!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .fila.tiene{background:transparent!important}
+  .nom{font-size:8.6pt;font-weight:600}
+  .pr{background:none!important;font-size:9pt;padding:0;text-align:right}
+  .pr.menor{color:#1a3050!important}
+  .pr.mayor{color:#15803d!important}
+  .pr .tach{display:none}
+  .cant,.del,.sub,.badge-of,.h-cant,.h-del{display:none!important}
 }
 .print-h{display:none}
 </style>
@@ -126,8 +186,8 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 <body>
 
 <div class="print-h">
-  <h1 style="font-size:16px">Paladear Mercado de Sabores — Lista de Precios</h1>
-  <div style="font-size:10px" id="printFecha"></div>
+  <h1>PALADEAR — LISTA DE PRECIOS</h1>
+  <div id="printFecha"></div>
 </div>
 
 <header class="top" id="top">
@@ -136,16 +196,24 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
     <div class="top-t">Lista de Precios<small>Paladear Mercado de Sabores</small></div>
     <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
   </div>
-  <div class="buscador">
-    <input id="q" type="search" placeholder="Buscar un producto…" autocomplete="off" oninput="filtrar(this.value)">
-    <button class="btn-x" id="bx" onclick="limpiar()" aria-label="Borrar búsqueda">×</button>
+  <div class="fila-busq">
+    <button class="btn-cat" onclick="abrirCats()"><span class="ham"><i></i><i></i><i></i></span>Categorías</button>
+    <div class="busq-wrap">
+      <input id="q" type="search" placeholder="Buscar un producto…" autocomplete="off"
+             oninput="alEscribir(this.value)" onfocus="alEscribir(this.value)" onblur="ocultarSugPronto()">
+      <div class="sug" id="sug"></div>
+    </div>
   </div>
 </header>
 
-<nav class="chips" id="chips"><div class="chips-in" id="chipsIn"></div></nav>
+<div class="cat-ov" id="catOv" onclick="cerrarCats()"></div>
+<aside class="cat-panel" id="catPanel">
+  <div class="cat-h"><h2>Categorías</h2><button class="cat-x" onclick="cerrarCats()" aria-label="Cerrar">×</button></div>
+  <div class="cat-list" id="catList"></div>
+</aside>
 
 <main class="wrap">
-  <div class="aviso">👉 <b>Tocá el precio</b> del tamaño que quieras y se suma a tu pedido. Cuando termines, lo enviás por WhatsApp.</div>
+  <div class="ayuda">✏️ Escribí <b>cuánto querés</b> en el casillero de la derecha. En los productos que van por peso, elegí si es <b>g</b> (gramos) o <b>kg</b> (kilos). Abajo de todo vas a ver el total y el botón para enviarlo por WhatsApp.</div>
   <div id="lista"><div class="cargando">Cargando la lista de precios…</div></div>
 </main>
 
@@ -153,7 +221,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   <div class="barra-in">
     <div class="barra-info">
       <div class="barra-c" id="barraC">0 productos</div>
-      <div class="barra-t" id="barraT">$0</div>
+      <div class="barra-t" id="barraT">$0<small id="barraMay"></small></div>
     </div>
     <button class="b-ver" onclick="abrirPanel()">Ver pedido</button>
     <button class="b-wa" onclick="enviar()">Enviar</button>
@@ -166,6 +234,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   <div class="panel-b" id="panelB"></div>
   <div class="panel-f">
     <div class="tot"><span>Total</span><span id="panelT">$0</span></div>
+    <div id="panelMay"></div>
     <button class="b-wa b-wa-full" onclick="enviar()">💬 Enviar pedido por WhatsApp</button>
     <div class="nota">Te respondemos para confirmar stock y coordinar la entrega.</div>
   </div>
@@ -173,36 +242,17 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 
 <script>
 const WA='5492616512823';
+const MIN_MAYORISTA=80000;   // desde este total del pedido rige la lista mayorista
 const SHEET='https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=';
 const INFO_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub?gid=1603230501&single=true&output=csv';
 
-// Mismo mapa de rubros que la tienda (define nombre, ícono y orden de aparición)
-const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos',ic:'🥜'},'DESHIDRATADOS':{id:'deshidratados',n:'Deshidratados',ic:'🍇'},'SEMILLAS':{id:'semillas',n:'Semillas',ic:'🌻'},'ESPECIAS':{id:'especias',n:'Especias',ic:'🌿'},'INFUSIONES Y HIERBAS':{id:'infusiones',n:'Infusiones y Hierbas',ic:'🍵'},'CEREALES':{id:'cereales',n:'Cereales',ic:'🥣'},'GRANOS Y LEGUMBRES':{id:'granos',n:'Granos y Legumbres',ic:'🫘'},'HARINAS':{id:'harinas',n:'Harinas',ic:'🌾'},'PRODUCTOS SIN TACC':{id:'sintacc',n:'Sin TACC',ic:'🌱'},'DULCES, MIEL Y CHOCOLATES':{id:'dulces',n:'Dulces, Miel y Chocolates',ic:'🍯'},'AZUCAR, CACAO Y REPOSTERIA':{id:'reposteria',n:'Azúcar, Cacao y Repostería',ic:'🍫'},'MANTECAS Y PASTAS':{id:'mantecas',n:'Mantecas y Pastas',ic:'🧈'},'ACEITES Y VINAGRES':{id:'aceites',n:'Aceites y Vinagres',ic:'🫙'},'ACEITUNAS':{id:'aceitunas',n:'Aceitunas',ic:'🫒'},'ENCURTIDOS':{id:'encurtidos',n:'Encurtidos',ic:'🥒'},'TOMATE TRITURADO':{id:'tomate',n:'Tomate',ic:'🍅'},'SNACK':{id:'snack',n:'Snacks',ic:'🍿'},'SUPLEMENTOS':{id:'suplementos',n:'Suplementos',ic:'💊'},'LINEA GOURMET':{id:'gourmet',n:'Línea Gourmet',ic:'⭐'},'BEBIDAS':{id:'bebidas',n:'Bebidas',ic:'🥤'},'VINOS':{id:'vinos',n:'Vinos y Licores',ic:'🍷'},'PRODUCTOS DE FRIO':{id:'frio',n:'Productos de Frío',ic:'❄️'},'PRODUCTOS CONGELADOS':{id:'congelados',n:'Congelados',ic:'🧊'},'PALADEAR HOME':{id:'home',n:'Paladear Home',ic:'🏠'}};
+const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos'},'DESHIDRATADOS':{id:'deshidratados',n:'Deshidratados'},'SEMILLAS':{id:'semillas',n:'Semillas'},'ESPECIAS':{id:'especias',n:'Especias'},'INFUSIONES Y HIERBAS':{id:'infusiones',n:'Infusiones y Hierbas'},'CEREALES':{id:'cereales',n:'Cereales'},'GRANOS Y LEGUMBRES':{id:'granos',n:'Granos y Legumbres'},'HARINAS':{id:'harinas',n:'Harinas'},'PRODUCTOS SIN TACC':{id:'sintacc',n:'Sin TACC'},'DULCES, MIEL Y CHOCOLATES':{id:'dulces',n:'Dulces, Miel y Chocolates'},'AZUCAR, CACAO Y REPOSTERIA':{id:'reposteria',n:'Azúcar, Cacao y Repostería'},'MANTECAS Y PASTAS':{id:'mantecas',n:'Mantecas y Pastas'},'ACEITES Y VINAGRES':{id:'aceites',n:'Aceites y Vinagres'},'ACEITUNAS':{id:'aceitunas',n:'Aceitunas'},'ENCURTIDOS':{id:'encurtidos',n:'Encurtidos'},'TOMATE TRITURADO':{id:'tomate',n:'Tomate'},'SNACK':{id:'snack',n:'Snacks'},'SUPLEMENTOS':{id:'suplementos',n:'Suplementos'},'LINEA GOURMET':{id:'gourmet',n:'Línea Gourmet'},'BEBIDAS':{id:'bebidas',n:'Bebidas'},'VINOS':{id:'vinos',n:'Vinos y Licores'},'PRODUCTOS DE FRIO':{id:'frio',n:'Productos de Frío'},'PRODUCTOS CONGELADOS':{id:'congelados',n:'Congelados'},'PALADEAR HOME':{id:'home',n:'Paladear Home'}};
 
-/* ── Utilidades: copiadas tal cual de la tienda para que los precios coincidan ── */
+/* Utilidades copiadas de la tienda para que los precios coincidan */
 function _precio(s){const c=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(c);return isNaN(n)?0:Math.round(n)}
 function _norm(s){return(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
 function _tc(s){return(s||'').toLowerCase().replace(/[^\s\-\/(]+/g,w=>w.charAt(0).toUpperCase()+w.slice(1))}
-function fmt(n){return (n||0).toLocaleString('es-AR')}
-function _parseCantidades(str){if(!str)return null;const i=str.split('/').map(s=>s.trim()).filter(Boolean);return i.length?i:null}
-function _calcPrecioOpc(opc,p1,p2,esKg){
-  const s=opc.toLowerCase().replace(/\s+/g,'');
-  let m=s.match(/^(\d+)g$/);
-  if(m&&esKg){const f=parseInt(m[1])/1000;return [Math.round(p1*f),Math.round(p2*f)];}
-  m=s.match(/^([\d.,]+)kg?$/);
-  if(m&&esKg){const f=parseFloat(m[1].replace(',','.'));return [Math.round(p1*f),Math.round(p2*f)];}
-  m=s.match(/^(\d+)(unidad|unidades|und|u|inidad)$/);
-  if(m){const f=parseInt(m[1]);return [Math.round(p1*f),Math.round(p2*f)];}
-  return [p1,p2];
-}
-// Etiqueta corta para el botón: "250G" -> "250 g", "1 UNIDAD" -> "unidad"
-function medida(o){
-  const s=(o||'').trim().toLowerCase().replace(/\s+/g,'');
-  let m=s.match(/^(\d+)g$/); if(m) return m[1]+' g';
-  m=s.match(/^([\d.,]+)kg?$/); if(m) return m[1].replace('.',',')+' kg';
-  m=s.match(/^(\d+)(unidad|unidades|und|u|inidad)$/); if(m) return m[1]==='1'?'unidad':m[1]+' u.';
-  return o;
-}
+function fmt(n){return Math.round(n||0).toLocaleString('es-AR')}
 function _parseCSV(t){
   const f=[];let c='',row=[],q=false;
   for(let i=0;i<t.length;i++){const ch=t[i];
@@ -215,20 +265,18 @@ function _parseCSV(t){
 
 let PRODS=[], CATS=[], pedido={}, filtro='';
 
-/* ── Carga de datos (mismo Sheet que la tienda: se actualiza solo) ── */
 async function cargar(){
   try{
     const [infoTxt,preTxt]=await Promise.all([
       fetch(INFO_CSV+'&t='+Date.now(),{cache:'no-store'}).then(r=>r.text()),
       fetch(SHEET+'precios&t='+Date.now(),{cache:'no-store'}).then(r=>r.text())
     ]);
-    // Info: cantidades, oferta y nombre lindo, cruzado por Artículo
     const INFO={};
     _parseCSV(infoTxt).forEach((c,i)=>{
       if(i===0||c.length<2)return;
       const nombre=(c[0]||'').trim(); if(!nombre)return;
       const id=(c[6]||'').trim().replace(/\./g,'').replace(/,.*$/,'');
-      const e={nombre,cantidades:_parseCantidades((c[1]||'').trim()),oferta:parseInt((c[7]||'').replace('%',''))||0};
+      const e={nombre,cantidades:(c[1]||'').trim(),oferta:parseInt((c[7]||'').replace('%',''))||0};
       if(id)INFO[id]=e;
       if(_norm(nombre)!==id)INFO[_norm(nombre)]=e;
     });
@@ -243,149 +291,234 @@ async function cargar(){
       const cat=RUBRO_MAP[rubro]; if(!cat)return;
       catMap[cat.id]=cat;
       const inf=INFO[pid]||INFO[_norm(nombre)]||{};
-      const cants=inf.cantidades||[];
-      const esKgInfo=cants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
+      // ¿se vende por peso o por unidad? (misma regla que la tienda)
+      const cants=(inf.cantidades||'').split('/').map(s=>s.trim()).filter(Boolean);
+      const esKgInfo=cants.some(o=>/g$|kg$|k$/i.test(o.replace(/\s+/g,'')));
       const esKg=cants.length?esKgInfo:/x kg|xkg|x 1 kg| kg/i.test(nombre);
-      let opts={};
-      if(cants.length){ cants.forEach(o=>{opts[o]=_calcPrecioOpc(o,p1,p2,esKg)}); }
-      else if(esKg){ opts={'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]}; }
-      else { opts={'1 unidad':[p1,p2]}; }
-      tmp.push({id:pid||_norm(nombre),cat:cat.id,nombre:_tc(inf.nombre||nombre),opts,oferta:inf.oferta||0});
+      tmp.push({id:pid||_norm(nombre),cat:cat.id,nombre:_tc(inf.nombre||nombre),esKg,p1,p2,oferta:inf.oferta||0});
     });
     PRODS=tmp;
     CATS=Object.keys(RUBRO_MAP).map(k=>RUBRO_MAP[k]).filter(c=>catMap[c.id]);
     render();
   }catch(e){
-    document.getElementById('lista').innerHTML='<div class="vacio">No pudimos cargar la lista.<br>Revisá tu conexión y volvé a intentar.<br><br><button class="b-ver" onclick="location.reload()">Reintentar</button></div>';
+    document.getElementById('lista').innerHTML='<div class="vacio">No pudimos cargar la lista.<br>Revisá tu conexión.<br><br><button class="b-ver" onclick="location.reload()">Reintentar</button></div>';
   }
+}
+
+/* ── Precios: p1 = por menor, p2 = mayorista (+$80.000). La oferta del mes aplica a ambos ── */
+function precioMenor(p){ return p.oferta>0?Math.round(p.p1*(1-p.oferta/100)):p.p1; }
+function precioMayor(p){ return p.oferta>0?Math.round(p.p2*(1-p.oferta/100)):p.p2; }
+
+/* ── Cantidad → subtotal. Para peso el precio es por kilo; para unidad, por unidad ── */
+function subtotalDe(p,it,usarMayor){
+  const pr = usarMayor?precioMayor(p):precioMenor(p);
+  if(!it||!it.cant)return 0;
+  if(p.esKg){ const g = it.uni==='kg'?it.cant*1000:it.cant; return Math.round(pr*(g/1000)); }
+  return Math.round(pr*it.cant);
+}
+function cantTexto(p,it){
+  if(!it||!it.cant)return '';
+  if(!p.esKg) return it.cant+(it.cant===1?' unidad':' unidades');
+  if(it.uni==='kg') return String(it.cant).replace('.',',')+' kg';
+  return it.cant>=1000?(it.cant/1000).toString().replace('.',',')+' kg':it.cant+' g';
 }
 
 /* ── Dibujar la sábana ── */
 function render(){
   const cont=document.getElementById('lista');
   const f=_norm(filtro);
-  let html='',chips='',hay=0;
+  let html='',hay=0,cats='';
   CATS.forEach(cat=>{
     let items=PRODS.filter(p=>p.cat===cat.id);
+    const total=items.length;
     if(f) items=items.filter(p=>_norm(p.nombre).includes(f));
     if(!items.length)return;
     hay+=items.length;
     items.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
-    chips+=`<button class="chip" onclick="irA('${cat.id}')">${cat.ic} ${cat.n}</button>`;
+    cats+=`<button class="cat-b" onclick="irA('${cat.id}')">${cat.n}<span>${total}</span></button>`;
     html+=`<section class="rubro" id="r_${cat.id}">
-      <div class="rubro-h">${cat.ic} ${cat.n}<span class="n">${items.length}</span></div>
-      <div class="tabla">`;
+      <div class="rubro-h">${cat.n}<span class="n">${items.length}</span></div>
+      <div class="tabla">
+        <div class="hdr"><div>Producto</div><div class="c menor">Por menor</div><div class="c mayor">+$80.000</div><div class="c h-cant">Cantidad</div><div class="h-del"></div></div>`;
     items.forEach(p=>{
-      const tiene=Object.keys(p.opts).some(o=>pedido[p.id+'|'+o]);
-      html+=`<div class="fila${tiene?' tiene':''}">
-        <div class="nom">${p.nombre}${p.oferta>0?`<span class="of">−${p.oferta}%</span>`:''}</div>
-        <div class="precios">`;
-      Object.keys(p.opts).forEach(o=>{
-        const base=p.opts[o][0];
-        const fin=p.oferta>0?Math.round(base*(1-p.oferta/100)):base;
-        const k=p.id+'|'+o, c=pedido[k]?pedido[k].c:0;
-        html+=`<button class="pb${p.oferta>0?' of':''}${c?' sel':''}" onclick="sumar('${p.id}','${o.replace(/'/g,"\\'")}')" title="Agregar al pedido">
-          <span class="med">${medida(o)}</span>
-          ${p.oferta>0?`<span class="antes">$${fmt(base)}</span>`:''}
-          <span class="val">$${fmt(fin)}</span>
-          ${c?`<span class="cnt">${c}</span>`:''}
-        </button>`;
-      });
-      html+='</div></div>';
+      const it=pedido[p.id];
+      const tiene=!!(it&&it.cant);
+      const pm=precioMenor(p), py=precioMayor(p);
+      const unidadTxt=p.esKg?'kg':'un.';
+      html+=`<div class="fila${tiene?' tiene':''}" id="f_${p.id}">
+        <div class="nom">${p.nombre}${p.oferta>0?`<span class="badge-of">−${p.oferta}%</span>`:''}</div>
+        <div class="pr menor${p.oferta>0?' of':''}">${p.oferta>0?`<span class="tach">$${fmt(p.p1)}</span>`:''}$${fmt(pm)}</div>
+        <div class="pr mayor${p.oferta>0?' of':''}">${p.oferta>0?`<span class="tach">$${fmt(p.p2)}</span>`:''}$${fmt(py)}</div>
+        <div class="cant">
+          <input type="number" inputmode="decimal" min="0" step="any" placeholder="0"
+                 value="${it&&it.cant?it.cant:''}" class="${tiene?'lleno':''}"
+                 aria-label="Cantidad de ${p.nombre}"
+                 oninput="setCant('${p.id}',this.value)">
+          ${p.esKg
+            ? `<select aria-label="Unidad" onchange="setUni('${p.id}',this.value)">
+                 <option value="g"${(!it||it.uni!=='kg')?' selected':''}>g</option>
+                 <option value="kg"${(it&&it.uni==='kg')?' selected':''}>kg</option>
+               </select>`
+            : `<span class="und">un.</span>`}
+        </div>
+        <button class="del${tiene?' on':''}" onclick="borrar('${p.id}')" aria-label="Quitar ${p.nombre}" title="Quitar">🗑</button>
+        <div class="sub" id="s_${p.id}">${tiene?cantTexto(p,it)+' · $'+fmt(subtotalDe(p,it,esMayorista())):''}</div>
+      </div>`;
     });
     html+='</div></section>';
   });
   cont.innerHTML=hay?html:`<div class="vacio">No encontramos “${filtro}”.<br><br><button class="b-ver" onclick="limpiar()">Ver todo</button></div>`;
-  document.getElementById('chipsIn').innerHTML=chips;
+  document.getElementById('catList').innerHTML=cats;
   actualizarBarra();
-  ajustarTop();
 }
 
 function irA(id){
-  const el=document.getElementById('r_'+id);
-  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  cerrarCats();
+  setTimeout(()=>{const el=document.getElementById('r_'+id); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},260);
 }
-// La barra de rubros se pega justo debajo del encabezado, que cambia de alto
-function ajustarTop(){
-  const t=document.getElementById('top');
-  if(t) document.getElementById('chips').style.top=t.offsetHeight+'px';
-}
-window.addEventListener('resize',ajustarTop);
+function abrirCats(){document.getElementById('catOv').classList.add('on');document.getElementById('catPanel').classList.add('on');document.body.style.overflow='hidden';}
+function cerrarCats(){document.getElementById('catOv').classList.remove('on');document.getElementById('catPanel').classList.remove('on');document.body.style.overflow='';}
 
-/* ── Pedido ── */
-function sumar(pid,opt){
+/* ── Pedido: una sola entrada por producto (nunca se repite) ── */
+function esMayorista(){ return totalCon(true).bruto>=MIN_MAYORISTA || totalCon(false).bruto>=MIN_MAYORISTA; }
+function setCant(pid,v){
   const p=PRODS.find(x=>x.id===pid); if(!p)return;
-  const k=pid+'|'+opt;
-  const base=p.opts[opt][0];
-  const precio=p.oferta>0?Math.round(base*(1-p.oferta/100)):base;
-  if(pedido[k]) pedido[k].c++;
-  else pedido[k]={nombre:p.nombre,opt,precio,c:1};
-  guardar(); render();
+  const n=parseFloat(String(v).replace(',','.'));
+  if(!n||n<=0){ delete pedido[pid]; }
+  else{ pedido[pid]={cant:n,uni:(pedido[pid]&&pedido[pid].uni)||'g'}; }
+  guardar(); refrescarFila(pid); actualizarBarra();
 }
-function cambiar(k,d){
-  if(!pedido[k])return;
-  pedido[k].c+=d;
-  if(pedido[k].c<=0) delete pedido[k];
-  guardar(); render(); pintarPanel();
+function setUni(pid,u){
+  if(pedido[pid]){ pedido[pid].uni=u; guardar(); refrescarFila(pid); actualizarBarra(); }
+  else { pedido[pid]={cant:0,uni:u}; delete pedido[pid]; }
+}
+function borrar(pid){
+  delete pedido[pid]; guardar();
+  const fila=document.getElementById('f_'+pid);
+  if(fila){ const i=fila.querySelector('input'); if(i){i.value='';i.classList.remove('lleno');} }
+  refrescarFila(pid); actualizarBarra(); pintarPanel();
   if(!Object.keys(pedido).length) cerrarPanel();
 }
-function guardar(){ try{localStorage.setItem('pld_catalogo',JSON.stringify(pedido));}catch(e){} }
-function recuperar(){ try{const s=localStorage.getItem('pld_catalogo'); if(s)pedido=JSON.parse(s)||{};}catch(e){pedido={};} }
+/* Refresca solo esa fila: así no se pierde el foco mientras se escribe */
+function refrescarFila(pid){
+  const p=PRODS.find(x=>x.id===pid); if(!p)return;
+  const fila=document.getElementById('f_'+pid); if(!fila)return;
+  const it=pedido[pid], tiene=!!(it&&it.cant);
+  fila.classList.toggle('tiene',tiene);
+  const inp=fila.querySelector('input'); if(inp) inp.classList.toggle('lleno',tiene);
+  const del=fila.querySelector('.del'); if(del) del.classList.toggle('on',tiene);
+  const sub=document.getElementById('s_'+pid);
+  if(sub) sub.textContent=tiene?cantTexto(p,it)+' · $'+fmt(subtotalDe(p,it,esMayorista())):'';
+}
+function guardar(){ try{localStorage.setItem('pld_catalogo2',JSON.stringify(pedido));}catch(e){} }
+function recuperar(){ try{const s=localStorage.getItem('pld_catalogo2'); if(s)pedido=JSON.parse(s)||{};}catch(e){pedido={};} }
 
-function totales(){
-  let n=0,t=0;
-  Object.keys(pedido).forEach(k=>{n+=pedido[k].c;t+=pedido[k].precio*pedido[k].c;});
-  return {n,t};
+function totalCon(mayor){
+  let n=0,bruto=0;
+  Object.keys(pedido).forEach(id=>{
+    const p=PRODS.find(x=>x.id===id); if(!p)return;
+    const s=subtotalDe(p,pedido[id],mayor);
+    if(s>0){n++;bruto+=s;}
+  });
+  return {n,bruto};
 }
 function actualizarBarra(){
-  const {n,t}=totales();
+  const may=esMayorista();
+  const {n,bruto}=totalCon(may);
   const b=document.getElementById('barra');
   b.classList.toggle('on',n>0);
+  document.body.style.paddingBottom=n>0?'92px':'24px';
   document.getElementById('barraC').textContent=n+(n===1?' producto':' productos');
-  document.getElementById('barraT').textContent='$'+fmt(t);
-  document.body.style.paddingBottom=n>0?'96px':'24px';
+  const menor=totalCon(false).bruto;
+  document.getElementById('barraT').firstChild.nodeValue='$'+fmt(bruto);
+  document.getElementById('barraMay').textContent=may?('✓ Precio mayorista aplicado (ahorrás $'+fmt(menor-bruto)+')'):('Faltan $'+fmt(MIN_MAYORISTA-menor)+' para el precio mayorista');
+  // los subtotales por fila cambian si se cruza el umbral
+  Object.keys(pedido).forEach(refrescarFila);
 }
+
+/* ── Panel del pedido ── */
 function pintarPanel(){
-  const {t}=totales();
-  const ks=Object.keys(pedido);
-  document.getElementById('panelB').innerHTML=ks.length?ks.map(k=>{
-    const i=pedido[k];
+  const may=esMayorista();
+  const {bruto}=totalCon(may);
+  const ids=Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subtotalDe(p,pedido[id],may)>0;});
+  document.getElementById('panelB').innerHTML=ids.length?ids.map(id=>{
+    const p=PRODS.find(x=>x.id===id), it=pedido[id];
     return `<div class="it">
-      <div class="it-n">${i.nombre}<small>${medida(i.opt)} · $${fmt(i.precio)} c/u</small></div>
-      <div class="it-q">
-        <button class="qb" onclick="cambiar('${k.replace(/'/g,"\\'")}',-1)" aria-label="Quitar uno">−</button>
-        <span class="it-c">${i.c}</span>
-        <button class="qb" onclick="cambiar('${k.replace(/'/g,"\\'")}',1)" aria-label="Agregar uno">+</button>
-      </div>
-      <div class="it-s">$${fmt(i.precio*i.c)}</div>
+      <div class="it-n">${p.nombre}<small>${cantTexto(p,it)} · $${fmt(may?precioMayor(p):precioMenor(p))} por ${p.esKg?'kg':'unidad'}</small></div>
+      <div class="it-s">$${fmt(subtotalDe(p,it,may))}</div>
+      <button class="it-x" onclick="borrar('${id}')" aria-label="Quitar">🗑</button>
     </div>`;
   }).join(''):'<div class="vacio">Tu pedido está vacío</div>';
-  document.getElementById('panelT').textContent='$'+fmt(t);
+  document.getElementById('panelT').textContent='$'+fmt(bruto);
+  const menor=totalCon(false).bruto;
+  document.getElementById('panelMay').innerHTML = may
+    ? `<div class="aviso-may">✓ Estás comprando con precio mayorista<br>Ahorrás $${fmt(menor-bruto)}</div>`
+    : (menor>0?`<div class="aviso-may" style="background:#fff8e6;border-color:#f0d089;color:#7a5f18">Te faltan $${fmt(MIN_MAYORISTA-menor)} para acceder al precio mayorista</div>`:'');
 }
 function abrirPanel(){ pintarPanel(); document.getElementById('ov').classList.add('on'); document.getElementById('panel').classList.add('on'); document.body.style.overflow='hidden'; }
 function cerrarPanel(){ document.getElementById('ov').classList.remove('on'); document.getElementById('panel').classList.remove('on'); document.body.style.overflow=''; }
 
-/* ── Enviar por WhatsApp ── */
+/* ── WhatsApp: un renglón por producto, nunca repetido ── */
 function enviar(){
-  const ks=Object.keys(pedido);
-  if(!ks.length){ alert('Todavía no agregaste productos.\n\nTocá el precio del tamaño que quieras para sumarlo.'); return; }
-  const {t}=totales();
+  const may=esMayorista();
+  const ids=Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subtotalDe(p,pedido[id],may)>0;});
+  if(!ids.length){ alert('Todavía no cargaste cantidades.\n\nEscribí cuánto querés en el casillero de la derecha de cada producto.'); return; }
+  const {bruto}=totalCon(may);
   let m='🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
-  ks.forEach(k=>{ const i=pedido[k]; m+=`• ${i.nombre} — ${medida(i.opt)} × ${i.c} — $${fmt(i.precio*i.c)}\n`; });
-  m+=`\n*TOTAL: $${fmt(t)}*\n\n_Pedido armado desde la lista de precios_`;
+  ids.forEach(id=>{
+    const p=PRODS.find(x=>x.id===id), it=pedido[id];
+    m+=`• ${p.nombre} — ${cantTexto(p,it)} — $${fmt(subtotalDe(p,it,may))}\n`;
+  });
+  m+=`\n*TOTAL: $${fmt(bruto)}*`;
+  if(may) m+='\n_(Precio mayorista aplicado por superar $80.000)_';
+  m+='\n\n_Pedido armado desde la lista de precios_';
   window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
 }
 
-/* ── Buscador ── */
+/* ── Buscador predictivo (mismo criterio que la tienda: empieza con > palabra > contiene) ── */
 let tBusq=null;
-function filtrar(v){
-  document.getElementById('bx').classList.toggle('on',!!v);
+function alEscribir(v){
   clearTimeout(tBusq);
-  tBusq=setTimeout(()=>{filtro=v.trim();render();},220);
+  sugerencias(v);
+  tBusq=setTimeout(()=>{ filtro=(v||'').trim(); render(); },260);
 }
-function limpiar(){ document.getElementById('q').value=''; document.getElementById('bx').classList.remove('on'); filtro=''; render(); }
+function sugerencias(v){
+  const caja=document.getElementById('sug');
+  const t=(v||'').trim();
+  if(t.length<2){ caja.classList.remove('on'); caja.innerHTML=''; return; }
+  const q=_norm(t);
+  const rub=CATS.map(c=>{
+    const cn=_norm(c.n); let s=0;
+    if(cn.startsWith(q))s=3; else if(cn.split(' ').some(w=>w.startsWith(q)))s=2; else if(cn.includes(q))s=1;
+    return {c,s};
+  }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
+  const prod=PRODS.map(p=>{
+    const tn=_norm(p.nombre); let s=0;
+    if(tn.startsWith(q))s=3; else if(tn.split(' ').some(w=>w.startsWith(q)))s=2; else if(tn.includes(q))s=1;
+    return {p,s};
+  }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  const vistos=new Set(), top=[];
+  for(const{p}of prod){ if(vistos.has(p.nombre))continue; vistos.add(p.nombre); top.push(p); if(top.length>=6)break; }
+  if(!rub.length&&!top.length){ caja.classList.remove('on'); caja.innerHTML=''; return; }
+  caja.innerHTML =
+    rub.map(x=>`<div class="sug-it rubro" onmousedown="elegirRubro('${x.c.id}')">${x.c.n}</div>`).join('')+
+    top.map(p=>`<div class="sug-it" onmousedown="elegirProd('${p.nombre.replace(/'/g,"\\'")}')"><span class="ic">🔍</span>${p.nombre}</div>`).join('');
+  caja.classList.add('on');
+}
+function elegirProd(n){
+  document.getElementById('q').value=n;
+  document.getElementById('sug').classList.remove('on');
+  filtro=n; render();
+}
+function elegirRubro(id){
+  document.getElementById('q').value='';
+  document.getElementById('sug').classList.remove('on');
+  filtro=''; render(); irA(id);
+}
+function ocultarSugPronto(){ setTimeout(()=>document.getElementById('sug').classList.remove('on'),160); }
+function limpiar(){ document.getElementById('q').value=''; filtro=''; document.getElementById('sug').classList.remove('on'); render(); }
 
-document.getElementById('printFecha').textContent='Precios al '+new Date().toLocaleDateString('es-AR');
+document.getElementById('printFecha').textContent='Precios actualizados al '+new Date().toLocaleDateString('es-AR')+' · Consultar stock · @palade.ar';
 recuperar();
 cargar();
 </script>
