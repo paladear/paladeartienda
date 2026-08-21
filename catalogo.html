@@ -16,7 +16,7 @@ layout: null
 <style>
 :root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted-fg:#5a6b7d;--menor:#2d5f8a;--mayor:#15803d;--mayor-bg:#eaf7ee;--oferta:#c2410c;--oferta-bg:#fff3ea;--whatsapp:#25d366;
 /* anchos de columna: los mismos en toda la pagina para que todo quede alineado */
---cPre:86px;--cCant:120px;--cDel:30px}
+--cPre:86px;--cCant:134px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--fg);padding-bottom:24px;font-size:16px}
 
@@ -78,7 +78,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .rubro-h .n{margin-left:auto;font-size:11.5px;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none}
 .tabla{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
 /* Grid: mismas columnas en encabezado y filas => todo alineado */
-.hdr,.fila{display:grid;grid-template-columns:1fr var(--cPre) var(--cPre) var(--cCant) var(--cDel);align-items:center;gap:7px;padding:8px 11px}
+.hdr,.fila{display:grid;grid-template-columns:1fr var(--cPre) var(--cPre) var(--cCant);align-items:center;gap:7px;padding:8px 11px}
 .hdr{background:#eef4f9;border-bottom:1.5px solid var(--border);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted-fg)}
 .hdr .c{text-align:center}
 .hdr .c.menor{color:var(--menor)}
@@ -97,16 +97,12 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .pr .tach{display:block;font-size:10px;color:#9aa8b6;text-decoration:line-through;font-weight:600;line-height:1}
 /* Cantidad: número + unidad */
 .cant{display:flex;gap:4px;align-items:center}
-.cant input{width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 4px;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
+.cant input{flex:1;width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 4px;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
 .cant input:focus{border-color:var(--azul)}
 .cant input.lleno{border-color:#16a34a;background:#f2fbf5}
-.cant select{border:2px solid var(--border);border-radius:8px;padding:7px 0;font-family:inherit;font-size:16px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
+.cant select{flex:0 0 50px;border:2px solid var(--border);border-radius:8px;padding:7px 0;font-family:inherit;font-size:16px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
 .cant select:focus{border-color:var(--azul)}
 .cant .und{font-size:11.5px;font-weight:700;color:var(--muted-fg);white-space:nowrap}
-/* Tachito: la columna existe siempre, solo se muestra u oculta => nada se mueve */
-.del{width:var(--cDel);height:28px;border:none;background:none;color:#c8d2dc;cursor:pointer;font-size:16px;padding:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
-.del.on{visibility:visible;color:#d9776a}
-.del:hover{color:var(--oferta)}
 .sub{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--mayor);padding-top:2px;display:none}
 .fila.tiene .sub{display:block}
 .vacio{text-align:center;padding:50px 20px;color:var(--muted-fg);font-size:16px;font-weight:600}
@@ -136,7 +132,8 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .it-n{flex:1;min-width:0;font-size:13.5px;font-weight:700;line-height:1.3}
 .it-n small{display:block;font-weight:600;color:var(--muted-fg);font-size:12px;margin-top:2px}
 .it-s{font-size:14px;font-weight:800;color:var(--azul-dark);text-align:right;white-space:nowrap}
-.it-x{background:none;border:none;color:#d9776a;font-size:17px;cursor:pointer;padding:2px 4px}
+.it-x{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px;padding:0;border-radius:7px;background:rgba(212,84,60,.1);border:1.5px solid rgba(212,84,60,.3);color:#b04020;cursor:pointer;transition:all .2s}
+.it-x:hover{border-color:#d4543c;background:rgba(212,84,60,.18)}
 .panel-f{border-top:1.5px solid var(--border);padding:12px 13px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:#fff;flex-shrink:0}
 .tot{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
 .tot span:first-child{font-size:14.5px;font-weight:700}
@@ -147,7 +144,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 
 /* ══ Celular: todo en un renglón, más compacto ══ */
 @media(max-width:640px){
-  :root{--cPre:58px;--cCant:96px;--cDel:22px}
+  :root{--cPre:58px;--cCant:114px}
   body{font-size:15px}
   .wrap{padding:9px}
   .hdr,.fila{gap:5px;padding:7px 8px;font-size:12px}
@@ -155,10 +152,9 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .nom{font-size:12.2px;line-height:1.25}
   .pr{font-size:12.2px;padding:4px 1px}
   .pr .tach{font-size:8.5px}
-  .cant input{padding:6px 1px;font-size:16px}
-  .cant select{padding:6px 0;font-size:16px}
+  .cant input{padding:6px 2px;font-size:16px}
+  .cant select{flex:0 0 44px;padding:6px 0;font-size:16px}
   .cant{gap:3px}
-  .del{height:24px;font-size:14px}
   .rubro-h{font-size:14.5px;letter-spacing:.8px;padding:9px 11px}
   .badge-of{font-size:8.5px;padding:1px 4px}
   .sub{font-size:11px}
@@ -176,7 +172,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .rubro-h{background:#3d5a72!important;color:#fff!important;border-radius:0;padding:2mm 3mm;font-size:10pt;letter-spacing:.8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-after:avoid}
   .rubro-h .n{display:none}
   .tabla{border:.4pt solid #999;border-radius:0}
-  /* En papel no hay cantidad ni tachito: solo producto y precios, bien alineados */
+  /* En papel no hay cantidad: solo producto y precios, bien alineados */
   .hdr,.fila{grid-template-columns:1fr 24mm 24mm;gap:0;padding:1.1mm 3mm;break-inside:avoid}
   .hdr{background:#eef4f9!important;font-size:7.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-bottom:.4pt solid #999}
   .fila{font-size:9pt;border-bottom:.3pt solid #ddd}
@@ -187,7 +183,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .pr.menor{color:#1a3050!important}
   .pr.mayor{color:#15803d!important}
   .pr .tach{display:none}
-  .cant,.del,.sub,.badge-of,.h-cant,.h-del{display:none!important}
+  .cant,.sub,.badge-of,.h-cant{display:none!important}
 }
 .print-h{display:none}
 </style>
@@ -228,12 +224,25 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   <div id="lista"><div class="cargando">Cargando la lista de precios…</div></div>
 </main>
 
+<div class="ov" id="ov" onclick="cerrarPanel()"></div>
+<section class="panel" id="panel">
+  <div class="panel-h"><h2>Tu pedido</h2><button class="panel-x" onclick="cerrarPanel()" aria-label="Cerrar">&times;</button></div>
+  <div class="panel-b" id="panelB"></div>
+  <div class="panel-f">
+    <div class="tot"><span>Total</span><span id="panelT">$0</span></div>
+    <div id="panelMay"></div>
+    <button class="b-wa b-wa-full" onclick="enviar()">Enviar por WhatsApp</button>
+    <div class="nota">Te confirmamos stock y precio final por WhatsApp.</div>
+  </div>
+</section>
+
 <div class="barra" id="barra">
   <div class="barra-in">
     <div class="barra-info">
       <div class="barra-c" id="barraC">0 productos</div>
       <div class="barra-t" id="barraT">$0<small id="barraMay"></small></div>
     </div>
+    <button class="b-ver" onclick="abrirPanel()">Ver pedido</button>
     <button class="b-wa" onclick="enviar()">Enviar</button>
   </div>
 </div>
@@ -297,7 +306,8 @@ async function cargar(){
       tmp.push({id:pid||_norm(nombre),cat:cat.id,nombre:_tc(inf.nombre||nombre),esKg,p1,p2,oferta:inf.oferta||0});
     });
     PRODS=tmp;
-    CATS=Object.keys(RUBRO_MAP).map(k=>RUBRO_MAP[k]).filter(c=>catMap[c.id]);
+    CATS=Object.keys(RUBRO_MAP).map(k=>RUBRO_MAP[k]).filter(c=>catMap[c.id])
+      .sort((a,b)=>a.n.localeCompare(b.n,'es'));   // alfabético: sábana y menú hamburguesa
     render();
   }catch(e){
     document.getElementById('lista').innerHTML='<div class="vacio">No pudimos cargar la lista.<br>Revisá tu conexión.<br><br><button class="b-ver" onclick="location.reload()">Reintentar</button></div>';
@@ -352,7 +362,7 @@ function render(){
     html+=`<section class="rubro" id="r_${cat.id}">
       <div class="rubro-h">${cat.n}<span class="n">${items.length}</span></div>
       <div class="tabla">
-        <div class="hdr"><div>Producto</div><div class="c menor">Por menor</div><div class="c mayor">+$80.000</div><div class="c h-cant">Cantidad</div><div class="h-del"></div></div>`;
+        <div class="hdr"><div>Producto</div><div class="c menor">Por menor</div><div class="c mayor">+$80.000</div><div class="c h-cant">Cantidad</div></div>`;
     items.forEach(p=>{
       const it=pedido[p.id];
       const tiene=!!(it&&it.cant);
@@ -374,7 +384,6 @@ function render(){
                </select>`
             : `<span class="und">un.</span>`}
         </div>
-        <button class="del${tiene?' on':''}" onclick="borrar('${p.id}')" aria-label="Quitar ${p.nombre}" title="Quitar">🗑</button>
         <div class="sub" id="s_${p.id}">${tiene?cantTexto(p,it)+' · $'+fmt(subtotalDe(p,it,esMayorista())):''}</div>
       </div>`;
     });
@@ -419,7 +428,6 @@ function refrescarFila(pid){
   const it=pedido[pid], tiene=!!(it&&it.cant);
   fila.classList.toggle('tiene',tiene);
   const inp=fila.querySelector('input'); if(inp) inp.classList.toggle('lleno',tiene);
-  const del=fila.querySelector('.del'); if(del) del.classList.toggle('on',tiene);
   const sub=document.getElementById('s_'+pid);
   if(sub) sub.textContent=tiene?cantTexto(p,it)+' · $'+fmt(subtotalDe(p,it,esMayorista())):'';
 }
@@ -443,19 +451,48 @@ function totales(){
   const esMay=base>=MIN_MAYORISTA;
   return {n,base,conOferta,may,esMay,final:esMay?may:conOferta};
 }
+/* Tachito idéntico al de las cards de la tienda */
+const TRASH='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+function idsDelPedido(){
+  return Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subConPrecio(p,pedido[id],p.p1)>0;});
+}
+function pintarPanel(){
+  const t=totales(), ids=idsDelPedido();
+  document.getElementById('panelB').innerHTML = ids.length
+    ? ids.map(id=>{
+        const p=PRODS.find(x=>x.id===id), it=pedido[id];
+        return `<div class="it" id="i_${id}">
+          <div class="it-n">${p.nombre}<small>${cantTexto(p,it)}</small></div>
+          <div class="it-s">$${fmt(subtotalDe(p,it,t.esMay))}</div>
+          <button class="it-x" onclick="borrarDesdePanel('${id}')" aria-label="Quitar ${p.nombre}" title="Quitar">${TRASH}</button>
+        </div>`;
+      }).join('')
+    : '<div class="vacio">Todavía no cargaste nada.</div>';
+  document.getElementById('panelT').textContent='$'+fmt(t.final);
+  document.getElementById('panelMay').innerHTML = t.esMay
+    ? `<div class="aviso-may">✓ Tenés precio mayorista: ahorrás $${fmt(t.base-t.may)}</div>`
+    : (t.n?`<div class="aviso-may" style="background:#fff8e6;border-color:#f0d68a;color:#8a6d1f">Sumá $${fmt(MIN_MAYORISTA-t.base)} más y pagás precio mayorista</div>`:'');
+}
+function abrirPanel(){pintarPanel();document.getElementById('ov').classList.add('on');document.getElementById('panel').classList.add('on');document.body.style.overflow='hidden';}
+function cerrarPanel(){document.getElementById('ov').classList.remove('on');document.getElementById('panel').classList.remove('on');document.body.style.overflow='';}
+function borrarDesdePanel(pid){ borrar(pid); pintarPanel(); }
+
 function actualizarBarra(){
   const t=totales();
   const b=document.getElementById('barra');
   b.classList.toggle('on',t.n>0);
-  document.body.style.paddingBottom=t.n>0?'86px':'24px';
   document.getElementById('barraC').textContent=t.n+(t.n===1?' producto':' productos');
   document.getElementById('barraT').firstChild.nodeValue='$'+fmt(t.final);
   document.getElementById('barraMay').textContent = t.esMay
     ? '✓ Precio mayorista (ahorrás $'+fmt(t.base-t.may)+')'
     : (t.n?'Faltan $'+fmt(MIN_MAYORISTA-t.base)+' para el precio mayorista':'');
+  // recién ahora, con el texto ya puesto, se reserva la altura real de la barra
+  document.body.style.paddingBottom=t.n>0?(b.offsetHeight+14)+'px':'24px';
   // Marca qué columna de precio rige ahora mismo
   document.body.classList.toggle('esmay',t.esMay);
   Object.keys(pedido).forEach(refrescarFila);
+  if(document.getElementById('panel').classList.contains('on')) pintarPanel();
 }
 
 
@@ -464,13 +501,13 @@ function enviar(){
   const may=esMayorista();
   const ids=Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subtotalDe(p,pedido[id],may)>0;});
   if(!ids.length){ alert('Todavía no cargaste cantidades.\n\nEscribí cuánto querés en el casillero de la derecha de cada producto.'); return; }
-  const {bruto}=totalCon(may);
+  const t=totales();
   let m='🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
   ids.forEach(id=>{
     const p=PRODS.find(x=>x.id===id), it=pedido[id];
     m+=`• ${p.nombre} — ${cantTexto(p,it)} — $${fmt(subtotalDe(p,it,may))}\n`;
   });
-  m+=`\n*TOTAL: $${fmt(bruto)}*`;
+  m+=`\n*TOTAL: $${fmt(t.final)}*`;
   if(may) m+='\n_(Precio mayorista aplicado por superar $80.000)_';
   m+='\n\n_Pedido armado desde la lista de precios_';
   window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
