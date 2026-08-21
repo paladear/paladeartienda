@@ -16,7 +16,7 @@ layout: null
 <style>
 :root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted-fg:#5a6b7d;--menor:#2d5f8a;--mayor:#15803d;--mayor-bg:#eaf7ee;--oferta:#c2410c;--oferta-bg:#fff3ea;--whatsapp:#25d366;
 /* anchos de columna: los mismos en toda la pagina para que todo quede alineado */
---cPre:86px;--cCant:112px;--cDel:30px}
+--cPre:86px;--cCant:120px;--cDel:30px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--fg);padding-bottom:24px;font-size:16px}
 
@@ -37,6 +37,15 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .busq-wrap{position:relative;flex:1;min-width:0}
 .busq-wrap input{width:100%;border:none;border-radius:12px;padding:13px 15px;font-size:16px;font-family:inherit;font-weight:600;color:var(--fg);outline:none;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .busq-wrap input::placeholder{color:#93a5b5;font-weight:500}
+.busq-wrap input{padding-right:42px}
+.busq-wrap input::-webkit-search-cancel-button{display:none}
+.q-x{display:none;position:absolute;right:7px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:none;border-radius:50%;background:#e3e8ed;color:#5a6b7d;font-size:19px;line-height:1;cursor:pointer;align-items:center;justify-content:center}
+.q-x.on{display:flex}
+/* Barra que aparece al buscar: dice qué se buscó y permite volver a la lista completa */
+.volver{display:none;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:9px 12px;margin-bottom:12px}
+.volver.on{display:flex}
+.volver .txt{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--muted-fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.volver button{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 /* Sugerencias predictivas */
 .sug{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 10px 28px rgba(15,28,42,.3);z-index:60;max-height:300px;overflow-y:auto;padding:5px}
 .sug.on{display:block}
@@ -88,10 +97,10 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .pr .tach{display:block;font-size:10px;color:#9aa8b6;text-decoration:line-through;font-weight:600;line-height:1}
 /* Cantidad: número + unidad */
 .cant{display:flex;gap:4px;align-items:center}
-.cant input{width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 5px;font-family:inherit;font-size:14px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
+.cant input{width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 4px;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
 .cant input:focus{border-color:var(--azul)}
 .cant input.lleno{border-color:#16a34a;background:#f2fbf5}
-.cant select{border:2px solid var(--border);border-radius:8px;padding:7px 1px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
+.cant select{border:2px solid var(--border);border-radius:8px;padding:7px 0;font-family:inherit;font-size:16px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
 .cant select:focus{border-color:var(--azul)}
 .cant .und{font-size:11.5px;font-weight:700;color:var(--muted-fg);white-space:nowrap}
 /* Tachito: la columna existe siempre, solo se muestra u oculta => nada se mueve */
@@ -138,7 +147,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 
 /* ══ Celular: todo en un renglón, más compacto ══ */
 @media(max-width:640px){
-  :root{--cPre:60px;--cCant:86px;--cDel:24px}
+  :root{--cPre:58px;--cCant:96px;--cDel:22px}
   body{font-size:15px}
   .wrap{padding:9px}
   .hdr,.fila{gap:5px;padding:7px 8px;font-size:12px}
@@ -146,8 +155,8 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .nom{font-size:12.2px;line-height:1.25}
   .pr{font-size:12.2px;padding:4px 1px}
   .pr .tach{font-size:8.5px}
-  .cant input{padding:6px 2px;font-size:13px}
-  .cant select{padding:6px 0;font-size:11px}
+  .cant input{padding:6px 1px;font-size:16px}
+  .cant select{padding:6px 0;font-size:16px}
   .cant{gap:3px}
   .del{height:24px;font-size:14px}
   .rubro-h{font-size:14.5px;letter-spacing:.8px;padding:9px 11px}
@@ -201,6 +210,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
     <div class="busq-wrap">
       <input id="q" type="search" placeholder="Buscar un producto…" autocomplete="off"
              oninput="alEscribir(this.value)" onfocus="alEscribir(this.value)" onblur="ocultarSugPronto()">
+      <button class="q-x" id="qx" onclick="limpiar()" aria-label="Borrar lo escrito">×</button>
       <div class="sug" id="sug"></div>
     </div>
   </div>
@@ -214,6 +224,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 
 <main class="wrap">
   <div class="ayuda">✏️ Escribí <b>cuánto querés</b> en el casillero de la derecha. En los productos que van por peso, elegí si es <b>g</b> (gramos) o <b>kg</b> (kilos). Abajo de todo vas a ver el total y el botón para enviarlo por WhatsApp.</div>
+  <div class="volver" id="volver"><span class="txt" id="volverTxt"></span><button onclick="limpiar()">← Ver toda la lista</button></div>
   <div id="lista"><div class="cargando">Cargando la lista de precios…</div></div>
 </main>
 
@@ -223,22 +234,10 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
       <div class="barra-c" id="barraC">0 productos</div>
       <div class="barra-t" id="barraT">$0<small id="barraMay"></small></div>
     </div>
-    <button class="b-ver" onclick="abrirPanel()">Ver pedido</button>
     <button class="b-wa" onclick="enviar()">Enviar</button>
   </div>
 </div>
 
-<div class="ov" id="ov" onclick="cerrarPanel()"></div>
-<section class="panel" id="panel">
-  <div class="panel-h"><h2>Tu pedido</h2><button class="panel-x" onclick="cerrarPanel()" aria-label="Cerrar">×</button></div>
-  <div class="panel-b" id="panelB"></div>
-  <div class="panel-f">
-    <div class="tot"><span>Total</span><span id="panelT">$0</span></div>
-    <div id="panelMay"></div>
-    <button class="b-wa b-wa-full" onclick="enviar()">💬 Enviar pedido por WhatsApp</button>
-    <div class="nota">Te respondemos para confirmar stock y coordinar la entrega.</div>
-  </div>
-</section>
 
 <script>
 const WA='5492616512823';
@@ -306,15 +305,22 @@ async function cargar(){
 }
 
 /* ── Precios: p1 = por menor, p2 = mayorista (+$80.000). La oferta del mes aplica a ambos ── */
+/* Reglas de precio EXACTAS de la tienda (index.html):
+   - El descuento del mes aplica SOLO al precio por menor.
+   - Al superar los $80.000 rige el precio mayorista (lista 2) SIN descuento: no se combinan.
+   - El umbral de $80.000 se mide con la lista 1 SIN descuento (igual que _itemMin en la tienda). */
 function precioMenor(p){ return p.oferta>0?Math.round(p.p1*(1-p.oferta/100)):p.p1; }
-function precioMayor(p){ return p.oferta>0?Math.round(p.p2*(1-p.oferta/100)):p.p2; }
+function precioMayor(p){ return p.p2; }
 
-/* ── Cantidad → subtotal. Para peso el precio es por kilo; para unidad, por unidad ── */
-function subtotalDe(p,it,usarMayor){
-  const pr = usarMayor?precioMayor(p):precioMenor(p);
+/* Subtotal con un precio unitario dado. Para peso el precio es por kilo; para unidad, por unidad */
+function subConPrecio(p,it,precioUnit){
   if(!it||!it.cant)return 0;
-  if(p.esKg){ const g = it.uni==='kg'?it.cant*1000:it.cant; return Math.round(pr*(g/1000)); }
-  return Math.round(pr*it.cant);
+  if(p.esKg){ const g = it.uni==='kg'?it.cant*1000:it.cant; return Math.round(precioUnit*(g/1000)); }
+  return Math.round(precioUnit*it.cant);
+}
+/* Subtotal que realmente se cobra, según si el pedido llegó al mínimo mayorista */
+function subtotalDe(p,it,usarMayor){
+  return subConPrecio(p,it,usarMayor?precioMayor(p):precioMenor(p));
 }
 function cantTexto(p,it){
   if(!it||!it.cant)return '';
@@ -327,15 +333,22 @@ function cantTexto(p,it){
 function render(){
   const cont=document.getElementById('lista');
   const f=_norm(filtro);
-  let html='',hay=0,cats='';
+  let html='',hay=0;
+  // El menú de categorías se arma con TODAS, sin importar el filtro del buscador
+  document.getElementById('catList').innerHTML=CATS.map(c=>
+    `<button class="cat-b" onclick="irA('${c.id}')">${c.n}<span>${PRODS.filter(p=>p.cat===c.id).length}</span></button>`
+  ).join('');
+  // Aviso de búsqueda activa
+  const vb=document.getElementById('volver');
+  vb.classList.toggle('on',!!filtro);
+  if(filtro) document.getElementById('volverTxt').textContent='Resultados para “'+filtro+'”';
+  document.getElementById('qx').classList.toggle('on',!!filtro);
   CATS.forEach(cat=>{
     let items=PRODS.filter(p=>p.cat===cat.id);
-    const total=items.length;
     if(f) items=items.filter(p=>_norm(p.nombre).includes(f));
     if(!items.length)return;
     hay+=items.length;
     items.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
-    cats+=`<button class="cat-b" onclick="irA('${cat.id}')">${cat.n}<span>${total}</span></button>`;
     html+=`<section class="rubro" id="r_${cat.id}">
       <div class="rubro-h">${cat.n}<span class="n">${items.length}</span></div>
       <div class="tabla">
@@ -368,19 +381,20 @@ function render(){
     html+='</div></section>';
   });
   cont.innerHTML=hay?html:`<div class="vacio">No encontramos “${filtro}”.<br><br><button class="b-ver" onclick="limpiar()">Ver todo</button></div>`;
-  document.getElementById('catList').innerHTML=cats;
   actualizarBarra();
 }
 
 function irA(id){
   cerrarCats();
-  setTimeout(()=>{const el=document.getElementById('r_'+id); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},260);
+  // Si había una búsqueda activa, se limpia: así el rubro elegido siempre aparece completo
+  if(filtro){ document.getElementById('q').value=''; filtro=''; render(); }
+  setTimeout(()=>{const el=document.getElementById('r_'+id); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},280);
 }
 function abrirCats(){document.getElementById('catOv').classList.add('on');document.getElementById('catPanel').classList.add('on');document.body.style.overflow='hidden';}
 function cerrarCats(){document.getElementById('catOv').classList.remove('on');document.getElementById('catPanel').classList.remove('on');document.body.style.overflow='';}
 
 /* ── Pedido: una sola entrada por producto (nunca se repite) ── */
-function esMayorista(){ return totalCon(true).bruto>=MIN_MAYORISTA || totalCon(false).bruto>=MIN_MAYORISTA; }
+function esMayorista(){ return totales().esMay; }
 function setCant(pid,v){
   const p=PRODS.find(x=>x.id===pid); if(!p)return;
   const n=parseFloat(String(v).replace(',','.'));
@@ -396,8 +410,7 @@ function borrar(pid){
   delete pedido[pid]; guardar();
   const fila=document.getElementById('f_'+pid);
   if(fila){ const i=fila.querySelector('input'); if(i){i.value='';i.classList.remove('lleno');} }
-  refrescarFila(pid); actualizarBarra(); pintarPanel();
-  if(!Object.keys(pedido).length) cerrarPanel();
+  refrescarFila(pid); actualizarBarra();
 }
 /* Refresca solo esa fila: así no se pierde el foco mientras se escribe */
 function refrescarFila(pid){
@@ -413,50 +426,38 @@ function refrescarFila(pid){
 function guardar(){ try{localStorage.setItem('pld_catalogo2',JSON.stringify(pedido));}catch(e){} }
 function recuperar(){ try{const s=localStorage.getItem('pld_catalogo2'); if(s)pedido=JSON.parse(s)||{};}catch(e){pedido={};} }
 
-function totalCon(mayor){
-  let n=0,bruto=0;
+/* Los tres totales, igual que la tienda:
+   base       = lista 1 sin descuento  (es el que decide si se llega a los $80.000)
+   conOferta  = lista 1 con el descuento del mes aplicado
+   may        = lista 2 (mayorista), sin descuento */
+function totales(){
+  let n=0, base=0, conOferta=0, may=0;
   Object.keys(pedido).forEach(id=>{
     const p=PRODS.find(x=>x.id===id); if(!p)return;
-    const s=subtotalDe(p,pedido[id],mayor);
-    if(s>0){n++;bruto+=s;}
+    const b=subConPrecio(p,pedido[id],p.p1);
+    if(b<=0)return;
+    n++; base+=b;
+    conOferta+=subConPrecio(p,pedido[id],precioMenor(p));
+    may+=subConPrecio(p,pedido[id],p.p2);
   });
-  return {n,bruto};
+  const esMay=base>=MIN_MAYORISTA;
+  return {n,base,conOferta,may,esMay,final:esMay?may:conOferta};
 }
 function actualizarBarra(){
-  const may=esMayorista();
-  const {n,bruto}=totalCon(may);
+  const t=totales();
   const b=document.getElementById('barra');
-  b.classList.toggle('on',n>0);
-  document.body.style.paddingBottom=n>0?'92px':'24px';
-  document.getElementById('barraC').textContent=n+(n===1?' producto':' productos');
-  const menor=totalCon(false).bruto;
-  document.getElementById('barraT').firstChild.nodeValue='$'+fmt(bruto);
-  document.getElementById('barraMay').textContent=may?('✓ Precio mayorista aplicado (ahorrás $'+fmt(menor-bruto)+')'):('Faltan $'+fmt(MIN_MAYORISTA-menor)+' para el precio mayorista');
-  // los subtotales por fila cambian si se cruza el umbral
+  b.classList.toggle('on',t.n>0);
+  document.body.style.paddingBottom=t.n>0?'86px':'24px';
+  document.getElementById('barraC').textContent=t.n+(t.n===1?' producto':' productos');
+  document.getElementById('barraT').firstChild.nodeValue='$'+fmt(t.final);
+  document.getElementById('barraMay').textContent = t.esMay
+    ? '✓ Precio mayorista (ahorrás $'+fmt(t.base-t.may)+')'
+    : (t.n?'Faltan $'+fmt(MIN_MAYORISTA-t.base)+' para el precio mayorista':'');
+  // Marca qué columna de precio rige ahora mismo
+  document.body.classList.toggle('esmay',t.esMay);
   Object.keys(pedido).forEach(refrescarFila);
 }
 
-/* ── Panel del pedido ── */
-function pintarPanel(){
-  const may=esMayorista();
-  const {bruto}=totalCon(may);
-  const ids=Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subtotalDe(p,pedido[id],may)>0;});
-  document.getElementById('panelB').innerHTML=ids.length?ids.map(id=>{
-    const p=PRODS.find(x=>x.id===id), it=pedido[id];
-    return `<div class="it">
-      <div class="it-n">${p.nombre}<small>${cantTexto(p,it)} · $${fmt(may?precioMayor(p):precioMenor(p))} por ${p.esKg?'kg':'unidad'}</small></div>
-      <div class="it-s">$${fmt(subtotalDe(p,it,may))}</div>
-      <button class="it-x" onclick="borrar('${id}')" aria-label="Quitar">🗑</button>
-    </div>`;
-  }).join(''):'<div class="vacio">Tu pedido está vacío</div>';
-  document.getElementById('panelT').textContent='$'+fmt(bruto);
-  const menor=totalCon(false).bruto;
-  document.getElementById('panelMay').innerHTML = may
-    ? `<div class="aviso-may">✓ Estás comprando con precio mayorista<br>Ahorrás $${fmt(menor-bruto)}</div>`
-    : (menor>0?`<div class="aviso-may" style="background:#fff8e6;border-color:#f0d089;color:#7a5f18">Te faltan $${fmt(MIN_MAYORISTA-menor)} para acceder al precio mayorista</div>`:'');
-}
-function abrirPanel(){ pintarPanel(); document.getElementById('ov').classList.add('on'); document.getElementById('panel').classList.add('on'); document.body.style.overflow='hidden'; }
-function cerrarPanel(){ document.getElementById('ov').classList.remove('on'); document.getElementById('panel').classList.remove('on'); document.body.style.overflow=''; }
 
 /* ── WhatsApp: un renglón por producto, nunca repetido ── */
 function enviar(){
@@ -479,6 +480,7 @@ function enviar(){
 let tBusq=null;
 function alEscribir(v){
   clearTimeout(tBusq);
+  document.getElementById('qx').classList.toggle('on',!!(v||'').trim());
   sugerencias(v);
   tBusq=setTimeout(()=>{ filtro=(v||'').trim(); render(); },260);
 }
@@ -516,7 +518,14 @@ function elegirRubro(id){
   filtro=''; render(); irA(id);
 }
 function ocultarSugPronto(){ setTimeout(()=>document.getElementById('sug').classList.remove('on'),160); }
-function limpiar(){ document.getElementById('q').value=''; filtro=''; document.getElementById('sug').classList.remove('on'); render(); }
+function limpiar(){
+  document.getElementById('q').value='';
+  filtro='';
+  document.getElementById('sug').classList.remove('on');
+  document.getElementById('qx').classList.remove('on');
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 document.getElementById('printFecha').textContent='Precios actualizados al '+new Date().toLocaleDateString('es-AR')+' · Consultar stock · @palade.ar';
 recuperar();
