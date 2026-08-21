@@ -100,9 +100,9 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .cant input{flex:1;width:100%;min-width:0;border:2px solid var(--border);border-radius:8px;padding:7px 4px;font-family:inherit;font-size:16px;font-weight:700;text-align:center;color:var(--fg);outline:none;background:#fff}
 .cant input:focus{border-color:var(--azul)}
 .cant input.lleno{border-color:#16a34a;background:#f2fbf5}
-.cant select{flex:0 0 50px;border:2px solid var(--border);border-radius:8px;padding:7px 0;font-family:inherit;font-size:16px;font-weight:700;color:var(--fg);background:#fff;outline:none;cursor:pointer}
+.cant select{flex:0 0 52px;border:2px solid var(--border);border-radius:8px;padding:7px 11px;font-family:inherit;font-size:16px;font-weight:700;color:var(--fg);outline:none;cursor:pointer;text-align:center;text-align-last:center;-webkit-appearance:none;appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%2390a4b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 3px center;background-size:7px}
 .cant select:focus{border-color:var(--azul)}
-.cant .und{font-size:11.5px;font-weight:700;color:var(--muted-fg);white-space:nowrap}
+.cant .und{flex:0 0 52px;text-align:center;font-size:11.5px;font-weight:700;color:var(--muted-fg);white-space:nowrap}
 .sub{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--mayor);padding-top:2px;display:none}
 .fila.tiene .sub{display:block}
 .vacio{text-align:center;padding:50px 20px;color:var(--muted-fg);font-size:16px;font-weight:600}
@@ -153,7 +153,8 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .pr{font-size:12.2px;padding:4px 1px}
   .pr .tach{font-size:8.5px}
   .cant input{padding:6px 2px;font-size:16px}
-  .cant select{flex:0 0 44px;padding:6px 0;font-size:16px}
+  .cant select{flex:0 0 46px;padding:6px 9px;background-position:right 2px center}
+  .cant .und{flex:0 0 46px}
   .cant{gap:3px}
   .rubro-h{font-size:14.5px;letter-spacing:.8px;padding:9px 11px}
   .badge-of{font-size:8.5px;padding:1px 4px}
