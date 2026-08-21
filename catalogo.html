@@ -52,9 +52,9 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .sug-it{padding:10px 12px;font-size:14px;font-weight:600;color:var(--fg);cursor:pointer;border-radius:9px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sug-it:hover,.sug-it.sel{background:var(--azul-light)}
 .sug-it.rubro.sel{background:var(--azul);color:#fff}
-/* Foco visible: navegando con Tab hay que ver siempre dónde se está parado */
-:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
-.cant input:focus,.cant select:focus{outline:3px solid #1d4ed8;outline-offset:1px}
+/* Foco visible: se resalta la fila entera, suave, en vez de un borde grueso */
+:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.cant input:focus,.cant select:focus{outline:none;border-color:var(--azul)}
 .sug-it .ic{opacity:.5;flex-shrink:0}
 .sug-it.rubro{background:var(--azul-light);color:var(--azul-dark);font-weight:800;margin-bottom:2px}
 .sug-it.rubro:hover{background:var(--azul);color:#fff}
@@ -91,6 +91,9 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .fila:last-child{border-bottom:none}
 .fila:nth-child(even){background:#fafcfe}
 .fila.tiene{background:#eef7f0}
+/* Fila enfocada (teclado): resaltado suave, gana sobre el rayado y sobre el verde de "ya cargada" */
+.fila:focus-within{background:#e9f1f9;box-shadow:inset 3px 0 0 var(--azul)}
+.fila.tiene:focus-within{background:#e4f0ea}
 .nom{font-weight:700;line-height:1.28;min-width:0;overflow-wrap:break-word}
 .badge-of{display:inline-block;background:var(--oferta);color:#fff;font-size:9.5px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle;white-space:nowrap}
 /* Columnas de precio, cada una con su color */
