@@ -50,7 +50,11 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 .sug{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 10px 28px rgba(15,28,42,.3);z-index:60;max-height:300px;overflow-y:auto;padding:5px}
 .sug.on{display:block}
 .sug-it{padding:10px 12px;font-size:14px;font-weight:600;color:var(--fg);cursor:pointer;border-radius:9px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sug-it:hover{background:var(--azul-light)}
+.sug-it:hover,.sug-it.sel{background:var(--azul-light)}
+.sug-it.rubro.sel{background:var(--azul);color:#fff}
+/* Foco visible: navegando con Tab hay que ver siempre dónde se está parado */
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
+.cant input:focus,.cant select:focus{outline:3px solid #1d4ed8;outline-offset:1px}
 .sug-it .ic{opacity:.5;flex-shrink:0}
 .sug-it.rubro{background:var(--azul-light);color:var(--azul-dark);font-weight:800;margin-bottom:2px}
 .sug-it.rubro:hover{background:var(--azul);color:#fff}
@@ -206,7 +210,8 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
     <button class="btn-cat" onclick="abrirCats()"><span class="ham"><i></i><i></i><i></i></span>Categorías</button>
     <div class="busq-wrap">
       <input id="q" type="search" placeholder="Buscar un producto…" autocomplete="off"
-             oninput="alEscribir(this.value)" onfocus="alEscribir(this.value)" onblur="ocultarSugPronto()">
+             oninput="alEscribir(this.value)" onfocus="alEscribir(this.value)" onblur="ocultarSugPronto()"
+             onkeydown="teclaBuscador(event)">
       <button class="q-x" id="qx" onclick="limpiar()" aria-label="Borrar lo escrito">×</button>
       <div class="sug" id="sug"></div>
     </div>
@@ -372,7 +377,7 @@ function render(){
       html+=`<div class="fila${tiene?' tiene':''}" id="f_${p.id}">
         <div class="nom">${p.nombre}${p.oferta>0?`<span class="badge-of">−${p.oferta}%</span>`:''}</div>
         <div class="pr menor${p.oferta>0?' of':''}">${p.oferta>0?`<span class="tach">$${fmt(p.p1)}</span>`:''}$${fmt(pm)}</div>
-        <div class="pr mayor${p.oferta>0?' of':''}">${p.oferta>0?`<span class="tach">$${fmt(p.p2)}</span>`:''}$${fmt(py)}</div>
+        <div class="pr mayor">$${fmt(py)}</div>
         <div class="cant">
           <input type="number" inputmode="decimal" min="0" step="any" placeholder="0"
                  value="${it&&it.cant?it.cant:''}" class="${tiene?'lleno':''}"
@@ -393,6 +398,31 @@ function render(){
   cont.innerHTML=hay?html:`<div class="vacio">No encontramos “${filtro}”.<br><br><button class="b-ver" onclick="limpiar()">Ver todo</button></div>`;
   actualizarBarra();
 }
+
+/* ── Teclado: se puede armar todo el pedido sin tocar el mouse ──
+   Enter salta al casillero siguiente (Shift+Enter, al anterior); al final cae en Enviar.
+   Tab sigue funcionando normal: casillero → g/kg → casillero siguiente. */
+function casilleros(){ return Array.from(document.querySelectorAll('.fila .cant input')); }
+function saltarCasillero(inp,dir){
+  const l=casilleros(), i=l.indexOf(inp);
+  if(i<0)return;
+  const sig=l[i+dir];
+  if(sig){ sig.focus(); sig.select(); sig.scrollIntoView({block:'center'}); }
+  else if(dir>0){ const b=document.querySelector('.barra.on .b-wa'); if(b)b.focus(); }
+}
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  // Enter dentro de un casillero de cantidad
+  if(e.key==='Enter'&&t.tagName==='INPUT'&&t.closest('.cant')){
+    e.preventDefault(); saltarCasillero(t,e.shiftKey?-1:1); return;
+  }
+  // Escape cierra lo que esté abierto
+  if(e.key==='Escape'){
+    if(document.getElementById('panel').classList.contains('on')){ cerrarPanel(); return; }
+    if(document.getElementById('catPanel').classList.contains('on')){ cerrarCats(); return; }
+    if(document.getElementById('sug').classList.contains('on')){ document.getElementById('sug').classList.remove('on'); sugSel=-1; return; }
+  }
+});
 
 function irA(id){
   cerrarCats();
@@ -475,8 +505,19 @@ function pintarPanel(){
     ? `<div class="aviso-may">✓ Tenés precio mayorista: ahorrás $${fmt(t.base-t.may)}</div>`
     : (t.n?`<div class="aviso-may" style="background:#fff8e6;border-color:#f0d68a;color:#8a6d1f">Sumá $${fmt(MIN_MAYORISTA-t.base)} más y pagás precio mayorista</div>`:'');
 }
-function abrirPanel(){pintarPanel();document.getElementById('ov').classList.add('on');document.getElementById('panel').classList.add('on');document.body.style.overflow='hidden';}
-function cerrarPanel(){document.getElementById('ov').classList.remove('on');document.getElementById('panel').classList.remove('on');document.body.style.overflow='';}
+function abrirPanel(){
+  pintarPanel();
+  document.getElementById('ov').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{const b=document.querySelector('.panel .b-wa-full'); if(b)b.focus();},60);
+}
+function cerrarPanel(){
+  document.getElementById('ov').classList.remove('on');
+  document.getElementById('panel').classList.remove('on');
+  document.body.style.overflow='';
+  const v=document.querySelector('.barra .b-ver'); if(v)v.focus();
+}
 function borrarDesdePanel(pid){ borrar(pid); pintarPanel(); }
 
 function actualizarBarra(){
@@ -541,9 +582,10 @@ function sugerencias(v){
   for(const{p}of prod){ if(vistos.has(p.nombre))continue; vistos.add(p.nombre); top.push(p); if(top.length>=6)break; }
   if(!rub.length&&!top.length){ caja.classList.remove('on'); caja.innerHTML=''; return; }
   caja.innerHTML =
-    rub.map(x=>`<div class="sug-it rubro" onmousedown="elegirRubro('${x.c.id}')">${x.c.n}</div>`).join('')+
-    top.map(p=>`<div class="sug-it" onmousedown="elegirProd('${p.nombre.replace(/'/g,"\\'")}')"><span class="ic">🔍</span>${p.nombre}</div>`).join('');
+    rub.map(x=>`<div class="sug-it rubro" data-t="r" data-v="${x.c.id}" onmousedown="elegirRubro('${x.c.id}')">${x.c.n}</div>`).join('')+
+    top.map(p=>`<div class="sug-it" data-t="p" data-v="${p.nombre.replace(/"/g,'&quot;')}" onmousedown="elegirProd('${p.nombre.replace(/'/g,"\\'")}')"><span class="ic">🔍</span>${p.nombre}</div>`).join('');
   caja.classList.add('on');
+  sugSel=-1;
 }
 function elegirProd(n){
   document.getElementById('q').value=n;
@@ -555,6 +597,35 @@ function elegirRubro(id){
   document.getElementById('sug').classList.remove('on');
   filtro=''; render(); irA(id);
 }
+/* Flechas y Enter en el buscador, para no necesitar el mouse */
+let sugSel=-1;
+function sugLista(){ return Array.from(document.querySelectorAll('#sug .sug-it')); }
+function marcarSug(i){
+  const l=sugLista(); if(!l.length)return;
+  sugSel=Math.max(-1,Math.min(i,l.length-1));
+  l.forEach((el,k)=>el.classList.toggle('sel',k===sugSel));
+  if(l[sugSel])l[sugSel].scrollIntoView({block:'nearest'});
+}
+function teclaBuscador(e){
+  const abierto=document.getElementById('sug').classList.contains('on');
+  if(e.key==='ArrowDown'&&abierto){ e.preventDefault(); marcarSug(sugSel+1); return; }
+  if(e.key==='ArrowUp'&&abierto){ e.preventDefault(); marcarSug(sugSel-1); return; }
+  if(e.key==='Enter'){
+    e.preventDefault();
+    const l=sugLista();
+    if(abierto&&sugSel>=0&&l[sugSel]){
+      const el=l[sugSel];
+      if(el.dataset.t==='r'){ elegirRubro(el.dataset.v); return; }  // el rubro se encarga del scroll
+      elegirProd(el.dataset.v);
+    }else{
+      // sin sugerencia elegida: se aplica lo escrito y el foco baja al primer casillero
+      document.getElementById('sug').classList.remove('on');
+      clearTimeout(tBusq); filtro=document.getElementById('q').value.trim(); render();
+    }
+    setTimeout(()=>{ const p=casilleros()[0]; if(p){p.focus();p.select();} },220);
+  }
+}
+
 function ocultarSugPronto(){ setTimeout(()=>document.getElementById('sug').classList.remove('on'),160); }
 function limpiar(){
   document.getElementById('q').value='';
