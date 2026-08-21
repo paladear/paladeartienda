@@ -1,0 +1,393 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Lista de Precios | Paladear Mercado de Sabores</title>
+<meta name="description" content="Lista de precios completa de Paladear Mercado de Sabores. Frutos secos, especias, infusiones, harinas y más. Pedí por WhatsApp.">
+<link rel="icon" href="favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--azul-mid:#6d90aa;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted:#e3e8ed;--muted-fg:#5a6b7d;--oferta:#d4543c;--whatsapp:#25d366}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--fg);padding-bottom:96px;font-size:16px}
+
+/* ── Encabezado ── */
+.top{position:sticky;top:0;z-index:50;background:var(--azul);box-shadow:0 2px 14px rgba(26,48,80,.25)}
+.top-in{max-width:1000px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.logo{width:46px;height:46px;border-radius:50%;background:#fff;flex-shrink:0;object-fit:contain;padding:2px}
+.top-t{color:#fff;font-weight:800;font-size:17px;line-height:1.15}
+.top-t small{display:block;font-weight:500;font-size:12px;opacity:.9}
+.btn-print{margin-left:auto;background:rgba(255,255,255,.16);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:13px;padding:9px 13px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.btn-print:hover{background:rgba(255,255,255,.28)}
+.buscador{max-width:1000px;margin:0 auto;padding:0 14px 11px;display:flex;gap:8px}
+.buscador input{flex:1;border:none;border-radius:12px;padding:14px 16px;font-size:16px;font-family:inherit;font-weight:600;color:var(--fg);outline:none;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.buscador input::placeholder{color:#93a5b5;font-weight:500}
+.btn-x{background:rgba(255,255,255,.16);border:none;color:#fff;font-size:20px;width:46px;border-radius:12px;cursor:pointer;display:none}
+.btn-x.on{display:block}
+
+/* ── Chips de rubros ── */
+.chips{background:var(--azul-dark);overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--topH,120px);z-index:49}
+.chips::-webkit-scrollbar{display:none}
+.chips-in{display:flex;gap:7px;padding:9px 14px;max-width:1000px;margin:0 auto;width:max-content;min-width:100%}
+.chip{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:999px;padding:8px 14px;font-family:inherit;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+.chip:hover,.chip.on{background:#fff;color:var(--azul-dark)}
+
+/* ── Contenido ── */
+.wrap{max-width:1000px;margin:0 auto;padding:14px}
+.aviso{background:#fff8e6;border:1.5px solid #f0d089;border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;color:#8a6a1f;margin-bottom:14px;line-height:1.5}
+.rubro{margin-bottom:22px;scroll-margin-top:190px}
+.rubro-h{display:flex;align-items:center;gap:9px;background:var(--azul-dark);color:#fff;padding:11px 15px;border-radius:12px 12px 0 0;font-size:16px;font-weight:800;position:relative}
+.rubro-h .n{margin-left:auto;font-size:12px;font-weight:600;opacity:.85}
+.tabla{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
+.fila{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.fila:last-child{border-bottom:none}
+.fila:nth-child(even){background:#fafcfe}
+.fila.tiene{background:#eef7f0}
+.nom{flex:1;min-width:145px;font-size:14.5px;font-weight:700;line-height:1.3}
+.nom .of{display:inline-block;background:var(--oferta);color:#fff;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:5px;margin-left:5px;vertical-align:middle}
+.precios{display:flex;gap:6px;flex-wrap:wrap}
+/* Botón de precio: tocarlo agrega al pedido */
+.pb{border:2px solid var(--azul-light);background:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-family:inherit;text-align:center;min-width:84px;transition:all .15s;position:relative}
+.pb:hover{border-color:var(--azul);background:#f2f7fb}
+.pb .med{display:block;font-size:11px;font-weight:700;color:var(--muted-fg);text-transform:uppercase;letter-spacing:.3px}
+.pb .val{display:block;font-size:15px;font-weight:800;color:var(--azul-dark);line-height:1.2}
+.pb .antes{display:block;font-size:11px;color:#95a5b5;text-decoration:line-through;line-height:1.1}
+.pb.of .val{color:var(--oferta)}
+.pb.sel{border-color:#16a34a;background:#eaf7ee}
+.pb .cnt{position:absolute;top:-9px;right:-9px;background:#16a34a;color:#fff;font-size:11.5px;font-weight:800;min-width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.vacio{text-align:center;padding:50px 20px;color:var(--muted-fg);font-size:16px;font-weight:600}
+.cargando{text-align:center;padding:60px 20px;color:var(--muted-fg);font-weight:700}
+
+/* ── Barra de pedido ── */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;box-shadow:0 -3px 18px rgba(26,48,80,.22);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:none}
+.barra.on{display:block}
+.barra-in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.barra-info{flex:1;min-width:0}
+.barra-c{font-size:12.5px;font-weight:700;color:var(--muted-fg)}
+.barra-t{font-size:21px;font-weight:800;color:var(--azul-dark);line-height:1.15}
+.b-ver{background:var(--azul-light);color:var(--azul-dark);border:none;border-radius:11px;padding:12px 15px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}
+.b-wa{background:var(--whatsapp);color:#fff;border:none;border-radius:11px;padding:13px 17px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px}
+
+/* ── Panel del pedido ── */
+.ov{position:fixed;inset:0;background:rgba(15,28,42,.55);z-index:70;display:none}
+.ov.on{display:block}
+.panel{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--bg);border-radius:18px 18px 0 0;max-height:85vh;display:none;flex-direction:column}
+.panel.on{display:flex}
+.panel-h{background:var(--azul);color:#fff;padding:14px 16px;border-radius:18px 18px 0 0;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.panel-h h2{font-size:17px;font-weight:800;flex:1}
+.panel-x{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:21px;cursor:pointer;line-height:1}
+.panel-b{overflow-y:auto;padding:12px 14px;flex:1}
+.it{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.it-n{flex:1;min-width:0;font-size:14px;font-weight:700;line-height:1.3}
+.it-n small{display:block;font-weight:600;color:var(--muted-fg);font-size:12.5px;margin-top:2px}
+.it-q{display:flex;align-items:center;gap:6px}
+.qb{width:34px;height:34px;border-radius:9px;border:2px solid var(--azul);background:#fff;color:var(--azul);font-size:19px;font-weight:800;cursor:pointer;line-height:1}
+.qb:hover{background:var(--azul);color:#fff}
+.it-c{font-size:16px;font-weight:800;min-width:26px;text-align:center}
+.it-s{font-size:14.5px;font-weight:800;color:var(--azul-dark);min-width:76px;text-align:right}
+.panel-f{border-top:1.5px solid var(--border);padding:13px 14px;padding-bottom:calc(13px + env(safe-area-inset-bottom));background:#fff;flex-shrink:0}
+.tot{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px}
+.tot span:first-child{font-size:15px;font-weight:700}
+.tot span:last-child{font-size:25px;font-weight:800;color:var(--azul-dark)}
+.b-wa-full{width:100%;justify-content:center}
+.nota{font-size:12px;color:var(--muted-fg);text-align:center;margin-top:9px;line-height:1.45}
+
+@media(min-width:700px){
+  .nom{font-size:15px}
+  .rubro{scroll-margin-top:170px}
+}
+/* ── Impresión: sábana en papel, sin botones ── */
+@media print{
+  body{background:#fff;padding:0;font-size:11px}
+  .top,.chips,.barra,.ov,.panel,.btn-print,.buscador,.aviso{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .rubro{margin-bottom:9px;break-inside:avoid}
+  .rubro-h{background:#e8eff5!important;color:#1a3050!important;border-radius:0;padding:5px 8px;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tabla{border:1px solid #bbb;border-radius:0}
+  .fila{padding:3px 8px;gap:6px}
+  .fila.tiene{background:#fff}
+  .nom{font-size:10.5px}
+  .pb{border:none;padding:0 4px;min-width:0}
+  .pb .cnt{display:none}
+  .pb .med{font-size:8.5px}
+  .pb .val{font-size:10.5px}
+  .print-h{display:block!important;text-align:center;margin-bottom:8px}
+}
+.print-h{display:none}
+</style>
+</head>
+<body>
+
+<div class="print-h">
+  <h1 style="font-size:16px">Paladear Mercado de Sabores — Lista de Precios</h1>
+  <div style="font-size:10px" id="printFecha"></div>
+</div>
+
+<header class="top" id="top">
+  <div class="top-in">
+    <img class="logo" src="android-chrome-192x192.png" alt="Paladear">
+    <div class="top-t">Lista de Precios<small>Paladear Mercado de Sabores</small></div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+  <div class="buscador">
+    <input id="q" type="search" placeholder="Buscar un producto…" autocomplete="off" oninput="filtrar(this.value)">
+    <button class="btn-x" id="bx" onclick="limpiar()" aria-label="Borrar búsqueda">×</button>
+  </div>
+</header>
+
+<nav class="chips" id="chips"><div class="chips-in" id="chipsIn"></div></nav>
+
+<main class="wrap">
+  <div class="aviso">👉 <b>Tocá el precio</b> del tamaño que quieras y se suma a tu pedido. Cuando termines, lo enviás por WhatsApp.</div>
+  <div id="lista"><div class="cargando">Cargando la lista de precios…</div></div>
+</main>
+
+<div class="barra" id="barra">
+  <div class="barra-in">
+    <div class="barra-info">
+      <div class="barra-c" id="barraC">0 productos</div>
+      <div class="barra-t" id="barraT">$0</div>
+    </div>
+    <button class="b-ver" onclick="abrirPanel()">Ver pedido</button>
+    <button class="b-wa" onclick="enviar()">Enviar</button>
+  </div>
+</div>
+
+<div class="ov" id="ov" onclick="cerrarPanel()"></div>
+<section class="panel" id="panel">
+  <div class="panel-h"><h2>Tu pedido</h2><button class="panel-x" onclick="cerrarPanel()" aria-label="Cerrar">×</button></div>
+  <div class="panel-b" id="panelB"></div>
+  <div class="panel-f">
+    <div class="tot"><span>Total</span><span id="panelT">$0</span></div>
+    <button class="b-wa b-wa-full" onclick="enviar()">💬 Enviar pedido por WhatsApp</button>
+    <div class="nota">Te respondemos para confirmar stock y coordinar la entrega.</div>
+  </div>
+</section>
+
+<script>
+const WA='5492616512823';
+const SHEET='https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=';
+const INFO_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT2RlZaSdlV-aaVGUw7YI9MVE1MHjopNhbjTOfWBZwPNo_clhJUao2KNcNowEzsdBGpd2Bh5-2rt1aH/pub?gid=1603230501&single=true&output=csv';
+
+// Mismo mapa de rubros que la tienda (define nombre, ícono y orden de aparición)
+const RUBRO_MAP={'FRUTOS SECOS':{id:'frutos',n:'Frutos Secos',ic:'🥜'},'DESHIDRATADOS':{id:'deshidratados',n:'Deshidratados',ic:'🍇'},'SEMILLAS':{id:'semillas',n:'Semillas',ic:'🌻'},'ESPECIAS':{id:'especias',n:'Especias',ic:'🌿'},'INFUSIONES Y HIERBAS':{id:'infusiones',n:'Infusiones y Hierbas',ic:'🍵'},'CEREALES':{id:'cereales',n:'Cereales',ic:'🥣'},'GRANOS Y LEGUMBRES':{id:'granos',n:'Granos y Legumbres',ic:'🫘'},'HARINAS':{id:'harinas',n:'Harinas',ic:'🌾'},'PRODUCTOS SIN TACC':{id:'sintacc',n:'Sin TACC',ic:'🌱'},'DULCES, MIEL Y CHOCOLATES':{id:'dulces',n:'Dulces, Miel y Chocolates',ic:'🍯'},'AZUCAR, CACAO Y REPOSTERIA':{id:'reposteria',n:'Azúcar, Cacao y Repostería',ic:'🍫'},'MANTECAS Y PASTAS':{id:'mantecas',n:'Mantecas y Pastas',ic:'🧈'},'ACEITES Y VINAGRES':{id:'aceites',n:'Aceites y Vinagres',ic:'🫙'},'ACEITUNAS':{id:'aceitunas',n:'Aceitunas',ic:'🫒'},'ENCURTIDOS':{id:'encurtidos',n:'Encurtidos',ic:'🥒'},'TOMATE TRITURADO':{id:'tomate',n:'Tomate',ic:'🍅'},'SNACK':{id:'snack',n:'Snacks',ic:'🍿'},'SUPLEMENTOS':{id:'suplementos',n:'Suplementos',ic:'💊'},'LINEA GOURMET':{id:'gourmet',n:'Línea Gourmet',ic:'⭐'},'BEBIDAS':{id:'bebidas',n:'Bebidas',ic:'🥤'},'VINOS':{id:'vinos',n:'Vinos y Licores',ic:'🍷'},'PRODUCTOS DE FRIO':{id:'frio',n:'Productos de Frío',ic:'❄️'},'PRODUCTOS CONGELADOS':{id:'congelados',n:'Congelados',ic:'🧊'},'PALADEAR HOME':{id:'home',n:'Paladear Home',ic:'🏠'}};
+
+/* ── Utilidades: copiadas tal cual de la tienda para que los precios coincidan ── */
+function _precio(s){const c=(s||'').replace(/[^0-9,.]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(c);return isNaN(n)?0:Math.round(n)}
+function _norm(s){return(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
+function _tc(s){return(s||'').toLowerCase().replace(/[^\s\-\/(]+/g,w=>w.charAt(0).toUpperCase()+w.slice(1))}
+function fmt(n){return (n||0).toLocaleString('es-AR')}
+function _parseCantidades(str){if(!str)return null;const i=str.split('/').map(s=>s.trim()).filter(Boolean);return i.length?i:null}
+function _calcPrecioOpc(opc,p1,p2,esKg){
+  const s=opc.toLowerCase().replace(/\s+/g,'');
+  let m=s.match(/^(\d+)g$/);
+  if(m&&esKg){const f=parseInt(m[1])/1000;return [Math.round(p1*f),Math.round(p2*f)];}
+  m=s.match(/^([\d.,]+)kg?$/);
+  if(m&&esKg){const f=parseFloat(m[1].replace(',','.'));return [Math.round(p1*f),Math.round(p2*f)];}
+  m=s.match(/^(\d+)(unidad|unidades|und|u|inidad)$/);
+  if(m){const f=parseInt(m[1]);return [Math.round(p1*f),Math.round(p2*f)];}
+  return [p1,p2];
+}
+// Etiqueta corta para el botón: "250G" -> "250 g", "1 UNIDAD" -> "unidad"
+function medida(o){
+  const s=(o||'').trim().toLowerCase().replace(/\s+/g,'');
+  let m=s.match(/^(\d+)g$/); if(m) return m[1]+' g';
+  m=s.match(/^([\d.,]+)kg?$/); if(m) return m[1].replace('.',',')+' kg';
+  m=s.match(/^(\d+)(unidad|unidades|und|u|inidad)$/); if(m) return m[1]==='1'?'unidad':m[1]+' u.';
+  return o;
+}
+function _parseCSV(t){
+  const f=[];let c='',row=[],q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){ if(ch==='"'){ if(t[i+1]==='"'){c+='"';i++;} else q=false; } else c+=ch; }
+    else { if(ch==='"')q=true; else if(ch===','){row.push(c);c='';} else if(ch==='\n'){row.push(c);f.push(row);row=[];c='';} else if(ch!=='\r')c+=ch; }
+  }
+  if(c||row.length){row.push(c);f.push(row);}
+  return f;
+}
+
+let PRODS=[], CATS=[], pedido={}, filtro='';
+
+/* ── Carga de datos (mismo Sheet que la tienda: se actualiza solo) ── */
+async function cargar(){
+  try{
+    const [infoTxt,preTxt]=await Promise.all([
+      fetch(INFO_CSV+'&t='+Date.now(),{cache:'no-store'}).then(r=>r.text()),
+      fetch(SHEET+'precios&t='+Date.now(),{cache:'no-store'}).then(r=>r.text())
+    ]);
+    // Info: cantidades, oferta y nombre lindo, cruzado por Artículo
+    const INFO={};
+    _parseCSV(infoTxt).forEach((c,i)=>{
+      if(i===0||c.length<2)return;
+      const nombre=(c[0]||'').trim(); if(!nombre)return;
+      const id=(c[6]||'').trim().replace(/\./g,'').replace(/,.*$/,'');
+      const e={nombre,cantidades:_parseCantidades((c[1]||'').trim()),oferta:parseInt((c[7]||'').replace('%',''))||0};
+      if(id)INFO[id]=e;
+      if(_norm(nombre)!==id)INFO[_norm(nombre)]=e;
+    });
+    const catMap={},tmp=[];
+    _parseCSV(preTxt).forEach((c,i)=>{
+      if(i===0||c.length<6)return;
+      const nombre=(c[2]||'').trim();
+      const p1=_precio(c[3]),p2=_precio(c[4]);
+      const rubro=(c[5]||'').trim().toUpperCase();
+      const pid=(c[6]||'').trim().replace(/\./g,'').replace(/,.*$/,'');
+      if(!nombre||!p1||!rubro)return;
+      const cat=RUBRO_MAP[rubro]; if(!cat)return;
+      catMap[cat.id]=cat;
+      const inf=INFO[pid]||INFO[_norm(nombre)]||{};
+      const cants=inf.cantidades||[];
+      const esKgInfo=cants.some(o=>/g$|kg$/i.test(o.replace(/\s+/g,'')));
+      const esKg=cants.length?esKgInfo:/x kg|xkg|x 1 kg| kg/i.test(nombre);
+      let opts={};
+      if(cants.length){ cants.forEach(o=>{opts[o]=_calcPrecioOpc(o,p1,p2,esKg)}); }
+      else if(esKg){ opts={'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]}; }
+      else { opts={'1 unidad':[p1,p2]}; }
+      tmp.push({id:pid||_norm(nombre),cat:cat.id,nombre:_tc(inf.nombre||nombre),opts,oferta:inf.oferta||0});
+    });
+    PRODS=tmp;
+    CATS=Object.keys(RUBRO_MAP).map(k=>RUBRO_MAP[k]).filter(c=>catMap[c.id]);
+    render();
+  }catch(e){
+    document.getElementById('lista').innerHTML='<div class="vacio">No pudimos cargar la lista.<br>Revisá tu conexión y volvé a intentar.<br><br><button class="b-ver" onclick="location.reload()">Reintentar</button></div>';
+  }
+}
+
+/* ── Dibujar la sábana ── */
+function render(){
+  const cont=document.getElementById('lista');
+  const f=_norm(filtro);
+  let html='',chips='',hay=0;
+  CATS.forEach(cat=>{
+    let items=PRODS.filter(p=>p.cat===cat.id);
+    if(f) items=items.filter(p=>_norm(p.nombre).includes(f));
+    if(!items.length)return;
+    hay+=items.length;
+    items.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+    chips+=`<button class="chip" onclick="irA('${cat.id}')">${cat.ic} ${cat.n}</button>`;
+    html+=`<section class="rubro" id="r_${cat.id}">
+      <div class="rubro-h">${cat.ic} ${cat.n}<span class="n">${items.length}</span></div>
+      <div class="tabla">`;
+    items.forEach(p=>{
+      const tiene=Object.keys(p.opts).some(o=>pedido[p.id+'|'+o]);
+      html+=`<div class="fila${tiene?' tiene':''}">
+        <div class="nom">${p.nombre}${p.oferta>0?`<span class="of">−${p.oferta}%</span>`:''}</div>
+        <div class="precios">`;
+      Object.keys(p.opts).forEach(o=>{
+        const base=p.opts[o][0];
+        const fin=p.oferta>0?Math.round(base*(1-p.oferta/100)):base;
+        const k=p.id+'|'+o, c=pedido[k]?pedido[k].c:0;
+        html+=`<button class="pb${p.oferta>0?' of':''}${c?' sel':''}" onclick="sumar('${p.id}','${o.replace(/'/g,"\\'")}')" title="Agregar al pedido">
+          <span class="med">${medida(o)}</span>
+          ${p.oferta>0?`<span class="antes">$${fmt(base)}</span>`:''}
+          <span class="val">$${fmt(fin)}</span>
+          ${c?`<span class="cnt">${c}</span>`:''}
+        </button>`;
+      });
+      html+='</div></div>';
+    });
+    html+='</div></section>';
+  });
+  cont.innerHTML=hay?html:`<div class="vacio">No encontramos “${filtro}”.<br><br><button class="b-ver" onclick="limpiar()">Ver todo</button></div>`;
+  document.getElementById('chipsIn').innerHTML=chips;
+  actualizarBarra();
+  ajustarTop();
+}
+
+function irA(id){
+  const el=document.getElementById('r_'+id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+// La barra de rubros se pega justo debajo del encabezado, que cambia de alto
+function ajustarTop(){
+  const t=document.getElementById('top');
+  if(t) document.getElementById('chips').style.top=t.offsetHeight+'px';
+}
+window.addEventListener('resize',ajustarTop);
+
+/* ── Pedido ── */
+function sumar(pid,opt){
+  const p=PRODS.find(x=>x.id===pid); if(!p)return;
+  const k=pid+'|'+opt;
+  const base=p.opts[opt][0];
+  const precio=p.oferta>0?Math.round(base*(1-p.oferta/100)):base;
+  if(pedido[k]) pedido[k].c++;
+  else pedido[k]={nombre:p.nombre,opt,precio,c:1};
+  guardar(); render();
+}
+function cambiar(k,d){
+  if(!pedido[k])return;
+  pedido[k].c+=d;
+  if(pedido[k].c<=0) delete pedido[k];
+  guardar(); render(); pintarPanel();
+  if(!Object.keys(pedido).length) cerrarPanel();
+}
+function guardar(){ try{localStorage.setItem('pld_catalogo',JSON.stringify(pedido));}catch(e){} }
+function recuperar(){ try{const s=localStorage.getItem('pld_catalogo'); if(s)pedido=JSON.parse(s)||{};}catch(e){pedido={};} }
+
+function totales(){
+  let n=0,t=0;
+  Object.keys(pedido).forEach(k=>{n+=pedido[k].c;t+=pedido[k].precio*pedido[k].c;});
+  return {n,t};
+}
+function actualizarBarra(){
+  const {n,t}=totales();
+  const b=document.getElementById('barra');
+  b.classList.toggle('on',n>0);
+  document.getElementById('barraC').textContent=n+(n===1?' producto':' productos');
+  document.getElementById('barraT').textContent='$'+fmt(t);
+  document.body.style.paddingBottom=n>0?'96px':'24px';
+}
+function pintarPanel(){
+  const {t}=totales();
+  const ks=Object.keys(pedido);
+  document.getElementById('panelB').innerHTML=ks.length?ks.map(k=>{
+    const i=pedido[k];
+    return `<div class="it">
+      <div class="it-n">${i.nombre}<small>${medida(i.opt)} · $${fmt(i.precio)} c/u</small></div>
+      <div class="it-q">
+        <button class="qb" onclick="cambiar('${k.replace(/'/g,"\\'")}',-1)" aria-label="Quitar uno">−</button>
+        <span class="it-c">${i.c}</span>
+        <button class="qb" onclick="cambiar('${k.replace(/'/g,"\\'")}',1)" aria-label="Agregar uno">+</button>
+      </div>
+      <div class="it-s">$${fmt(i.precio*i.c)}</div>
+    </div>`;
+  }).join(''):'<div class="vacio">Tu pedido está vacío</div>';
+  document.getElementById('panelT').textContent='$'+fmt(t);
+}
+function abrirPanel(){ pintarPanel(); document.getElementById('ov').classList.add('on'); document.getElementById('panel').classList.add('on'); document.body.style.overflow='hidden'; }
+function cerrarPanel(){ document.getElementById('ov').classList.remove('on'); document.getElementById('panel').classList.remove('on'); document.body.style.overflow=''; }
+
+/* ── Enviar por WhatsApp ── */
+function enviar(){
+  const ks=Object.keys(pedido);
+  if(!ks.length){ alert('Todavía no agregaste productos.\n\nTocá el precio del tamaño que quieras para sumarlo.'); return; }
+  const {t}=totales();
+  let m='🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
+  ks.forEach(k=>{ const i=pedido[k]; m+=`• ${i.nombre} — ${medida(i.opt)} × ${i.c} — $${fmt(i.precio*i.c)}\n`; });
+  m+=`\n*TOTAL: $${fmt(t)}*\n\n_Pedido armado desde la lista de precios_`;
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
+}
+
+/* ── Buscador ── */
+let tBusq=null;
+function filtrar(v){
+  document.getElementById('bx').classList.toggle('on',!!v);
+  clearTimeout(tBusq);
+  tBusq=setTimeout(()=>{filtro=v.trim();render();},220);
+}
+function limpiar(){ document.getElementById('q').value=''; document.getElementById('bx').classList.remove('on'); filtro=''; render(); }
+
+document.getElementById('printFecha').textContent='Precios al '+new Date().toLocaleDateString('es-AR');
+recuperar();
+cargar();
+</script>
+</body>
+</html>
