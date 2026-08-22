@@ -280,7 +280,8 @@ function _parseCSV(t){
   return f;
 }
 
-let PRODS=[], CATS=[], pedido={}, filtro='';
+let PRODS=[], CATS=[], pedido={}, unidades={}, filtro='';
+function uniDe(pid){ return unidades[pid]||'g'; }
 
 async function cargar(){
   try{
@@ -388,8 +389,8 @@ function render(){
                  oninput="setCant('${p.id}',this.value)">
           ${p.esKg
             ? `<select aria-label="Unidad" onchange="setUni('${p.id}',this.value)">
-                 <option value="g"${(!it||it.uni!=='kg')?' selected':''}>g</option>
-                 <option value="kg"${(it&&it.uni==='kg')?' selected':''}>kg</option>
+                 <option value="g"${uniDe(p.id)!=='kg'?' selected':''}>g</option>
+                 <option value="kg"${uniDe(p.id)==='kg'?' selected':''}>kg</option>
                </select>`
             : `<span class="und">un.</span>`}
         </div>
@@ -442,12 +443,15 @@ function setCant(pid,v){
   const p=PRODS.find(x=>x.id===pid); if(!p)return;
   const n=parseFloat(String(v).replace(',','.'));
   if(!n||n<=0){ delete pedido[pid]; }
-  else{ pedido[pid]={cant:n,uni:(pedido[pid]&&pedido[pid].uni)||'g'}; }
+  else{ pedido[pid]={cant:n,uni:uniDe(pid)}; }
   guardar(); refrescarFila(pid); actualizarBarra();
 }
+/* La unidad se recuerda SIEMPRE, aunque todavía no se haya escrito la cantidad:
+   si no, elegir "kg" antes de tipear el número se perdía y se cobraba en gramos. */
 function setUni(pid,u){
-  if(pedido[pid]){ pedido[pid].uni=u; guardar(); refrescarFila(pid); actualizarBarra(); }
-  else { pedido[pid]={cant:0,uni:u}; delete pedido[pid]; }
+  unidades[pid]=u;
+  if(pedido[pid]) pedido[pid].uni=u;
+  guardar(); refrescarFila(pid); actualizarBarra();
 }
 function borrar(pid){
   delete pedido[pid]; guardar();
@@ -465,8 +469,16 @@ function refrescarFila(pid){
   const sub=document.getElementById('s_'+pid);
   if(sub) sub.textContent=tiene?cantTexto(p,it)+' · $'+fmt(subtotalDe(p,it,esMayorista())):'';
 }
-function guardar(){ try{localStorage.setItem('pld_catalogo2',JSON.stringify(pedido));}catch(e){} }
-function recuperar(){ try{const s=localStorage.getItem('pld_catalogo2'); if(s)pedido=JSON.parse(s)||{};}catch(e){pedido={};} }
+function guardar(){ try{localStorage.setItem('pld_catalogo2',JSON.stringify({pedido,unidades}));}catch(e){} }
+function recuperar(){
+  try{
+    const s=localStorage.getItem('pld_catalogo2'); if(!s)return;
+    const d=JSON.parse(s)||{};
+    pedido=d.pedido||d||{};              // acepta el formato viejo (solo pedido)
+    unidades=d.unidades||{};
+    Object.keys(pedido).forEach(id=>{ if(pedido[id]&&pedido[id].uni) unidades[id]=pedido[id].uni; });
+  }catch(e){ pedido={}; unidades={}; }
+}
 
 /* Los tres totales, igual que la tienda:
    base       = lista 1 sin descuento  (es el que decide si se llega a los $80.000)
