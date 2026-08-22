@@ -14,7 +14,7 @@ layout: null
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted-fg:#5a6b7d;--menor:#2d5f8a;--mayor:#15803d;--mayor-bg:#eaf7ee;--oferta:#c2410c;--oferta-bg:#fff3ea;--whatsapp:#25d366;
+:root{color-scheme:light;--azul:#547692;--azul-dark:#3d5a72;--azul-light:#cfdce8;--bg:#dce8f2;--fg:#1a3050;--card:#fff;--border:#d6e2eb;--muted-fg:#5a6b7d;--menor:#2d5f8a;--mayor:#15803d;--mayor-bg:#eaf7ee;--oferta:#c2410c;--oferta-bg:#fff3ea;--whatsapp:#25d366;--muted:#e3e8ed;
 /* anchos de columna: los mismos en toda la pagina para que todo quede alineado */
 --cPre:86px;--cCant:134px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -194,6 +194,113 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
   .cant,.sub,.badge-of,.h-cant{display:none!important}
 }
 .print-h{display:none}
+
+/* ══ Banner de descuento por cantidad (mismo de la tienda) ══ */
+.descb-wrap{padding:0 0 14px}
+.descb-banner{position:relative;overflow:hidden;background:radial-gradient(circle at 6% 16%,rgba(84,118,146,.10) 0 46px,transparent 47px),radial-gradient(circle at 95% 88%,rgba(84,118,146,.10) 0 72px,transparent 73px),linear-gradient(135deg,#eef4f9,#e1ecf6);border:2px solid #547692;border-radius:20px;padding:22px 24px;box-shadow:0 4px 16px rgba(84,118,146,.16)}
+.descb-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;row-gap:6px}
+.descb-ic{width:28px;height:28px;object-fit:contain;flex-shrink:0}
+.descb-name{font-size:17px;font-weight:800;color:#1a3050}
+.descb-go{font-size:12.5px;font-weight:700;color:#547692;margin-left:auto;background:#fff;border:1px solid #cdddec;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.descb-note{font-size:14px;color:#54677d;font-weight:600;margin-bottom:16px;line-height:1.5}
+.descb-note b{color:#1a3050}
+.descb-mlabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.descb-cnt{font-size:20px;font-weight:800;color:#1a3050;font-variant-numeric:tabular-nums}
+.descb-goal{font-size:12px;font-weight:600;color:#8a9bad}
+.descb-track{height:14px;background:#dde6ee;border-radius:8px;overflow:hidden}
+.descb-fill{height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#547692,#6fa3c4);transition:width .5s ease}
+.descb-reward{margin-top:14px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#1c9d63;opacity:0;transform:translateY(5px);transition:all .4s;min-height:20px}
+.descb-reward.on{opacity:1;transform:none}
+@media(max-width:640px){.descb-banner{padding:17px 16px;border-radius:16px}.descb-name{font-size:15.5px}.descb-note{font-size:13px}.descb-go{font-size:11.5px;padding:3px 11px}}
+@media print{.descb-wrap{display:none!important}}
+
+/* ══ Checkout (traído de la tienda) ══ */
+.hidden{display:none!important}
+.wa-btn{background:var(--whatsapp);color:#fff;border:none;border-radius:12px;padding:15px;font-family:inherit;font-weight:800;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;cursor:pointer}
+.wa-btn:hover{filter:brightness(1.08);transform:scale(1.02)}
+@media print{.checkout-overlay{display:none!important}}
+.checkout-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:10120;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.checkout-overlay{align-items:center}}
+.checkout-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:94vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.22);display:flex;flex-direction:column}
+@media(min-width:600px){.checkout-sheet{border-radius:20px;max-height:88vh}}
+.checkout-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--muted);position:sticky;top:0;background:var(--card);z-index:1;flex-shrink:0}
+.checkout-hdr-btn{background:var(--muted);border:none;border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--fg);flex-shrink:0;line-height:1}
+.checkout-hdr h2{flex:1;font-size:17px;font-weight:700;margin:0;color:var(--azul-dark);text-align:center}
+.checkout-summary{padding:9px 16px;background:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted-fg);flex-shrink:0}
+.checkout-summary b{color:var(--azul-dark);font-size:15px}
+.checkout-body{padding:20px 16px;overflow-y:auto;flex:1}
+.checkout-step-lbl{font-size:15px;font-weight:600;color:var(--fg);margin:0 0 16px}
+.checkout-delivery-opts{display:flex;flex-direction:column;gap:10px}
+.checkout-delivery-btn{background:var(--card);border:2px solid var(--muted);border-radius:14px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-family:inherit;text-align:left;width:100%}
+.checkout-delivery-btn:hover,.checkout-delivery-btn:active{border-color:var(--azul);background:rgba(84,118,146,.05)}
+.checkout-delivery-ic{width:48px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.checkout-delivery-ic img{display:block;max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(36,65,91,.20))}
+.checkout-delivery-ic.retiro img{width:38px}
+.checkout-delivery-ic.domicilio img{width:48px}
+.checkout-delivery-txt{flex:1}
+.checkout-delivery-txt b{display:block;font-size:15px;color:var(--fg);margin-bottom:2px;font-family:inherit}
+.checkout-delivery-txt small{font-size:12px;color:var(--muted-fg)}
+.checkout-delivery-arr{font-size:22px;color:var(--muted-fg);font-weight:200}
+.co-field{margin-bottom:16px}
+.co-field label{display:block;font-size:13px;font-weight:600;color:var(--fg);margin-bottom:5px}
+.co-field .opt-lbl{font-weight:400;color:var(--muted-fg);font-size:12px}
+.co-input{width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid var(--muted);border-radius:10px;font-size:15px;font-family:inherit;color:var(--fg);background:var(--card);transition:border-color .2s;-webkit-appearance:none}
+.co-input:focus{outline:none;border-color:var(--azul)}
+.co-dir-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.co-dir-opt,.co-field label.co-dir-opt{display:flex;align-items:center;gap:10px;border:2px solid var(--muted);border-radius:10px;padding:11px 13px;cursor:pointer;font-size:14px;font-weight:400;margin-bottom:0;background:var(--card);transition:border-color .15s,background .15s}
+.co-dir-opt-txt{display:block}
+.co-dir-opt.on{border-color:var(--azul);background:var(--azul-light)}
+.co-dir-opt input{accent-color:var(--azul);width:17px;height:17px;flex-shrink:0;margin:0}
+.co-dir-opt span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--fg)}
+.co-dir-opt.otra span{color:var(--azul-dark)}
+.co-dir-opt-txt{flex:1;min-width:0}
+.co-dir-opt-txt span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--fg)}
+.co-dir-opt-sub{display:block;font-size:12px;color:var(--muted-fg);font-weight:400;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.co-nombre-mini{font-size:14px;color:var(--fg);background:var(--azul-light);border-radius:10px;padding:11px 13px;margin-bottom:16px}
+.co-nombre-mini a{color:var(--azul);font-weight:700;text-decoration:none}
+.co-pago-nota{font-size:13.5px;line-height:1.45;color:var(--fg);background:var(--azul-light);border-radius:10px;padding:11px 13px;margin:4px 0 12px}
+.co-dir-det-note{font-size:13px;font-weight:600;color:var(--azul-dark);margin:2px 0 10px}
+/* iOS: evitar el auto-zoom al tocar un campo (Safari hace zoom si la letra es <16px) */
+@media(max-width:767px){
+  .co-input,.cta-input,.cta-dir-in,#coStep2Dom input,#coStep2Dom textarea,#coStep2Retiro input,input[type="text"],input[type="search"],input[type="tel"],input[type="email"],input[type="number"],textarea,select{font-size:16px!important}
+}
+.co-hint{display:block;font-size:11px;color:var(--muted-fg);margin-top:4px;line-height:1.4}
+.co-saved-hint{text-align:center;font-size:11px;color:var(--muted-fg);margin-top:10px;line-height:1.5}
+.co-saved-hint a{color:var(--muted-fg);text-decoration:underline}
+.co-saved-hint a:hover{color:var(--azul)}
+.co-addr-row{display:flex;gap:8px;margin-bottom:6px}
+.co-addr-row .co-input{flex:1;margin:0}
+.co-map-btn{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:0 13px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;flex-shrink:0;height:48px}
+.co-loc-btn{background:transparent;border:1.5px solid var(--muted);border-radius:8px;padding:7px 11px;font-size:12px;color:var(--muted-fg);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;margin-bottom:10px;width:100%}
+.co-loc-btn:hover{border-color:var(--azul);color:var(--azul)}
+#coMap{height:220px;border-radius:12px;overflow:hidden;margin-bottom:8px;border:2px solid var(--muted)}
+.co-map-confirm{display:flex;align-items:flex-start;gap:6px;background:#e8f5e9;border-radius:8px;padding:8px 10px;font-size:12px;color:#2e7d32;margin-bottom:8px;line-height:1.4}
+.co-pago-opts{display:flex;flex-direction:column;gap:10px}
+.co-radio{display:flex;align-items:flex-start;gap:10px;border:2px solid var(--muted);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .2s;background:var(--card)}
+.co-radio:has(input:checked){border-color:var(--azul);background:rgba(84,118,146,.05)}
+.co-radio input{flex-shrink:0;margin-top:2px;accent-color:var(--azul);width:16px;height:16px}
+.co-radio span{font-size:13px;color:var(--fg);line-height:1.4}
+/* Row de campos lado a lado */
+.co-field-row{display:flex;gap:10px}
+.co-field-row .co-field{margin-bottom:16px}
+/* Radio tipo casa/depto inline */
+.co-tipo-opts{display:flex;gap:6px}
+.co-tipo-radio{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;border:2px solid var(--muted);border-radius:10px;padding:11px 6px;cursor:pointer;transition:border-color .2s;background:var(--card);font-size:13px;color:var(--fg)}
+.co-tipo-radio:has(input:checked){border-color:var(--azul);background:rgba(84,118,146,.07);color:var(--azul-dark);font-weight:600}
+.co-tipo-radio input{display:none}
+textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
+/* Caja de ubicación opcional */
+.co-ubicacion-box{background:var(--muted);border-radius:12px;padding:14px;margin-top:8px}
+.co-ubic-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.co-ubic-title{font-size:14px;font-weight:600;color:var(--azul-dark);margin-bottom:2px}
+.co-ubic-desc{font-size:12px;color:var(--muted-fg)}
+.co-ubic-btn{background:var(--azul);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.co-ubic-btn:hover{background:var(--azul-dark)}
+.co-ubic-actions{display:flex;gap:8px;margin-top:10px}
+.co-ubic-hint{font-size:11px;color:var(--muted-fg);text-align:center;margin-top:8px;line-height:1.4}
+.co-ubic-close{display:block;background:transparent;border:none;color:var(--muted-fg);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;margin:8px auto 0;padding:4px}
+.co-ubic-close:hover{color:#e53935}
+.co-ubic-confirm{display:flex;align-items:center;gap:8px;background:#e8f5e9;border-radius:8px;padding:10px 12px;font-size:12px;color:#2e7d32;margin-top:10px;line-height:1.4;font-weight:600}
 </style>
 </head>
 <body>
@@ -229,6 +336,19 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:va
 
 <main class="wrap">
   <div class="ayuda">✏️ Escribí <b>cuánto querés</b> en el casillero de la derecha. En los productos que van por peso, elegí si es <b>g</b> (gramos) o <b>kg</b> (kilos). Abajo de todo vas a ver el total y el botón para enviarlo por WhatsApp.</div>
+  <div class="descb-wrap">
+    <div class="descb-banner" id="descBanner">
+      <div class="descb-top">
+        <img class="descb-ic" src="icon-minorista.png" alt="">
+        <span class="descb-name">Descuento por cantidad</span>
+        <span class="descb-go">Sin mínimo de compra</span>
+      </div>
+      <div class="descb-note">Cargá cantidades en la lista: al superar los <b>$80.000</b> se activan los precios con descuento de tu pedido.</div>
+      <div class="descb-mlabel"><span class="descb-cnt" id="descbCnt">$0</span><span class="descb-goal">Meta: $80.000</span></div>
+      <div class="descb-track"><div class="descb-fill" id="descbFill"></div></div>
+      <div class="descb-reward" id="descbRw">¡Descuento por cantidad activado!</div>
+    </div>
+  </div>
   <div class="volver" id="volver"><span class="txt" id="volverTxt"></span><button onclick="limpiar()">← Ver toda la lista</button></div>
   <div id="lista"><div class="cargando">Cargando la lista de precios…</div></div>
 </main>
@@ -550,14 +670,20 @@ function actualizarBarra(){
   document.body.classList.toggle('esmay',t.esMay);
   Object.keys(pedido).forEach(refrescarFila);
   if(document.getElementById('panel').classList.contains('on')) pintarPanel();
+  pintarBanner();
 }
 
 
 /* ── WhatsApp: un renglón por producto, nunca repetido ── */
 function enviar(){
-  const may=esMayorista();
-  const ids=Object.keys(pedido).filter(id=>{const p=PRODS.find(x=>x.id===id);return p&&subtotalDe(p,pedido[id],may)>0;});
+  const ids=idsDelPedido();
   if(!ids.length){ alert('Todavía no cargaste cantidades.\n\nEscribí cuánto querés en el casillero de la derecha de cada producto.'); return; }
+  abrirCheckout();   // primero los datos del cliente, después WhatsApp
+}
+/* El armado del mensaje quedó dentro de coEnviar() */
+function _enviarViejo(){
+  const may=esMayorista();
+  const ids=idsDelPedido();
   const t=totales();
   let m='🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
   ids.forEach(id=>{
@@ -651,9 +777,540 @@ function limpiar(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+var _RETIRO = {
+  minorista: {
+    dirCorta: 'Pueyrredón 588, Mendoza',
+    dirLarga: 'Pueyrredón 588, esq. Paso de los Andes — Quinta Sección, Mendoza',
+    horarioCorto: 'Lun–Sáb 10 a 20hs',
+    horarioLargo: 'Lunes a Sábados 10:00 a 20:00hs'
+  }
+};
+var _PALADEAR_PERFIL_KEY = 'paladear_perfil_v1';  // misma clave que la tienda: los datos del cliente se comparten
+var _coVenta = 'minorista';
+var _coEntrega = null;
+var _coMap = null, _coMarker = null, _leafletReady = false;
+
+// ═══ PERFIL LOCAL (localStorage) — recuerda datos del cliente entre pedidos ═══
+var _PALADEAR_PERFIL_KEY = 'paladear_perfil_v1';
+function _coCargarPerfil() {
+  try { return JSON.parse(localStorage.getItem(_PALADEAR_PERFIL_KEY) || '{}') || {}; }
+  catch(e) { return {}; }
+}
+function _coGuardarPerfil(p) {
+  try { localStorage.setItem(_PALADEAR_PERFIL_KEY, JSON.stringify(p)); } catch(e) {}
+}
+function _coSet(id, val) {
+  var el = document.getElementById(id);
+  if (el && !el.value && val) el.value = val;
+}
+function _coAutocompletar() {
+  var p = _coCargarPerfil();
+  if (!p || !Object.keys(p).length) return;
+  _coSet('coNombre', p.nombre);
+  _coSet('coNombreDom', p.nombre);
+  _coSet('coHorarioRetiro', p.horarioRetiro);
+  // Los detalles de la dirección (piso, tipo, entre calles, indicaciones) viven en cada
+  // dirección guardada; los campos quedan vacíos para cargar una dirección nueva.
+}
+window.coBorrarPerfil = function() {
+  if (!confirm('¿Borrar tus datos guardados (nombre, dirección, etc.)?')) return;
+  try { localStorage.removeItem(_PALADEAR_PERFIL_KEY); } catch(e) {}
+  ['coNombre','coNombreDom','coHorarioRetiro','coCalle','coNumero','coLocalidad','coPisoDepto','coEntreCalles','coIndicaciones'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('input[name="coTipo"],input[name="coPago"]').forEach(function(r){ r.checked = false; });
+  var _pv = document.getElementById('coProvincia'); if (_pv) _pv.value = 'Mendoza';
+  _coBuildDirOpts();
+  _coNombreCompacto();
+};
+
+// Direcciones guardadas en el checkout: radios para elegir rápido + "otra dirección".
+// Los detalles (piso, tipo, entre calles, indicaciones, mapa) solo se piden al cargar una
+// dirección NUEVA y quedan guardados con ella.
+function _ctaEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function _cuentaDirecciones(p){
+  p=p||_coCargarPerfil();
+  var raw=Array.isArray(p.direcciones)?p.direcciones.filter(Boolean):(p.direccion?[p.direccion]:[]);
+  return raw.map(function(d,i){
+    if(typeof d==='string'){
+      var o={dir:d};
+      if(i===0){if(p.pisoDepto)o.piso=p.pisoDepto;if(p.tipoViv)o.tipo=p.tipoViv;if(p.entreCalles)o.entre=p.entreCalles;if(p.indicaciones)o.indic=p.indicaciones;}
+      return o;
+    }
+    return (d&&d.dir)?d:null;
+  }).filter(Boolean);
+}
+var _coDirsCache=[];
+function _coBuildDirOpts(){
+  var wrap=document.getElementById('coDirOpts');
+  var inp=document.getElementById('coDirNueva');
+  var det=document.getElementById('coDirDetalles');
+  if(!wrap||!inp)return;
+  _coDirsCache=_cuentaDirecciones(_coCargarPerfil());
+  var dirs=_coDirsCache;
+  if(!dirs.length){wrap.style.display='none';wrap.innerHTML='';inp.style.display='';if(det)det.style.display='';return;}
+  var h='';
+  dirs.forEach(function(d,i){
+    var extras=[];
+    if(d.tipo)extras.push(d.tipo==='depto'?'Depto':'Casa');
+    if(d.piso)extras.push(d.piso);
+    if(d.entre)extras.push('entre '+d.entre);
+    var sub=extras.length?'<span class="co-dir-opt-sub">'+_ctaEsc(extras.join(' · '))+'</span>':'';
+    h+='<label class="co-dir-opt'+(i===0?' on':'')+'"><input type="radio" name="coDirSel" value="'+i+'"'+(i===0?' checked':'')+'><span class="co-dir-opt-txt"><span>'+_ctaEsc(d.dir)+'</span>'+sub+'</span></label>';
+  });
+  h+='<label class="co-dir-opt otra"><input type="radio" name="coDirSel" value="__otra"><span>➕ Usar otra dirección…</span></label>';
+  wrap.innerHTML=h;
+  wrap.style.display='';
+  inp.style.display='none';
+  if(det)det.style.display='none';
+  wrap.onchange=function(){
+    var sel=wrap.querySelector('input[name="coDirSel"]:checked');
+    wrap.querySelectorAll('.co-dir-opt').forEach(function(l){l.classList.toggle('on',sel&&l.contains(sel));});
+    if(sel&&sel.value==='__otra'){inp.style.display='';if(det)det.style.display='';var c=document.getElementById('coCalle');if(c)c.focus();}
+    else{inp.style.display='none';if(det)det.style.display='none';}
+  };
+}
+// Dirección efectiva como OBJETO: la elegida en los radios, o una nueva armada con los campos.
+// Para direcciones nuevas: calle, número, localidad y provincia son OBLIGATORIOS.
+function _coDirObjActual(){
+  var sel=document.querySelector('#coDirOpts input[name="coDirSel"]:checked');
+  if(sel&&sel.value!=='__otra'){var d=_coDirsCache[parseInt(sel.value,10)];if(d)return d;}
+  var calle=(document.getElementById('coCalle').value||'').trim();
+  var num=(document.getElementById('coNumero').value||'').trim();
+  var loc=(document.getElementById('coLocalidad').value||'').trim();
+  var prov=(document.getElementById('coProvincia').value||'').trim();
+  if(!calle){_coMarkRequired('coCalle');return null;}
+  if(!num){_coMarkRequired('coNumero');return null;}
+  if(!loc){_coMarkRequired('coLocalidad');return null;}
+  if(!prov){_coMarkRequired('coProvincia');return null;}
+  var tipoEl=document.querySelector('input[name="coTipo"]:checked');
+  var o={dir:calle+' '+num+', '+loc+', '+prov,
+    calle:calle,num:num,loc:loc,prov:prov,
+    piso:(document.getElementById('coPisoDepto').value||'').trim(),
+    tipo:tipoEl?tipoEl.value:'',
+    entre:(document.getElementById('coEntreCalles').value||'').trim(),
+    indic:(document.getElementById('coIndicaciones').value||'').trim()};
+  return o;
+}
+function _coDireccionActual(){var d=_coDirObjActual();return d?d.dir:'';}
+window._coDireccionActual=_coDireccionActual;
+// Nombre compacto: si ya lo tenemos guardado, mostrar "A nombre de X · Cambiar" en vez del campo
+function _coNombreCompacto(){
+  var nom=(_coCargarPerfil().nombre||'').trim();
+  [['coNombreField','coNombreMiniR','coNombreTxtR'],['coNombreDomField','coNombreMiniDom','coNombreTxtDom']].forEach(function(ids){
+    var f=document.getElementById(ids[0]),m=document.getElementById(ids[1]),t=document.getElementById(ids[2]);
+    if(!f||!m||!t)return;
+    if(nom){f.classList.add('hidden');t.textContent=nom;m.classList.remove('hidden');}
+    else{f.classList.remove('hidden');m.classList.add('hidden');}
+  });
+}
+window.coCambiarNombre=function(which){
+  var f=document.getElementById(which==='R'?'coNombreField':'coNombreDomField');
+  var m=document.getElementById(which==='R'?'coNombreMiniR':'coNombreMiniDom');
+  if(f)f.classList.remove('hidden');
+  if(m)m.classList.add('hidden');
+  var inp=document.getElementById(which==='R'?'coNombre':'coNombreDom');
+  if(inp)inp.focus();
+};
+
+function abrirCheckout() {
+  _coEntrega = null;
+  var _ret = _RETIRO.minorista;
+  var _subEl = document.getElementById('coRetiroSub');
+  if (_subEl) _subEl.textContent = _ret.dirCorta + ' · ' + _ret.horarioCorto;
+  var _hintEl = document.getElementById('coRetiroHint');
+  if (_hintEl) _hintEl.textContent = 'Horarios del local: ' + _ret.horarioLargo;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+  _coRenderSummary();
+  document.getElementById('checkoutOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  _coAutocompletar();
+  _coBuildDirOpts();
+  _coNombreCompacto();
+}
+window.abrirCheckout = abrirCheckout;
+
+function cerrarCheckout() {
+  document.getElementById('checkoutOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  _coEntrega = null;
+}
+window.cerrarCheckout = cerrarCheckout;
+
+function _coBack() {
+  _coEntrega = null;
+  document.getElementById('coStep1').classList.remove('hidden');
+  document.getElementById('coStep2Retiro').classList.add('hidden');
+  document.getElementById('coStep2Dom').classList.add('hidden');
+  document.getElementById('coTitle').textContent = 'Finalizar pedido';
+  document.getElementById('coBtnBack').style.display = 'none';
+}
+window._coBack = _coBack;
+
+function _coRenderSummary() {
+  var t = totales();
+  document.getElementById('coSummary').innerHTML =
+    '<span>' + t.n + ' producto' + (t.n !== 1 ? 's' : '') + '</span>' +
+    '<span>Total: <b>$' + fmt(t.final) + '</b></span>';
+}
+
+function coElegirEntrega(tipo) {
+  _coEntrega = tipo;
+  document.getElementById('coStep1').classList.add('hidden');
+  document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
+  document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
+  document.getElementById('coTitle').textContent = tipo === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio';
+  document.getElementById('coBtnBack').style.display = '';
+}
+window.coElegirEntrega = coElegirEntrega;
+
+function _coLoadLeaflet() {
+  if (window.L) return;
+  if (!document.getElementById('leafletCSS')) {
+    var lk = document.createElement('link');
+    lk.id = 'leafletCSS';
+    lk.rel = 'stylesheet';
+    lk.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(lk);
+  }
+  if (!document.getElementById('leafletJS')) {
+    var sc = document.createElement('script');
+    sc.id = 'leafletJS';
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    sc.onload = function(){ _leafletReady = true; };
+    document.head.appendChild(sc);
+  }
+}
+
+function _coInitMap() {
+  if (_coMap) { setTimeout(function(){ _coMap.invalidateSize(); }, 100); return; }
+  var mapDiv = document.getElementById('coMap');
+  if (!mapDiv || !window.L) { setTimeout(_coInitMap, 500); return; }
+  _coMap = L.map('coMap').setView([-32.89, -68.83], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap', maxZoom: 19
+  }).addTo(_coMap);
+  _coMarker = L.marker([-32.89, -68.83], {draggable: true}).addTo(_coMap);
+  _coMarker.on('dragend', function(){
+    var p = _coMarker.getLatLng();
+    _coCoords = { lat: p.lat, lng: p.lng };
+    _coShowConfirm();
+  });
+  setTimeout(function(){ _coMap.invalidateSize(); }, 150);
+}
+
+// Coords guardadas (sin tocar el campo de dirección)
+var _coCoords = null;
+
+function coAbrirUbicacion() {
+  _coLoadLeaflet();
+  document.getElementById('coUbicacionPanel').classList.remove('hidden');
+  document.getElementById('coUbicBtn').style.display = 'none';
+  // Esperar a Leaflet y inicializar
+  var tries = 0;
+  var waiter = setInterval(function() {
+    tries++;
+    if (window.L) { clearInterval(waiter); _coInitMap(); }
+    else if (tries > 30) { clearInterval(waiter); alert('No se pudo cargar el mapa. Revisá tu conexión.'); }
+  }, 200);
+}
+window.coAbrirUbicacion = coAbrirUbicacion;
+
+function coCerrarUbicacion() {
+  document.getElementById('coUbicacionPanel').classList.add('hidden');
+  document.getElementById('coUbicBtn').style.display = '';
+  document.getElementById('coUbicConfirm').classList.add('hidden');
+  _coCoords = null;
+}
+window.coCerrarUbicacion = coCerrarUbicacion;
+
+function coBuscarMapa() {
+  var addr = _coDireccionActual();
+  if (!addr) {
+    alert('Primero completá calle, número y localidad arriba.');
+    var _c = document.getElementById('coCalle');
+    if (_c) _c.focus();
+    return;
+  }
+  if (!window.L || !_coMap) { _coLoadLeaflet(); setTimeout(coBuscarMapa, 800); return; }
+  var q = addr + ', Mendoza, Argentina';
+  fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=ar')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data && data.length) {
+        var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+        _coMap.setView([lat, lon], 16);
+        _coMarker.setLatLng([lat, lon]);
+        _coCoords = { lat: lat, lng: lon };
+        _coShowConfirm();
+        setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+      } else {
+        alert('No se encontró la dirección. Probá escribirla más completa o usá "Mi ubicación actual".');
+      }
+    })
+    .catch(function(){ alert('No se pudo buscar la dirección. Revisá tu conexión.'); });
+}
+window.coBuscarMapa = coBuscarMapa;
+
+function coUsarUbicacion() {
+  if (!navigator.geolocation) { alert('Tu dispositivo no permite compartir la ubicación.'); return; }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      if (!window.L || !_coMap) { _coLoadLeaflet(); setTimeout(coUsarUbicacion, 800); return; }
+      _coMap.setView([lat, lon], 17);
+      _coMarker.setLatLng([lat, lon]);
+      _coCoords = { lat: lat, lng: lon };
+      _coShowConfirm();
+      setTimeout(function(){ _coMap.invalidateSize(); }, 100);
+    },
+    function(){ alert('No se pudo obtener tu ubicación. Activá los permisos de ubicación o arrastrá el pin en el mapa.'); },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+window.coUsarUbicacion = coUsarUbicacion;
+
+function _coShowConfirm() {
+  document.getElementById('coUbicConfirm').classList.remove('hidden');
+}
+
+function coEnviar() {
+  var tipo = _coEntrega;
+  var nombre, horario, direccion, pago, deliveryMsg;
+
+  if (tipo === 'retiro') {
+    nombre = (document.getElementById('coNombre').value || '').trim();
+    if (!nombre) { _coMarkRequired('coNombre'); return; }
+    horario = (document.getElementById('coHorarioRetiro').value || '').trim();
+    var _retM = _RETIRO.minorista;
+    deliveryMsg = '\n\n🏬 *RETIRO EN EL LOCAL*\n👤 ' + nombre;
+    deliveryMsg += '\n🕐 Horario preferido: ' + (horario || 'Sin preferencia');
+    deliveryMsg += '\n📍 ' + _retM.dirLarga;
+    if (_retM.mapa) deliveryMsg += '\n\uD83D\uDD17 ' + _retM.mapa;
+    deliveryMsg += '\n💳 Pago: a definir en el local';
+  } else {
+    nombre = (document.getElementById('coNombreDom').value || '').trim();
+    if (!nombre) { _coMarkRequired('coNombreDom'); return; }
+    var dirObj = _coDirObjActual();
+    if (!dirObj) return; // _coDirObjActual ya marcó el campo obligatorio que falta
+    direccion = dirObj.dir;
+    // Si marcó el pin del mapa en esta sesión, queda guardado con la dirección elegida
+    if (_coCoords && !(dirObj.lat && dirObj.lng)) { dirObj.lat = _coCoords.lat; dirObj.lng = _coCoords.lng; }
+    deliveryMsg = '\n\n🚚 *ENVÍO A DOMICILIO*\n👤 ' + nombre;
+    deliveryMsg += '\n📍 ' + direccion;
+    if (dirObj.piso) deliveryMsg += '\n🏠 Piso/Depto: ' + dirObj.piso;
+    if (dirObj.tipo) deliveryMsg += '\n🏢 Tipo: ' + (dirObj.tipo === 'casa' ? 'Casa' : 'Departamento');
+    if (dirObj.entre) deliveryMsg += '\n\uD83D\uDEA6 Entre calles: ' + dirObj.entre;
+    if (dirObj.indic) deliveryMsg += '\n📝 Indicaciones: ' + dirObj.indic;
+    // Link de Google Maps SIEMPRE: pin exacto si lo tiene, sino búsqueda por la dirección escrita
+    if (dirObj.lat && dirObj.lng) {
+      deliveryMsg += '\n📌 Ubicación exacta: https://maps.google.com/?q=' + dirObj.lat + ',' + dirObj.lng;
+    } else {
+      var _q = /mendoza/i.test(direccion) ? direccion : direccion + ', Mendoza, Argentina';
+      deliveryMsg += '\n\uD83D\uDD17 Ver en Google Maps: https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(_q);
+    }
+    deliveryMsg += '\n💳 Pago: Transferencia bancaria';
+  }
+
+  // ── Mensaje con los productos del catálogo (un renglón por producto, nunca repetido) ──
+  var may = esMayorista();
+  var ids = idsDelPedido();
+  if (!ids.length) { alert('Todavía no cargaste cantidades.'); return; }
+  var t = totales();
+  var msg = '🛒 *Pedido - Paladear Mercado de Sabores*\n\n';
+  ids.map(function(id){ return PRODS.find(function(x){return x.id===id;}); })
+     .sort(function(a,b){ return a.nombre.localeCompare(b.nombre,'es'); })
+     .forEach(function(p){
+       var it = pedido[p.id];
+       msg += '*' + cantTexto(p,it) + '* - ' + p.nombre + '\n   $' + fmt(subtotalDe(p,it,may)) + '\n';
+     });
+  msg += '\n*TOTAL: $' + fmt(t.final) + '*';
+  if (may) msg += '\n_(Descuento por volumen aplicado)_';
+  else if (ids.some(function(id){var p=PRODS.find(function(x){return x.id===id;});return p&&p.oferta>0;}))
+    msg += '\n_(Ofertas del mes aplicadas)_';
+  msg += deliveryMsg + '\n\n_Pedido armado desde la lista de precios_';
+  var url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+
+  // Guardar perfil para próximos pedidos
+  var _perfil = _coCargarPerfil();
+  _perfil.nombre = nombre;
+  if (tipo === 'retiro') {
+    if (horario) _perfil.horarioRetiro = horario;
+  } else {
+    _perfil.direccion = direccion;
+    var _dl = direccion.trim().toLowerCase();
+    var _dirsArr = _cuentaDirecciones(_perfil).filter(function(d){ return d.dir.trim().toLowerCase() !== _dl; });
+    _dirsArr.unshift(dirObj);
+    _perfil.direcciones = _dirsArr.slice(0, 6);
+    delete _perfil.pisoDepto; delete _perfil.tipoViv; delete _perfil.entreCalles; delete _perfil.indicaciones;
+  }
+  _coGuardarPerfil(_perfil);
+
+  // El pedido se vacía recién cuando ya se envió
+  pedido = {}; unidades = {}; guardar();
+  cerrarCheckout(); cerrarPanel(); render();
+  window.open(url, '_blank');
+}
+window.coEnviar = coEnviar;
+
+function _coMarkRequired(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '#e53935';
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.focus();
+  el.addEventListener('input', function(){ el.style.borderColor = ''; }, {once:true});
+}
+
+
+/* ── El banner sigue el total real del pedido ── */
+var _descbAnim=false;
+function pintarBanner(){
+  var cnt=document.getElementById('descbCnt'), fill=document.getElementById('descbFill'), rw=document.getElementById('descbRw');
+  if(!cnt)return;
+  var t=totales();
+  if(t.n===0){ if(!_descbAnim) animarBanner(); return; }   // sin pedido: la animación de muestra
+  _descbAnim=true;
+  cnt.textContent='$'+fmt(t.base);
+  fill.style.width=Math.min(100,(t.base/MIN_MAYORISTA)*100)+'%';
+  rw.classList.toggle('on',t.esMay);
+}
+function animarBanner(){
+  if(_descbAnim)return; _descbAnim=true;
+  var cnt=document.getElementById('descbCnt'), fill=document.getElementById('descbFill'), rw=document.getElementById('descbRw');
+  if(!cnt)return;
+  var dur=1700,start=null;
+  function step(ts){
+    if(totales().n>0){ pintarBanner(); return; }          // si el cliente empezó a cargar, manda el pedido real
+    if(!start)start=ts;
+    var p=Math.min((ts-start)/dur,1), e=1-Math.pow(1-p,3);
+    cnt.textContent='$'+Math.round(e*MIN_MAYORISTA).toLocaleString('es-AR');
+    fill.style.width=(e*100)+'%';
+    if(p>=1){ rw.classList.add('on'); _descbAnim=false; return; }
+    requestAnimationFrame(step);
+  }
+  fill.style.transition='none'; requestAnimationFrame(step);
+}
+
 document.getElementById('printFecha').textContent='Precios actualizados al '+new Date().toLocaleDateString('es-AR')+' · Consultar stock · @palade.ar';
 recuperar();
 cargar();
 </script>
+<div id="checkoutOverlay" class="checkout-overlay hidden" onclick="if(event.target===this)cerrarCheckout()">
+  <div class="checkout-sheet">
+    <!-- Header -->
+    <div class="checkout-hdr">
+      <button class="checkout-hdr-btn" id="coBtnBack" onclick="_coBack()" style="display:none" title="Volver">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <h2 id="coTitle">Finalizar pedido</h2>
+      <button class="checkout-hdr-btn" onclick="cerrarCheckout()" title="Cerrar">✕</button>
+    </div>
+    <!-- Resumen -->
+    <div class="checkout-summary" id="coSummary"></div>
+    <!-- Body dinámico -->
+    <div class="checkout-body" id="coBody">
+      <!-- Step 1 -->
+      <div id="coStep1">
+        <p class="checkout-step-lbl">¿Cómo querés recibir tu pedido?</p>
+        <div class="checkout-delivery-opts">
+          <button class="checkout-delivery-btn" onclick="coElegirEntrega('retiro')">
+            <span class="checkout-delivery-ic retiro"><img src="nav-inicio.png" alt="" aria-hidden="true"></span>
+            <div class="checkout-delivery-txt"><b>Retiro en el local</b><small id="coRetiroSub">Pueyrredón 588, Mendoza · Lun–Sáb 10 a 20hs</small></div>
+            <span class="checkout-delivery-arr">›</span>
+          </button>
+          <button class="checkout-delivery-btn" onclick="coElegirEntrega('domicilio')">
+            <span class="checkout-delivery-ic domicilio"><img src="camion-envio.png" alt="" aria-hidden="true"></span>
+            <div class="checkout-delivery-txt"><b>Envío a domicilio</b><small>Hacemos envíos a todo el país</small></div>
+            <span class="checkout-delivery-arr">›</span>
+          </button>
+        </div>
+      </div>
+      <!-- Step 2: Retiro -->
+      <div id="coStep2Retiro" class="hidden">
+        <div class="co-field" id="coNombreField">
+          <label>Nombre y apellido <span style="color:#e53935">*</span></label>
+          <input type="text" id="coNombre" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
+        </div>
+        <div class="co-nombre-mini hidden" id="coNombreMiniR">👤 A nombre de <b id="coNombreTxtR"></b> · <a href="#" onclick="coCambiarNombre('R');return false">Cambiar</a></div>
+        <div class="co-field">
+          <label>Horario preferido de retiro <span class="opt-lbl">(opcional)</span></label>
+          <input type="text" id="coHorarioRetiro" placeholder="Ej: entre 10 y 12hs" class="co-input">
+          <span class="co-hint" id="coRetiroHint">Horarios del local: Lunes a Sábados 10:00 a 20:00hs</span>
+        </div>
+        <div class="co-pago-nota">💳 En el local podés pagar con <b>efectivo, transferencia o tarjeta</b>.</div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()"><svg viewBox="0 0 24 24" width="19" height="19" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg> Enviar pedido por WhatsApp</button>
+        <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
+      </div>
+      <!-- Step 2: Domicilio -->
+      <div id="coStep2Dom" class="hidden">
+        <div class="co-field" id="coNombreDomField">
+          <label>Nombre y apellido <span style="color:#e53935">*</span></label>
+          <input type="text" id="coNombreDom" placeholder="Tu nombre completo" class="co-input" autocomplete="name">
+        </div>
+        <div class="co-nombre-mini hidden" id="coNombreMiniDom">👤 A nombre de <b id="coNombreTxtDom"></b> · <a href="#" onclick="coCambiarNombre('Dom');return false">Cambiar</a></div>
+        <div class="co-field">
+          <label>Dirección <span style="color:#e53935">*</span></label>
+          <div id="coDirOpts" class="co-dir-opts" style="display:none"></div>
+          <div id="coDirNueva">
+            <div class="co-field-row">
+              <div class="co-field" style="flex:2;margin-bottom:0">
+                <label>Calle <span style="color:#e53935">*</span></label>
+                <input type="text" id="coCalle" placeholder="Ej: San Martín" class="co-input" autocomplete="address-line1">
+              </div>
+              <div class="co-field" style="flex:1;margin-bottom:0">
+                <label>Número <span style="color:#e53935">*</span></label>
+                <input type="text" id="coNumero" placeholder="Ej: 1234" class="co-input" inputmode="numeric">
+              </div>
+            </div>
+            <div class="co-field-row" style="margin-top:10px">
+              <div class="co-field" style="flex:1.3;margin-bottom:0">
+                <label>Localidad <span style="color:#e53935">*</span></label>
+                <input type="text" id="coLocalidad" placeholder="Ej: Godoy Cruz" class="co-input" autocomplete="address-level2">
+              </div>
+              <div class="co-field" style="flex:1;margin-bottom:0">
+                <label>Provincia <span style="color:#e53935">*</span></label>
+                <input type="text" id="coProvincia" value="Mendoza" class="co-input" autocomplete="address-level1">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Detalles de la dirección: solo al cargar una dirección NUEVA (quedan guardados con ella) -->
+        <div id="coDirDetalles">
+        <div class="co-dir-det-note">Contanos cómo llegar <span class="opt-lbl">(opcional — queda guardado con esta dirección)</span></div>
+        <div class="co-field-row">
+          <div class="co-field" style="flex:1">
+            <label>Piso / Depto <span class="opt-lbl">(opcional)</span></label>
+            <input type="text" id="coPisoDepto" placeholder="Ej: 3°B" class="co-input">
+          </div>
+          <div class="co-field" style="flex:1.4">
+            <label>Tipo <span class="opt-lbl">(opcional)</span></label>
+            <div class="co-tipo-opts">
+              <label class="co-tipo-radio"><input type="radio" name="coTipo" value="casa"><span>🏠 Casa</span></label>
+              <label class="co-tipo-radio"><input type="radio" name="coTipo" value="depto"><span>🏢 Depto</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="co-field">
+          <label>Entre calles <span class="opt-lbl">(opcional)</span></label>
+          <input type="text" id="coEntreCalles" placeholder="Ej: entre Belgrano y San Martín" class="co-input">
+        </div>
+        <div class="co-field">
+          <label>Indicaciones para llegar <span class="opt-lbl">(opcional)</span></label>
+          <textarea id="coIndicaciones" placeholder="Ej: casa rosada, tocar timbre 2 veces" class="co-input" rows="2"></textarea>
+        </div>
+        </div><!-- /coDirDetalles -->
+        <div class="co-pago-nota">💳 El pedido se abona por <b>transferencia bancaria</b> — te pasamos el alias por WhatsApp.<br>🚚 <b>Envío gratis</b> en compras desde <b>$40.000</b> en Gran Mendoza (si es menor, el envío se abona aparte).</div>
+        <button class="wa-btn" style="margin-top:8px" onclick="coEnviar()"><svg viewBox="0 0 24 24" width="19" height="19" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.006 22l4.984-1.307A9.961 9.961 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.24 8.24 0 01-4.258-1.178l-.306-.181-3.157.828.844-3.07-.2-.319A8.25 8.25 0 1112 20.25z"/></svg> Enviar pedido por WhatsApp</button>
+        <div class="co-saved-hint">💾 Guardamos tus datos en este dispositivo para tu próximo pedido. <a href="#" onclick="coBorrarPerfil();return false">Borrar mis datos</a></div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
