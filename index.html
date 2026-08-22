@@ -1202,6 +1202,31 @@ body.cart-open #cart-fab,body.cart-open #chat-fab{display:none!important}
 #chat-send{background:var(--azul);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 
+
+/* ── LISTA DE PRECIOS (banner): mismo layout que mix/granola/blend, en el azul de la marca ── */
+.lista-banner{background:radial-gradient(circle at -3% 18%,rgba(222,238,250,.22) 0 58px,transparent 59px),radial-gradient(circle at 104% 82%,rgba(222,238,250,.18) 0 72px,transparent 73px),linear-gradient(135deg,#4a6b85 0%,#6f96b5 100%);border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(60,95,125,.28)}
+.lista-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(60,95,125,.45)}
+.lista-banner-ic{flex-shrink:0;width:82px;height:100px;filter:drop-shadow(0 2px 2.5px rgba(20,45,70,.20))}
+.lista-banner-text h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.lista-banner-text p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
+.lista-banner-btn{background:#fff;color:#3d5a72;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;font-family:inherit;transition:background .2s}
+.lista-banner-btn:hover{background:#dce8f2}
+@media(min-width:600px){.banner-slide .lista-banner{flex:1;margin-bottom:0;align-items:center}}
+@media(max-width:599px){.banner-slide .lista-banner{flex:1;min-height:100px;align-items:center}}
+@media(max-width:480px){.lista-banner{padding:16px}.lista-banner-ic{width:62px;height:76px}.lista-banner-text h3{font-size:17px}.lista-banner-btn{width:100%;text-align:center}}
+/* En el home los banners van centrados y solo clickea el botón (igual que los otros tres) */
+#homeView .lista-banner{flex-direction:column;text-align:center;cursor:default;gap:10px;padding:22px 18px}
+#homeView .lista-banner:hover{transform:none}
+#homeView .lista-banner-text h3{font-size:24px;margin-bottom:6px}
+#homeView .lista-banner-text p{font-size:15px;max-width:44ch;margin:0 auto}
+#homeView .lista-banner-btn{width:auto;padding:12px 28px;font-size:15px}
+@media(min-width:768px){
+  #homeView .lista-banner{flex-direction:row;text-align:left;justify-content:flex-start;align-items:center;gap:34px;padding:40px 48px}
+  #homeView .lista-banner-text{flex:1}
+  #homeView .lista-banner-text p{max-width:none;margin:0;font-size:16px}
+  #homeView .lista-banner{background:radial-gradient(circle at 3% 20%,rgba(222,238,250,.30) 0 150px,transparent 151px),radial-gradient(circle at 98% 86%,rgba(222,238,250,.24) 0 195px,transparent 196px),linear-gradient(135deg,#4a6b85 0%,#6f96b5 100%)}
+  #homeView .lista-banner-ic{width:110px;height:134px}
+}
 /* ── GRANOLA BANNER ── */
 /* ── ÍCONOS ANIMADOS (mix / granola) ── */
 .sprite-icon{flex-shrink:0;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
@@ -2134,6 +2159,18 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
           <p>Combiná especias e infusiones y armá tu propia mezcla</p>
         </div>
         <button class="blend-banner-btn" onclick="openBlend()">Armar blend →</button>
+      </div>
+    </div>
+
+    <!-- Banner 4: Lista de precios -->
+    <div class="banner-slide">
+      <div class="lista-banner" onclick="location.href='catalogo.html'">
+        <svg class="lista-banner-ic" viewBox="0 0 64 78" fill="none" aria-hidden="true"><rect x="8" y="4" width="48" height="70" rx="6" fill="#fff" fill-opacity=".96"/><rect x="16" y="15" width="15" height="4" rx="2" fill="#4a6b85"/><rect x="36" y="15" width="12" height="4" rx="2" fill="#9dbdd4"/><rect x="16" y="27" width="15" height="4" rx="2" fill="#4a6b85"/><rect x="36" y="27" width="12" height="4" rx="2" fill="#9dbdd4"/><rect x="16" y="39" width="15" height="4" rx="2" fill="#4a6b85"/><rect x="36" y="39" width="12" height="4" rx="2" fill="#9dbdd4"/><rect x="16" y="51" width="15" height="4" rx="2" fill="#4a6b85"/><rect x="36" y="51" width="12" height="4" rx="2" fill="#9dbdd4"/><rect x="16" y="63" width="32" height="4" rx="2" fill="#c8dcea"/></svg>
+        <div class="lista-banner-text" style="flex:1">
+          <h3>Lista de precios completa</h3>
+          <p>Todos los productos y precios en una sola hoja, para ver o imprimir</p>
+        </div>
+        <button class="lista-banner-btn" onclick="event.stopPropagation();location.href='catalogo.html'">Ver la lista →</button>
       </div>
     </div>
 
