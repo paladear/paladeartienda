@@ -417,7 +417,7 @@ function selectCat(catId,productId,navOpts){
   const prods=PRODS.filter(p=>p[1]===catId);
   const isMobile=window.innerWidth<768;
   const prefix=isMobile?'mb':'dt';
-  const html=renderProdsHTML(cat,prods,prefix);
+  const html=renderProdsHTML(cat,prods,prefix,productId);
   const area=isMobile?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
   if(isMobile)area.classList.remove('hidden');
   area.innerHTML=html;
@@ -452,12 +452,12 @@ function volverInicio(){
   if(area)setTimeout(()=>area.scrollIntoView({behavior:'smooth',block:'start'}),40);
 }
 
-function renderProdsHTML(cat,prods,prefix){
+function renderProdsHTML(cat,prods,prefix,priorityProductId){
   let h='<button class="back-btn" onclick="volverInicio()">← Volver a todos los productos</button>';
   h+=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat.n}</h2>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   h+='<div class="prod-grid">';
-  prods.forEach(p=>{h+=renderCard(p,prefix)});
+  prods.forEach((p,i)=>{h+=renderCard(p,prefix,i<4||p[0]===priorityProductId)});
   h+='</div>';
   return h;
 }
@@ -481,7 +481,7 @@ function _priceMinContent(precio,oferta){
   const rebajado=Math.round(precio*(1-oferta/100));
   return `<span class="precio-tachado-sm">$${fmt(precio)}</span><span class="precio-oferta">$${fmt(rebajado)}</span>`;
 }
-function renderCard(p,prefix){
+function renderCard(p,prefix,prioritizeImage){
   const opts=_sortOpts(Object.keys(p[7]));if(!opts.length)return'';
   const id=prefix+'_'+p[0];
   const hasSrc=p[6]&&p[6].startsWith('http');
@@ -493,7 +493,8 @@ function renderCard(p,prefix){
   let h=`<div class="pcard" id="${id}" data-pid="${p[0]}">`;
   h+=`<button type="button" class="fav-btn${favOn?' active':''}" data-fav-pid="${p[0]}" onclick="return toggleFavorite(${p[0]})" aria-label="${favOn?'Quitar de favoritos':'Agregar a favoritos'}" aria-pressed="${favOn?'true':'false'}" title="${favOn?'Quitar de favoritos':'Agregar a favoritos'}"><span class="fav-heart" aria-hidden="true"></span></button>`;
   if(oferta>0)h+=`<div class="oferta-badge oferta-badge-lg">−${oferta}% OFF</div>`;
-  h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`🌿`}</div>`;
+  const imgLoading=prioritizeImage?'loading="eager" fetchpriority="high"':'loading="lazy"';
+  h+=`<div class="pcard-img" onclick="zoomImg(this)" data-src="${hasSrc?p[6]:''}">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" ${imgLoading} decoding="async">`:`🌿`}</div>`;
   h+=`<div class="pcard-body">`;
   h+=`<div class="pcard-head"><div class="pcard-name">${_tc(p[2])}</div>`;
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
@@ -545,12 +546,8 @@ function selOpt(id,opt,p1,p2){
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
 
-// Métricas: marca un evento del embudo en Clarity (no rompe si Clarity no cargó)
-function _track(ev){try{if(window.clarity)clarity('event',ev);}catch(e){}}
-
 function showInfo(pid){
   const p=PRODS.find(x=>x[0]===pid);if(!p||!p[8])return;
-  _track('producto_abierto');
   const old=document.getElementById('infoModal');if(old)old.remove();
   const m=document.createElement('div');
   m.id='infoModal';
@@ -604,7 +601,7 @@ function _reRenderCard(pid){
     const cardEl=document.getElementById(prefix+'_'+pid);
     if(!cardEl)return;
     const tmp=document.createElement('div');
-    tmp.innerHTML=renderCard(p,prefix);
+    tmp.innerHTML=renderCard(p,prefix,true);
     cardEl.parentNode.replaceChild(tmp.firstChild,cardEl);
     // Restaurar el opt seleccionado
     const opts=_sortOpts(Object.keys(p[7]));
@@ -615,7 +612,6 @@ function _reRenderCard(pid){
 function addToCart(pid,elId){
   const p=PRODS.find(x=>x[0]===pid);if(!p)return;
   const el=document.getElementById(elId);if(!el)return;
-  _track('agrego_carrito');
   const opts=_sortOpts(Object.keys(p[7]));
   const opt=el.dataset.opt||opts[0];
   const sabores=p[9];
@@ -774,7 +770,6 @@ window._pintarDescBanner=_pintarDescBanner;
 })();
 
 function openCart(){
-  _track('abrio_carrito');
   document.getElementById('cartOverlay').classList.add('open');
   document.getElementById('cartPanel').classList.add('open');
   document.body.classList.add('cart-open');
@@ -1333,7 +1328,7 @@ function _doSearch(val){
     // sin salir de los resultados de búsqueda.
     const prefix=isMobile?'mb':'dt';
     h+='<div class="prod-grid">';
-    results.forEach(p=>{h+=renderCard(p,prefix);});
+    results.forEach((p,i)=>{h+=renderCard(p,prefix,i<4);});
     h+='</div>';
   }
 
@@ -1626,7 +1621,7 @@ function _calcPrecioOpc(opc,p1,p2,esKg){
 
 // Carga hoja Info. Intenta primero el archivo estático del repo (cacheable por SW),
 // si no está disponible cae al CSV directo del Sheet.
-function _cargarInfo(){
+function _cargarInfo(useSnapshot){
   return new Promise(resolve=>{
     function _procesar(csv){
       const filas=_parseCSV(csv);
@@ -1652,10 +1647,12 @@ function _cargarInfo(){
       console.log(`📘 Info: ${Object.keys(mapa).length} entradas cargadas`);
       resolve(mapa);
     }
-    // Cargar directamente desde Sheet (GID estable, el usuario nunca reemplaza esta hoja)
-    if(!INFO_CSV_URL||INFO_CSV_URL.indexOf('REEMPLAZAR')>=0){console.warn('ℹ️ Hoja Info no configurada aún');resolve({});return;}
-    fetch(INFO_CSV_URL+'&t='+Date.now(),{cache:'no-store'})
-      .then(r=>r.text()).then(csv=>_procesar(csv))
+    // La copia local se actualiza automáticamente desde GitHub Actions y permite
+    // dibujar las cards sin esperar a Google Sheets. Luego se revalida en segundo plano.
+    if(!useSnapshot&&(!INFO_CSV_URL||INFO_CSV_URL.indexOf('REEMPLAZAR')>=0)){console.warn('ℹ️ Hoja Info no configurada aún');resolve({});return;}
+    const infoUrl=useSnapshot?'info-min.csv':INFO_CSV_URL+'&t='+Date.now();
+    fetch(infoUrl,{cache:useSnapshot?'default':'no-store'})
+      .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(csv=>_procesar(csv))
       .catch(err=>{console.warn('⚠️ Error cargando Info:',err);resolve({});});
   });
 }
@@ -1681,8 +1678,9 @@ function sincronizarDesdeSheets(){
       }
     }
   } catch(e) {}
-  function _refreshFromSheets(){
-    _cargarInfo().then(INFO=>{
+  function _refreshFromSheets(useSnapshot){
+    useSnapshot=!!useSnapshot;
+    _cargarInfo(useSnapshot).then(INFO=>{
 
     function _procesarCSV(csv){
       const filas=_parseCSV(csv);
@@ -1734,7 +1732,7 @@ function sincronizarDesdeSheets(){
       if(searchTerm)_doSearch(searchTerm);
       hideLoader();
       // Cargar recetas en background (no bloquea la UI)
-      if (typeof cargarRecetas === 'function') {
+      if (!useSnapshot && typeof cargarRecetas === 'function') {
         setTimeout(function(){
           _palAfterLoadIdle(function(){
             cargarRecetas().then(function() {
@@ -1749,7 +1747,22 @@ function sincronizarDesdeSheets(){
       }
     }
 
-    // Cargar directamente desde Apps Script JSONP (referencia la hoja por nombre, no GID)
+    // Primera visita: usar el snapshot local cacheable para mostrar las cards enseguida.
+    if(useSnapshot){
+      fetch('precios-min.csv',{cache:'default'})
+        .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+        .then(function(csv){
+          _procesarCSV(csv);
+          _palAfterLoadIdle(function(){_refreshFromSheets(false);},4500);
+        })
+        .catch(function(err){
+          console.warn('⚠️ Snapshot local no disponible:',err);
+          _refreshFromSheets(false);
+        });
+      return;
+    }
+
+    // Revalidación: cargar directamente desde Apps Script JSONP (referencia la hoja por nombre, no GID)
     window.recibirPrecios=function(csv){
       try { _procesarCSV(csv); }
       catch(e){ console.warn('⚠️ Error procesando CSV:',e); hideLoader(); }
@@ -1775,8 +1788,8 @@ function sincronizarDesdeSheets(){
     });
   }
   // Con caché la tienda ya está utilizable: actualizar precios cuando el arranque quede libre.
-  if(_cacheReady)_palAfterLoadIdle(_refreshFromSheets,4500);
-  else _refreshFromSheets();
+  if(_cacheReady)_palAfterLoadIdle(function(){_refreshFromSheets(false);},4500);
+  else _refreshFromSheets(true);
 }
 let _catalogSyncStarted=false;
 function _ensureCatalogSync(){
@@ -3304,7 +3317,7 @@ function renderOfertasView(){
   }
   var maxPct=Math.max.apply(null,of.map(function(p){return p[12].oferta;}));
   stat.textContent=of.length+' oferta'+(of.length!==1?'s':'')+'. Hasta -'+maxPct+'%';
-  area.innerHTML='<div class="prod-grid ofview-grid">'+of.map(function(p){return renderCard(p,'of');}).join('')+'</div>';
+  area.innerHTML='<div class="prod-grid ofview-grid">'+of.map(function(p,i){return renderCard(p,'of',i<4);}).join('')+'</div>';
 }
 window.renderOfertasView=renderOfertasView;
 function hvIrOfertas(){
@@ -3326,7 +3339,7 @@ function renderWishlistView(){
     area.innerHTML='<div class="wishlist-empty"><img src="nav-favoritos.png" alt=""><h2>Tu lista está vacía</h2><p>Tocá el corazón de cualquier producto para guardarlo acá.</p><button onclick="switchTab(\'minorista\')">Ver productos</button></div>';
     return;
   }
-  area.innerHTML='<div class="prod-grid wishlist-grid">'+favs.map(function(p){return renderCard(p,'fav');}).join('')+'</div>';
+  area.innerHTML='<div class="prod-grid wishlist-grid">'+favs.map(function(p,i){return renderCard(p,'fav',i<4);}).join('')+'</div>';
 }
 window.renderWishlistView=renderWishlistView;
 var _wishlistReturnTab='home';
@@ -3604,7 +3617,7 @@ function renderCarruseles(){
     var queue=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es')).map(function(cat){
       return {cat:cat,prods:(grouped[cat.id]||[]).slice().sort((a,b)=>a[2].localeCompare(b[2],'es'))};
     }).filter(function(item){return item.prods.length;});
-    var catIndex=0,prodIndex=0,currentGrid=null,pending=false;
+    var catIndex=0,prodIndex=0,renderedCount=0,currentGrid=null,pending=false;
     var token=_catalogBatchToken;
 
     function openCategory(item){
@@ -3632,12 +3645,14 @@ function renderCarruseles(){
       if(pending||token!==_catalogBatchToken||catIndex>=queue.length)return;
       if(!forceAll&&!_catalogAllViewIsVisible())return;
       pending=true;
-      var budget=forceAll?PRODS.length:(isMobile?20:32);
+      var budget=forceAll?PRODS.length:(isMobile?12:16);
       while(budget>0&&catIndex<queue.length){
         var item=queue[catIndex];
         if(!currentGrid)openCategory(item);
         var take=Math.min(budget,item.prods.length-prodIndex);
-        currentGrid.insertAdjacentHTML('beforeend',item.prods.slice(prodIndex,prodIndex+take).map(function(p){return renderCard(p,prefix);}).join(''));
+        var batch=item.prods.slice(prodIndex,prodIndex+take);
+        currentGrid.insertAdjacentHTML('beforeend',batch.map(function(p,i){return renderCard(p,prefix,renderedCount+i<4);}).join(''));
+        renderedCount+=take;
         prodIndex+=take;
         budget-=take;
         if(prodIndex>=item.prods.length){catIndex++;prodIndex=0;currentGrid=null;}
@@ -4092,7 +4107,6 @@ window.chgQtyMay = chgQtyMay;
 function addToCartMay(pid, elId) {
   const p = PRODS_MAY.find(x => x[0] === pid);
   if (!p) return;
-  _track('agrego_carrito_may');
   const qty = parseInt(document.getElementById(elId + '_q').textContent) || 1;
   const sabSelect = document.getElementById(elId + '_sab');
   const sabor = sabSelect ? sabSelect.value : '';
@@ -4287,7 +4301,6 @@ function updateCartMayCount() {
 }
 
 function openCartMay() {
-  _track('abrio_carrito_may');
   document.getElementById('cartOverlayMay').classList.add('open');
   document.getElementById('cartPanelMay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5236,7 +5249,6 @@ function coEnviar() {
   if (!isMin) { cartMay=[]; updateCartMayCount(); try{localStorage.removeItem('paladear_cart_may_v2');}catch(e){} }
 
   cerrarCheckout();
-  _track(isMin ? 'pedido_enviado' : 'pedido_enviado_may');
   if (!navigator.onLine) { _guardarPedidoPendiente(url, isMin ? 'minorista' : 'mayorista'); return; }
   window.open(url, '_blank');
 }
@@ -5783,7 +5795,7 @@ function _irAProductoDesdeReceta(pid, catId) {
     document.getElementById('recetaProdClose').addEventListener('click', cerrarProductoReceta);
   }
   const prefix = 'rp';
-  document.getElementById('recetaProdBody').innerHTML = renderCard(p, prefix);
+  document.getElementById('recetaProdBody').innerHTML = renderCard(p, prefix, true);
   const opts = _sortOpts(Object.keys(p[7]));
   if (opts.length) selOpt(prefix + '_' + p[0], opts[0], p[7][opts[0]][0], p[7][opts[0]][1]);
   ov.classList.remove('hidden');
@@ -5954,5 +5966,3 @@ window.addEventListener('online', function() {
     }
   } catch(e) {}
 })();
-
-
