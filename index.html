@@ -4189,6 +4189,8 @@ function _palPushOverlay(view,extra){
     history.pushState(Object.assign({paladear:true,view:view,tab:_palVisibleTab()},extra||{}),'');
   }catch(e){}
 }
+// También lo usa el bloque independiente de instalación de la PWA.
+window._palPushOverlay=_palPushOverlay;
 function _palRestoreScroll(y){
   y=Math.max(0,parseInt(y,10)||0);
   [60,220,600,1200,2200].forEach(function(ms){setTimeout(function(){window.scrollTo(0,y);},ms);});
@@ -7041,6 +7043,7 @@ window.coCambiarNombre=function(which){
 function abrirCheckout(venta) {
   _coVenta = venta || 'minorista';
   _coEntrega = null;
+  _track(_coVenta === 'mayorista' ? 'checkout_abierto_may' : 'checkout_abierto');
   // Textos de retiro según minorista (Pueyrredón) o mayorista (depósito Guaymallén)
   var _ret = _RETIRO[_coVenta] || _RETIRO.minorista;
   var _subEl = document.getElementById('coRetiroSub');
@@ -7108,6 +7111,7 @@ function _coRenderSummary() {
 
 function coElegirEntrega(tipo) {
   _coEntrega = tipo;
+  _track(_coVenta === 'mayorista' ? 'checkout_entrega_' + tipo + '_may' : 'checkout_entrega_' + tipo);
   document.getElementById('coStep1').classList.add('hidden');
   document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
   document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
@@ -7284,6 +7288,7 @@ function coEnviar() {
   }
 
   var isMin = _coVenta === 'minorista';
+  _track(isMin ? 'checkout_completo' : 'checkout_completo_may');
   var msg, url;
 
   if (isMin) {
