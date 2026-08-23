@@ -3775,6 +3775,8 @@ function irAProducto(pid){
   const bannersWrap=document.getElementById('bannersTrackWrap');
   if(bannersWrap)bannersWrap.style.display='';
   selectCat(p[1],pid);
+  // al final: selectCat toca el historial, así que la dirección del producto se marca después
+  try{ if(typeof _urlProducto==='function') _urlProducto(p); }catch(e){}
 }
 
 function closeModal(){document.getElementById('catModal').classList.add('hidden');document.body.style.overflow=''}
@@ -4189,8 +4191,6 @@ function _palPushOverlay(view,extra){
     history.pushState(Object.assign({paladear:true,view:view,tab:_palVisibleTab()},extra||{}),'');
   }catch(e){}
 }
-// También lo usa el bloque independiente de instalación de la PWA.
-window._palPushOverlay=_palPushOverlay;
 function _palRestoreScroll(y){
   y=Math.max(0,parseInt(y,10)||0);
   [60,220,600,1200,2200].forEach(function(ms){setTimeout(function(){window.scrollTo(0,y);},ms);});
@@ -6832,6 +6832,144 @@ window.editBuilder=editBuilder;
 window.granolaPickSize=granolaPickSize;
 window.granolaRemoveProd=granolaRemoveProd;
 window.irAProducto=irAProducto;
+
+/* ══════ URLs de producto y de categoría (las que están en el sitemap) ══════
+   Cada producto tiene su propia dirección, por ejemplo:
+     .../paladeartienda/?producto=almendras-nonpareil-1234
+   Sirve para dos cosas: que Google pueda indexar cada producto por separado,
+   y que se pueda pasar por WhatsApp el link de un producto puntual.
+   El slug termina SIEMPRE en el id del producto, así que se lee de ahí:
+   si mañana cambia el nombre en la planilla, el link viejo sigue funcionando. */
+function _slugTexto(t){
+  return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function _articuloDe(p){ return (p&&p[12]&&p[12].productId)?String(p[12].productId):''; }
+function _slugProducto(p){ var a=_articuloDe(p); return _slugTexto(p[2])+(a?'-'+a:''); }
+/* El número del slug es el ARTÍCULO de la planilla, no la posición en la lista:
+   así el link sigue andando aunque se agreguen o reordenen filas en el Sheet. */
+function _articuloDesdeSlug(sl){ var m=String(sl||'').match(/-(\d+)$/); return m?m[1]:null; }
+function _prodPorArticulo(art){
+  if(!art||typeof PRODS==='undefined')return null;
+  return PRODS.find(function(x){ return _articuloDe(x)===String(art); })||null;
+}
+function _catDesdeSlug(sl){
+  sl=_slugTexto(sl);
+  var c=(typeof CATS!=='undefined'?CATS:[]).find(function(x){ return _slugTexto(x.n)===sl||x.id===sl; });
+  return c?c.id:null;
+}
+
+/* Título y datos que lee Google. Se guardan los originales para poder volver a ellos. */
+var _seoOriginal=null;
+function _seoGuardarOriginal(){
+  if(_seoOriginal)return;
+  var can=document.querySelector('link[rel="canonical"]');
+  var des=document.querySelector('meta[name="description"]');
+  _seoOriginal={title:document.title, canonical:can?can.getAttribute('href'):'', description:des?des.getAttribute('content'):''};
+}
+function _seoAplicar(title, url, desc){
+  _seoGuardarOriginal();
+  document.title=title;
+  var can=document.querySelector('link[rel="canonical"]'); if(can)can.setAttribute('href',url);
+  var des=document.querySelector('meta[name="description"]'); if(des&&desc)des.setAttribute('content',desc);
+  var ogu=document.querySelector('meta[property="og:url"]'); if(ogu)ogu.setAttribute('content',url);
+  var ogt=document.querySelector('meta[property="og:title"]'); if(ogt)ogt.setAttribute('content',title);
+  var ogd=document.querySelector('meta[property="og:description"]'); if(ogd&&desc)ogd.setAttribute('content',desc);
+}
+function _seoRestaurar(){
+  if(!_seoOriginal)return;
+  _seoVigilando=null;
+  _seoAplicar(_seoOriginal.title,_seoOriginal.canonical,_seoOriginal.description);
+}
+/* Durante la carga el sitio arma vistas y restaura estado en varios momentos, y en el medio
+   pisa el título. En vez de perseguir cada uno de esos puntos, durante unos segundos se
+   verifica que el título siga siendo el del producto y se vuelve a poner si hizo falta.
+   Se corta solo: al terminar el plazo, o si la dirección deja de apuntar a un producto. */
+var _seoVigilando=null;
+function _seoVigilar(title,url,desc){
+  _seoVigilando={t:title,u:url,d:desc};
+  var hasta=Date.now()+7000;
+  (function chequear(){
+    if(!_seoVigilando||_seoVigilando.t!==title)return;
+    if(location.search.indexOf('producto=')<0&&location.search.indexOf('categoria=')<0)return;
+    if(document.title!==title)_seoAplicar(title,url,desc);
+    if(Date.now()<hasta)setTimeout(chequear,250);
+  })();
+}
+var _BASE_URL='https://paladear.github.io/paladeartienda/';
+/* Durante la apertura desde una URL del sitemap el sitio llama varias veces a selectCat
+   (restaura estado, arma vistas). Sin esta bandera, esas llamadas borran el título del
+   producto que se acaba de poner. */
+var _abriendoDesdeURL=false;
+
+/* Marca la dirección del producto abierto, sin tocar el historial del sitio
+   (se usa replaceState y se conserva el estado que el sitio ya venía manejando). */
+function _urlProducto(p){
+  if(!p)return;
+  var slug=_slugProducto(p);
+  var url=_BASE_URL+'?producto='+slug;              // absoluta: es la que se le declara a Google
+  // La barra del navegador se cambia con una ruta RELATIVA: una absoluta de otro dominio
+  // la bloquea el navegador (y rompería si el sitio se moviera de dirección).
+  try{ history.replaceState(history.state, '', '?producto='+slug); }catch(e){}
+  var nom=(typeof _tc==='function'?_tc(p[2]):p[2]);
+  var desc=nom+' en Paladear Mercado de Sabores, Mendoza. '+
+           (p[8]?String(p[8]).slice(0,110):'Frutos secos, semillas, especias y productos naturales.')+
+           ' Pedí por WhatsApp con envíos a todo el país.';
+  _seoAplicar(nom+' | Paladear Mercado de Sabores', url, desc);
+}
+function _urlHome(){
+  if(_abriendoDesdeURL)return;
+  try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
+  _seoRestaurar();
+}
+
+/* Al entrar desde Google (o desde un link compartido) se abre lo que pide la URL */
+function _abrirDesdeURL(){
+  var q;
+  try{ q=new URLSearchParams(location.search); }catch(e){ return; }
+  var sp=q.get('producto'), sc=q.get('categoria');
+  if(sp){
+    var p=_prodPorArticulo(_articuloDesdeSlug(sp));
+    if(p){
+      _abriendoDesdeURL=true;
+      irAProducto(p[0]);                       // irAProducto marca la dirección al terminar
+      setTimeout(function(){ _abriendoDesdeURL=false; _urlProducto(p); },1200);
+      return true;
+    }
+  }
+  if(sc){
+    var cid=_catDesdeSlug(sc);
+    if(cid){
+      _abriendoDesdeURL=true;
+      selectCat(cid);
+      setTimeout(function(){ _abriendoDesdeURL=false; },1200);
+      var c=CATS.find(function(x){return x.id===cid;});
+      if(c){
+        var tc=c.n+' | Paladear Mercado de Sabores';
+        var uc=_BASE_URL+'?categoria='+_slugTexto(c.n);
+        var dc=c.n+' en Paladear Mercado de Sabores, Mendoza. Precios por kilo, envíos a todo el país.';
+        _seoAplicar(tc,uc,dc); _seoVigilar(tc,uc,dc);
+      }
+      return true;
+    }
+  }
+  return false;
+}
+/* Solo corre si la URL trae parámetros: si no, no hace absolutamente nada */
+(function(){
+  var tiene=false;
+  try{ var q=new URLSearchParams(location.search); tiene=!!(q.get('producto')||q.get('categoria')); }catch(e){}
+  if(!tiene)return;
+  var t0=Date.now();
+  (function esperar(){
+    try{
+      if(typeof PRODS!=='undefined'&&PRODS&&PRODS.length&&typeof CATS!=='undefined'&&CATS.length){ _abrirDesdeURL(); return; }
+    }catch(e){ return; }
+    if(Date.now()-t0<15000) setTimeout(esperar,150);
+  })();
+})();
+window._urlProducto=_urlProducto;
+window._urlHome=_urlHome;
 window.mixPickSize=mixPickSize;
 window.mixRemoveProd=mixRemoveProd;
 window.pedirWA=pedirWA;
@@ -7043,7 +7181,6 @@ window.coCambiarNombre=function(which){
 function abrirCheckout(venta) {
   _coVenta = venta || 'minorista';
   _coEntrega = null;
-  _track(_coVenta === 'mayorista' ? 'checkout_abierto_may' : 'checkout_abierto');
   // Textos de retiro según minorista (Pueyrredón) o mayorista (depósito Guaymallén)
   var _ret = _RETIRO[_coVenta] || _RETIRO.minorista;
   var _subEl = document.getElementById('coRetiroSub');
@@ -7111,7 +7248,6 @@ function _coRenderSummary() {
 
 function coElegirEntrega(tipo) {
   _coEntrega = tipo;
-  _track(_coVenta === 'mayorista' ? 'checkout_entrega_' + tipo + '_may' : 'checkout_entrega_' + tipo);
   document.getElementById('coStep1').classList.add('hidden');
   document.getElementById('coStep2Retiro').classList.toggle('hidden', tipo !== 'retiro');
   document.getElementById('coStep2Dom').classList.toggle('hidden', tipo !== 'domicilio');
@@ -7288,7 +7424,6 @@ function coEnviar() {
   }
 
   var isMin = _coVenta === 'minorista';
-  _track(isMin ? 'checkout_completo' : 'checkout_completo_may');
   var msg, url;
 
   if (isMin) {
