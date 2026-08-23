@@ -22,12 +22,11 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v12';
+const CACHE_VERSION = 'paladear-v11';
 const CACHE_PREFIX = 'paladear-v';
 
 const SHELL_FILES = [
   '/paladeartienda/app.js?v=11',
-  '/paladeartienda/styles.css?v=1',
   '/paladeartienda/logo-header.png',
   '/paladeartienda/herobannerazul.webp',
   '/paladeartienda/paladear-wordmark.webp',
