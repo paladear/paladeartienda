@@ -2570,6 +2570,28 @@ const _carState={}; // {cid:{prods:[...],cursor:0}}
 var _catalogRenderMode=null;
 var _catalogRenderedProds=null;
 var _catalogRenderedCats=null;
+var _catalogBatchObserver=null;
+var _catalogBatchToken=0;
+var _catalogSkipNextAllRender=false;
+
+function _catalogStopBatches(){
+  if(_catalogBatchObserver){_catalogBatchObserver.disconnect();_catalogBatchObserver=null;}
+  _catalogBatchToken++;
+}
+
+function _catalogAllViewIsVisible(){
+  if(_catalogSkipNextAllRender)return false;
+  if(document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos'))return false;
+  // En la hidratación desde cache esta función puede correr antes de inicializar los `let`
+  // de navegación que aparecen más abajo en el archivo. En ese instante no hay nada visible que renderizar.
+  try{
+    if(typeof currentTab!=='undefined'&&currentTab!=='minorista')return false;
+    if(typeof activeCatId!=='undefined'&&activeCatId)return false;
+    if(typeof searchTerm!=='undefined'&&searchTerm)return false;
+  }catch(e){return false;}
+  if(typeof _abriendoDesdeURL!=='undefined'&&_abriendoDesdeURL)return false;
+  return true;
+}
 
 function _sortOpts(opts){
   // kg first: order by weight descending (1kg > 500g > 100g > und)
@@ -5761,7 +5783,11 @@ window.selectOfertasMes=selectOfertasMes;
       // Inspiración ("recetas") no tiene clase propia en <body> como sí tienen Home/Ofertas/Favoritos,
       // por eso se detecta con currentTab en vez de una clase.
       var _tab=(typeof currentTab!=='undefined')?currentTab:'';
-      if((document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')||_tab==='recetas') && v && String(v).trim()) window.switchTab('minorista');
+      if((document.body.classList.contains('hv-home')||document.body.classList.contains('hv-ofertas')||document.body.classList.contains('hv-favoritos')||_tab==='recetas') && v && String(v).trim()){
+        // La búsqueda va a reemplazar el catálogo enseguida: no construir antes las 542 cards.
+        _catalogSkipNextAllRender=true;
+        try{window.switchTab('minorista');}finally{_catalogSkipNextAllRender=false;}
+      }
       _o(v);
     };
   }
@@ -5791,11 +5817,15 @@ function renderCarruseles(){
   var desktopArea=document.getElementById('desktopProdsArea');
   var mobileArea=document.getElementById('mobileProdsArea');
   if(!PRODS.length){
+    _catalogStopBatches();
     desktopArea.innerHTML='';
     mobileArea.innerHTML='';
     _catalogRenderMode=null;_catalogRenderedProds=null;_catalogRenderedCats=null;
     return;
   }
+  // Home, Ofertas, Favoritos, Inspiración y las URLs directas no necesitan el catálogo completo.
+  // Se construye recién cuando Productos queda realmente visible.
+  if(!_catalogAllViewIsVisible())return;
   var isMobile=window.innerWidth<768;
   var mode=isMobile?'mobile':'desktop';
   var activeArea=isMobile?mobileArea:desktopArea;
@@ -5804,32 +5834,82 @@ function renderCarruseles(){
     mobileArea.classList.remove('hidden');
     return;
   }
+  _catalogStopBatches();
   var grouped=Object.create(null);
   PRODS.forEach(function(p){(grouped[p[1]]||(grouped[p[1]]=[])).push(p);});
-  function buildAll(prefix){
-    let h=`<div class="catalog-intro">
+  function buildProgressive(prefix){
+    activeArea.innerHTML=`<div class="catalog-intro">
       <div>
         <h1>Todos los productos</h1>
         <p>Explorá el catálogo completo o elegí una categoría para filtrar.</p>
       </div>
       <button class="catalog-filter-btn" onclick="toggleCatsDropdown()"><span aria-hidden="true">☰</span> Categorías</button>
-    </div>`;
-    const catsAlpha=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es'));
-    catsAlpha.forEach(cat=>{
-      const prods=(grouped[cat.id]||[]).slice().sort((a,b)=>a[2].localeCompare(b[2],'es'));
-      if(!prods.length)return;
-      h+=`<section class="allcat-sec" id="catalogo-${prefix}-${cat.id}">
+    </div>
+    <div class="catalog-progressive-sections"></div>
+    <div class="catalog-load-sentinel" aria-hidden="true" style="height:1px"></div>`;
+    activeArea.setAttribute('aria-busy','true');
+    var sections=activeArea.querySelector('.catalog-progressive-sections');
+    var sentinel=activeArea.querySelector('.catalog-load-sentinel');
+    var queue=[...CATS].sort((a,b)=>a.n.localeCompare(b.n,'es')).map(function(cat){
+      return {cat:cat,prods:(grouped[cat.id]||[]).slice().sort((a,b)=>a[2].localeCompare(b[2],'es'))};
+    }).filter(function(item){return item.prods.length;});
+    var catIndex=0,prodIndex=0,currentGrid=null,pending=false;
+    var token=_catalogBatchToken;
+
+    function openCategory(item){
+      var holder=document.createElement('div');
+      holder.innerHTML=`<section class="allcat-sec" id="catalogo-${prefix}-${item.cat.id}">
         <div class="allcat-head">
-          <img class="allcat-img" src="cat-${cat.id}.png" alt="" loading="lazy" onerror="this.style.display='none'">
-          <span class="allcat-name">${cat.n}</span>
-          <span class="allcat-count">${prods.length}</span>
+          <img class="allcat-img" src="cat-${item.cat.id}.png" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="allcat-name">${item.cat.n}</span>
+          <span class="allcat-count">${item.prods.length}</span>
         </div>
-        <div class="prod-grid">${prods.map(p=>renderCard(p,prefix)).join('')}</div>
+        <div class="prod-grid"></div>
       </section>`;
-    });
-    return h;
+      var section=holder.firstElementChild;
+      sections.appendChild(section);
+      currentGrid=section.querySelector('.prod-grid');
+    }
+
+    function finish(){
+      activeArea.removeAttribute('aria-busy');
+      if(sentinel&&sentinel.parentNode)sentinel.remove();
+      if(_catalogBatchObserver){_catalogBatchObserver.disconnect();_catalogBatchObserver=null;}
+    }
+
+    function appendBatch(forceAll){
+      if(pending||token!==_catalogBatchToken||catIndex>=queue.length)return;
+      if(!forceAll&&!_catalogAllViewIsVisible())return;
+      pending=true;
+      var budget=forceAll?PRODS.length:(isMobile?20:32);
+      while(budget>0&&catIndex<queue.length){
+        var item=queue[catIndex];
+        if(!currentGrid)openCategory(item);
+        var take=Math.min(budget,item.prods.length-prodIndex);
+        currentGrid.insertAdjacentHTML('beforeend',item.prods.slice(prodIndex,prodIndex+take).map(function(p){return renderCard(p,prefix);}).join(''));
+        prodIndex+=take;
+        budget-=take;
+        if(prodIndex>=item.prods.length){catIndex++;prodIndex=0;currentGrid=null;}
+      }
+      pending=false;
+      if(catIndex>=queue.length){finish();return;}
+      // Si el lote todavía no llenó la zona próxima al viewport, sumar otro sin esperar scroll.
+      requestAnimationFrame(function(){
+        if(token===_catalogBatchToken&&sentinel&&sentinel.getBoundingClientRect().top<window.innerHeight+1000)appendBatch(false);
+      });
+    }
+
+    appendBatch(false);
+    if('IntersectionObserver' in window){
+      _catalogBatchObserver=new IntersectionObserver(function(entries){
+        if(entries.some(function(entry){return entry.isIntersecting;}))appendBatch(false);
+      },{rootMargin:'1000px 0px'});
+      _catalogBatchObserver.observe(sentinel);
+    }else{
+      appendBatch(true);
+    }
   }
-  activeArea.innerHTML=buildAll(isMobile?'mb':'dt')||'<div></div>';
+  buildProgressive(isMobile?'mb':'dt');
   activeArea.dataset.catalogView='all';
   inactiveArea.innerHTML='';
   inactiveArea.removeAttribute('data-catalog-view');
