@@ -64,7 +64,7 @@ window.toggleFavorite=function(pid){
 try{if(cart.length){var _badge0=document.getElementById('cartCount');if(_badge0)_badge0.textContent=cart.length;}}catch(e){}
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwpRm16QpdpCNTtRwtmoZsNPesqA3Vfli2LEubvunNiV0lFTH-rKPLNaIpsm531F3c9/exec';
 function fmt(n){return n.toLocaleString('es-AR')}
-let _loaderHidden=false,_catalogDataReady=false;
+let _loaderHidden=!!window.__palHomeRevealedEarly,_catalogDataReady=false;
 function _removeHiddenLoader(){
   const o=document.getElementById('loadingOverlay');
   if(o&&_loaderHidden&&_catalogDataReady&&o.parentNode)o.remove();
@@ -80,6 +80,7 @@ function showLoader(){
   const o=document.getElementById('loadingOverlay');
   if(!o)return;
   _loaderHidden=false;
+  o.style.display='flex';
   o.classList.remove('hidden');
 }
 function _markCatalogReady(){
@@ -1674,6 +1675,7 @@ function sincronizarDesdeSheets(){
         _markCatalogReady();
         renderCatsUI();
         renderCarruseles();
+        if(searchTerm)_doSearch(searchTerm);
         hideLoader();
         console.log('⚡ Paladear: catálogo desde cache ('+PRODS.length+' productos)');
       }
@@ -1729,6 +1731,7 @@ function sincronizarDesdeSheets(){
       console.log(`✅ Paladear: ${PRODS.length} productos, ${CATS.length} categorías`);
       renderCatsUI();
       renderCarruseles();
+      if(searchTerm)_doSearch(searchTerm);
       hideLoader();
       // Cargar recetas en background (no bloquea la UI)
       if (typeof cargarRecetas === 'function') {
@@ -1775,11 +1778,17 @@ function sincronizarDesdeSheets(){
   if(_cacheReady)_palAfterLoadIdle(_refreshFromSheets,4500);
   else _refreshFromSheets();
 }
-if(_palNeedsCatalogAtStart())sincronizarDesdeSheets();
+let _catalogSyncStarted=false;
+function _ensureCatalogSync(){
+  if(_catalogSyncStarted)return;
+  _catalogSyncStarted=true;
+  sincronizarDesdeSheets();
+}
+if(_palNeedsCatalogAtStart())_ensureCatalogSync();
 else{
-  // Home es estático: mostrarlo primero y preparar catálogo/precios después de la primera pintura.
+  // Home es estático: catálogo y precios se preparan cuando ya terminó la carga visible.
   hideLoader();
-  _palAfterFirstPaint(sincronizarDesdeSheets);
+  _palAfterLoadIdle(_ensureCatalogSync,3500);
 }
 
 // ── HISTORIAL REAL DE VISTAS + BOTÓN "ATRÁS" ──
@@ -3437,6 +3446,7 @@ function _bnavActiveTab(){
       return;
     }
     if(tab==='ofertas'){
+      if(!PRODS.length){showLoader();_ensureCatalogSync();}
       _prev('minorista');
       document.body.classList.remove('hv-home','hv-favoritos');
       document.body.classList.add('hv-ofertas');
@@ -3454,6 +3464,7 @@ function _bnavActiveTab(){
       return;
     }
     if(tab==='favoritos'){
+      if(!PRODS.length)_ensureCatalogSync();
       _prev('minorista');
       document.body.classList.remove('hv-home','hv-ofertas');
       document.body.classList.add('hv-favoritos');
@@ -3471,7 +3482,7 @@ function _bnavActiveTab(){
       return;
     }
     var resetCatalog=tab==='minorista'&&(activeCatId||_activeOfertasMes);
-    if(tab==='minorista'&&!PRODS.length)showLoader();
+    if(tab==='minorista'&&!PRODS.length){showLoader();_ensureCatalogSync();}
     document.body.classList.remove('hv-home','hv-ofertas','hv-favoritos');
     _activeOfertasMes=false;
     var thx=document.getElementById('tabHome'); if(thx) thx.classList.remove('active');
@@ -5943,9 +5954,5 @@ window.addEventListener('online', function() {
     }
   } catch(e) {}
 })();
-
-
-
-
 
 

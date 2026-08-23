@@ -9,6 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
+<link rel="preload" as="script" href="app.js?v=11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -1566,6 +1567,22 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 </div>
 
 <script>
+/* Home ya está completo en el HTML y no necesita esperar el catálogo. Dejamos el
+   loader únicamente para URLs directas o para restaurar una pestaña de productos. */
+(function(){
+  try{
+    var q=new URLSearchParams(location.search),needs=q.has('producto')||q.has('categoria');
+    var raw=sessionStorage.getItem('paladear_view_state');
+    if(raw){var st=JSON.parse(raw);if(st&&st.tab&&st.tab!=='home')needs=true;}
+    if(!needs){
+      var ov=document.getElementById('loadingOverlay');
+      if(ov){
+        ov.classList.add('hidden');window.__palHomeRevealedEarly=true;
+        setTimeout(function(){if(ov.parentNode&&ov.classList.contains('hidden'))ov.style.display='none';},450);
+      }
+    }
+  }catch(e){}
+})();
 /* Watchdog anti-cuelgue: si la pantalla de carga sigue visible tras 12s,
    algo quedó trabado (SW o cache corrupto). Auto-recuperamos UNA sola vez:
    desregistramos el Service Worker, limpiamos los caches y recargamos.
@@ -2388,7 +2405,48 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   <div id="chat-msgs"></div>
 </div>
 
-<script src="app.js?v=10" defer></script>
+<script>
+(function(){
+  var started=false,fallback=null,queuedClick=null,queuedInput=null;
+  function holdClick(e){
+    if(window.__palAppReady)return;
+    var el=e.target&&e.target.closest?e.target.closest('[onclick]'):null;
+    if(!el)return;
+    e.preventDefault();e.stopImmediatePropagation();queuedClick=el;
+  }
+  function holdInput(e){
+    if(window.__palAppReady)return;
+    var el=e.target;
+    if(!el||!el.getAttribute||!el.getAttribute('oninput'))return;
+    e.stopImmediatePropagation();queuedInput=el;
+  }
+  document.addEventListener('click',holdClick,true);
+  document.addEventListener('input',holdInput,true);
+  function ready(){
+    window.__palAppReady=true;
+    document.removeEventListener('click',holdClick,true);
+    document.removeEventListener('input',holdInput,true);
+    if(queuedInput&&queuedInput.isConnected)queuedInput.dispatchEvent(new Event('input',{bubbles:true}));
+    if(queuedClick&&queuedClick.isConnected)queuedClick.click();
+  }
+  function start(){
+    if(started)return;
+    started=true;
+    if(fallback)clearTimeout(fallback);
+    var s=document.createElement('script');
+    s.src='app.js?v=11';
+    s.onload=ready;
+    document.head.appendChild(s);
+  }
+  // El archivo ya se descarga en paralelo. requestIdleCallback se ejecuta después
+  // de entregar el primer frame, evitando que la compilación tape la pintura del hero.
+  requestAnimationFrame(function(){
+    if('requestIdleCallback' in window)requestIdleCallback(start,{timeout:2500});
+    else setTimeout(start,50);
+  });
+  fallback=setTimeout(start,4000);
+})();
+</script>
 
 <!-- ══════════ SERVICE WORKER (PWA) ══════════ -->
 <script>
