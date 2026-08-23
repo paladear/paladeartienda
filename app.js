@@ -1657,6 +1657,20 @@ function _cargarInfo(useSnapshot){
   });
 }
 
+function _hydrateMinCatalog(data,source){
+  if(!data||!Array.isArray(data.prods)||!data.prods.length||!Array.isArray(data.cats)||!data.cats.length)return false;
+  CATS=data.cats;
+  PRODS=data.prods;
+  _MIN_BY_ID=null;
+  _markCatalogReady();
+  renderCatsUI();
+  renderCarruseles();
+  if(searchTerm)_doSearch(searchTerm);
+  hideLoader();
+  console.log('⚡ Paladear: catálogo desde '+source+' ('+PRODS.length+' productos)');
+  return true;
+}
+
 function sincronizarDesdeSheets(){
   // Stale-while-revalidate: hidratar UI desde cache local para render instantáneo
   let _cacheReady=false;
@@ -1664,17 +1678,8 @@ function sincronizarDesdeSheets(){
     const raw = localStorage.getItem('paladear_min_v1');
     if (raw) {
       const data = JSON.parse(raw);
-      if (data && data.prods && data.prods.length && data.cats && data.cats.length) {
-        CATS = data.cats;
-        PRODS = data.prods;
-        _MIN_BY_ID = null;
+      if (_hydrateMinCatalog(data,'cache')) {
         _cacheReady=true;
-        _markCatalogReady();
-        renderCatsUI();
-        renderCarruseles();
-        if(searchTerm)_doSearch(searchTerm);
-        hideLoader();
-        console.log('⚡ Paladear: catálogo desde cache ('+PRODS.length+' productos)');
       }
     }
   } catch(e) {}
@@ -1788,8 +1793,21 @@ function sincronizarDesdeSheets(){
     });
   }
   // Con caché la tienda ya está utilizable: actualizar precios cuando el arranque quede libre.
-  if(_cacheReady)_palAfterLoadIdle(function(){_refreshFromSheets(false);},4500);
-  else _refreshFromSheets(true);
+  if(_cacheReady){
+    _palAfterLoadIdle(function(){_refreshFromSheets(false);},4500);
+  }else{
+    fetch('catalog-min.json',{cache:'default'})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(data){
+        if(!_hydrateMinCatalog(data,'snapshot local'))throw new Error('Snapshot inválido');
+        try{localStorage.setItem('paladear_min_v1',JSON.stringify(data));}catch(e){}
+        _palAfterLoadIdle(function(){_refreshFromSheets(false);},4500);
+      })
+      .catch(function(err){
+        console.warn('⚠️ Catálogo preparado no disponible:',err);
+        _refreshFromSheets(true);
+      });
+  }
 }
 let _catalogSyncStarted=false;
 function _ensureCatalogSync(){

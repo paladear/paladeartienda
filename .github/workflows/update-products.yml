@@ -36,11 +36,14 @@ jobs:
       - name: Actualizar precios minoristas y sitemap de productos
         run: node scripts/generate-product-sitemap.mjs
 
+      - name: Preparar catálogo rápido para la tienda
+        run: node scripts/build-catalog-snapshot.mjs
+
       - name: Commit si hubo cambios
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add precios-min.csv info-min.csv precios-may.csv info-may.csv sitemap.xml sitemap.txt
+          git add precios-min.csv info-min.csv precios-may.csv info-may.csv catalog-min.json sitemap.xml sitemap.txt
           if git diff --staged --quiet; then
             echo "Sin cambios en los datos, nada que commitear."
           else
