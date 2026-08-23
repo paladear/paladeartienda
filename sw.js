@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.6
+// Versión: 1.7
 //
 // CAMBIO CLAVE (arregla "no carga si no borrás el historial" y
 // "tarda muchísimo en cargar"):
@@ -22,10 +22,14 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v9';
+const CACHE_VERSION = 'paladear-v10';
 const CACHE_PREFIX = 'paladear-v';
 
 const SHELL_FILES = [
+  '/paladeartienda/app.js?v=10',
+  '/paladeartienda/logo-header.png',
+  '/paladeartienda/herobannerazul.webp',
+  '/paladeartienda/paladear-wordmark.webp',
   '/paladeartienda/android-chrome-192x192.png',
   '/paladeartienda/android-chrome-512x512.png',
   '/paladeartienda/apple-touch-icon.png',
