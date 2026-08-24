@@ -1666,7 +1666,7 @@ function _hydrateMinCatalog(data,source){
   // y no en el archivo, para que siga valiendo cada vez que se regenere.
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
-    if(_u&&_u.indexOf('/w_500/')>-1)PRODS[_i][6]=_u.replace('/w_500/','/w_320/');
+    if(_u&&_u.indexOf(',w_500/')>-1)PRODS[_i][6]=_u.replace(',w_500/',',w_320/');
   }
   _MIN_BY_ID=null;
   _markCatalogReady();
