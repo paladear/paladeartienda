@@ -293,7 +293,7 @@ function _cardHTML(p, xopts){
   const onclick=opts2.onclick||`selectCat('${p[1]}',${p[0]})`;
   return `<div class="carousel-card" onclick="${onclick}">
     ${ofertaBadge}
-    <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">`:`${cat?cat.ic:'🌿'}`}</div>
+    <div class="carousel-card-img">${hasSrc?`<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy" decoding="async">`:`${cat?cat.ic:'🌿'}`}</div>
     <div class="carousel-card-body">
       <div class="carousel-card-name">${_tc(p[2])}</div>
       <div class="carousel-card-cat">${cat?cat.n:''}</div>
@@ -1707,7 +1707,7 @@ function sincronizarDesdeSheets(){
         const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre);
         const esKg=_infCants.length?esKgInfo:esKgNombre;
         const esEspecia=['especias','infusiones'].includes(cat.id);
-        const imgUrl=(inf.imagen||imgPrecios)?_prodImg(productId,500):'';
+        const imgUrl=(inf.imagen||imgPrecios)?_prodImg(productId,320):'';
         const infoText=inf.info||'';
         const sabores=inf.sabores||null;
         let opts;
@@ -3764,7 +3764,7 @@ function cargarMayorista() {
         const inf          = infoMay[artId] || infoMay[_norm(nombre)] || {};
         const bulto        = inf.bulto  || 1;
         const sabores      = inf.sabores || null;
-        const imgUrl       = inf.imagen ? _prodImg(artId,500) : '';
+        const imgUrl       = inf.imagen ? _prodImg(artId,320) : '';
         const nombreFinal  = inf.nombre  || nombre;
         const precioTotal  = precio * bulto;
 
@@ -3968,7 +3968,7 @@ function _cardHTMLMay(p) {
   const cat = CATS_MAY.find(c => c.id === p[1]);
   const bulto = p[12] ? p[12].bulto : 1;
   return `<div class="carousel-card" onclick="selectMayCat('${p[1]}', ${p[0]})">
-    <div class="carousel-card-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : (cat ? cat.ic : '🌿')}</div>
+    <div class="carousel-card-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy" decoding="async">` : (cat ? cat.ic : '🌿')}</div>
     <div class="carousel-card-body">
       <div class="carousel-card-name">${_tc(p[2])}</div>
       <div class="carousel-card-cat">${cat ? cat.n : ''}</div>
@@ -4536,7 +4536,7 @@ function _doSearchMay(val) {
       const cat = CATS_MAY.find(c => c.id === p[1]);
       const bulto = p[12] ? p[12].bulto : 1;
     h += `<div class="search-item" onclick="selectMayCat('${p[1]}', ${p[0]})">
-        <div class="search-item-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy">` : (cat ? cat.ic : '🌿')}</div>
+        <div class="search-item-img">${hasSrc ? `<img src="${p[6]}" alt="${p[2]}" onerror="this.parentNode.innerHTML='🌿'" loading="lazy" decoding="async">` : (cat ? cat.ic : '🌿')}</div>
         <div class="search-item-body">
           <div class="search-item-name">${_tc(p[2])}</div>
           <div class="search-item-cat">${cat ? cat.n : ''}</div>
