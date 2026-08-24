@@ -157,7 +157,7 @@ function buildCatalog(pricesCsv, infoCsv) {
 
     const hasImage = Boolean(info.image || String(cols[7] || '').trim());
     const image = hasImage && productId
-      ? 'https://res.cloudinary.com/hswu4zpv/image/upload/f_auto,q_auto,w_500/' + productId
+      ? 'https://res.cloudinary.com/hswu4zpv/image/upload/f_auto,q_auto,w_320/' + productId
       : '';
     products.push([
       pid++, category.id, info.name || sourceName, isKg ? 'Granel' : 'Varios',
