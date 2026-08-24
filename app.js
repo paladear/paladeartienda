@@ -1661,6 +1661,13 @@ function _hydrateMinCatalog(data,source){
   if(!data||!Array.isArray(data.prods)||!data.prods.length||!Array.isArray(data.cats)||!data.cats.length)return false;
   CATS=data.cats;
   PRODS=data.prods;
+  // Las fotos se ven a ~159px de ancho: pedirlas a 320 (el doble, para pantallas retina)
+  // pesa la mitad que a 500. El catálogo preparado las trae a 500, así que se ajusta acá
+  // y no en el archivo, para que siga valiendo cada vez que se regenere.
+  for(var _i=0;_i<PRODS.length;_i++){
+    var _u=PRODS[_i][6];
+    if(_u&&_u.indexOf('/w_500/')>-1)PRODS[_i][6]=_u.replace('/w_500/','/w_320/');
+  }
   _MIN_BY_ID=null;
   _markCatalogReady();
   renderCatsUI();
