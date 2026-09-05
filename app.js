@@ -3630,8 +3630,8 @@ function renderCarruseles(){
     activeArea.innerHTML=`<div class="catalog-intro">
       <div>
         <h1>Todos los productos</h1>
-        <p>Explorá el catálogo completo o elegí una categoría para filtrar.</p>
       </div>
+      <img class="catalog-intro-ic" src="icon-minorista.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
       <button class="catalog-filter-btn" onclick="toggleCatsDropdown()"><span aria-hidden="true">☰</span> Categorías</button>
     </div>
     <div class="catalog-progressive-sections"></div>
