@@ -1908,7 +1908,10 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
 }
 /* Catálogo completo por rubro */
 .allcat-sec{margin-bottom:34px}
-.catalog-intro{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:4px 0 24px;padding:18px 20px;background:var(--azul-light);border:1.5px solid rgba(84,118,146,.24);border-radius:16px}
+.catalog-intro{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:4px 0 24px;padding:18px 20px;background:radial-gradient(circle at 5% 14%,rgba(84,118,146,.20) 0 52px,transparent 53px),radial-gradient(circle at 97% 88%,rgba(84,118,146,.17) 0 78px,transparent 79px),var(--azul-light);border:1.5px solid rgba(84,118,146,.24);border-radius:16px;overflow:hidden;position:relative}
+/* Ícono de productos, como en la maqueta: al lado del botón de Categorías */
+.catalog-intro-ic{width:56px;height:56px;object-fit:contain;flex-shrink:0;margin-left:auto;filter:drop-shadow(0 2px 4px rgba(20,45,70,.18))}
+@media(max-width:767px){.catalog-intro-ic{width:44px;height:44px}}
 .catalog-intro h1{font-size:25px;line-height:1.15;color:var(--azul-dark);font-weight:800;margin:0 0 5px}
 .catalog-intro p{font-size:13px;line-height:1.45;color:var(--muted-fg);font-weight:550;margin:0}
 .catalog-filter-btn{display:none;align-items:center;gap:7px;flex-shrink:0;border:1.5px solid var(--azul);background:#fff;color:var(--azul-dark);border-radius:999px;padding:9px 13px;font-family:inherit;font-size:12px;font-weight:750;white-space:nowrap}
@@ -1928,17 +1931,17 @@ body.hv-favoritos .bnav a,.bnav button.active,body.hv-favoritos .bnav a,.bnav bu
   .allcat-count{font-size:10px;padding:2px 7px}
 }
 /* ═══ Barra inferior (mobile) ═══ */
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:none;background:var(--azul);border-top:0;padding-bottom:calc(env(safe-area-inset-bottom) + 10px);box-shadow:0 -4px 20px rgba(61,90,114,.18);isolation:isolate}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:none;background:#f5fafe;border-top:1px solid rgba(84,118,146,.14);padding-bottom:calc(env(safe-area-inset-bottom) + 10px);box-shadow:0 -4px 20px rgba(61,90,114,.10);isolation:isolate}
 /* Cápsula cerrada: deja visible el azul alrededor del botón activo. */
-.bnav-pill{position:absolute;top:2px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:63px;background:#fff;border-radius:999px;box-shadow:0 3px 12px rgba(38,67,91,.18);z-index:0;pointer-events:none;transition:width .22s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
+.bnav-pill{position:absolute;top:2px;left:var(--bnav-pill-x,0);width:var(--bnav-pill-w,0);height:63px;background:#e3f0f9;border-radius:999px;box-shadow:none;z-index:0;pointer-events:none;transition:width .22s cubic-bezier(.2,.75,.3,1);transform:translateZ(0)}
 body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 .bnav-pill.instant{transition:none}
 .bnav-pill.bouncing{animation:bnavPillBounce .32s forwards}
 @keyframes bnavPillBounce{0%{transform:translateX(var(--bnav-pill-dx,0));animation-timing-function:cubic-bezier(.2,.6,.35,1)}60%{transform:translateX(calc(var(--bnav-pill-dx,0) * -.05));animation-timing-function:ease-in-out}80%{transform:translateX(calc(var(--bnav-pill-dx,0) * .02));animation-timing-function:ease-out}100%{transform:translateX(0)}}
-.bnav a,.bnav button{position:relative;z-index:2;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 8px;color:rgba(255,255,255,.92);font-size:10.5px;font-weight:650;text-decoration:none;cursor:pointer;transition:color .2s;background:none;border:none;font-family:inherit}
+.bnav a,.bnav button{position:relative;z-index:2;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 8px;color:#617893;font-size:10.5px;font-weight:650;text-decoration:none;cursor:pointer;transition:color .2s;background:none;border:none;font-family:inherit}
 .bnav a,.bnav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bnav a,.bnav button svg{width:25px;height:25px;color:var(--azul)}
-.bnav a,.bnav button img{width:32px;height:32px;object-fit:contain;transform-origin:center;filter:drop-shadow(0 3px 5px rgba(15,28,42,.45))}
+.bnav a,.bnav button img{width:32px;height:32px;object-fit:contain;transform-origin:center;filter:drop-shadow(0 2px 3px rgba(15,28,42,.18))}
 .bnav a,.bnav button.active{color:var(--azul-dark);font-weight:750}
 .bnav a,.bnav button.active svg{color:var(--azul-dark)}
 .bnav a,.bnav button.active img{transform:scale(1.04)}
