@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=32">
+<link rel="preload" as="script" href="app.js?v=33">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2378,7 +2378,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 
 <!-- CHATBOT -->
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">↑</button>
-<button id="cart-fab" onclick="openCart()" title="Ver carrito"><img class="fab-icon" src="icon-carrito.webp" alt=""><span class="cart-fab-label">Carrito</span><span class="fab-may-tag" aria-hidden="true">Precio mayorista</span><span class="cart-count" id="cartCount">0</span></button>
+<button id="cart-fab" onclick="openCart()" title="Ver carrito"><img class="fab-icon" src="icon-carrito.webp" alt=""><span class="cart-fab-label">Carrito</span><span class="cart-count" id="cartCount">0</span></button>
 <div id="chat-box">
   <div id="chat-header">
     <img src="chat-avatar.jpg" loading="lazy" onerror="this.style.display='none'" alt="">
@@ -2417,7 +2417,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=32';
+    s.src='app.js?v=33';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2807,14 +2807,20 @@ body.mayorista-activo #cart-fab{box-shadow:0 4px 22px rgba(58,85,114,.55),0 0 0 
 body.mayorista-activo .price-may{background:var(--azul);color:#fff;
   box-shadow:0 2px 8px rgba(58,85,114,.30)}
 body.mayorista-activo .prices>div:last-child .price-label{color:var(--azul-dark);font-weight:800}
-body.mayorista-activo .prices>div:first-child .price-min{opacity:.5;text-decoration:line-through;
-  text-decoration-thickness:1.5px}
+body.mayorista-activo .prices>div:first-child .price-min{color:var(--muted-fg);opacity:.75}
 .price-may{transition:background .25s ease,color .25s ease,box-shadow .25s ease}
 .price-min{transition:opacity .25s ease}
 
 @media(prefers-reduced-motion:reduce){
   .fab-may-tag,.price-may,.price-min{transition:none}
 }
+
+/* ===== Tocar rápido el + no debe disparar el zoom del doble toque =====
+   `manipulation` deja el pinch para agrandar, pero saca el doble-toque-zoom
+   y el retardo de 300 ms al tocar. */
+html{touch-action:manipulation}
+button,.opt-btn,.qty-btn,.add-btn,.cat-chip,.cats-dd-btn,.card-edit-btn,.card-del-btn,
+.catalog-filter-btn,.bnav a,.bnav button,#cart-fab{touch-action:manipulation}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
