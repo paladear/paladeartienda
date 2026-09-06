@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=22">
+<link rel="preload" as="script" href="app.js?v=23">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -1495,7 +1495,7 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 .compact-hamb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s,transform .15s;padding:0}
 .compact-hamb:hover{background:rgba(255,255,255,.32);transform:scale(1.05)}
 .compact-hamb svg{width:20px;height:20px;display:block}
-@media(min-width:768px){.compact-hamb{display:none}}
+/* la hamburguesa de categorías también en la compu, al lado del buscador */
 .compact-wave{display:block;width:100%;height:16px;margin-top:-1px;position:relative;z-index:1}
 .compact-wave path{fill:#547692}
 @media(min-width:768px){.compact-inner{padding:10px 24px;min-height:64px;gap:14px}.compact-logo{width:48px;height:48px}.compact-hamb{width:44px;height:44px}.compact-search{font-size:15px;padding:10px 18px}}
@@ -2140,9 +2140,6 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 
   <!-- Promo Mundial finalizada y retirada. -->
 
-  <!-- Categorías: una sola fila arriba, sirve para celular y compu -->
-  <div class="cat-chips" id="catsChips" role="group" aria-label="Categorías" style="display:none"></div>
-
   <!-- MÓVIL: productos -->
   <div class="mobile-prods-area hidden" id="mobileProdsArea"></div>
 
@@ -2417,7 +2414,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=22';
+    s.src='app.js?v=23';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2662,22 +2659,6 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   .prices.precio-sale,.prices.precio-entra,.cart-item.resaltado{animation:none}
 }
 
-/* ===== Categorías en una fila arriba (antes: columna lateral) ===== */
-.cat-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth}
-.cat-chips::-webkit-scrollbar{display:none}
-.cat-chip{flex:0 0 auto;border-radius:10px;padding:9px 15px;border:2px solid transparent;
-  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;
-  letter-spacing:.2px;white-space:nowrap;cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-  transition:filter .18s ease,border-color .18s ease,box-shadow .18s ease}
-.cat-chip:hover{filter:brightness(1.1)}
-.cat-chip.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 3px 12px rgba(0,0,0,.2)}
-body.hv-home .cat-chips,body.hv-ofertas .cat-chips,body.hv-favoritos .cat-chips{display:none!important}
-@media(max-width:767px){
-  .cat-chips{gap:6px;padding:2px 0 12px}
-  .cat-chip{padding:8px 12px;font-size:12px;border-radius:9px}
-}
 
 /* una sola medida ("1 UNIDAD"): que no se estire a lo ancho de la tarjeta */
 .opt-btns-1{grid-auto-columns:max-content;justify-content:start}
