@@ -238,7 +238,9 @@ function _matchScore(q,t){
   return score;
 }
 function _imgZoomGoBack(){if(history.state&&history.state.modal==='imgZoom')history.back();else{const z=document.getElementById('imgZoom');if(z)z.remove();}}
-function zoomImg(el){let src=el.dataset.src||'';if(!src)return;src=src.replace(/=w\d+/,'=w1200').replace(/,w_\d+\//,',w_1200/');  // ojo: coma, no barraconst old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<img src="${src}" alt="">`;document.body.appendChild(z);_palPushOverlay('imgZoom',{modal:'imgZoom'});}
+/* El ancho en Cloudinary va después de una COMA (f_auto,q_auto,w_320/), no de una barra.
+   Con el patrón viejo el zoom nunca subía la resolución y se veía borroso. */
+function zoomImg(el){let src=el.dataset.src||'';if(!src)return;src=src.replace(/=w\d+/,'=w1200').replace(/,w_\d+\//,',w_1200/');const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<img src="${src}" alt="">`;document.body.appendChild(z);_palPushOverlay('imgZoom',{modal:'imgZoom'});}
 window.addEventListener('popstate',function(e){const z=document.getElementById('imgZoom');if(z){z.remove();e.stopImmediatePropagation();}});
 
 /* ── CARRUSELES ── */
@@ -445,8 +447,8 @@ function volverInicio(){
   renderCatsUI();
   renderCarruseles();
   if(typeof _bnavSet==='function')_bnavSet('minorista');
-  // Sin scroll automático: al volver a todos los productos la página se queda donde está,
-  // así el botón de categorías siempre queda a la vista (pedido de Juani).
+  // Sin scroll automático: al volver a todos los productos la página se queda donde
+  // está, así el botón de categorías siempre queda a la vista (pedido de Juani).
 }
 
 function renderProdsHTML(cat,prods,prefix,priorityProductId){
@@ -1712,8 +1714,8 @@ function _hydrateMinCatalog(data,source){
   // Las fotos se ven a ~159px de ancho: pedirlas a 320 (el doble, para pantallas retina)
   // pesa la mitad que a 500. El catálogo preparado las trae a 500, así que se ajusta acá
   // y no en el archivo, para que siga valiendo cada vez que se regenere.
-  // Tarjetas: 164px en el celular y 235px en la compu. Se pide el doble de esos
-  // anchos para que se vean nítidas en pantallas retina, sin traer de más.
+  // Tarjetas: 164px en el celular, 235px en la compu. Se pide ~el doble para que
+  // se vean nítidas en pantallas retina, sin traer de más.
   var _anchoFoto=window.innerWidth<768?',w_320/':',w_400/';
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
