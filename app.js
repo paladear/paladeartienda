@@ -720,7 +720,7 @@ function addToCart(pid,elId){
     if(newBtn){
       newBtn.classList.add('added');
       newBtn.innerHTML='✓ Agregado!';
-      setTimeout(function(){newBtn.classList.remove('added');newBtn.innerHTML=ADD_CART_ICON+' Agregar al pedido';},1400);
+      setTimeout(function(){newBtn.classList.remove('added');newBtn.innerHTML=ADD_CART_ICON+' Agregar';},1400);
     }
   },20);
 }
