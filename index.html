@@ -2733,7 +2733,11 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   }
   .cats-dd-btn{min-height:46px;padding:6px 12px 6px 8px;gap:10px}
   .cats-dd-btn .nm{font-size:13px}
-  .cats-dd-thumb{width:32px;height:32px}
+  /* el ícono sobresale un poco del círculo a propósito: al achicar el círculo
+     hay que achicar también la imagen, si no se monta sobre el texto */
+  .cats-dd-thumb{width:34px;height:34px}
+  .cats-dd-thumb img{width:38px;height:38px}
+  .cats-dd-thumb.all img{width:28px;height:28px}
 }
 @keyframes catsDropIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:none}}
 </style>
