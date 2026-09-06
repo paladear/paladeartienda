@@ -2695,9 +2695,12 @@ body.hv-home .cat-chips,body.hv-ofertas .cat-chips,body.hv-favoritos .cat-chips{
 .price-may{font-size:14px;padding:3px 7px}
 .price-min .precio-oferta{font-size:17px}
 @media(min-width:768px){
-  .price-min{font-size:25px;letter-spacing:-.02em}
-  .price-min .precio-oferta{font-size:25px}
-  .price-may{font-size:20px;padding:4px 10px}
+  /* dos columnas fijas: con el precio grande, en flex algunas tarjetas apilaban
+     los precios y otras no, y quedaban desparejas */
+  .prices{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px;align-items:end}
+  .price-min{font-size:22px;letter-spacing:-.02em}
+  .price-min .precio-oferta{font-size:22px}
+  .price-may{font-size:17px;padding:4px 7px}
   .price-label{font-size:11px}
 }
 /* el subtotal de lo que ya está en el pedido, debajo del botón Agregar */
