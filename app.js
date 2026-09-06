@@ -273,6 +273,12 @@ function _catalogAllViewIsVisible(){
 }
 
 
+/* "100G" -> "100g", "1KG" -> "1kg". Sólo cambia lo que se muestra: el valor real
+   viaja en data-opt, porque es el que usa el resto de la app para el precio. */
+function _medidaCorta(o){
+  return String(o).replace(/\s*KG\s*$/i,'kg').replace(/\s*GRS?\s*$/i,'g').replace(/\s*G\s*$/,'g');
+}
+
 function _sortOpts(opts){
   // kg first: order by weight descending (1kg > 500g > 100g > und)
   function _optWeight(o){
@@ -509,7 +515,7 @@ function renderCard(p,prefix,prioritizeImage){
   // opts[0] (el kilo), que es la medida por defecto que usa el resto de la app.
   const optsVis=opts.slice().reverse();
   h+=`<div class="opt-btns${opts.length>=4?' opt-btns-4':''}${opts.length===1?' opt-btns-1':''}">`;
-  optsVis.forEach(o=>{h+=`<button class="opt-btn${o===opts[0]?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
+  optsVis.forEach(o=>{h+=`<button class="opt-btn${o===opts[0]?' active':''}" data-opt="${o.replace(/"/g,'&quot;')}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${_medidaCorta(o)}</button>`});
   h+='</div>';
   if(sabores&&sabores.length){
     h+=`<div class="sabor-row"><label class="sabor-label" for="${id}_sab">Sabor:</label><select class="sabor-select" id="${id}_sab" onchange="selSabor('${id}',this.value)">`;
@@ -557,7 +563,7 @@ function _animPrecio(cont,pintar){
 
 function selOpt(id,opt,p1,p2){
   const el=document.getElementById(id);if(!el)return;
-  el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));
+  el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',(b.dataset.opt||b.textContent)===opt));
   const pid=parseInt(el.dataset.pid,10);
   const p=PRODS.find(x=>x[0]===pid);
   const oferta=p&&p[12]&&p[12].oferta?p[12].oferta:0;
@@ -1246,7 +1252,7 @@ function _updateSuggestions(value){
     if(seen.has(nombre))continue;
     seen.add(nombre);
     top.push(nombre);
-    if(top.length>=6)break;
+    if(top.length>=6)break;   // las mismas de siempre; ocupan menos por CSS
   }
   if(!top.length&&!catMatches.length){box.classList.remove('active');box.innerHTML='';return;}
   const catHTML=catMatches.map(c=>
