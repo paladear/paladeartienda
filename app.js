@@ -396,7 +396,7 @@ function renderCatsUI(opts){
   // El dropdown está oculto casi siempre: construir sus imágenes recién al abrirlo.
   const dg=document.getElementById('catsDropdownGrid');
   if(dg&&opts.dropdown&&dg.dataset.renderKey!==renderKey){
-    dg.innerHTML=`<button class="cats-dd-btn" style="background:var(--azul-dark)" onclick="window.switchTab('minorista');volverInicio();closeCatsDropdown()"><span class="cats-dd-thumb all"><img src="icon-minorista.webp" alt="" aria-hidden="true"></span><div class="nm">Todos los productos</div></button>`+sortedCats.map((c,i)=>`<button class="cats-dd-btn" style="background:var(--cat${i%4})" onclick="hvGoCat('${c.id}');closeCatsDropdown()"><span class="cats-dd-thumb"><img src="cat-${c.id}.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.display='none'"></span><div class="nm">${c.n}</div></button>`).join('');
+    dg.innerHTML=`<button class="cats-dd-btn" style="background:var(--azul-dark)" onclick="window.switchTab('minorista');volverInicio();closeCatsDropdown()"><span class="cats-dd-thumb all"><img src="icon-minorista.webp" alt="" aria-hidden="true"></span><div class="nm">Todos los productos</div></button>`+sortedCats.map((c,i)=>`<button class="cats-dd-btn" style="background:var(--cat${i%4})" onclick="hvGoCat('${c.id}');closeCatsDropdown()"><span class="cats-dd-thumb"><img src="cat-${c.id}.webp" alt="" aria-hidden="true" loading="lazy" onerror="this.onerror=null;this.src='cat-${c.id}.png'"></span><div class="nm">${c.n}</div></button>`).join('');
     dg.dataset.renderKey=renderKey;
   }
 }
