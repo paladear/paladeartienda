@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=16">
+<link rel="preload" as="script" href="app.js?v=17">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -760,7 +760,6 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
 /* ── DESKTOP: sidebar + área productos ── */
 .main-layout{display:block}
 @media(min-width:768px){
-  .main-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
   .cats-sidebar{position:sticky;top:165px;padding-right:6px;max-height:calc(100vh - 185px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(84,118,146,.35) transparent}
   .cats-sidebar::-webkit-scrollbar{width:6px}
   .cats-sidebar::-webkit-scrollbar-track{background:transparent}
@@ -2140,15 +2139,14 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 
   <!-- Promo Mundial finalizada y retirada. -->
 
+  <!-- Categorías: una sola fila arriba, sirve para celular y compu -->
+  <div class="cat-chips" id="catsChips" role="group" aria-label="Categorías" style="display:none"></div>
+
   <!-- MÓVIL: productos -->
   <div class="mobile-prods-area hidden" id="mobileProdsArea"></div>
 
-  <!-- DESKTOP: sidebar + área -->
+  <!-- DESKTOP: área de productos a todo el ancho -->
   <div class="main-layout">
-    <div class="cats-sidebar">
-      <h2>Categorías</h2>
-      <div id="catsSidebarList"></div>
-    </div>
     <div id="desktopProdsArea">
       <!-- Carruseles de inicio - se rellena con JS -->
     </div>
@@ -2418,7 +2416,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=16';
+    s.src='app.js?v=17';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2661,6 +2659,23 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 .cart-item.resaltado{animation:palResaltarItem 2.6s ease-out;border-radius:12px}
 @media(prefers-reduced-motion:reduce){
   .prices.precio-sale,.prices.precio-entra,.cart-item.resaltado{animation:none}
+}
+
+/* ===== Categorías en una fila arriba (antes: columna lateral) ===== */
+.cat-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth}
+.cat-chips::-webkit-scrollbar{display:none}
+.cat-chip{flex:0 0 auto;border-radius:10px;padding:9px 15px;border:2px solid transparent;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;
+  letter-spacing:.2px;white-space:nowrap;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  transition:filter .18s ease,border-color .18s ease,box-shadow .18s ease}
+.cat-chip:hover{filter:brightness(1.1)}
+.cat-chip.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 3px 12px rgba(0,0,0,.2)}
+body.hv-home .cat-chips,body.hv-ofertas .cat-chips,body.hv-favoritos .cat-chips{display:none!important}
+@media(max-width:767px){
+  .cat-chips{gap:6px;padding:2px 0 12px}
+  .cat-chip{padding:8px 12px;font-size:12px;border-radius:9px}
 }
 </style>
 <div id="tutbOverlay">
