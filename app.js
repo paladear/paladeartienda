@@ -520,7 +520,7 @@ function renderCard(p,prefix,prioritizeImage){
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
   h+=`</div>`;
   if(p[3]&&p[3]!=='Varios'&&p[3]!=='Granel')h+=`<div class="pcard-brand">${p[3]}</div>`;
-  h+='<div class="opt-btns">';
+  h+=`<div class="opt-btns${opts.length>=4?' opt-btns-4':''}">`;
   opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
   h+='</div>';
   if(sabores&&sabores.length){
@@ -541,7 +541,7 @@ function renderCard(p,prefix,prioritizeImage){
   if(cartItem){
     h+=`<div class="card-cart-actions">
       <button class="card-del-btn" onclick="cardDelProduct(${p[0]})" title="Quitar del carrito">${TRASH_SVG}</button>
-      <button class="card-edit-btn" onclick="openCart()" title="Editar en carrito">${EDIT_SVG} Ver en carrito</button>
+      <button class="card-edit-btn" onclick="openCart();_resaltarEnCarrito(${p[0]})" title="Editar en el carrito">${EDIT_SVG} Editar</button>
     </div>`;
   }
   h+=`</div></div>`;
@@ -553,15 +553,47 @@ function cardDelProduct(pid){
   updateCartCount();
   _reRenderCard(pid);
 }
+/* El precio viejo se achica y se va, el nuevo entra desde abajo agrandándose.
+   Mismo movimiento que usa La Natural al cambiar de medida. */
+function _animPrecio(cont,pintar){
+  if(!cont||matchMedia('(prefers-reduced-motion: reduce)').matches){pintar();return;}
+  cont.classList.remove('precio-entra');
+  cont.classList.add('precio-sale');
+  setTimeout(function(){
+    pintar();
+    cont.classList.remove('precio-sale');
+    cont.classList.add('precio-entra');
+  },110);
+}
+
 function selOpt(id,opt,p1,p2){
   const el=document.getElementById(id);if(!el)return;
   el.querySelectorAll('.opt-btn').forEach(b=>b.classList.toggle('active',b.textContent===opt));
   const pid=parseInt(el.dataset.pid,10);
   const p=PRODS.find(x=>x[0]===pid);
   const oferta=p&&p[12]&&p[12].oferta?p[12].oferta:0;
-  el.querySelector('.price-min').innerHTML=_priceMinContent(p1,oferta);
-  el.querySelector('.price-may').textContent='$'+fmt(p2);
   el.dataset.opt=opt;
+  _animPrecio(el.querySelector('.prices'),function(){
+    el.querySelector('.price-min').innerHTML=_priceMinContent(p1,oferta);
+    el.querySelector('.price-may').textContent='$'+fmt(p2);
+  });
+}
+
+/* "Editar" abre el carrito y lleva hasta ese producto, resaltándolo.
+   Un producto puede estar en varias medidas a la vez: se resaltan todas
+   sus filas y el scroll va a la primera. */
+function _resaltarEnCarrito(pid){
+  setTimeout(function(){
+    var cajas=document.querySelectorAll('#cartBody .cart-item[data-pid="'+pid+'"]');
+    if(!cajas.length)return;
+    cajas[0].scrollIntoView({block:'center',behavior:'smooth'});
+    Array.prototype.forEach.call(cajas,function(c){
+      c.classList.remove('resaltado');
+      void c.offsetWidth;                        // reinicia la animación
+      c.classList.add('resaltado');
+      setTimeout(function(){c.classList.remove('resaltado');},2600);
+    });
+  },320);                                        // después de que el panel terminó de entrar
 }
 function selSabor(id,sab){const el=document.getElementById(id);el.dataset.sabor=sab}
 function chgQty(id,d){const el=document.getElementById(id+'_q');let v=parseInt(el.textContent)+d;if(v<1)v=1;el.textContent=v}
@@ -1090,7 +1122,7 @@ function renderCart(){
       :`<div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',-1)">−</button><span style="font-size:12px;font-weight:700;min-width:32px;text-align:center">${qLabel}</span><button class="qty-btn" style="width:26px;height:26px;font-size:15px" onclick="cartQty('${it.key}',1)">+</button></div>`;
     const trashSvg='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
     const editBtn=isMix?`<button onclick="editBuilder('${it.key}')" title="Editar" style="background:none;border:1.5px solid var(--azul);color:var(--azul-dark);border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:4px;white-space:nowrap">✏ Editar</button>`:'';
-    h+=`<div class="cart-item"><div class="cart-item-name">${_tc(it.n)}${subLabel}</div>${controls}${editBtn}${priceHTML}<button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
+    h+=`<div class="cart-item" data-pid="${it.pid}"><div class="cart-item-name">${_tc(it.n)}${subLabel}</div>${controls}${editBtn}${priceHTML}<button class="cart-item-del" onclick="cartDel('${it.key}')" title="Eliminar">${trashSvg}</button></div>`;
   });
   body.innerHTML=h;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
