@@ -388,20 +388,8 @@ function renderCatsUI(opts){
   const allActive=!activeCatId&&!_activeOfertasMes;
   const renderKey=sortedCats.map(c=>c.id).join('|')+';'+(activeCatId||'all')+';'+(_activeOfertasMes?'of':'');
 
-  // Categorías: una sola fila arriba de los productos (antes era una columna
-  // lateral con scroll propio, que se comía 260px de ancho en la compu).
-  const cc=document.getElementById('catsChips');
-  const mostrar=opts.sidebar||_catsSidebarShouldRender();
-  if(cc){
-    cc.style.display=mostrar?'':'none';
-    if(mostrar&&cc.dataset.renderKey!==renderKey){
-      cc.innerHTML=`<button class="cat-chip${allActive?' active':''}" style="background:var(--azul-dark)" onclick="volverInicio()">Todos los productos</button>`+sortedCats.map((c,i)=>`<button class="cat-chip${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')">${c.n}</button>`).join('');
-      cc.dataset.renderKey=renderKey;
-      // la categoría elegida queda a la vista, sin mover la página
-      const act=cc.querySelector('.cat-chip.active');
-      if(act)cc.scrollLeft=Math.max(0,act.offsetLeft-(cc.clientWidth-act.offsetWidth)/2);
-    }
-  }
+  // Las categorías se eligen desde el panel que abre el botón ☰ del recuadro de arriba
+  // (y desde la hamburguesa del header). No hay lista de chips.
 
   // El dropdown está oculto casi siempre: construir sus imágenes recién al abrirlo.
   const dg=document.getElementById('catsDropdownGrid');
@@ -443,9 +431,9 @@ function selectCat(catId,productId,navOpts){
         area.scrollIntoView({behavior:'smooth',block:'start'});
       }
     },60);
-  }else{
-    area.scrollIntoView({behavior:'smooth',block:'start'});
   }
+  // Antes acá había un scroll automático hasta los productos. Se sacó a pedido de Juani:
+  // los productos ya se ven, y así el botón de categorías queda siempre a la vista.
 }
 
 let _activeOfertasMes=false;
@@ -463,7 +451,14 @@ function volverInicio(){
 
 function renderProdsHTML(cat,prods,prefix,priorityProductId){
   let h='<button class="back-btn" onclick="volverInicio()">← Volver a todos los productos</button>';
-  h+=`<h2 style="font-size:22px;color:var(--azul-dark);margin-bottom:16px;font-weight:700">${cat.n}</h2>`;
+  // Mismo recuadro que en "Todos los productos", pero con el rubro elegido y su ícono.
+  h+=`<div class="catalog-intro">
+      <div>
+        <h1>${cat.n}</h1>
+      </div>
+      <img class="catalog-intro-ic" src="cat-${cat.id}.png" alt="" aria-hidden="true" loading="lazy" decoding="async" onerror="this.style.display='none'">
+      <button class="catalog-filter-btn" onclick="toggleCatsDropdown()"><span aria-hidden="true">☰</span> Categorías</button>
+    </div>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
   h+='<div class="prod-grid">';
   prods.forEach((p,i)=>{h+=renderCard(p,prefix,i<4||p[0]===priorityProductId)});
