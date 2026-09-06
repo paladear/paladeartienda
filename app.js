@@ -528,7 +528,7 @@ function renderCard(p,prefix,prioritizeImage){
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
   h+=`</div>`;
   if(p[3]&&p[3]!=='Varios'&&p[3]!=='Granel')h+=`<div class="pcard-brand">${p[3]}</div>`;
-  h+=`<div class="opt-btns${opts.length>=4?' opt-btns-4':''}">`;
+  h+=`<div class="opt-btns${opts.length>=4?' opt-btns-4':''}${opts.length===1?' opt-btns-1':''}">`;
   opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
   h+='</div>';
   if(sabores&&sabores.length){
