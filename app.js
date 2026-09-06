@@ -281,6 +281,7 @@ function _agregar100g(opts){
   if(pesos.some(function(x){return x.g===100;}))return opts;   // ya la tiene
   var min=pesos.reduce(function(a,b){return a.g<b.g?a:b;});
   if(min.g<250)return opts;                           // ya arranca por debajo de 250 g
+  if(min.g>=1000)return opts;                         // se vende sólo por kilo entero (ej. azúcar negra): no se fracciona
   var base=opts[min.k];
   if(!Array.isArray(base)||!base.length)return opts;
   var f=100/min.g;                                    // se escala desde la medida más chica
