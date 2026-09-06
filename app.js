@@ -179,6 +179,22 @@ document.addEventListener('pointerdown',function(e){
     }
   };
   // Hamburguesa del compacto: abre el panel de categorías de la pestaña activa
+  // La X del buscador: borra lo escrito y vuelve a mostrar todo.
+  window.compactLimpiarBusqueda=function(){
+    var inp=document.getElementById('compactSearchInput');
+    if(inp){inp.value='';inp.focus();}
+    var sug=document.getElementById('searchSuggestions');
+    if(sug){sug.classList.remove('active');sug.innerHTML='';}
+    if(typeof window.compactOnSearch==='function')window.compactOnSearch('');
+    var w=document.getElementById('compactSearchWrap');
+    if(w)w.classList.remove('con-texto');
+  };
+  // Muestra u oculta la X según haya algo escrito
+  window.compactToggleX=function(v){
+    var w=document.getElementById('compactSearchWrap');
+    if(w)w.classList.toggle('con-texto',!!(v&&v.length));
+  };
+
   window.compactOpenCats=function(){
     const tab=(typeof currentTab!=='undefined')?currentTab:'minorista';
     if(tab==='mayorista'){
