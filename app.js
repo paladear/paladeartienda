@@ -284,7 +284,9 @@ function _agregar100g(opts){
   var base=opts[min.k];
   if(!Array.isArray(base)||!base.length)return opts;
   var f=100/min.g;                                    // se escala desde la medida más chica
-  opts['100g']=base.map(function(v){return Math.round(v*f);});
+  // la etiqueta sigue la capitalización de las otras ("250G" -> "100G", "250g" -> "100g")
+  var etiqueta=/[A-Z]/.test(min.k)?'100G':'100g';
+  opts[etiqueta]=base.map(function(v){return Math.round(v*f);});
   return opts;
 }
 
