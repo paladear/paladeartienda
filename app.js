@@ -4835,7 +4835,11 @@ function toggleCatsDropdown(){
   if(_catsDropOpen){
     overlay.classList.add('open');
     panel.style.display='block';
-    panel.style.animation='slideUp .22s ease';
+    // La animación la elige el CSS (sube desde abajo en el celular, baja desde el
+    // botón en la compu). Se reinicia a mano para que corra cada vez que se abre.
+    panel.style.animation='none';
+    void panel.offsetWidth;
+    panel.style.animation='';
     _palPushOverlay('cats');
   } else {
     overlay.classList.remove('open');
