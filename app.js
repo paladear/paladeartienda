@@ -1643,6 +1643,10 @@ function _driveToImg(raw){
 // Fotos de productos servidas desde Cloudinary (public_id = ID del artículo).
 // El Apps Script del dueño sube cada foto acá con ese mismo ID.
 const _CLOUD='hswu4zpv';
+/* Ancho de las fotos de tarjeta: las tarjetas miden ~164px en el celular y ~235px
+   en la compu, así que se pide el doble para que se vean nítidas en retina.
+   El zoom pide aparte una de 1200. */
+function _anchoFotoTarjeta(){ return (typeof window!=='undefined'&&window.innerWidth>=768)?400:320; }
 function _prodImg(id,w){ return id?('https://res.cloudinary.com/'+_CLOUD+'/image/upload/f_auto,q_auto,w_'+(w||500)+'/'+id):''; }
 
 // Parsea "250g/500g/1kg" o "1 unidad" y devuelve array de claves de opciones válidas
@@ -1718,7 +1722,7 @@ function _hydrateMinCatalog(data,source){
   // se vean nítidas en pantallas retina, sin traer de más.
   // El catálogo preparado puede venir con cualquier ancho: se normaliza acá, así
   // el ajuste vale aunque el archivo se regenere con otro valor.
-  var _anchoFoto=window.innerWidth<768?',w_320/':',w_400/';
+  var _anchoFoto=',w_'+_anchoFotoTarjeta()+'/';
   var _reAncho=/,w_\d+\//;
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
@@ -1770,7 +1774,7 @@ function sincronizarDesdeSheets(){
         const esKgNombre=/x kg|xkg|x 1 kg| kg/i.test(nombre);
         const esKg=_infCants.length?esKgInfo:esKgNombre;
         const esEspecia=['especias','infusiones'].includes(cat.id);
-        const imgUrl=(inf.imagen||imgPrecios)?_prodImg(productId,320):'';
+        const imgUrl=(inf.imagen||imgPrecios)?_prodImg(productId,_anchoFotoTarjeta()):'';
         const infoText=inf.info||'';
         const sabores=inf.sabores||null;
         let opts;
@@ -3827,7 +3831,7 @@ function cargarMayorista() {
         const inf          = infoMay[artId] || infoMay[_norm(nombre)] || {};
         const bulto        = inf.bulto  || 1;
         const sabores      = inf.sabores || null;
-        const imgUrl       = inf.imagen ? _prodImg(artId,320) : '';
+        const imgUrl       = inf.imagen ? _prodImg(artId,_anchoFotoTarjeta()) : '';
         const nombreFinal  = inf.nombre  || nombre;
         const precioTotal  = precio * bulto;
 
