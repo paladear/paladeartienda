@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=31">
+<link rel="preload" as="script" href="app.js?v=32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2417,7 +2417,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=31';
+    s.src='app.js?v=32';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2793,14 +2793,14 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
    dos señales permanentes, en vez del cartel que tapaba la pantalla. */
 
 /* 1) chapita sobre el botón del carrito */
-.fab-may-tag{position:absolute;left:50%;top:-13px;transform:translateX(-50%) scale(.9);
+.fab-may-tag{position:absolute;right:0;left:auto;top:-13px;transform:scale(.9);transform-origin:100% 50%;
   white-space:nowrap;background:#dff0fb;color:var(--azul-dark);
   border:1.5px solid var(--azul-mid);border-radius:999px;
   padding:2px 9px;font-size:10px;font-weight:800;letter-spacing:.2px;
   box-shadow:0 2px 8px rgba(20,45,70,.22);
   opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
 .fab-may-tag::before{content:"✓ "}
-body.mayorista-activo .fab-may-tag{opacity:1;transform:translateX(-50%) scale(1)}
+body.mayorista-activo .fab-may-tag{opacity:1;transform:scale(1)}
 body.mayorista-activo #cart-fab{box-shadow:0 4px 22px rgba(58,85,114,.55),0 0 0 3px rgba(158,204,216,.85)}
 
 /* 2) en cada tarjeta, el precio de +$80.000 pasa a ser el que manda */
