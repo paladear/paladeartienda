@@ -4625,6 +4625,7 @@ function _doSearchMay(val) {
 window.selectCat=selectCat;
 window.addToCart=addToCart;
 window.cardDelProduct=cardDelProduct;
+window._resaltarEnCarrito=_resaltarEnCarrito;
 window.showInfo=showInfo;
 window.openCart=openCart;
 window.closeCart=closeCart;
