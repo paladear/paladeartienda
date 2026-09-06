@@ -827,12 +827,14 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
   .search-item-name{font-size:13px}
   .search-item-arrow{font-size:22px}
 }
-.opt-btns{display:flex;gap:3px;flex-wrap:nowrap;margin-bottom:8px}
+.opt-btns{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:5px;margin-bottom:8px}
+    .opt-btns-4{gap:4px}
 .chat-quick-faqs{padding:8px 4px;display:flex;flex-direction:column;gap:6px}
 .chat-faq-title{font-size:12px;font-weight:700;color:var(--azul-dark);margin-bottom:2px;opacity:.8}
 .chat-faq-btn{background:var(--azul-light);border:1.5px solid var(--azul-mid);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--azul-dark);cursor:pointer;text-align:left;transition:all .2s;font-family:inherit}
 .chat-faq-btn:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
-.opt-btn{flex-shrink:1;min-width:0;text-align:center;white-space:nowrap;border-radius:8px;padding:4px 2px;font-size:10.5px;font-weight:700;transition:all .2s;background:var(--muted);color:var(--azul-dark);border:2px solid transparent}
+.opt-btn{width:100%;min-width:0;display:flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:8px;padding:7px 3px;font-size:12.5px;font-weight:700;min-height:34px;transition:background .18s ease,border-color .18s ease,color .18s ease;background:var(--muted);color:var(--azul-dark);border:2px solid transparent}
+    .opt-btns-4 .opt-btn{font-size:11px;padding:7px 1px;letter-spacing:-.01em}
 .opt-btn.active{background:var(--azul);color:#fff;border-color:var(--azul)}
 .opt-btn:hover:not(.active){border-color:var(--azul-mid)}
 .prices{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
@@ -876,8 +878,9 @@ textarea.co-input{resize:vertical;min-height:60px;font-family:inherit}
   .pcard-name{font-size:12.5px;line-height:1.25}
   .pcard-brand{font-size:10.5px;margin-bottom:6px}
   .info-btn{width:24px;height:24px;font-size:12px}
-  .opt-btns{gap:3px;margin-bottom:7px}
-  .opt-btn{padding:4px 2px;font-size:9.8px;border-width:1.5px}
+  .opt-btns{gap:4px;margin-bottom:7px}
+  .opt-btn{padding:6px 2px;font-size:11.5px;min-height:31px;border-width:1.5px}
+      .opt-btns-4 .opt-btn{font-size:10px;padding:6px 1px}
   .sabor-row{display:block;margin-bottom:7px}
   .sabor-label{display:block;font-size:10px;margin-bottom:3px}
   .sabor-select{width:100%;min-width:0;padding:5px 6px;font-size:10.5px}
