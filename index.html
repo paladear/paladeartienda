@@ -2695,6 +2695,18 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 @media(max-width:767px){
   .pcard-body .card-cart-actions{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
 }
+
+/* ===== El recuadro de arriba es el selector de rubro =====
+   El bloque del título se encoge y parte en dos renglones antes de empujar
+   al botón fuera del recuadro (pasaba en rubros de nombre largo). */
+.catalog-intro>div:first-child{min-width:0;flex:1 1 auto}
+.catalog-intro h1{overflow-wrap:anywhere}
+.catalog-intro-ic{margin-left:0}
+/* el botón de categorías también en la compu, no sólo en el celular */
+.catalog-filter-btn{display:inline-flex}
+@media(min-width:768px){
+  .catalog-filter-btn{padding:10px 16px;font-size:13px}
+}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
