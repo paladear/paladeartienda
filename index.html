@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=29">
+<link rel="preload" as="script" href="app.js?v=30">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -1647,8 +1647,11 @@ body.compact-on .compact-header{transform:translateY(0);pointer-events:auto}
 <div class="compact-header" id="compactHeader">
   <div class="compact-inner">
     <img class="compact-logo" src="android-chrome-192x192.png" alt="Paladear" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer">
-    <div class="search-wrap-compact">
-      <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value)" onblur="_hideSuggestionsDelayed();compactSearchBlur()" aria-label="Buscar productos">
+    <div class="search-wrap-compact" id="compactSearchWrap">
+      <input class="compact-search" id="compactSearchInput" type="text" placeholder="Buscar productos..." oninput="compactOnSearch(this.value);_updateSuggestions(this.value);compactToggleX(this.value)" onblur="_hideSuggestionsDelayed();compactSearchBlur()" aria-label="Buscar productos">
+      <button class="compact-search-x" type="button" onmousedown="event.preventDefault()" onclick="compactLimpiarBusqueda()" aria-label="Borrar la búsqueda" title="Borrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
       <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
     <button class="compact-hamb" onclick="compactOpenCats()" aria-label="Categorías">
@@ -2414,7 +2417,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=29';
+    s.src='app.js?v=30';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2740,6 +2743,46 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   .cats-dd-thumb.all img{width:28px;height:28px}
 }
 @keyframes catsDropIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ===== X para borrar la búsqueda (aparece sólo si hay algo escrito) ===== */
+.compact-search-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:26px;height:26px;border:0;border-radius:50%;background:rgba(84,118,146,.13);
+  color:var(--azul-dark);display:none;align-items:center;justify-content:center;
+  cursor:pointer;padding:0;transition:background .18s ease}
+.compact-search-x svg{width:13px;height:13px;display:block}
+.compact-search-x:hover{background:rgba(84,118,146,.26)}
+#compactSearchWrap.con-texto .compact-search-x{display:flex}
+#compactSearchWrap.con-texto .compact-search{padding-right:40px}
+
+/* ===== Sugerencias más compactas: las mismas 6, tapan menos las tarjetas ===== */
+.search-suggestions{max-height:208px;padding:5px}
+.search-suggestion-item{padding:6px 10px;font-size:13.5px;border-radius:8px;gap:7px}
+.search-suggestion-item.sug-cat{margin-bottom:1px}
+
+/* ===== Tarjetas: más anchas y menos altas, sin apretar ===== */
+@media(max-width:767px){
+  #mainContainer{padding-left:11px;padding-right:11px}
+  .prod-grid{gap:9px}
+  .pcard-img{height:120px}
+  .pcard-body{padding:8px 9px 9px}
+  .opt-btns{margin-bottom:5px}
+  .prices{margin-bottom:6px}
+  .qty-row{margin-bottom:6px}
+  .qty-btn{width:29px;height:29px}
+  .add-btn{padding:8px 3px}
+}
+/* el subtotal y los botones de abajo, sin la línea que los separaba */
+.card-cart-actions{border-top:0;margin-top:6px;padding-top:0}
+.pcard-body .card-cart-actions{margin-left:0;margin-right:0;padding-left:0;padding-right:0}
+
+/* ===== El producto resaltado en el carrito: sólo se aclara el fondo,
+        sin el anillo oscuro que se comía las letras de los costados ===== */
+@keyframes palResaltarItem{
+  0%{background:var(--azul-light)}
+  70%{background:var(--azul-light)}
+  100%{background:transparent}
+}
+.cart-item.resaltado{animation:palResaltarItem 2.6s ease-out;border-radius:10px;box-shadow:none}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
