@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=17">
+<link rel="preload" as="script" href="app.js?v=18">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2416,7 +2416,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=17';
+    s.src='app.js?v=18';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2676,6 +2676,16 @@ body.hv-home .cat-chips,body.hv-ofertas .cat-chips,body.hv-favoritos .cat-chips{
 @media(max-width:767px){
   .cat-chips{gap:6px;padding:2px 0 12px}
   .cat-chip{padding:8px 12px;font-size:12px;border-radius:9px}
+}
+
+/* una sola medida ("1 UNIDAD"): que no se estire a lo ancho de la tarjeta */
+.opt-btns-1{grid-auto-columns:max-content;justify-content:start}
+/* En la compu las tarjetas ahora son más anchas (se fue la columna lateral):
+   el precio puede ser grande como en La Natural. */
+@media(min-width:768px){
+  .price-min{font-size:21px;letter-spacing:-.02em}
+  .price-min .precio-oferta{font-size:21px}
+  .price-may{font-size:16px}
 }
 </style>
 <div id="tutbOverlay">
