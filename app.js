@@ -1244,8 +1244,9 @@ function _updateSuggestions(value){
 
   // Rubros que matchean el término (hasta 2), para saltar directo a la categoría.
   // Solo aplica en minorista: mayorista tiene su propio mecanismo de categorías.
+  // Sin rubros en el predictor: Juani lo pidió sólo con productos.
   let catMatches=[];
-  if(tab!=='mayorista'&&typeof CATS!=='undefined'){
+  if(false&&tab!=='mayorista'&&typeof CATS!=='undefined'){
     catMatches=CATS.map(c=>{
       const cn=_norm(c.n);
       let score=0;
@@ -3084,14 +3085,10 @@ function _triggerMayoristaConfetti(){
   ctx.clearRect(0,0,_confCanvas.width,_confCanvas.height);
 
   setTimeout(function(){
-    function getConePos(id){
-      var el=document.getElementById(id);
-      if(!el)return{x:window.innerWidth/2,y:window.innerHeight/3};
-      var r=el.getBoundingClientRect();
-      return{x:r.left+r.width/2,y:r.top+r.height*0.25};
-    }
-    var oL=getConePos('mayConL');
-    var oR=getConePos('mayConR');
+    // Sale desde los dos costados, a media altura. (Antes salía de dos puntos del
+    // cartel; como el cartel ya no está, terminaba saliendo del centro.)
+    var oL={x:-10,y:window.innerHeight*0.62};
+    var oR={x:window.innerWidth+10,y:window.innerHeight*0.62};
     var pieces=[];
 
     function spawnFrom(ox,oy,dirSign){
