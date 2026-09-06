@@ -456,7 +456,7 @@ function renderProdsHTML(cat,prods,prefix,priorityProductId){
       <div>
         <h1>${cat.n}</h1>
       </div>
-      <img class="catalog-intro-ic" src="cat-${cat.id}.png" alt="" aria-hidden="true" loading="lazy" decoding="async" onerror="this.style.display='none'">
+      <img class="catalog-intro-ic" src="cat-${cat.id}.png" alt="" aria-hidden="true" decoding="async" onerror="this.style.display='none'">
       <button class="catalog-filter-btn" onclick="toggleCatsDropdown()"><span aria-hidden="true">☰</span> Categorías</button>
     </div>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
