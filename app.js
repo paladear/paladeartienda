@@ -407,11 +407,19 @@ function renderCatsUI(opts){
   const allActive=!activeCatId&&!_activeOfertasMes;
   const renderKey=sortedCats.map(c=>c.id).join('|')+';'+(activeCatId||'all')+';'+(_activeOfertasMes?'of':'');
 
-  // Desktop sidebar
-  const sl=document.getElementById('catsSidebarList');
-  if(sl&&(opts.sidebar||_catsSidebarShouldRender())&&sl.dataset.renderKey!==renderKey){
-    sl.innerHTML=`<button class="cat-list-btn${allActive?' active':''}" style="background:var(--azul-dark)" onclick="volverInicio()"><div class="nm">Todos los productos</div></button>`+sortedCats.map((c,i)=>`<button class="cat-list-btn${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')"><div class="nm">${c.n}</div></button>`).join('');
-    sl.dataset.renderKey=renderKey;
+  // Categorías: una sola fila arriba de los productos (antes era una columna
+  // lateral con scroll propio, que se comía 260px de ancho en la compu).
+  const cc=document.getElementById('catsChips');
+  const mostrar=opts.sidebar||_catsSidebarShouldRender();
+  if(cc){
+    cc.style.display=mostrar?'':'none';
+    if(mostrar&&cc.dataset.renderKey!==renderKey){
+      cc.innerHTML=`<button class="cat-chip${allActive?' active':''}" style="background:var(--azul-dark)" onclick="volverInicio()">Todos los productos</button>`+sortedCats.map((c,i)=>`<button class="cat-chip${activeCatId===c.id?' active':''}" style="background:var(--cat${i%4})" onclick="selectCat('${c.id}')">${c.n}</button>`).join('');
+      cc.dataset.renderKey=renderKey;
+      // la categoría elegida queda a la vista, sin mover la página
+      const act=cc.querySelector('.cat-chip.active');
+      if(act)cc.scrollLeft=Math.max(0,act.offsetLeft-(cc.clientWidth-act.offsetWidth)/2);
+    }
   }
 
   // El dropdown está oculto casi siempre: construir sus imágenes recién al abrirlo.
