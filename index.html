@@ -2792,15 +2792,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
    Al superar los $80.000 el body toma .mayorista-activo y quedan encendidas
    dos señales permanentes, en vez del cartel que tapaba la pantalla. */
 
-/* 1) chapita sobre el botón del carrito */
-.fab-may-tag{position:absolute;right:10px;left:auto;top:-29px;transform:scale(.9);transform-origin:100% 100%;
-  white-space:nowrap;background:#dff0fb;color:var(--azul-dark);
-  border:1.5px solid var(--azul-mid);border-radius:999px;
-  padding:2px 9px;font-size:10px;font-weight:800;letter-spacing:.2px;
-  box-shadow:0 2px 8px rgba(20,45,70,.22);
-  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
-.fab-may-tag::before{content:"✓ "}
-body.mayorista-activo .fab-may-tag{opacity:1;transform:scale(1)}
+/* (la chapita sobre el carrito se quitó: era demasiado) */
 body.mayorista-activo #cart-fab{box-shadow:0 4px 22px rgba(58,85,114,.55),0 0 0 3px rgba(158,204,216,.85)}
 
 /* 2) en cada tarjeta, el precio de +$80.000 pasa a ser el que manda */
@@ -2818,7 +2810,7 @@ body.mayorista-activo .prices>div:first-child .price-min{color:var(--muted-fg);o
 /* ===== Tocar rápido el + no debe disparar el zoom del doble toque =====
    `manipulation` deja el pinch para agrandar, pero saca el doble-toque-zoom
    y el retardo de 300 ms al tocar. */
-html{touch-action:manipulation}
+html,body{touch-action:manipulation}
 button,.opt-btn,.qty-btn,.add-btn,.cat-chip,.cats-dd-btn,.card-edit-btn,.card-del-btn,
 .catalog-filter-btn,.bnav a,.bnav button,#cart-fab{touch-action:manipulation}
 </style>
