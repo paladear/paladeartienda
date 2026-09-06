@@ -784,6 +784,9 @@ function updateCartCount(){
   document.getElementById('cartCount').textContent=cart.length;
   const totalMin=cart.reduce((a,i)=>a+_itemMin(i),0);
   const isMay=totalMin>=80000;
+  // Mientras el pedido supere los $80.000, toda la página queda "en mayorista":
+  // se enciende la chapita del carrito y las etiquetas de +$80.000 de las tarjetas.
+  document.body.classList.toggle('mayorista-activo',isMay);
   if(isMay&&!_wasMay)_triggerMayoristaConfetti();
   _wasMay=isMay;
   _saveCart();
@@ -3037,7 +3040,7 @@ window.blendAgregarAlCarrito=blendAgregarAlCarrito;
 
 
 /* ── MAYORISTA CONFETTI ── */
-const _CONF_COLORS=['#f28e78','#f7b2a2','#75a8d6','#a9c9e8','#6fb6aa','#a6d2c2','#f4c7ae','#b4c3d8'];
+const _CONF_COLORS=['#547692','#3d5a72','#6888a8','#8fb0cc','#b9d2e6','#dbe9f5','#ffffff','#a9c9e8'];
 let _confCanvas=null;
 
 function _buildConeHTML(id,flipX){
@@ -3067,18 +3070,9 @@ function _buildConeHTML(id,flipX){
 }
 
 function _triggerMayoristaConfetti(){
-  var toast=document.getElementById('mayToast');
-  if(!toast){
-    toast=document.createElement('div');
-    toast.id='mayToast';
-    toast.className='may-toast may-toast-img';
-    toast.innerHTML='<img src="mensajedescuentonuevo.webp" width="1040" height="780" alt="\u00a1Desbloqueaste tu descuento! Tu compra ahora tiene 20% OFF" class="may-toast-imgsrc">';
-    document.body.appendChild(toast);
-  }
-  toast.classList.remove('hide');
-  toast.classList.add('show');
-  setTimeout(function(){toast.classList.add('hide');setTimeout(function(){toast.classList.remove('show','hide');},400);},3400);
-
+  // Sin cartel en el medio: cortaba el flujo de compra. Lo que queda es el confeti
+  // breve y, sobre todo, las señales permanentes que enciende `mayorista-activo`:
+  // la chapita del carrito y las etiquetas de +$80.000 en cada tarjeta.
   if(!_confCanvas){
     _confCanvas=document.createElement('canvas');
     _confCanvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998';
@@ -3396,6 +3390,16 @@ function hvRenderOfertas(){
     });
     var seleccion=Object.keys(porRubro).map(function(k){return porRubro[k];})
       .sort(function(a,b){return b[12].oferta-a[12].oferta;}).slice(0,6);
+    // Si hay menos de 6 rubros con oferta, se completa con los descuentos más
+    // fuertes que quedaron afuera, para que la fila nunca muestre huecos.
+    if(seleccion.length<6){
+      var yaEsta={};
+      seleccion.forEach(function(p){yaEsta[p[0]]=1;});
+      of.slice().sort(function(a,b){return b[12].oferta-a[12].oferta;}).forEach(function(p){
+        if(seleccion.length>=6||yaEsta[p[0]])return;
+        yaEsta[p[0]]=1; seleccion.push(p);
+      });
+    }
     var minis=seleccion.map(function(p){
       var opts=_sortOpts(Object.keys(p[7]));
       var precio=opts.length?p[7][opts[0]][0]:0;
