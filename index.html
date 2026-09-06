@@ -2133,7 +2133,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   <div class="cats-dropdown-list" id="catsDropdownGrid"></div>
 </div>
 
-<div style="max-width:1100px;margin:0 auto;padding:18px 20px" id="mainContainer" data-hv="1">
+<div class="main-container" id="mainContainer" data-hv="1">
   <!-- Buscador y categorías ahora viven en el compact-header (aparecen al scrollear) -->
   <input type="hidden" id="searchInput">
   <!-- Resultados de búsqueda en mobile -->
@@ -2783,6 +2783,10 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   100%{background:transparent}
 }
 .cart-item.resaltado{animation:palResaltarItem 2.6s ease-out;border-radius:10px;box-shadow:none}
+
+/* el ancho del contenedor pasó del style inline a acá, para poder ajustarlo por pantalla */
+.main-container{max-width:1100px;margin:0 auto;padding:18px 20px}
+@media(max-width:767px){.main-container{padding:18px 11px}}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
