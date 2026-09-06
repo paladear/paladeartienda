@@ -270,6 +270,24 @@ function _catalogAllViewIsVisible(){
   return true;
 }
 
+/* 100 g para todo producto por peso cuya medida más chica sea 250 g o más.
+   Vive acá (y no en la planilla) para que valga tanto al leer el Sheet como al
+   hidratar el catálogo preparado, que es lo que ve la primera visita. */
+function _agregar100g(opts){
+  if(!opts)return opts;
+  var claves=Object.keys(opts);
+  var pesos=claves.map(function(k){return {k:k,g:_optToG(k)};}).filter(function(x){return x.g>0;});
+  if(!pesos.length)return opts;                       // producto por unidad: no aplica
+  if(pesos.some(function(x){return x.g===100;}))return opts;   // ya la tiene
+  var min=pesos.reduce(function(a,b){return a.g<b.g?a:b;});
+  if(min.g<250)return opts;                           // ya arranca por debajo de 250 g
+  var base=opts[min.k];
+  if(!Array.isArray(base)||!base.length)return opts;
+  var f=100/min.g;                                    // se escala desde la medida más chica
+  opts['100g']=base.map(function(v){return Math.round(v*f);});
+  return opts;
+}
+
 function _sortOpts(opts){
   // kg first: order by weight descending (1kg > 500g > 100g > und)
   function _optWeight(o){
@@ -1667,6 +1685,7 @@ function _hydrateMinCatalog(data,source){
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
     if(_u&&_u.indexOf(',w_500/')>-1)PRODS[_i][6]=_u.replace(',w_500/',',w_320/');
+    if(PRODS[_i][4]==='kg')_agregar100g(PRODS[_i][7]);
   }
   _MIN_BY_ID=null;
   _markCatalogReady();
@@ -1721,6 +1740,7 @@ function sincronizarDesdeSheets(){
         if(inf.cantidades&&inf.cantidades.length){
           opts={};
           inf.cantidades.forEach(opc=>{opts[opc]=_calcPrecioOpc(opc,p1,p2,esKg)});
+          if(esKg)_agregar100g(opts);
         } else if(esKg&&esEspecia){
           opts={'100g':[Math.round(p1*.1),Math.round(p2*.1)],'500g':[Math.round(p1*.5),Math.round(p2*.5)],'1 kg':[p1,p2]};
         } else if(esKg){
