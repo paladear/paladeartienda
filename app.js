@@ -529,8 +529,11 @@ function renderCard(p,prefix,prioritizeImage){
   if(infoText)h+=`<button class="info-btn" onclick="showInfo(${p[0]})" title="Ver información">ℹ️</button>`;
   h+=`</div>`;
   if(p[3]&&p[3]!=='Varios'&&p[3]!=='Granel')h+=`<div class="pcard-brand">${p[3]}</div>`;
+  // En pantalla van de la más chica a la más grande, pero la marcada sigue siendo
+  // opts[0] (el kilo), que es la medida por defecto que usa el resto de la app.
+  const optsVis=opts.slice().reverse();
   h+=`<div class="opt-btns${opts.length>=4?' opt-btns-4':''}${opts.length===1?' opt-btns-1':''}">`;
-  opts.forEach((o,i)=>{h+=`<button class="opt-btn${i===0?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
+  optsVis.forEach(o=>{h+=`<button class="opt-btn${o===opts[0]?' active':''}" onclick="selOpt('${id}','${o.replace(/'/g,"\\'")}',${p[7][o][0]},${p[7][o][1]})">${o}</button>`});
   h+='</div>';
   if(sabores&&sabores.length){
     h+=`<div class="sabor-row"><label class="sabor-label" for="${id}_sab">Sabor:</label><select class="sabor-select" id="${id}_sab" onchange="selSabor('${id}',this.value)">`;
@@ -539,12 +542,13 @@ function renderCard(p,prefix,prioritizeImage){
   }
   const precioMin=p[7][opts[0]][0];
   const minHTML=`<div class="price-min">${_priceMinContent(precioMin,oferta)}</div>`;
-  h+=`<div class="prices"><div><span class="price-label">Precio${oferta>0?' (Oferta)':''}</span>${minHTML}</div><div><span class="price-label">Con descuento</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
+  h+=`<div class="prices"><div><span class="price-label">Precio${oferta>0?' (Oferta)':''}</span>${minHTML}</div><div><span class="price-label">+$80.000</span><div class="price-may">$${fmt(p[7][opts[0]][1])}</div></div></div>`;
   const aplicaVolumen=cart.reduce((a,it)=>a+_itemMin(it),0)>=80000;
   const acumSub=acumLbl?cart.filter(i=>i.pid===p[0]).reduce((a,it)=>a+(aplicaVolumen?_itemMay(it):_itemMinConOferta(it)),0):0;
   const acumInfo=acumLbl?`<span class="acum-badge">🛒 ${acumLbl} · $${fmt(acumSub)}</span>`:'';
-  h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button>${acumInfo}</div>`;
-  h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">${ADD_CART_ICON} Agregar al pedido</button>`;
+  h+=`<div class="qty-row"><button class="qty-btn" onclick="chgQty('${id}',-1)">−</button><span class="qty-val" id="${id}_q">1</span><button class="qty-btn" onclick="chgQty('${id}',1)">+</button></div>`;
+  h+=`<button class="add-btn" id="${id}_ab" onclick="addToCart(${p[0]},'${id}')">${ADD_CART_ICON} Agregar</button>`;
+  if(acumInfo)h+=`<div class="acum-row">${acumInfo}</div>`;
   // Trash + edit buttons — only shown when item is in cart
   const cartItem=cart.find(i=>i.pid===p[0]);
   if(cartItem){
