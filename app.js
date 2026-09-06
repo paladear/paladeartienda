@@ -238,7 +238,7 @@ function _matchScore(q,t){
   return score;
 }
 function _imgZoomGoBack(){if(history.state&&history.state.modal==='imgZoom')history.back();else{const z=document.getElementById('imgZoom');if(z)z.remove();}}
-function zoomImg(el){let src=el.dataset.src||'';if(!src)return;src=src.replace(/=w\d+/,'=w1200').replace(/\/w_\d+\//,'/w_1200/');const old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<img src="${src}" alt="">`;document.body.appendChild(z);_palPushOverlay('imgZoom',{modal:'imgZoom'});}
+function zoomImg(el){let src=el.dataset.src||'';if(!src)return;src=src.replace(/=w\d+/,'=w1200').replace(/,w_\d+\//,',w_1200/');  // ojo: coma, no barraconst old=document.getElementById('imgZoom');if(old)old.remove();const z=document.createElement('div');z.id='imgZoom';z.onclick=e=>{if(e.target===z||e.target.tagName==='IMG')_imgZoomGoBack();};z.innerHTML=`<img src="${src}" alt="">`;document.body.appendChild(z);_palPushOverlay('imgZoom',{modal:'imgZoom'});}
 window.addEventListener('popstate',function(e){const z=document.getElementById('imgZoom');if(z){z.remove();e.stopImmediatePropagation();}});
 
 /* ── CARRUSELES ── */
@@ -445,18 +445,17 @@ function volverInicio(){
   renderCatsUI();
   renderCarruseles();
   if(typeof _bnavSet==='function')_bnavSet('minorista');
-  const area=window.innerWidth<768?document.getElementById('mobileProdsArea'):document.getElementById('desktopProdsArea');
-  if(area)setTimeout(()=>area.scrollIntoView({behavior:'smooth',block:'start'}),40);
+  // Sin scroll automático: al volver a todos los productos la página se queda donde está,
+  // así el botón de categorías siempre queda a la vista (pedido de Juani).
 }
 
 function renderProdsHTML(cat,prods,prefix,priorityProductId){
   let h='<button class="back-btn" onclick="volverInicio()">← Volver a todos los productos</button>';
   // Mismo recuadro que en "Todos los productos", pero con el rubro elegido y su ícono.
-  h+=`<div class="catalog-intro">
+  h+=`<div class="catalog-intro catalog-intro--rubro">
       <div>
         <h1>${cat.n}</h1>
       </div>
-      <img class="catalog-intro-ic" src="cat-${cat.id}.png" alt="" aria-hidden="true" decoding="async" onerror="this.style.display='none'">
       <button class="catalog-filter-btn" onclick="toggleCatsDropdown()"><span aria-hidden="true">☰</span> Categorías</button>
     </div>`;
   if(!prods.length)return h+'<div style="text-align:center;padding:48px 0;color:var(--muted-fg);font-size:17px">No se encontraron productos 🔍</div>';
@@ -1713,9 +1712,12 @@ function _hydrateMinCatalog(data,source){
   // Las fotos se ven a ~159px de ancho: pedirlas a 320 (el doble, para pantallas retina)
   // pesa la mitad que a 500. El catálogo preparado las trae a 500, así que se ajusta acá
   // y no en el archivo, para que siga valiendo cada vez que se regenere.
+  // Tarjetas: 164px en el celular y 235px en la compu. Se pide el doble de esos
+  // anchos para que se vean nítidas en pantallas retina, sin traer de más.
+  var _anchoFoto=window.innerWidth<768?',w_320/':',w_400/';
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
-    if(_u&&_u.indexOf(',w_500/')>-1)PRODS[_i][6]=_u.replace(',w_500/',',w_320/');
+    if(_u&&_u.indexOf(',w_500/')>-1)PRODS[_i][6]=_u.replace(',w_500/',_anchoFoto);
   }
   _MIN_BY_ID=null;
   _markCatalogReady();
