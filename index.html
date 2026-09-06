@@ -2645,6 +2645,23 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
   .tutb-step .tutb-em{font-size:15px;display:block;margin-bottom:1px}
   .tutb-step .tutb-t{font-size:10.5px;color:#3a4d63;font-weight:600;line-height:1.25}
   .tutb-step-arrow{color:#b8c6d4;font-size:14px;align-self:center;margin-top:-10px}
+
+/* ===== Movimiento traído de La Natural =====
+   El precio viejo se achica y se va, el nuevo entra desde abajo.
+   Y al tocar "Editar", el producto se resalta dentro del carrito. */
+@keyframes palPrecioSale{to{opacity:0;transform:scale(.9)}}
+@keyframes palPrecioEntra{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:none}}
+.prices.precio-sale{animation:palPrecioSale .11s ease-in forwards}
+.prices.precio-entra{animation:palPrecioEntra .3s cubic-bezier(.2,.72,.3,1)}
+@keyframes palResaltarItem{
+  0%{background:var(--azul-light);box-shadow:0 0 0 2px var(--azul)}
+  70%{background:var(--azul-light);box-shadow:0 0 0 2px var(--azul)}
+  100%{background:transparent;box-shadow:0 0 0 2px transparent}
+}
+.cart-item.resaltado{animation:palResaltarItem 2.6s ease-out;border-radius:12px}
+@media(prefers-reduced-motion:reduce){
+  .prices.precio-sale,.prices.precio-entra,.cart-item.resaltado{animation:none}
+}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
