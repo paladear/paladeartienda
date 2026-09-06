@@ -3589,7 +3589,7 @@ function _bnavActiveTab(){
     var tOfx=document.getElementById('tabOfertas'); if(tOfx) tOfx.classList.remove('active');
     var tFavx=document.getElementById('tabFavoritos'); if(tFavx) tFavx.classList.remove('active');
     _prev(tab);
-    if(tab==='minorista')renderCatsUI({sidebar:true});
+    if(tab==='minorista')renderCatsUI({sidebar:true});else renderCatsUI();  // en mayorista, esconde las categorías del minorista
     if(resetCatalog)volverInicio();
     else if(tab==='minorista'&&!activeCatId&&!searchTerm)renderCarruseles();
     try{ var act=document.querySelector('#mainTabs .may-tab.active'); if(act) _setPill(act); }catch(e){}
