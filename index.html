@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=20">
+<link rel="preload" as="script" href="app.js?v=21">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2354,7 +2354,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cartPanel">
-  <div class="cart-header"><h2><img class="head-icon" src="icon-carrito.webp" alt="">Tu pedido</h2><div class="cart-header-actions"><button class="cart-chat-btn" onclick="toggleChat()" title="Consultar" aria-label="Consultar">💬</button><button class="close-btn" onclick="closeCart()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
+  <div class="cart-header"><h2><img class="head-icon" src="icon-carrito.webp" alt="">Tu pedido</h2><div class="cart-header-actions"><button class="close-btn" onclick="closeCart()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
   <div class="cart-body" id="cartBody"></div>
   <div class="cart-footer hidden" id="cartFooter"></div>
 </div>
@@ -2417,7 +2417,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=20';
+    s.src='app.js?v=21';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2687,6 +2687,29 @@ body.hv-home .cat-chips,body.hv-ofertas .cat-chips,body.hv-favoritos .cat-chips{
   .price-min{font-size:21px;letter-spacing:-.02em}
   .price-min .precio-oferta{font-size:21px}
   .price-may{font-size:16px}
+}
+
+/* ===== Tarjeta: precios más grandes, subtotal abajo del botón,
+        y "Editar" sin recuadro (sólo una línea de extremo a extremo) ===== */
+.price-min{font-size:17px}
+.price-may{font-size:14px;padding:3px 7px}
+.price-min .precio-oferta{font-size:17px}
+@media(min-width:768px){
+  .price-min{font-size:25px;letter-spacing:-.02em}
+  .price-min .precio-oferta{font-size:25px}
+  .price-may{font-size:20px;padding:4px 10px}
+  .price-label{font-size:11px}
+}
+/* el subtotal de lo que ya está en el pedido, debajo del botón Agregar */
+.acum-row{margin-top:7px}
+.acum-row .acum-badge{display:block;margin-left:0;text-align:center;white-space:normal}
+/* la línea cruza toda la tarjeta: compensa el padding del cuerpo */
+.card-cart-actions{margin-top:9px;padding-top:8px;border-top:1px solid var(--border)}
+.pcard-body .card-cart-actions{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
+.card-edit-btn{border:0;background:none;border-radius:0}
+.card-edit-btn:hover{background:none;color:var(--azul-dark);text-decoration:underline}
+@media(max-width:767px){
+  .pcard-body .card-cart-actions{margin-left:-8px;margin-right:-8px;padding-left:8px;padding-right:8px}
 }
 </style>
 <div id="tutbOverlay">
