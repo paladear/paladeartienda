@@ -1716,10 +1716,13 @@ function _hydrateMinCatalog(data,source){
   // y no en el archivo, para que siga valiendo cada vez que se regenere.
   // Tarjetas: 164px en el celular, 235px en la compu. Se pide ~el doble para que
   // se vean nítidas en pantallas retina, sin traer de más.
+  // El catálogo preparado puede venir con cualquier ancho: se normaliza acá, así
+  // el ajuste vale aunque el archivo se regenere con otro valor.
   var _anchoFoto=window.innerWidth<768?',w_320/':',w_400/';
+  var _reAncho=/,w_\d+\//;
   for(var _i=0;_i<PRODS.length;_i++){
     var _u=PRODS[_i][6];
-    if(_u&&_u.indexOf(',w_500/')>-1)PRODS[_i][6]=_u.replace(',w_500/',_anchoFoto);
+    if(_u&&_reAncho.test(_u))PRODS[_i][6]=_u.replace(_reAncho,_anchoFoto);
   }
   _MIN_BY_ID=null;
   _markCatalogReady();
