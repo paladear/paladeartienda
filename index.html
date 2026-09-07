@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=35">
+<link rel="preload" as="script" href="app.js?v=36">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2354,6 +2354,10 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 <div class="cart-panel cuenta-panel" id="cuentaPanel">
   <div class="cart-header"><h2>Mi cuenta</h2><div class="cart-header-actions"><button class="close-btn" onclick="closeCuenta()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
   <div class="cart-body" id="cuentaBody"></div>
+  <div class="cuenta-pie-app">
+    <button type="button" class="btn-actualizar-app" onclick="actualizarApp(this)">Actualizar la app</button>
+    <small>Traé la última versión de la tienda. Sirve cuando la usás como app y no podés recargar.</small>
+  </div>
 </div>
 <!-- Modal detalle de un pedido -->
 <div class="cta-pmodal" id="cuentaPedidoModal">
@@ -2407,7 +2411,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=35';
+    s.src='app.js?v=36';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2425,6 +2429,30 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 <script>
 /* Instalada como app no hay barra de direcciones ni botón de recargar. Si se
    publicó una versión nueva, aparece esta barra abajo para actualizar. */
+/* Botón "Actualizar la app": no depende de que el navegador avise nada.
+   Borra el service worker y todos los cachés de la tienda, y vuelve a entrar.
+   Es la salida cuando está instalada como app y no hay forma de recargar. */
+function actualizarApp(btn){
+  if (btn) { btn.disabled = true; btn.textContent = 'Actualizando...'; }
+  var tareas = [];
+  if ('serviceWorker' in navigator) {
+    tareas.push(navigator.serviceWorker.getRegistrations()
+      .then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })
+      .catch(function(){}));
+  }
+  if (window.caches) {
+    tareas.push(caches.keys()
+      .then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })
+      .catch(function(){}));
+  }
+  // El pedido y los datos del cliente NO se tocan: viven en localStorage.
+  Promise.all(tareas).then(function(){
+    var u = location.origin + location.pathname + '?actualizada=' + Date.now();
+    location.replace(u);
+  }).catch(function(){ location.reload(); });
+}
+window.actualizarApp = actualizarApp;
+
 function _avisarVersionNueva(nuevo){
   if (document.getElementById('avisoVersion')) return;
   var b = document.createElement('div');
@@ -2833,6 +2861,17 @@ body.mayorista-activo .prices>div:first-child .price-min{color:var(--muted-fg);o
 html,body{touch-action:manipulation}
 button,.opt-btn,.qty-btn,.add-btn,.cat-chip,.cats-dd-btn,.card-edit-btn,.card-del-btn,
 .catalog-filter-btn,.bnav a,.bnav button,#cart-fab{touch-action:manipulation}
+
+/* Pie del panel Mi cuenta: actualizar la app a mano */
+.cuenta-pie-app{padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);background:var(--bg)}
+.btn-actualizar-app{width:100%;min-height:46px;border:1.5px solid var(--azul-mid);
+  border-radius:10px;background:var(--azul-light);color:var(--azul-dark);
+  font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.btn-actualizar-app:hover{background:var(--azul);color:#fff}
+.btn-actualizar-app:disabled{opacity:.65}
+.cuenta-pie-app small{display:block;margin-top:7px;font-size:11.5px;line-height:1.45;
+  color:var(--muted-fg);text-align:center}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
