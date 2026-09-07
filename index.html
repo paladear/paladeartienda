@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=36">
+<link rel="preload" as="script" href="app.js?v=37">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2354,10 +2354,6 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 <div class="cart-panel cuenta-panel" id="cuentaPanel">
   <div class="cart-header"><h2>Mi cuenta</h2><div class="cart-header-actions"><button class="close-btn" onclick="closeCuenta()" aria-label="Cerrar"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button></div></div>
   <div class="cart-body" id="cuentaBody"></div>
-  <div class="cuenta-pie-app">
-    <button type="button" class="btn-actualizar-app" onclick="actualizarApp(this)">Actualizar la app</button>
-    <small>Traé la última versión de la tienda. Sirve cuando la usás como app y no podés recargar.</small>
-  </div>
 </div>
 <!-- Modal detalle de un pedido -->
 <div class="cta-pmodal" id="cuentaPedidoModal">
@@ -2411,7 +2407,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=36';
+    s.src='app.js?v=37';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2429,9 +2425,8 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
 <script>
 /* Instalada como app no hay barra de direcciones ni botón de recargar. Si se
    publicó una versión nueva, aparece esta barra abajo para actualizar. */
-/* Botón "Actualizar la app": no depende de que el navegador avise nada.
-   Borra el service worker y todos los cachés de la tienda, y vuelve a entrar.
-   Es la salida cuando está instalada como app y no hay forma de recargar. */
+/* Trae la última versión: borra el service worker y los cachés y vuelve a entrar.
+   NO toca localStorage, así que el pedido y los datos del cliente quedan intactos. */
 function actualizarApp(btn){
   if (btn) { btn.disabled = true; btn.textContent = 'Actualizando...'; }
   var tareas = [];
@@ -2452,6 +2447,73 @@ function actualizarApp(btn){
   }).catch(function(){ location.reload(); });
 }
 window.actualizarApp = actualizarApp;
+
+/* ══════════ Arrastrar hacia abajo para refrescar ══════════
+   Instalada como app no hay gesto de recarga del navegador. Este lo hace a mano:
+   estando arriba de todo, si arrastrás el dedo hacia abajo aparece un indicador y
+   al soltarlo la tienda se actualiza. */
+(function(){
+  var UMBRAL = 72;        // cuánto hay que arrastrar para que se dispare
+  var TOPE = 110;         // hasta dónde estira el indicador
+  var y0 = 0, x0 = 0, activo = false, listo = false, ind = null;
+
+  function crearIndicador(){
+    if (ind) return ind;
+    ind = document.createElement('div');
+    ind.id = 'ptrInd';
+    ind.innerHTML = '<span class="ptr-rueda"></span><span class="ptr-txt">Soltá para actualizar</span>';
+    document.body.appendChild(ind);
+    return ind;
+  }
+  function mover(d){
+    var i = crearIndicador();
+    var p = Math.min(1, d / UMBRAL);
+    i.style.transform = 'translate(-50%,' + Math.min(d * 0.55, TOPE * 0.55) + 'px)';
+    i.style.opacity = String(Math.min(1, p * 1.3));
+    i.classList.toggle('listo', d >= UMBRAL);
+    i.querySelector('.ptr-rueda').style.transform = 'rotate(' + (d * 2.6) + 'deg)';
+  }
+  function esconder(){
+    if (!ind) return;
+    ind.style.transition = 'transform .22s ease, opacity .22s ease';
+    ind.style.transform = 'translate(-50%,-60px)';
+    ind.style.opacity = '0';
+    setTimeout(function(){ if (ind) ind.style.transition = ''; }, 240);
+  }
+  function hayPanelAbierto(){
+    return document.body.classList.contains('cart-open') ||
+           !!document.querySelector('.cart-panel.open, #imgZoom, .modal-overlay.open, #catsDropdownPanel[style*="block"]');
+  }
+
+  document.addEventListener('touchstart', function(e){
+    if (e.touches.length !== 1) return;
+    if (window.scrollY > 2 || hayPanelAbierto()) { activo = false; return; }
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    activo = true; listo = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e){
+    if (!activo || e.touches.length !== 1) return;
+    var dy = e.touches[0].clientY - y0;
+    var dx = Math.abs(e.touches[0].clientX - x0);
+    // sólo si el gesto es claramente hacia abajo y no de costado
+    if (dy <= 0 || dx > Math.abs(dy) * 0.8) { if (dy < 0) activo = false; return; }
+    if (window.scrollY > 2) { activo = false; esconder(); return; }
+    mover(dy);
+    listo = dy >= UMBRAL;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(){
+    if (!activo) return;
+    activo = false;
+    if (listo) {
+      var i = crearIndicador();
+      i.classList.add('cargando');
+      i.querySelector('.ptr-txt').textContent = 'Actualizando...';
+      actualizarApp();
+    } else esconder();
+  }, { passive: true });
+})();
 
 function _avisarVersionNueva(nuevo){
   if (document.getElementById('avisoVersion')) return;
@@ -2862,16 +2924,22 @@ html,body{touch-action:manipulation}
 button,.opt-btn,.qty-btn,.add-btn,.cat-chip,.cats-dd-btn,.card-edit-btn,.card-del-btn,
 .catalog-filter-btn,.bnav a,.bnav button,#cart-fab{touch-action:manipulation}
 
-/* Pie del panel Mi cuenta: actualizar la app a mano */
-.cuenta-pie-app{padding:14px 16px calc(16px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--border);background:var(--bg)}
-.btn-actualizar-app{width:100%;min-height:46px;border:1.5px solid var(--azul-mid);
-  border-radius:10px;background:var(--azul-light);color:var(--azul-dark);
-  font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.btn-actualizar-app:hover{background:var(--azul);color:#fff}
-.btn-actualizar-app:disabled{opacity:.65}
-.cuenta-pie-app small{display:block;margin-top:7px;font-size:11.5px;line-height:1.45;
-  color:var(--muted-fg);text-align:center}
+
+/* ── Arrastrar hacia abajo para refrescar ── */
+#ptrInd{position:fixed;top:6px;left:50%;transform:translate(-50%,-60px);z-index:10060;
+  display:flex;align-items:center;gap:8px;pointer-events:none;opacity:0;
+  background:#fff;color:var(--azul-dark);border:1px solid var(--border);
+  border-radius:999px;padding:8px 15px;
+  box-shadow:0 6px 20px rgba(20,45,70,.20);
+  font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:700;white-space:nowrap}
+#ptrInd .ptr-rueda{width:15px;height:15px;flex:0 0 auto;border-radius:50%;
+  border:2.5px solid var(--azul-light);border-top-color:var(--azul)}
+#ptrInd .ptr-txt{opacity:.55}
+#ptrInd.listo .ptr-txt{opacity:1}
+#ptrInd.listo{border-color:var(--azul-mid)}
+#ptrInd.cargando .ptr-rueda{animation:ptrGira .7s linear infinite}
+@keyframes ptrGira{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#ptrInd .ptr-rueda{animation:none}}
 </style>
 <div id="tutbOverlay">
   <div class="tutb-modal">
