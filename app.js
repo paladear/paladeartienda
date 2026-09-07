@@ -3044,31 +3044,6 @@ window.blendAgregarAlCarrito=blendAgregarAlCarrito;
 const _CONF_COLORS=['#547692','#3d5a72','#6888a8','#8fb0cc','#b9d2e6','#dbe9f5','#ffffff','#a9c9e8'];
 let _confCanvas=null;
 
-function _buildConeHTML(id,flipX){
-  var sc=flipX?'style="overflow:visible;transform:scaleX(-1)"':'style="overflow:visible"';
-  var cls=flipX?'may-cone may-cone-right':'may-cone may-cone-left';
-  var clip=id+'Clip';
-  return '<div class="'+cls+'" id="'+id+'">'+
-    '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" '+sc+'>'+
-      '<defs><clipPath id="'+clip+'"><polygon points="32,58 4,18 60,18"/></clipPath></defs>'+
-      '<polygon points="32,58 4,18 60,18" fill="#e8a020" stroke="#c47810" stroke-width="1.2"/>'+
-      '<g clip-path="url(#'+clip+')">'+
-        '<rect x="0" y="22" width="70" height="6" fill="#e07860" opacity="0.75" transform="rotate(-8,32,25)"/>'+
-        '<rect x="0" y="31" width="70" height="6" fill="#4d7d8a" opacity="0.7" transform="rotate(-8,32,34)"/>'+
-        '<rect x="0" y="40" width="70" height="6" fill="#7bbf8e" opacity="0.75" transform="rotate(-8,32,43)"/>'+
-        '<rect x="0" y="49" width="70" height="6" fill="#f5c842" opacity="0.65" transform="rotate(-8,32,52)"/>'+
-      '</g>'+
-      '<polygon points="32,58 4,18 18,18" fill="rgba(0,0,0,0.12)"/>'+
-      '<ellipse cx="32" cy="18" rx="28" ry="9" fill="#f5c842" stroke="#e8a020" stroke-width="1"/>'+
-      '<ellipse cx="18" cy="14" rx="4" ry="2.8" fill="#e07860" transform="rotate(-20,18,14)"/>'+
-      '<ellipse cx="30" cy="10" rx="3.5" ry="2.2" fill="#4d7d8a" transform="rotate(10,30,10)"/>'+
-      '<ellipse cx="42" cy="13" rx="4" ry="2.5" fill="#7bbf8e" transform="rotate(-5,42,13)"/>'+
-      '<circle cx="24" cy="8" r="2.5" fill="#f5c842"/>'+
-      '<circle cx="36" cy="7" r="2.2" fill="#e8c488"/>'+
-      '<rect x="44" y="9" width="6" height="4" rx="1.5" fill="#e07860" transform="rotate(25,47,11)"/>'+
-    '</svg>'+
-  '</div>';
-}
 
 function _triggerMayoristaConfetti(){
   // Sin cartel en el medio: cortaba el flujo de compra. Lo que queda es el confeti
