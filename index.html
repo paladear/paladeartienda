@@ -9,7 +9,7 @@ layout: null
 <link rel="preload" as="image" href="herobannerazul.webp" type="image/webp" fetchpriority="high">
 <link rel="preload" as="image" href="paladear-wordmark.webp" type="image/webp">
 <link rel="preload" as="image" href="logo-header.png" type="image/png">
-<link rel="preload" as="script" href="app.js?v=37">
+<link rel="preload" as="script" href="app.js?v=38">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -2407,7 +2407,7 @@ body.hv-home #bnavPill{--bnav-pill-x:6px;--bnav-pill-w:calc(25% - 12px)}
     started=true;
     if(fallback)clearTimeout(fallback);
     var s=document.createElement('script');
-    s.src='app.js?v=37';
+    s.src='app.js?v=38';
     s.onload=ready;
     document.head.appendChild(s);
   }
@@ -2515,26 +2515,7 @@ window.actualizarApp = actualizarApp;
   }, { passive: true });
 })();
 
-function _avisarVersionNueva(nuevo){
-  if (document.getElementById('avisoVersion')) return;
-  var b = document.createElement('div');
-  b.id = 'avisoVersion';
-  b.innerHTML = '<span>Hay una versión nueva de la tienda</span><button type="button">Actualizar</button>';
-  b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));' +
-    'z-index:10050;background:#3d5a72;color:#fff;border-radius:14px;padding:12px 14px;' +
-    'display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(15,35,55,.35);' +
-    'font-size:14px;font-weight:600;font-family:inherit';
-  var btn = b.querySelector('button');
-  btn.style.cssText = 'margin-left:auto;flex:0 0 auto;border:0;border-radius:9px;background:#fff;' +
-    'color:#3d5a72;font-weight:800;font-size:14px;padding:10px 16px;cursor:pointer;' +
-    'font-family:inherit;min-height:42px';
-  btn.addEventListener('click', function(){
-    btn.textContent = 'Actualizando...';
-    try { if (nuevo) nuevo.postMessage({ tipo: 'ACTUALIZAR_YA' }); } catch(e) {}
-    setTimeout(function(){ location.reload(); }, 400);
-  });
-  document.body.appendChild(b);
-}
+
 
 (function() {
   if (!('serviceWorker' in navigator)) return;
@@ -2557,7 +2538,7 @@ function _avisarVersionNueva(nuevo){
         var newWorker = reg.installing;
         newWorker.addEventListener('statechange', function() {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            _avisarVersionNueva(newWorker);
+            console.log('[PWA] Versión nueva lista.');
           }
         });
       });
