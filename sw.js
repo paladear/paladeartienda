@@ -22,11 +22,13 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v13';
+const CACHE_VERSION = 'paladear-v14';   // subir en cada publicación: al cambiar, se borran los caches viejos
 const CACHE_PREFIX = 'paladear-v';
 
+// app.js NO va acá: su dirección lleva un ?v= que cambia en cada publicación,
+// así que dejarlo fijo guardaba para siempre una versión vieja. Se cachea solo,
+// por su cuenta, la primera vez que la página lo pide.
 const SHELL_FILES = [
-  '/paladeartienda/app.js?v=13',
   '/paladeartienda/logo-header.png',
   '/paladeartienda/herobannerazul.webp',
   '/paladeartienda/paladear-wordmark.webp',
@@ -141,4 +143,11 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(clients.openWindow('/paladeartienda/'));
+});
+
+// ── El botón "Actualizar" de la tienda ─────────────────
+// Cuando el visitante toca Actualizar, esta versión toma el control enseguida
+// en vez de esperar a que cierre todas las pestañas.
+self.addEventListener('message', event => {
+  if (event.data && event.data.tipo === 'ACTUALIZAR_YA') self.skipWaiting();
 });
