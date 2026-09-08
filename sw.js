@@ -22,14 +22,14 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v14';   // subir en cada publicación: al cambiar, se borran los caches viejos
+const CACHE_VERSION = 'paladear-v15';   // subir en cada publicación: al cambiar, se borran los caches viejos
 const CACHE_PREFIX = 'paladear-v';
 
 // app.js NO va acá: su dirección lleva un ?v= que cambia en cada publicación,
 // así que dejarlo fijo guardaba para siempre una versión vieja. Se cachea solo,
 // por su cuenta, la primera vez que la página lo pide.
 const SHELL_FILES = [
-  '/paladeartienda/logo-header.png',
+  '/paladeartienda/logo-header.webp',
   '/paladeartienda/herobannerazul.webp',
   '/paladeartienda/paladear-wordmark.webp',
   '/paladeartienda/android-chrome-192x192.png',
