@@ -2990,5 +2990,30 @@ button,.opt-btn,.qty-btn,.add-btn,.cat-chip,.cats-dd-btn,.card-edit-btn,.card-de
 })();
 </script>
 
+<script>
+/* Carruseles horizontales manejables con mouse ------------------------------
+   El trackpad de Mac los mueve con dos dedos porque manda deltaX. Una rueda de
+   mouse comun solo manda deltaY, que el navegador aplica a la pagina y no al
+   carrusel, asi que lo que quedaba fuera de pantalla era inalcanzable. */
+(function(){
+  var SEL='.carousel-track,.recetas-filters,.mix-cat-tabs,.hv-cats-scroller,.cats-mobile-grid';
+  document.addEventListener('wheel', function(e){
+    if (e.deltaX !== 0) return;               // trackpad horizontal: ya anda solo
+    if (!e.target || !e.target.closest) return;
+    var el = e.target.closest(SEL);
+    if (!el) return;
+    var max = el.scrollWidth - el.clientWidth;
+    if (max < 4) return;                      // entra todo, no hay nada que mover
+    var d = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+    // En los extremos soltamos el evento para que la pagina siga scrolleando.
+    if ((d < 0 && el.scrollLeft <= 0) || (d > 0 && el.scrollLeft >= max - 1)) return;
+    e.preventDefault();
+    var suave = el.style.scrollBehavior;      // sin animacion encadenada por tic
+    el.style.scrollBehavior = 'auto';
+    el.scrollLeft = Math.max(0, Math.min(max, el.scrollLeft + d));
+    el.style.scrollBehavior = suave;
+  }, {passive:false});
+})();
+</script>
 </body>
 </html>
