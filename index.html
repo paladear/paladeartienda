@@ -8382,6 +8382,45 @@ window.pintarTableroCats=pintarTableroCats;
 }
 .ofview-nota{max-width:70ch;margin:8px 0 0;font-size:13px;line-height:1.45;color:#8a5a48}
 @media(min-width:768px){.ofview-nota{font-size:14.5px;margin-top:10px}}
+/* Ofertas y Favoritos: misma escala de cards que Productos */
+@media(min-width:768px){
+  body.min-redesign.hv-ofertas #ofertasView,
+  body.min-redesign.hv-favoritos #wishlistView{
+    max-width:1500px!important;
+    padding:34px 56px 54px!important;
+  }
+  body.min-redesign.hv-ofertas .ofview-shell,
+  body.min-redesign.hv-favoritos .wishlist-shell{
+    padding:28px!important;
+  }
+  body.min-redesign.hv-ofertas .ofview-grid,
+  body.min-redesign.hv-favoritos .wishlist-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:16px!important;
+  }
+}
+@media(min-width:768px) and (max-width:1179px){
+  body.min-redesign.hv-ofertas #ofertasView,
+  body.min-redesign.hv-favoritos #wishlistView{
+    padding-left:32px!important;
+    padding-right:32px!important;
+  }
+  body.min-redesign.hv-ofertas .ofview-grid,
+  body.min-redesign.hv-favoritos .wishlist-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:767px){
+  body.min-redesign.hv-ofertas #ofertasView,
+  body.min-redesign.hv-favoritos #wishlistView{
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+  body.min-redesign.hv-ofertas .ofview-shell,
+  body.min-redesign.hv-favoritos .wishlist-shell{
+    padding:12px!important;
+  }
+}
 .logo-wrap{cursor:pointer}
 .logo-wrap:focus-visible{outline:3px solid #3f789f;outline-offset:3px;border-radius:50%}
 </style>
