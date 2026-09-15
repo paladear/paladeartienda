@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════
 // sw.js — Service Worker de Paladear Mercado de Sabores
-// Versión: 1.7
+// Versión: 1.6
 //
 // CAMBIO CLAVE (arregla "no carga si no borrás el historial" y
 // "tarda muchísimo en cargar"):
@@ -22,21 +22,52 @@
 //      en segundo plano. Casi nunca cambian.
 // ════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'paladear-v15';   // subir en cada publicación: al cambiar, se borran los caches viejos
-const CACHE_PREFIX = 'paladear-v';
+const CACHE_VERSION = 'paladear-v26';   // subir esto en cada publicación de la tester
 
-// app.js NO va acá: su dirección lleva un ?v= que cambia en cada publicación,
-// así que dejarlo fijo guardaba para siempre una versión vieja. Se cachea solo,
-// por su cuenta, la primera vez que la página lo pide.
 const SHELL_FILES = [
-  '/paladeartienda/logo-header.webp',
-  '/paladeartienda/herobannerazul.webp',
-  '/paladeartienda/paladear-wordmark.webp',
-  '/paladeartienda/android-chrome-192x192.png',
-  '/paladeartienda/android-chrome-512x512.png',
-  '/paladeartienda/apple-touch-icon.png',
-  '/paladeartienda/favicon-32x32.png',
-  '/paladeartienda/og-image.jpg',
+  '/paladeartienda-test/android-chrome-192x192.png',
+  '/paladeartienda-test/android-chrome-512x512.png',
+  '/paladeartienda-test/apple-touch-icon.png',
+  '/paladeartienda-test/favicon-32x32.png',
+  '/paladeartienda-test/og-image.jpg',
+  '/paladeartienda-test/home-hero-minorista-mobile-v5.jpg',
+  '/paladeartienda-test/paladear-wordmark.png',
+  '/paladeartienda-test/home-discount-strip-v2.png',
+  '/paladeartienda-test/home-banner-v2-mix.jpg',
+  '/paladeartienda-test/home-banner-v2-granola.jpg',
+  '/paladeartienda-test/home-banner-v2-blend.jpg',
+  '/paladeartienda-test/home-banner-v2-lista.jpg',
+  '/paladeartienda-test/cat-v2-frutos.jpg',
+  '/paladeartienda-test/cat-v2-deshidratados.jpg',
+  '/paladeartienda-test/cat-v2-semillas.jpg',
+  '/paladeartienda-test/cat-v2-especias.jpg',
+  '/paladeartienda-test/cat-v2-infusiones.jpg',
+  '/paladeartienda-test/cat-v2-cereales.jpg',
+  '/paladeartienda-test/cat-v2-granos.jpg',
+  '/paladeartienda-test/cat-v2-harinas.jpg',
+  '/paladeartienda-test/cat-v2-sintacc.jpg',
+  '/paladeartienda-test/cat-v2-dulces.jpg',
+  '/paladeartienda-test/cat-v2-reposteria.jpg',
+  '/paladeartienda-test/cat-v2-mantecas.jpg',
+  '/paladeartienda-test/cat-v2-aceites.jpg',
+  '/paladeartienda-test/cat-v2-aceitunas.jpg',
+  '/paladeartienda-test/cat-v2-encurtidos.jpg',
+  '/paladeartienda-test/cat-v2-tomate.jpg',
+  '/paladeartienda-test/cat-v2-snack.jpg',
+  '/paladeartienda-test/cat-v2-suplementos.jpg',
+  '/paladeartienda-test/cat-v2-gourmet.jpg',
+  '/paladeartienda-test/cat-v2-bebidas.jpg',
+  '/paladeartienda-test/cat-v2-vinos.jpg',
+  '/paladeartienda-test/cat-v2-frio.jpg',
+  '/paladeartienda-test/cat-v2-congelados.jpg',
+  '/paladeartienda-test/cat-v2-home.jpg',
+  '/paladeartienda-test/may-icon-home-filled.png',
+  '/paladeartienda-test/may-icon-products-bag.png',
+  '/paladeartienda-test/may-icon-catalog-filled.png',
+  '/paladeartienda-test/may-icon-offers-filled.png',
+  '/paladeartienda-test/may-icon-account-outline.png',
+  '/paladeartienda-test/may-icon-cart-outline.png',
+  '/paladeartienda-test/may-icon-favorites-filled.svg',
 ];
 
 // ── INSTALL ─────────────────────────────────────────────
@@ -46,11 +77,11 @@ self.addEventListener('install', event => {
       .then(async cache => {
         // El HTML se descarga ignorando cualquier copia HTTP anterior. Así una
         // instalación/actualización nunca vuelve a sembrar una interfaz vieja.
-        const page = await fetch('/paladeartienda/index.html', { cache: 'reload' });
+        const page = await fetch('/paladeartienda-test/index.html', { cache: 'reload' });
         if (!page || !page.ok) throw new Error('No se pudo actualizar index.html');
         await Promise.all([
-          cache.put('/paladeartienda/', page.clone()),
-          cache.put('/paladeartienda/index.html', page.clone()),
+          cache.put('/paladeartienda-test/', page.clone()),
+          cache.put('/paladeartienda-test/index.html', page.clone()),
           cache.addAll(SHELL_FILES)
         ]);
       })
@@ -62,13 +93,12 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// ── ACTIVATE: borrar solo caches viejos de ESTA tienda ──────
-// Cache Storage se comparte por dominio: no borrar el cache de la distribuidora.
+// ── ACTIVATE: borrar caches viejos (incluye el v4 inflado) ──
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_VERSION).map(k => caches.delete(k))
+        keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
@@ -92,10 +122,20 @@ self.addEventListener('fetch', event => {
   // primera visita (sin tener que borrar el historial). Si no hay red,
   // caemos al cache para que la página siga abriendo offline.
   const _path = url.pathname;
-  const _esPagina = _path === '/paladeartienda/' ||
-                    _path === '/paladeartienda/index.html';
+  const _esPagina = _path === '/paladeartienda-test/' ||
+                    _path === '/paladeartienda-test/index.html' ||
+                    _path === '/paladeartienda-test/admin.html';
 
-  if (_esPagina) {
+  // DATOS DE PRECIOS Y STOCK: tambien NETWORK-FIRST.
+  // Antes los precios venian del Apps Script de Google (otro origen), asi que
+  // este service worker ni los tocaba y siempre llegaban frescos. Ahora salen
+  // de E-Pyme y viajan como archivos del propio sitio, asi que sin esta regla
+  // caerian en stale-while-revalidate y un visitante que vuelve veria los
+  // precios de la carga anterior. Con la red primero, siempre ve los de hoy;
+  // el cache queda solo como respaldo para cuando no hay conexion.
+  const _esDato = /\/(precios-min|info-min|precios-may|info-may|stock)\.csv$|\/(catalog-min|pendientes)\.json$/.test(_path);
+
+  if (_esPagina || _esDato) {
     event.respondWith(
       fetch(event.request, { cache: 'no-store' })
         .then(response => {
@@ -107,8 +147,13 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() =>
-          caches.match(event.request)
-            .then(cached => cached || caches.match('/paladeartienda/index.html'))
+          caches.match(event.request).then(cached => {
+            if (cached) return cached;
+            // Un CSV/JSON no puede caer al index.html: devolveria HTML donde se
+            // espera datos. Mejor fallar y que la pagina haga su reintento.
+            return _esDato ? Response.error()
+                           : caches.match('/paladeartienda-test/index.html');
+          })
         )
     );
     return;
@@ -127,7 +172,7 @@ self.addEventListener('fetch', event => {
             }
             return response;
           })
-          .catch(() => cached || caches.match('/paladeartienda/index.html'));
+          .catch(() => cached || caches.match('/paladeartienda-test/index.html'));
         // Servimos el cache al instante si existe; si no, esperamos la red.
         return cached || network;
       })
@@ -142,7 +187,7 @@ self.addEventListener('push', event => {
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(clients.openWindow('/paladeartienda/'));
+  event.waitUntil(clients.openWindow('/paladeartienda-test/'));
 });
 
 // ── El botón "Actualizar" de la tienda ─────────────────

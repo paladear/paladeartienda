@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de catálogo — Paladear</title>
+<link rel="icon" href="favicon-32x32.png">
+<style>
+  :root{
+    /* Mismos azules que los banners de la tienda, sobre crema: el blanco puro
+       en pantalla grande cansa la vista. --papel es la superficie de todo lo
+       que antes era #fff. */
+    --tinta:#123f67; --suave:#5c7b95; --linea:#e0dbd0; --fondo:#f2ece0;
+    --papel:#fdf9f0; --papel-2:#f5efe2;
+    --marca:#2f6d99; --marca-osc:#1d5480;
+    --alerta:#b45309; --alerta-suave:#fff7ed; --alerta-linea:#fdba74;
+    --nuevo:#1d4ed8; --nuevo-suave:#eff6ff; --nuevo-linea:#93c5fd;
+    --mal:#b91c1c; --mal-suave:#fef2f2; --mal-linea:#fca5a5;
+    --ok:#15803d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--tinta);
+       font:16.5px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+  header{background:var(--tinta);border-bottom:1px solid #0d3153;padding:15px 26px;
+         position:sticky;top:0;z-index:50;color:#f3ece0}
+  .hd h1,.hd .marca{color:#f3ece0}
+  .hd .quien{color:#a8c2d8}
+  .hd{max-width:1680px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hd h1{font-size:19px;margin:0;font-weight:650}
+  .hd .marca{font-weight:750;font-size:21px}
+  .hd .quien{margin-left:auto;font-size:14px}
+  .env{background:#e6c76a;border:1px solid #d4b354;color:#3d2f0a;border-radius:6px;
+       padding:3px 9px;font-size:12.5px;font-weight:700}
+  main{max-width:1680px;margin:0 auto;padding:20px 26px 40px}
+
+  .tarjetas{display:grid;gap:13px;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));margin-bottom:22px}
+  .kpi{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:17px 19px}
+  .kpi b{display:block;font-size:31px;line-height:1.1;font-weight:700}
+  .kpi span{font-size:14px;color:var(--suave)}
+  .kpi.avisa{background:var(--nuevo-suave);border-color:var(--nuevo-linea)}
+  .kpi.k-todos{background:var(--papel-2)}
+  .kpi.avisa b{color:var(--nuevo)}
+  .kpi.ojo{background:var(--alerta-suave);border-color:var(--alerta-linea)}
+  .kpi.ojo b{color:var(--alerta)}
+  .kpi.error{background:var(--mal-suave);border-color:var(--mal-linea)}
+  .kpi.error b{color:var(--mal)}
+
+  .barra{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .filtro{border:1px solid var(--linea);background:var(--papel);border-radius:999px;
+          padding:7px 14px;font-size:13.5px;cursor:pointer;color:var(--suave)}
+  .filtro:hover{border-color:var(--marca)}
+  .filtro.on{background:var(--marca);border-color:var(--marca);color:#fff;font-weight:600}
+  #buscar{flex:1;min-width:200px;border:1px solid var(--linea);border-radius:8px;
+          padding:9px 12px;font-size:14px;background:var(--papel)}
+
+  .grilla{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(350px,1fr))}
+  .prod{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:15px;
+        display:flex;gap:14px}
+  .prod.es-nuevo{background:var(--nuevo-suave);border-color:var(--nuevo-linea)}
+  .prod.es-renom{background:var(--alerta-suave);border-color:var(--alerta-linea)}
+  .prod.es-mal{background:var(--mal-suave);border-color:var(--mal-linea)}
+  .foto{width:82px;height:82px;flex:0 0 82px;border-radius:9px;object-fit:cover;
+        background:var(--papel-2);border:1px solid var(--linea)}
+  .foto.rota{display:flex;align-items:center;justify-content:center;font-size:10px;
+             color:var(--mal);text-align:center;line-height:1.2;padding:4px}
+  .datos{min-width:0;flex:1}
+  .nom{font-weight:650;font-size:16.5px;line-height:1.35;margin-bottom:4px;overflow-wrap:anywhere}
+  .meta{font-size:13.5px;color:var(--suave);margin-bottom:7px}
+  .precio{font-size:16px;font-weight:600}
+  .precio s{color:var(--suave);font-weight:400;margin-left:6px}
+  .chips{margin-top:7px;display:flex;flex-wrap:wrap;gap:4px}
+  .chip{font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px;
+        border:1px solid transparent}
+  .chip.nuevo{background:#dbeafe;color:var(--nuevo);border-color:var(--nuevo-linea)}
+  .chip.renom{background:#ffedd5;color:var(--alerta);border-color:var(--alerta-linea)}
+  .chip.falta{background:var(--papel-2);color:var(--suave);border-color:var(--linea)}
+  .chip.mal{background:#fee2e2;color:var(--mal);border-color:var(--mal-linea)}
+  .renombre{margin-top:7px;font-size:12px;background:var(--papel);border:1px dashed var(--alerta-linea);
+            border-radius:6px;padding:6px 8px;color:var(--alerta)}
+  .renombre b{color:var(--tinta)}
+  .vacio{background:var(--papel);border:1px dashed var(--linea);border-radius:10px;padding:40px;
+         text-align:center;color:var(--suave)}
+  .cargando{padding:60px;text-align:center;color:var(--suave)}
+  .nota{margin-top:22px;font-size:12.5px;color:var(--suave);line-height:1.6;
+        border-top:1px solid var(--linea);padding-top:14px}
+
+  .prod{cursor:pointer;transition:box-shadow .12s,border-color .12s}
+  .prod:hover{border-color:var(--marca);box-shadow:0 2px 10px rgba(18,33,43,.08)}
+  .chip.editada{background:#dcfce7;color:var(--ok);border-color:#86efac}
+
+  /* aviso de importacion inicial */
+  .importar{background:var(--papel);border:1px solid var(--nuevo-linea);background:var(--nuevo-suave);
+            border-radius:10px;padding:14px 16px;margin-bottom:18px;display:flex;
+            gap:14px;align-items:center;flex-wrap:wrap}
+  .importar p{margin:0;flex:1;min-width:240px;font-size:13.5px;color:#1e3a5f}
+  .btn{border:0;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600;
+       cursor:pointer;background:var(--marca);color:#fff}
+  .btn:hover{background:var(--marca-osc)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.gris{background:var(--papel);color:var(--suave);border:1px solid var(--linea)}
+  .btn.gris:hover{background:var(--papel-2);color:var(--tinta)}
+
+  /* editor */
+  #editor{position:fixed;inset:0;z-index:200;display:none;background:rgba(15,23,42,.55)}
+  #editor.abierto{display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;
+                  overflow:auto}
+  .ed-caja{background:var(--papel);border-radius:14px;width:100%;max-width:560px;
+           box-shadow:0 22px 60px rgba(0,0,0,.3)}
+  .ed-top{display:flex;gap:12px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--linea)}
+  .ed-top img,.ed-top .sinf{width:52px;height:52px;border-radius:8px;object-fit:cover;
+                            background:var(--papel-2);border:1px solid var(--linea);flex:0 0 52px;
+                            display:flex;align-items:center;justify-content:center;
+                            font-size:10px;color:var(--suave)}
+  .ed-top h3{margin:0;font-size:15px;font-weight:650;overflow-wrap:anywhere}
+  .ed-top .sub{font-size:12px;color:var(--suave)}
+  .ed-cerrar{margin-left:auto;background:none;border:0;font-size:24px;line-height:1;
+             color:var(--suave);cursor:pointer;padding:0 4px}
+  .ed-cuerpo{padding:18px 20px}
+  .campo{margin-bottom:15px}
+  .campo label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+  .campo .ayuda{font-weight:400;color:var(--suave)}
+  .campo input,.campo textarea{width:100%;border:1px solid var(--linea);border-radius:8px;
+                               padding:9px 11px;font:inherit;font-size:14px;background:var(--papel)}
+  .campo textarea{min-height:92px;resize:vertical}
+  .campo input:focus,.campo textarea:focus{outline:2px solid var(--marca);outline-offset:-1px;border-color:var(--marca)}
+  .ed-pie{display:flex;gap:10px;align-items:center;padding:14px 20px;border-top:1px solid var(--linea)}
+  .ed-estado{font-size:13px;color:var(--suave);margin-right:auto}
+  .ed-estado.ok{color:var(--ok);font-weight:600}
+  .ed-estado.mal{color:var(--mal);font-weight:600}
+  .solo-lectura{background:var(--papel-2);border:1px solid var(--linea);border-radius:8px;
+                padding:9px 11px;font-size:13.5px;color:var(--suave)}
+
+  /* aviso de renombre dentro del editor */
+  .ed-renombre{background:var(--alerta-suave);border:1px solid var(--alerta-linea);
+               border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px}
+  .ed-renombre .t{font-weight:700;color:var(--alerta);margin-bottom:6px}
+  .ed-renombre .par{margin:3px 0}
+  .ed-renombre .par b{color:var(--tinta)}
+  .ed-renombre .acc{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .ed-renombre .acc .btn{padding:7px 12px;font-size:13px}
+
+  /* banderas de armadores */
+  .banderas{display:flex;gap:8px;flex-wrap:wrap}
+  .bandera{flex:1;min-width:140px;border:1px solid var(--linea);border-radius:8px;
+           padding:9px 11px;display:flex;gap:8px;align-items:center;cursor:pointer;
+           font-size:13.5px;background:var(--papel)}
+  .bandera:hover{border-color:var(--marca)}
+  .bandera input{width:16px;height:16px;accent-color:var(--marca);cursor:pointer}
+  .bandera.sel{background:#ecfeff;border-color:var(--marca)}
+
+  /* descuentos por rubro */
+  #desc{position:fixed;inset:0;z-index:210;display:none;background:rgba(15,23,42,.55)}
+  #desc.abierto{display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto}
+  .dc-caja{background:var(--papel);border-radius:14px;width:100%;max-width:680px;
+           box-shadow:0 22px 60px rgba(0,0,0,.3)}
+  .dc-top{padding:16px 20px;border-bottom:1px solid var(--linea);display:flex;align-items:center;gap:12px}
+  .dc-top h3{margin:0;font-size:16px}
+  .dc-cuerpo{padding:16px 20px}
+  .dc-fila{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+  .dc-fila > div{flex:1;min-width:150px}
+  .dc-fila label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+  .dc-fila select,.dc-fila input{width:100%;border:1px solid var(--linea);border-radius:8px;
+                                 padding:9px 11px;font:inherit;font-size:14px;background:var(--papel)}
+  .dc-lista{border:1px solid var(--linea);border-radius:8px;max-height:320px;overflow:auto}
+  .dc-item{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--linea);font-size:13.5px}
+  .dc-item:last-child{border-bottom:0}
+  .dc-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--marca);flex:0 0 16px}
+  .dc-item .n{flex:1;min-width:0;overflow-wrap:anywhere}
+  .dc-item .act{color:var(--suave);font-size:12px;white-space:nowrap}
+  .dc-item .act b{color:var(--alerta)}
+  .dc-item.apagado{opacity:.5}
+  .dc-tools{display:flex;gap:10px;align-items:center;margin:10px 0;font-size:13px}
+  .dc-tools a{color:var(--marca);cursor:pointer;text-decoration:underline}
+  .dc-previo{background:var(--papel-2);border:1px solid var(--linea);border-radius:8px;padding:10px 12px;
+             font-size:13px;margin-top:12px}
+
+  #capaAcceso{position:fixed;inset:0;z-index:9999;display:none;align-items:center;
+              justify-content:center;background:#0f172a}
+  #capaAcceso .caja{background:var(--papel);border-radius:16px;padding:36px 32px;max-width:340px;
+                    width:88%;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  #capaAcceso .caja h2{margin:0 0 6px;font-size:26px;color:var(--marca)}
+  #capaAcceso .caja p{font-size:14px;color:#555;margin:0 0 22px}
+  #capaAcceso button{width:100%;padding:13px;border:0;border-radius:10px;background:var(--marca);
+                     color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+  #capaAcceso button:hover{background:var(--marca-osc)}
+  #accErr{margin-top:14px;font-size:13px;color:var(--mal)}
+
+/* ── Foto del producto ── */
+.foto-fila{display:flex;gap:14px;align-items:flex-start}
+.foto-prev{width:104px;height:104px;flex:0 0 auto;border-radius:12px;border:1px solid #d7dee6;
+  background:#f2f5f8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.foto-prev span{font-size:11px;color:#8a97a5;color:#8a97a5}
+.foto-prev img{width:100%;height:100%;object-fit:contain;display:block}
+.foto-acc{display:flex;flex-direction:column;gap:8px;min-width:0}
+.foto-acc .btn{width:max-content}
+.foto-info{font-size:12px;color:#5d6b7a;line-height:1.5}
+.foto-info b{color:#1f2d3a}
+.foto-info .malo{color:#b3261e}
+.foto-fondo{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid rgba(0,0,0,.18);
+  vertical-align:-1px;margin-right:5px}
+
+/* ══════════ Celular: esto se usa desde el teléfono ══════════ */
+
+/* Tocar dos veces no agranda la página */
+html,body{touch-action:manipulation}
+button,.btn,input,select,label,.prod,.chip,.filtro{touch-action:manipulation}
+
+/* El buscador va fijo arriba: administrar precios es, sobre todo, buscar. */
+.busca-fija{position:sticky;top:0;z-index:60;display:flex;gap:8px;align-items:center;
+  background:var(--fondo);margin:-20px -20px 14px;padding:12px 16px;
+  border-bottom:1px solid var(--linea)}
+.busca-fija input{flex:1;min-width:0;font:inherit;font-size:16px;   /* 16px: menos de eso, iPhone hace zoom al tocar */
+  padding:13px 14px;border:1px solid #cfd8e0;border-radius:11px;background:var(--papel);
+  -webkit-appearance:none;appearance:none}
+.busca-fija input:focus{outline:none;border-color:#7aa2c4;box-shadow:0 0 0 3px rgba(122,162,196,.22)}
+.busca-x{flex:0 0 auto;width:40px;height:40px;border:0;border-radius:50%;background:#e6edf3;
+  color:#54606c;font-size:22px;line-height:1;cursor:pointer;display:none}
+.busca-fija.con-texto .busca-x{display:block}
+
+/* El input de archivo real queda invisible pero NO oculto:
+   si se oculta con display:none, el iPhone no lo abre. */
+.foto-input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap}
+label.btn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+
+@media(max-width:700px){
+  header{padding:9px 14px}
+  header h1{font-size:15px}
+  .hd .env,.hd .quien{display:none}
+  main{padding:16px 14px}
+  .busca-fija{margin:-16px -14px 12px;padding:10px 14px}
+  /* Botones cómodos para el dedo */
+  .btn{min-height:44px;padding:11px 15px;font-size:14px}
+  .foto-prev{width:88px;height:88px}
+  /* Mientras se busca, lo único que importa son los resultados: los números y
+     los avisos se guardan para que la lista suba y quede a la vista. */
+  body.buscando #kpis,
+  body.buscando .kpis,
+  body.buscando #avisoImportar,
+  body.buscando .barra{display:none!important}
+  /* Que el teclado no tape lo que se está buscando */
+  .prod{scroll-margin-top:128px}
+  /* La lista arranca justo debajo del buscador */
+  #lista,.lista{scroll-margin-top:120px}
+}
+
+/* ══════════ El editor ocupa toda la pantalla ══════════
+   Antes era un recuadro flotante en el medio: incómodo en el teléfono y el botón
+   de Guardar quedaba fuera de la vista. Ahora ocupa todo, el encabezado queda
+   arriba y Guardar abajo, siempre visibles; en el medio scrollea el formulario. */
+/* No es una ventanita flotante: es una pantalla más, ocupa todo. */
+#editor{background:var(--papel)}
+#editor.abierto{padding:0;align-items:stretch;background:var(--papel)}
+.ed-caja{max-width:none;width:100%;border-radius:0;box-shadow:none;border:0;
+  display:flex;flex-direction:column;height:100vh;height:100dvh;margin:0}
+.ed-top{flex:0 0 auto;position:sticky;top:0;background:var(--papel);z-index:2}
+.ed-cuerpo{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:96px;overscroll-behavior:contain}
+.ed-pie{flex:0 0 auto;position:sticky;bottom:0;background:var(--papel);
+  box-shadow:0 -6px 18px rgba(15,23,42,.10);
+  padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+.ed-pie{flex-wrap:wrap}
+.ed-pie .btn{min-height:50px;font-size:15px}
+.ed-pie #edGuardar{flex:1 1 auto;min-width:60%}   /* Guardar: grande y siempre a mano */
+.ed-pie #edCancelar{flex:0 0 auto}
+.ed-estado{flex:1 1 100%;order:-1;margin-bottom:4px}
+
+@media(min-width:760px){
+  /* En la compu se centra, pero sigue ocupando todo el alto */
+  .ed-caja{max-width:760px;margin:0 auto;border-left:1px solid var(--linea);border-right:1px solid var(--linea)}
+}
+
+.btn-tienda{margin-left:auto;flex:0 0 auto;text-decoration:none;
+  background:#e8dcc4;color:#123f67;border-radius:9px;
+  padding:10px 16px;font-size:14px;font-weight:700;white-space:nowrap;
+  display:inline-flex;align-items:center}
+.btn-tienda:hover{filter:brightness(1.08)}
+@media(max-width:700px){ .btn-tienda{padding:9px 11px;font-size:12px} }
+
+/* El buscador fijo ahora lleva también el filtro por rubro */
+.busca-fija{flex-direction:column;align-items:stretch;gap:8px}
+.busca-linea{display:flex;gap:8px;align-items:center;position:relative}
+.busca-linea input{flex:1;min-width:0}
+#filtroRubro{width:100%;font:inherit;font-size:15px;padding:11px 12px;
+  border:1px solid #cfd8e0;border-radius:10px;background:var(--papel);color:#1f2d3a;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235d6b7a' stroke-width='1.7' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+#filtroRubro:focus{outline:none;border-color:#7aa2c4;box-shadow:0 0 0 3px rgba(122,162,196,.22)}
+/* Si hay un rubro elegido, el selector queda marcado */
+body.por-rubro #filtroRubro{border-color:#7aa2c4;background-color:#f2f8fc;font-weight:650}
+/* Al buscar se esconden los números, pero el filtro de rubro se queda */
+body.buscando .busca-fija{display:flex}
+
+/* ── En la tienda / fuera del catálogo ── */
+.grupo{display:grid;gap:14px}
+@media(min-width:900px){ .grupo{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(min-width:1300px){ .grupo{grid-template-columns:repeat(3,minmax(0,1fr))} }
+/* En pantallas anchas entra una cuarta columna: si no, queda medio monitor vacío. */
+@media(min-width:1620px){ .grupo{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.grupo-tit{display:flex;align-items:center;gap:9px;margin:22px 0 12px;
+  font-size:14px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.grupo-tit:first-child{margin-top:4px}
+.grupo-tit span{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.grupo-tit.dentro{color:#1f6b4f}
+.grupo-tit.dentro span{background:#dcf5e8;color:#14684a}
+.grupo-tit.fuera{color:#8a6a1f}
+.grupo-tit.fuera span{background:#fbeecd;color:#7a5c14}
+.grupo-tit.espera{color:#8a5310}
+.grupo-tit.espera span{background:#fbe3c2;color:#7a4709}
+.grupo-ayuda{margin:-6px 0 12px;font-size:12.5px;color:#6b7885;line-height:1.5}
+
+/* El color dice de un vistazo si el cliente lo ve o no */
+.prod.es-precio{border-left:4px solid #d98c1e!important;background:#fffaf1}
+.prod.en-catalogo{border-left:4px solid #2fa36b}
+.prod.fuera-catalogo{border-left:4px solid #d8a72e;background:#fffdf5}
+.prod.fuera-catalogo .nom{color:#6d5a22}
+
+/* ── Cantidades como botones ── */
+.medidas{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.medida{min-height:42px;padding:9px 15px;border:1.5px solid #cfd8e0;border-radius:10px;
+  background:var(--papel);color:#41505f;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s}
+.medida:hover{border-color:#9db6cc}
+.medida.on{background:#2c7a8c;border-color:#2c7a8c;color:#fff}
+.medida.apagada{opacity:.4}
+.medidas-sep{width:1px;height:26px;background:#dde4ea;margin:0 3px}
+.medidas-otro{margin-top:8px;font-size:12.5px;color:#6b7885}
+.medidas-otro b{color:#1f2d3a}
+#edRubro{width:100%;font:inherit;font-size:15px;padding:11px 12px;border:1px solid #cfd8e0;
+  border-radius:10px;background:var(--papel);color:#1f2d3a;-webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235d6b7a' stroke-width='1.7' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+#edRubro:focus{outline:none;border-color:#7aa2c4;box-shadow:0 0 0 3px rgba(122,162,196,.22)}
+.tienda-sel{display:inline-flex;gap:0;margin:0 0 14px;padding:4px;border-radius:999px;
+  background:var(--suave-bg,#eef2f6);border:1px solid var(--linea)}
+.tienda-sel button{padding:9px 18px;border:0;border-radius:999px;background:transparent;
+  color:var(--suave);font:700 13.5px/1 inherit;cursor:pointer}
+.tienda-sel button.on{background:var(--papel);color:var(--texto);box-shadow:0 2px 7px rgba(20,45,70,.13)}
+body.es-mayorista .tienda-sel button.on{background:#2f6d99;color:#fff}
+
+/* ── EN QUÉ TIENDA ESTOY ──────────────────────────────────────────────────────
+   Las dos tiendas se ven casi iguales en el panel y es fácil confundirse. Este
+   cartel queda siempre a la vista y cambia de color según cuál esté activa. */
+.cartel-tienda{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 16px;
+  padding:11px 15px;border-radius:11px;font-size:14.5px;
+  background:#e9f2f8;border:1px solid #b6d2e6;color:#1d5480}
+.cartel-tienda b{font-weight:800}
+.ct-punto{width:11px;height:11px;flex:0 0 11px;border-radius:50%;background:#2f6d99;
+  box-shadow:0 0 0 3px rgba(47,109,153,.18)}
+.ct-archivo{margin-left:auto;font-size:12px;font-weight:700;letter-spacing:.02em;
+  padding:3px 9px;border-radius:999px;background:rgba(29,84,128,.10)}
+body.es-mayorista .cartel-tienda{background:#fdf3e3;border-color:#e2c48e;color:#7d5410}
+body.es-mayorista .ct-punto{background:#c98a1e;box-shadow:0 0 0 3px rgba(201,138,30,.20)}
+body.es-mayorista .ct-archivo{background:rgba(125,84,16,.12)}
+@media(max-width:700px){
+  .cartel-tienda{font-size:14px;padding:12px 14px}
+  .ct-archivo{margin-left:0;width:100%;text-align:center}
+}
+
+/* El destino del Excel, dentro de la caja de importación. */
+.excel-destino{margin:12px 0;padding:10px 13px;border-radius:9px;display:flex;
+  flex-direction:column;gap:3px;background:#fdf3e3;border:1px solid #e2c48e;color:#7d5410}
+.excel-destino span{font-size:12.5px;opacity:.9}
+
+/* Las cuentas del Excel contra lo que ya hay, y las alarmas si algo no cierra. */
+.excel-cuentas{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.excel-cuentas span{padding:6px 11px;border-radius:9px;background:var(--papel-2);
+  border:1px solid var(--linea);font-size:13px}
+.excel-cuentas span b{font-size:15px;margin-right:4px}
+.excel-cuentas span.ojo{background:#fdeee0;border-color:#e6b98a;color:#8a4a10}
+.excel-alarma{margin:12px 0 0;padding:12px 14px;border-radius:10px;
+  background:#fdecec;border:1px solid #e8a8a8;color:#8a1f1f;font-size:13.5px;line-height:1.5}
+.excel-alarma ul{margin:6px 0 0;padding-left:20px}
+.excel-alarma li{margin:3px 0}
+.excel-saltos{display:flex;flex-direction:column;gap:3px;margin:9px 0 0;padding:9px 11px;
+  border-radius:8px;background:rgba(138,31,31,.07);font-size:12.5px}
+.excel-alarma-pie{display:block;margin-top:9px;font-size:12.5px;opacity:.85}
+.btn.peligro{background:#b4392f;border-color:#b4392f}
+.btn.peligro:hover{background:#9c3028}
+.excel-caja.ojo{border-color:#e6b98a;background:#fffaf3}
+body.es-mayorista #btnSync,body.es-mayorista #btnPublicar{display:none}
+.excel-caja{margin-top:13px;padding:14px 16px;border:1px solid var(--linea);border-radius:13px;
+  background:var(--papel);font-size:13.5px;line-height:1.6;color:var(--texto)}
+.excel-caja.ok{border-color:#bcd9c4;background:#f4faf6}
+.excel-caja.mal{border-color:var(--mal-linea);background:var(--mal-suave)}
+.excel-caja .btn{margin-top:10px}
+
+/* ── ORGANIZACIÓN DEL PANEL ───────────────────────────────────────────────────
+   Pensado para el celular, que es donde más se usa: los recuadros de arriba son
+   los filtros (se tocan), en dos columnas y con blanco suficiente para el dedo.
+   El color de cada uno es el mismo que después lleva el borde de la tarjeta, así
+   se sabe de un vistazo qué es cada cosa. */
+#kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:14px}
+.kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  min-height:62px;padding:11px 13px;border:1.5px solid var(--linea);border-left-width:5px;
+  border-radius:13px;background:var(--papel);text-align:left;cursor:pointer;font:inherit;
+  -webkit-tap-highlight-color:transparent;transition:border-color .15s,box-shadow .15s,transform .12s}
+.kpi b{font-size:22px;line-height:1.1;color:var(--texto)}
+.kpi span{font-size:12px;line-height:1.25;color:var(--suave)}
+.kpi:active{transform:scale(.985)}
+.kpi.on{box-shadow:0 0 0 3px rgba(47,109,153,.20);border-color:#2f6d99}
+.kpi.vacio{opacity:.5}
+.kpi.k-todos{border-left-color:#9fb4c4}
+.kpi.k-precio{border-left-color:#e08a1e}
+.kpi.k-nuevo{border-left-color:#2e9e63}
+.kpi.k-foto{border-left-color:#c2582f}
+.kpi.k-fuera{border-left-color:#8a93a0}
+.kpi.k-renom{border-left-color:#7b5bb5}
+.kpi.k-desc{border-left-color:#b9c3cd}
+.kpi.k-mal{border-left-color:#c8402c}
+
+/* el borde de la tarjeta usa el mismo color que su recuadro */
+.es-precio{border-left:5px solid #e08a1e!important}
+.es-nuevo{border-left:5px solid #2e9e63!important}
+.es-sinfoto{border-left:5px solid #c2582f!important}
+.es-renom{border-left:5px solid #7b5bb5!important}
+.es-mal{border-left:5px solid #c8402c!important}
+.chip.precio{background:#fdf0dc;color:#8a5310;border:1px solid #f0d6a8}
+
+/* acciones: las tres de siempre destacadas, el resto en gris */
+.barra.acciones{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.btn.primario{background:#2f6d99;color:#fff;border-color:#2f6d99;font-weight:700}
+.btn.primario:hover{background:#27597d}
+.filtro.oculto-btn{display:none}
+
+@media(max-width:700px){
+  #kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .kpi{min-height:70px;padding:10px 12px}
+  .kpi b{font-size:20px}
+  .kpi span{font-size:11.5px}
+  /* en el celu los botones ocupan el ancho: se aciertan sin apuntar */
+  .barra.acciones{flex-direction:column;align-items:stretch}
+  .barra.acciones .btn,.barra.acciones label.btn{width:100%;min-height:48px;
+    display:flex;align-items:center;justify-content:center;font-size:14.5px}
+  .tienda-sel{display:flex;width:100%}
+  .tienda-sel button{flex:1;min-height:44px;font-size:14px}
+}
+.ayuda-filtro{margin:0 0 13px;padding:11px 14px;border-left:4px solid #7fa7c1;
+  border-radius:0 11px 11px 0;background:#eff6fb;color:#2b5c80;font-size:13.5px;line-height:1.55}
+.ayuda-filtro b{color:#123f67}
+@media(max-width:700px){.ayuda-filtro{font-size:13px;padding:10px 12px}}
+.precio .p-uno{font-weight:800}
+.precio .p-dos{margin-left:10px;color:#2f6d99;font-weight:700}
+.precio .p-dos i{display:block;font-style:normal;font-size:9.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:#7d93a6;font-weight:700}
+.precio{display:flex;align-items:flex-end;gap:4px;flex-wrap:wrap}
+/* la barra con el botón que hace que los precios lleguen a la web */
+.barra-fija{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;
+  margin:0 0 12px;padding:11px 14px;border:1px solid #cfe0ec;border-radius:13px;
+  background:#eaf4fb;box-shadow:0 3px 12px rgba(20,50,80,.07)}
+.barra-fija .btn{white-space:nowrap}
+.barra-fija-nota{font-size:12.5px;color:#4a6b85;line-height:1.35}
+.barra-fija[hidden]{display:none}
+.orden-fila{display:flex;align-items:center;gap:9px;margin:0 0 12px;font-size:13px;color:var(--suave)}
+.orden-fila select{flex:1;max-width:260px;min-height:40px;padding:0 10px;
+  border:1px solid var(--linea);border-radius:10px;background:var(--papel);font:inherit}
+@media(max-width:700px){
+  .barra-fija{flex-direction:column;align-items:stretch;gap:7px;padding:10px 12px}
+  .barra-fija .btn{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center}
+  .barra-fija-nota{text-align:center;font-size:12px}
+  .orden-fila{flex-direction:column;align-items:stretch;gap:5px}
+  .orden-fila select{max-width:none;min-height:44px}
+}
+.cmp-intro{margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--suave)}
+.cmp-busca input{width:100%;min-height:46px;padding:0 13px;border:1px solid var(--linea);
+  border-radius:11px;font:inherit;background:var(--papel)}
+.cmp-acc{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:11px 0}
+.cmp-acc #cmpResumen{margin-left:auto;font-size:13px;color:var(--suave);font-weight:700}
+.cmp-lista{display:flex;flex-direction:column;gap:7px}
+.cmp-item{display:flex;align-items:center;gap:11px;padding:8px 11px;border:1px solid var(--linea);
+  border-radius:11px;background:var(--papel);cursor:pointer}
+.cmp-item.off{opacity:.5;background:#f6f8fa}
+.cmp-item input{width:22px;height:22px;flex-shrink:0}
+.cmp-item img{width:46px;height:46px;object-fit:contain;border-radius:8px;background:#f2f5f8;flex-shrink:0}
+.cmp-n{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cmp-n b{font-size:13.5px;line-height:1.25}
+.cmp-n i{font-style:normal;font-size:11.5px;color:var(--suave)}
+@media(max-width:700px){
+  .cmp-acc .btn{flex:1;min-height:44px}
+  .cmp-acc #cmpResumen{width:100%;margin:4px 0 0;text-align:center}
+  .cmp-item{padding:9px 10px}
+}
+/* ── BANDERILLAS ──────────────────────────────────────────────────────────────
+   Dos decisiones, dos gestos, sin abrir nada: la de catálogo va AFUERA de la
+   mini tarjeta (debajo de la foto) y dice si el producto se ve en la tienda; la
+   de precio va ADENTRO y da el OK a un precio nuevo. Alto de 40px para el dedo. */
+.prod-flanco{display:flex;flex-direction:column;align-items:center;gap:7px;flex:0 0 64px}
+.bander{display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;
+  border-radius:999px;border:1px solid #d3dbe3;background:var(--papel);color:#63707e;
+  font:700 11px/1 inherit;cursor:pointer;padding:0 9px;min-height:28px;
+  transition:background .12s,border-color .12s,color .12s}
+.bander i{width:15px;height:15px;flex:0 0 15px;border-radius:50%;border:1px solid currentColor;
+  position:relative;opacity:.55}
+.bander.on i,.bander.lista i{opacity:1}
+.bander.on i::after,.bander.lista i::after{content:'';position:absolute;left:4px;top:1px;
+  width:4px;height:8px;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(42deg)}
+
+/* Catálogo: verde cuando el producto se ve en la tienda, ámbar cuando no. */
+.bander-cat{width:64px;justify-content:center;padding:0 4px;min-height:40px;height:40px;
+  border-radius:9px;flex-direction:column;gap:3px;font-size:9.5px;text-align:center;line-height:1.15}
+.bander-cat i{width:13px;height:13px;flex:0 0 13px}
+.bander-cat.on{background:#e9f7ef;border-color:#9cd4b4;color:#1d7a4a}
+.bander-cat.on.alta{background:#eaf1fb;border-color:#a8c2e6;color:#28578f}
+.bander-cat:not(.on):not(.trabada){background:#fdf6e6;border-color:#e4cd95;color:#8a6b1c}
+.bander-cat.trabada{background:var(--papel-2);border-color:#dde3e9;color:#93a0ad;cursor:default}
+.bander-cat:disabled{cursor:default}
+
+/* Precio: mientras espera tu OK es un botón ámbar; una vez al día, queda gris. */
+.bander-precio{margin-top:8px;min-height:40px;padding:0 15px;font-size:12.5px}
+.bander-precio[data-ok]{background:#fdf3e4;border-color:#dcb677;color:#8a5310}
+.bander-precio[data-ok]:hover{background:#f9e8cd}
+.bander-precio.lista{background:transparent;border-color:transparent;color:#93a0ad;
+  padding-left:0;font-weight:600;cursor:default}
+.bander:disabled{opacity:.6}
+@media(max-width:700px){
+  .bander-cat{min-height:44px;height:44px}
+  .bander-precio{min-height:44px;width:100%;justify-content:center}
+  .bander-precio.lista{justify-content:flex-start}
+}
+.aviso-cat{display:flex;flex-direction:column;gap:2px;margin:0 0 9px;padding:8px 11px;border-radius:9px;font-size:12.5px;line-height:1.4}
+.aviso-cat b{font-size:12.5px}
+.aviso-cat span{color:inherit;opacity:.85}
+.aviso-cat.espera{background:#eaf6ee;border:1px solid #bfe0cb;color:#1f6b42}
+.aviso-cat.traba{background:var(--papel-2);border:1px solid #dde3e9;color:#5c6b7a}
+.sello-ver{display:inline-block;margin-right:10px;padding:4px 10px;border-radius:999px;
+  background:rgba(255,255,255,.13);color:#bcd3e6;font-size:12px;font-weight:700;vertical-align:middle}
+/* La pantalla de compartir usa el mismo esquema que el editor: si no, queda
+   dibujada al final de la página y parece que no pasó nada. */
+#capaCompartir{position:fixed;inset:0;z-index:220;display:none;background:rgba(15,23,42,.55)}
+#capaCompartir.abierto{display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto}
+#capaCompartir .ed-caja{background:var(--papel);border-radius:14px;width:100%;max-width:620px;
+  box-shadow:0 22px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+#capaCompartir .ed-top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--linea)}
+#capaCompartir .ed-cuerpo{flex:1 1 auto;overflow-y:auto;padding:16px 18px;-webkit-overflow-scrolling:touch}
+#capaCompartir .ed-pie{flex:0 0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:13px 18px;border-top:1px solid var(--linea);background:var(--papel)}
+@media(max-width:700px){
+  #capaCompartir.abierto{padding:0;align-items:stretch}
+  #capaCompartir .ed-caja{max-width:none;border-radius:0;max-height:none;height:100vh;height:100dvh}
+  #capaCompartir .ed-pie{padding-bottom:calc(13px + env(safe-area-inset-bottom))}
+  #capaCompartir .ed-pie .btn{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center}
+}
+/* En iPhone, un input con menos de 16px hace que la página se acerque sola al
+   tocarlo. A partir de acá todos los campos del panel van en 16px en mobile. */
+@media(max-width:700px){
+  input,select,textarea,.campo input,.campo textarea,#buscar,.cmp-busca input{font-size:16px!important}
+  .cmp-busca input{min-height:48px}
+}
+#capaAltas{position:fixed;inset:0;z-index:220;display:none;background:rgba(15,23,42,.55)}
+#capaAltas.abierto{display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto}
+#capaAltas .ed-caja{background:var(--papel);border-radius:14px;width:100%;max-width:620px;
+  box-shadow:0 22px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+#capaAltas .ed-top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--linea)}
+#capaAltas .ed-cuerpo{flex:1 1 auto;overflow-y:auto;padding:16px 18px;-webkit-overflow-scrolling:touch}
+#capaAltas .ed-pie{flex:0 0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:13px 18px;border-top:1px solid var(--linea);background:var(--papel)}
+.alt-item.on{border-color:#2e9e63;background:#f3faf6}
+.alt-falta{color:#c2582f}
+@media(max-width:700px){
+  #capaAltas.abierto{padding:0;align-items:stretch}
+  #capaAltas .ed-caja{max-width:none;border-radius:0;max-height:none;height:100vh;height:100dvh}
+  #capaAltas .ed-pie{padding-bottom:calc(13px + env(safe-area-inset-bottom))}
+  #capaAltas .ed-pie .btn{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div id="capaAcceso">
+  <div class="caja">
+    <h2>Paladear</h2>
+    <p>Panel de catálogo.<br>Pegá tu clave de GitHub para poder guardar.</p>
+    <input id="inpToken" type="password" placeholder="Clave de GitHub" autocomplete="off"
+           style="width:100%;padding:11px 12px;border:1px solid #cfd8e0;border-radius:9px;font-size:14px;margin-bottom:10px;font-family:inherit">
+    <button id="btnEntrar">Entrar</button>
+    <div id="accErr"></div>
+    <p style="font-size:12px;color:#7a8794;margin-top:12px;line-height:1.5">
+      Queda guardada sólo en este navegador. Sin ella podés mirar, pero no guardar.</p>
+  </div>
+</div>
+
+<header>
+  <div class="hd">
+    <span class="marca">Paladear</span>
+    <h1>Panel de catálogo</h1>
+    <span class="env">TESTER</span>
+    <span class="quien" id="quien"></span>
+    <span class="sello-ver" id="selloVer" title="Si esta fecha es vieja, recargá manteniendo apretado el botón de recargar">v. 13/09 12:24</span><a class="btn-tienda" href="./" target="_blank" rel="noopener">Ver la tienda</a>
+  </div>
+</header>
+
+<div id="editor">
+  <div class="ed-caja">
+    <div class="ed-top">
+      <div id="edFoto" class="sinf">sin foto</div>
+      <div style="min-width:0">
+        <h3 id="edTitulo"></h3>
+        <div class="sub" id="edSub"></div>
+      </div>
+      <button class="ed-cerrar" id="edCerrar" title="Cerrar">&times;</button>
+    </div>
+    <div class="ed-cuerpo">
+      <div id="edRenombre"></div>
+      <div class="campo">
+        <label>Precio <span class="ayuda">— viene de E-Pyme, no se edita acá</span></label>
+        <div class="solo-lectura" id="edPrecio"></div>
+      </div>
+      <div class="campo" id="edEnCatalogo"></div>
+      <div class="campo">
+        <label>Foto del producto <span class="ayuda">— se achica y se comprime sola</span></label>
+        <div class="foto-fila">
+          <div class="foto-prev" id="edFotoPrev"><span>sin foto</span></div>
+          <div class="foto-acc">
+            <label class="btn gris" for="edFotoFile">Elegir foto</label>
+            <input type="file" id="edFotoFile" accept="image/*" class="foto-input">
+            <button type="button" class="btn gris" id="edFotoQuitar" hidden>Quitar</button>
+             <button type="button" class="btn gris" id="edFotoMay" hidden title="Sube la misma foto a la distribuidora, con el mismo número de artículo">Compartir con la distribuidora</button>
+            <div class="foto-info" id="edFotoInfo"></div>
+          </div>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="edNombre">Nombre que ve el cliente</label>
+        <input id="edNombre" maxlength="120">
+      </div>
+      <div class="campo">
+        <label for="edRubro">Rubro <span class="ayuda">— la categoría donde aparece en la tienda</span></label>
+        <select id="edRubro"></select>
+      </div>
+      <div class="campo">
+        <label>Cantidades <span class="ayuda">— tocá las medidas que se venden</span></label>
+        <div class="medidas" id="edMedidas"></div>
+        <input id="edCant" maxlength="120" hidden>
+        <div class="medidas-otro" id="edMedidasOtro"></div>
+      </div>
+      <div class="campo">
+        <label for="edSabores">Sabores <span class="ayuda">— opcional, separados por barra</span></label>
+        <input id="edSabores" maxlength="200">
+      </div>
+      <div class="campo">
+        <label for="edDesc">Descripción</label>
+        <textarea id="edDesc" maxlength="900"></textarea>
+      </div>
+      <div class="campo">
+        <label for="edOferta">Oferta <span class="ayuda">— porcentaje de descuento. 0 = sin oferta</span></label>
+        <input id="edOferta" type="number" min="0" max="90" step="1">
+      </div>
+      <div class="campo">
+        <label>Aparece en los armadores <span class="ayuda">— solo productos a granel</span></label>
+        <div class="banderas">
+          <label class="bandera"><input type="checkbox" id="edMix"> Armar mix</label>
+          <label class="bandera"><input type="checkbox" id="edGranola"> Granola</label>
+          <label class="bandera"><input type="checkbox" id="edBlend"> Blend de té</label>
+        </div>
+      </div>
+    </div>
+    <div class="ed-pie">
+      <span class="ed-estado" id="edEstado"></span>
+      <button class="btn gris" id="edCancelar">Cancelar</button>
+      <button class="btn" id="edGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="desc">
+  <div class="dc-caja">
+    <div class="dc-top">
+      <h3>Descuento por rubro</h3>
+      <button class="ed-cerrar" id="dcCerrar" style="margin-left:auto" title="Cerrar">&times;</button>
+    </div>
+    <div class="dc-cuerpo">
+      <div class="dc-fila">
+        <div>
+          <label for="dcRubro">Rubro</label>
+          <select id="dcRubro"></select>
+        </div>
+        <div style="max-width:150px">
+          <label for="dcPct">Descuento %</label>
+          <input id="dcPct" type="number" min="0" max="90" step="1" value="0" placeholder="0">
+        </div>
+      </div>
+      <div class="dc-tools">
+        <span id="dcResumen"></span>
+        <a id="dcTodos">marcar todos</a>
+        <a id="dcNinguno">desmarcar todos</a>
+        <a id="dcSinOferta">solo los que hoy no tienen</a>
+      </div>
+      <div class="dc-lista" id="dcLista"></div>
+      <div class="dc-previo" id="dcPrevio"></div>
+    </div>
+    <div class="ed-pie">
+      <span class="ed-estado" id="dcEstado"></span>
+      <button class="btn gris" id="dcCancelar">Cancelar</button>
+      <button class="btn" id="dcAplicar">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<main>
+<div class="busca-fija">
+  <div class="busca-linea">
+    <input id="buscarFijo" placeholder="Buscar producto o número de artículo" autocomplete="off" enterkeyhint="search">
+    <button type="button" class="busca-x" id="buscarX" aria-label="Borrar">&times;</button>
+  </div>
+  <select id="filtroRubro" aria-label="Filtrar por rubro">
+    <option value="">Todos los rubros</option>
+  </select>
+</div>
+  <div id="avisoImportar"></div>
+  <div class="barra-fija" id="barraFija">
+    <button class="btn primario" id="btnPublicarFijo" onclick="publicarPrecios()" title="Le pide a la PC del negocio que mande los precios de E-Pyme a la tienda">Publicar precios en la tienda</button>
+    <span class="barra-fija-nota" id="notaPublicar"></span>
+  </div>
+  <div class="orden-fila">
+    <label for="selOrden">Ordenar por</label>
+    <select id="selOrden">
+      <option value="cambios">Lo que cambió, primero</option>
+      <option value="alfa">Alfabético</option>
+      <option value="caro">Más caro primero</option>
+      <option value="barato">Más barato primero</option>
+      <option value="rubro">Por rubro</option>
+    </select>
+  </div>
+  <div class="tienda-sel" role="group" aria-label="Elegí la tienda">
+    <button type="button" data-t="min" class="on">Tienda minorista</button>
+    <button type="button" data-t="may">Distribuidora</button>
+  </div>
+  <div class="cartel-tienda" id="cartelTienda" role="status">
+    <span class="ct-punto"></span>
+    <span>Estás trabajando en <b id="ctNombre">la Tienda minorista</b></span>
+    <span class="ct-archivo" id="ctArchivo">paladeartienda-test</span>
+  </div>
+  <div class="tarjetas" id="kpis"></div>
+  <div class="barra acciones">
+    <button class="btn primario" id="btnVistos" onclick="marcarPreciosRevisados()" title="Aprueba de una vez todos los precios que esperan tu OK" hidden>Dar el OK a todos los precios</button>
+    <button class="btn primario" id="btnPublicar" title="Publica en la tienda los precios que tiene E-Pyme ahora">Publicar precios en la tienda</button>
+    <label class="btn primario" for="fileExcel" title="Por si falla el pase automático: subí el mismo Excel que cargás al Sheet">Subir Excel de precios</label>
+    <input type="file" id="fileExcel" class="foto-input">
+    <button class="btn gris" id="btnSync">Traer del Sheet</button>
+    <button class="btn gris" id="btnDesc">Descuento por rubro</button>
+    <button class="btn gris" id="btnCompartir" onclick="abrirCompartir()">Compartir fotos con la distribuidora</button>
+    <button class="btn gris" id="btnAltas" onclick="abrirAltas()">Agregar productos al catálogo</button>
+    <button class="filtro oculto-btn" data-f="todos">Todos</button>
+    <button class="filtro oculto-btn" data-f="pendientes">Pendientes</button>
+    <button class="filtro oculto-btn" data-f="fuera">Fuera del catálogo</button>
+    <button class="filtro oculto-btn" data-f="oferta">Con oferta</button>
+  </div>
+  <div id="estadoPublicar"></div>
+  <div id="excelCaja"></div>
+  <div id="ayudaFiltro"></div>
+  <div id="salida" class="cargando">Cargando catálogo...</div>
+  <div class="nota">
+    Los <b>precios</b> vienen de E-Pyme y se actualizan solos cada 15 minutos: no se editan acá.
+    Este panel es de <b>solo lectura</b> por ahora — la edición y la carga de fotos vienen después.
+    Un producto <b>nuevo</b> no se publica en la tienda hasta que lo confirmes, y un
+    <b>cambio de nombre</b> no se aplica hasta que lo revises: mientras tanto la tienda sigue
+    mostrando el nombre anterior.
+  </div>
+</main>
+
+<script>
+// ── ACCESO ────────────────────────────────────────────────────────────────────
+// Todo vive en el repo de la tester: las fotos como archivos y las fichas en un JSON.
+// La llave para guardar es una clave de GitHub, guardada sólo en este navegador.
+const REPO = 'paladear/paladeartienda-test';
+const ARCHIVO_FICHAS = 'catalogo-panel.json';
+const CARPETA_FOTOS = 'fotos';
+
+/* ── LAS DOS TIENDAS ──────────────────────────────────────────────────────────
+   El panel maneja la tienda minorista y la distribuidora. Cada una tiene su
+   propio repo, sus fichas y sus fotos; acá se guarda cuál está activa.
+   OJO: la distribuidora apunta a la TESTER, no a la oficial. */
+const REPO_MAY = 'paladear/paladeardistribuidora-test';
+var TIENDA = 'min';
+var CSV_MAY_INFO = '', CSV_MAY_PRECIOS = '';
+var GUARDADO_MIN = null, GUARDADO_MAY = null;   // fichas/fotos/productos de cada una
+var FICHAS_MAY_LISTAS = false;
+var PRECIOS_VISTOS = {};        // {id: precio que ya revisaste}
+// Memoria permanente: la fecha del último cambio real de precio de cada producto.
+// Sin esto el orden "lo último que cambió" se pierde apenas revisás, y la lista
+// vuelve a salir alfabética.
+var CAMBIOS_FECHA = {};         // {id: {p: precio anterior, f: fecha ISO}}
+// El precio que vos aprobaste. La tienda usa ESTE, no el que llega de E-Pyme:
+// así un cambio de precio no llega solo a la web hasta que le das el OK.
+var PRECIOS_APROBADOS = {};     // {id: [p1, p2]}
+var ORDEN = 'cambios';          // como se ordena la lista
+var GUARDANDO_VISTOS = false;
+function repoActivo(){ return TIENDA === 'may' ? REPO_MAY : REPO; }
+/* Cómo se llama y dónde guarda cada tienda. Se usa en todos los avisos para que
+   nunca haya dudas de sobre cuál de las dos se está trabajando. */
+function nombreTienda(){ return TIENDA === 'may' ? 'la Distribuidora (mayorista)' : 'la Tienda minorista'; }
+function nombreCorto(){ return TIENDA === 'may' ? 'Distribuidora' : 'Tienda minorista'; }
+function archivoPrecios(){ return TIENDA === 'may' ? 'precios-may.csv' : 'precios-min.csv'; }
+const LS_TOKEN = 'paladear_panel_token';
+
+let TOKEN = '';
+try { TOKEN = localStorage.getItem(LS_TOKEN) || ''; } catch(e) {}
+
+function verCapa(si){ document.getElementById('capaAcceso').style.display = si ? 'flex' : 'none'; }
+
+async function gh(ruta, opciones, repo){
+  const o = Object.assign({}, opciones || {});
+  o.headers = Object.assign({
+    'Accept': 'application/vnd.github+json',
+    'Authorization': 'token ' + TOKEN
+  }, o.headers || {});
+  const r = await fetch('https://api.github.com/repos/' + (repo || REPO) + ruta, o);
+  if (!r.ok) {
+    let msg = 'HTTP ' + r.status;
+    try { const j = await r.json(); if (j.message) msg = j.message; } catch(e) {}
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return r.json();
+}
+
+async function claveSirve(){
+  try {
+    const info = await gh('');
+    return !!(info && info.permissions && info.permissions.push);
+  } catch(e) { return false; }
+}
+
+/* Guarda un archivo en el repo. Si otro proceso lo cambió mientras tanto (el robot
+   de precios corre cada 2 horas), se reintenta con el sha nuevo. */
+async function guardarEnRepo(ruta, contenidoB64, mensaje, intento, repo){
+  intento = intento || 0;
+  let sha = null;
+  try { sha = (await gh('/contents/' + encodeURI(ruta) + '?ref=main', null, repo)).sha; }
+  catch(e) { if (e.status !== 404) throw e; }
+  const cuerpo = { message: mensaje, content: contenidoB64, branch: 'main' };
+  if (sha) cuerpo.sha = sha;
+  try {
+    return await gh('/contents/' + encodeURI(ruta), { method:'PUT', body: JSON.stringify(cuerpo) }, repo);
+  } catch(e) {
+    if ((e.status === 409 || e.status === 422) && intento < 2)
+      return guardarEnRepo(ruta, contenidoB64, mensaje, intento + 1, repo);
+    throw e;
+  }
+}
+
+const aB64 = txt => btoa(unescape(encodeURIComponent(txt)));
+
+document.getElementById('btnEntrar').addEventListener('click', async function(){
+  const b = this, inp = document.getElementById('inpToken'), err = document.getElementById('accErr');
+  const val = (inp.value || '').trim();
+  if (!val) { err.textContent = 'Pegá la clave.'; return; }
+  b.disabled = true; b.textContent = 'Comprobando...'; err.textContent = '';
+  TOKEN = val;
+  if (await claveSirve()) {
+    try { localStorage.setItem(LS_TOKEN, TOKEN); } catch(e) {}
+    verCapa(false);
+    document.getElementById('quien').textContent = 'podés guardar';
+    arrancar();
+  } else {
+    TOKEN = '';
+    b.disabled = false; b.textContent = 'Entrar';
+    err.textContent = 'Esa clave no sirve para este repositorio.';
+  }
+});
+
+document.getElementById('inpToken').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btnEntrar').click();
+});
+
+// Al abrir: si ya hay clave guardada y sigue sirviendo, entra derecho.
+setTimeout(async function(){
+  if (TOKEN && await claveSirve()) {
+    verCapa(false);
+    document.getElementById('quien').textContent = 'podés guardar';
+    arrancar();
+  } else { TOKEN = ''; verCapa(true); }
+}, 0);
+
+// ── DATOS ─────────────────────────────────────────────────────────────────────
+const CLOUD = 'hswu4zpv';
+// Fotos propias del panel (archivos del repo). Mandan sobre las de Cloudinary.
+let FOTOS_FB = {};   // { id: {fondo,w,h,peso,v} } — la imagen es fotos/<id>.webp
+/* Recién subida, la foto todavía no está publicada (GitHub tarda cerca de un
+   minuto). Mientras tanto se muestra la copia que quedó en memoria, así no se ve
+   rota. */
+const FOTOS_RECIEN = {};
+const baseSitio = () => (TIENDA === 'may' ? 'https://paladear.github.io/paladeardistribuidora-test/' : '');
+const urlFoto = id => FOTOS_RECIEN[id] ||
+  (baseSitio() + CARPETA_FOTOS + '/' + id + '.' + ((FOTOS_FB[id] && FOTOS_FB[id].ext) || 'webp')
+   + '?v=' + ((FOTOS_FB[id] && FOTOS_FB[id].v) || 1));
+const imgDe = id => FOTOS_FB[id]
+  ? urlFoto(id)
+  : ('https://res.cloudinary.com/' + CLOUD + '/image/upload/f_auto,q_auto,w_140/' + id);
+
+// Mismo parseo que usan los scripts del sitio (comillas dobles escapadas, saltos
+// de línea dentro de celdas).
+function leerCsv(txt){
+  const filas = [], lineas = txt.trim().split(/\r?\n/);
+  let i = 0;
+  while (i < lineas.length) {
+    let cruda = lineas[i++];
+    let comillas = (cruda.match(/"/g) || []).length;
+    while (comillas % 2 !== 0 && i < lineas.length) {
+      cruda += '\n' + lineas[i++];
+      comillas = (cruda.match(/"/g) || []).length;
+    }
+    const cols = []; let act = '', entre = false;
+    for (let j = 0; j < cruda.length; j++) {
+      const c = cruda[j];
+      if (c === '"') {
+        if (entre && cruda[j+1] === '"') { act += '"'; j++; }
+        else entre = !entre;
+      } else if (c === ',' && !entre) { cols.push(act.trim()); act = ''; }
+      else act += c;
+    }
+    cols.push(act.trim());
+    filas.push(cols);
+  }
+  return filas;
+}
+const limpiaId = v => String(v || '').trim().replace(/\./g, '').split(',')[0];
+const aNum = v => {
+  const c = String(v || '').replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(c);
+  return isFinite(n) ? Math.round(n) : 0;
+};
+const pesos = n => '$' + n.toLocaleString('es-AR');
+
+let PRODUCTOS = [], FILTRO = 'todos', BUSCA = '', RUBRO = '';
+// Fichas guardadas en el repo. Mandan sobre las del Sheet: si un producto ya se
+// edito desde el panel, esa version es la buena.
+let FICHAS_FB = {}, FICHAS_CSV = {};
+
+// Las fichas viven en un JSON del repo: se leen por HTTP, sin permisos.
+
+async function cargarFichasGuardadas(){
+  try {
+    const r = await fetch(ARCHIVO_FICHAS + '?t=' + Date.now(), {cache:'no-store'});
+    const j = r.ok ? await r.json() : {};
+    FICHAS_FB = j.fichas || {};
+    FOTOS_FB  = j.fotos  || {};
+    PRECIOS_VISTOS = j.preciosVistos || {};   // para saber cuáles cambiaron desde la última revisión
+    CAMBIOS_FECHA  = j.cambiosPrecio || {};
+    PRECIOS_APROBADOS = j.preciosAprobados || {};
+  } catch (e) {
+    console.warn('[panel] todavía no hay fichas guardadas:', e && e.message);
+    FICHAS_FB = {}; FOTOS_FB = {}; PRECIOS_VISTOS = {};
+    CAMBIOS_FECHA = {}; PRECIOS_APROBADOS = {};
+  }
+}
+
+/* Escribe el JSON con todas las fichas y los datos de las fotos. */
+/* Trae la planilla en vivo y actualiza las fichas que nunca se editaron a mano.
+   Sirve para que lo guardado sea copia fiel del Sheet, que es lo que va a quedar
+   el día que se deje de leer la planilla. Lo editado desde el panel NO se pisa. */
+const SHEET_INFO_URL = 'https://docs.google.com/spreadsheets/d/1aANKgaQFoiAixKQvPlRpZ0_PBQhES-iBWqOG1bsuLyg/gviz/tq?tqx=out:csv&sheet=Info';
+
+async function traerDelSheet(){
+  const b = $('btnSync');
+  const antes = b ? b.textContent : '';
+  if (b) { b.disabled = true; b.textContent = 'Leyendo la planilla...'; }
+  try {
+    const r = await fetch(SHEET_INFO_URL + '&t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const filas = leerCsv(await r.text());
+    if (filas.length < 2) throw new Error('la planilla vino vacía');
+
+    let tocadas = 0, respetadas = 0;
+    const cambios = [];
+    filas.slice(1).forEach(c => {
+      if (c.length < 7) return;
+      const id = limpiaId(c[6]); if (!id) return;
+      const delSheet = {
+        nombre: (c[0] || '').trim(),
+        cantidades: (c[1] || '').trim(),
+        desc: (c[2] || '').trim(),
+        sabores: (c[3] || '').trim(),
+        oferta: parseInt(String(c[7] || '').replace('%', ''), 10) || 0,
+        rubro: (c[9] || '').trim()
+      };
+      if (!delSheet.nombre) return;
+      const actual = FICHAS_FB[id];
+      if (actual && actual.origen === 'panel') { respetadas++; return; }
+      const distinto = !actual || ['nombre','cantidades','desc','sabores','oferta','rubro']
+        .some(k => String(actual[k] || '') !== String(delSheet[k] || ''));
+      if (!distinto) return;
+      if (cambios.length < 6 && actual && actual.cantidades !== delSheet.cantidades)
+        cambios.push(delSheet.nombre.slice(0,28) + ': ' + (actual.cantidades||'-') + ' -> ' + delSheet.cantidades);
+      FICHAS_FB[id] = Object.assign({}, actual || {}, delSheet, {
+        origen: 'sheet', actualizado: new Date().toISOString(), por: 'panel'
+      });
+      tocadas++;
+    });
+
+    if (!tocadas) {
+      alert('Ya estaba todo igual que en la planilla.\n' + respetadas + ' fichas editadas a mano quedaron como estaban.');
+      return;
+    }
+    if (b) b.textContent = 'Guardando ' + tocadas + '...';
+    await guardarFichasEnRepo('Panel: traer ' + tocadas + ' fichas de la planilla');
+    arrancar._ya = false;
+    await arrancar();
+    alert('Listo: ' + tocadas + ' fichas actualizadas desde la planilla.\n' +
+          respetadas + ' editadas a mano quedaron intactas.' +
+          (cambios.length ? '\n\nAlgunos cambios:\n' + cambios.join('\n') : ''));
+  } catch (e) {
+    alert('No se pudo leer la planilla: ' + (e.message || e));
+  } finally {
+    if (b) { b.disabled = false; b.textContent = antes; }
+  }
+}
+
+async function guardarFichasEnRepo(mensaje){
+  await guardarEnRepo(ARCHIVO_FICHAS,
+    aB64(JSON.stringify({ fichas: FICHAS_FB, fotos: FOTOS_FB,
+                          preciosVistos: PRECIOS_VISTOS,
+                          cambiosPrecio: CAMBIOS_FECHA,
+                          preciosAprobados: PRECIOS_APROBADOS,
+                          actualizado: new Date().toISOString() }, null, 1)),
+    mensaje, 0, repoActivo());
+}
+
+/* ── FOTOS ────────────────────────────────────────────────────────────────────
+   La foto que sube el dueño se achica y se convierte a WebP acá mismo, en el
+   navegador, antes de guardarla: entra una de 4 MB del celular y sale una de
+   ~25 KB. Además se mira el color de los bordes para saber sobre qué fondo está
+   recortada, y la tienda pinta la tarjeta de ese color: así la foto se funde con
+   la tarjeta aunque el fondo no sea blanco puro. */
+const FOTO_LADO = 700;      // suficiente para verse nítida en tarjeta y en zoom
+const FOTO_CALIDAD = 0.82;
+
+function _colorDeFondo(ctx, w, h){
+  // Toma el color de los cuatro bordes: es el fondo sobre el que está la foto.
+  const muestras = [];
+  const paso = Math.max(1, Math.floor(w / 40));
+  function tomar(x, y){
+    const d = ctx.getImageData(x, y, 1, 1).data;
+    if (d[3] > 200) muestras.push([d[0], d[1], d[2]]);
+  }
+  for (let x = 0; x < w; x += paso){ tomar(x, 0); tomar(x, h - 1); }
+  for (let y = 0; y < h; y += paso){ tomar(0, y); tomar(w - 1, y); }
+  if (!muestras.length) return '#ffffff';
+  // La mediana evita que una esquina rara mueva el color.
+  const canal = i => { const v = muestras.map(m => m[i]).sort((a,b) => a-b); return v[Math.floor(v.length/2)]; };
+  const hex = n => ('0' + Math.max(0, Math.min(255, n)).toString(16)).slice(-2);
+  return '#' + hex(canal(0)) + hex(canal(1)) + hex(canal(2));
+}
+
+function optimizarFoto(file){
+  return new Promise((resolve, reject) => {
+    if (!file) return reject(new Error('No llegó ninguna foto.'));
+    if (file.type && file.type.indexOf('image/') !== 0)
+      return reject(new Error('Eso no parece una foto (' + (file.type || 'sin tipo') + ').'));
+
+    function trabajar(fuente, ancho, alto){
+      try {
+        const escala = Math.min(1, FOTO_LADO / Math.max(ancho, alto));
+        let w = Math.max(1, Math.round(ancho * escala));
+        let h = Math.max(1, Math.round(alto * escala));
+        let c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(fuente, 0, 0, w, h);
+        const fondo = _colorDeFondo(ctx, w, h);
+
+        // WebP es lo mejor, pero los iPhone anteriores a iOS 16.4 y los Safari
+        // viejos de Mac no lo saben generar. Ahí se cae a JPG.
+        let datos = c.toDataURL('image/webp', FOTO_CALIDAD);
+        let ext = 'webp';
+        if (datos.indexOf('data:image/webp') !== 0) {
+          // El JPG del mismo tamaño pesa el doble que el WebP. Se redibuja más
+          // chico (560px sigue viéndose nítido en la tarjeta y en el zoom) para
+          // que una foto subida desde un navegador viejo no pese de más.
+          const LADO_JPG = 560;
+          if (Math.max(w, h) > LADO_JPG) {
+            const k = LADO_JPG / Math.max(w, h);
+            const c2 = document.createElement('canvas');
+            c2.width = Math.round(w * k); c2.height = Math.round(h * k);
+            const x2 = c2.getContext('2d');
+            x2.imageSmoothingQuality = 'high';
+            x2.drawImage(c, 0, 0, c2.width, c2.height);
+            c = c2; w = c2.width; h = c2.height;
+          }
+          datos = c.toDataURL('image/jpeg', 0.74);
+          ext = 'jpg';
+          if (datos.indexOf('data:image/jpeg') !== 0)
+            return reject(new Error('Este navegador no pudo preparar la foto.'));
+        }
+        resolve({ webp: datos, ext: ext, fondo, w, h,
+                  pesoOriginal: file.size, peso: Math.round(datos.length * 0.75) });
+      } catch(e) { reject(new Error('No se pudo preparar la foto: ' + (e.message || e))); }
+    }
+
+    // createImageBitmap entiende más formatos del celular (HEIC incluido).
+    if (typeof createImageBitmap === 'function') {
+      createImageBitmap(file)
+        .then(bm => trabajar(bm, bm.width, bm.height))
+        .catch(() => porImagen());
+    } else porImagen();
+
+    function porImagen(){
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => { URL.revokeObjectURL(url); trabajar(img, img.naturalWidth, img.naturalHeight); };
+      img.onerror = () => { URL.revokeObjectURL(url);
+        reject(new Error('El navegador no pudo abrir esa foto. Probá sacarle una captura o elegir otra.')); };
+      img.src = url;
+    }
+  });
+}
+
+const kb = n => (n >= 1048576 ? (n/1048576).toFixed(1) + ' MB' : Math.round(n/1024) + ' KB');
+
+// La ficha efectiva de un producto: lo guardado si existe, si no lo del Sheet.
+function fichaDe(id){
+  const fb = FICHAS_FB[id];
+  if (fb) return Object.assign({}, FICHAS_CSV[id] || {}, fb, {_fb:true});
+  return Object.assign({}, FICHAS_CSV[id] || {}, {_fb:false});
+}
+
+async function bajar(archivo){
+  const r = await fetch(archivo + '?t=' + Date.now(), {cache:'no-store'});
+  if (!r.ok) throw new Error(archivo + ': HTTP ' + r.status);
+  return r.text();
+}
+
+async function arrancar(){
+  if (arrancar._ya) return; arrancar._ya = true;
+  try {
+    const [csvPrecios, csvInfo, jsonPend, csvInfoMay, csvPreciosMay] = await Promise.all([
+      bajar('precios-min.csv'),
+      bajar('info-min.csv'),
+      bajar('pendientes.json').catch(() => '{}'),
+      // Las hojas de la distribuidora sirven para completar rubros: los productos
+      // que no están en la lista minorista suelen tenerlo cargado allá.
+      bajar('info-may.csv').catch(() => ''),
+      bajar('precios-may.csv').catch(() => '')
+    ]);
+
+    CSV_MAY_INFO = csvInfoMay; CSV_MAY_PRECIOS = csvPreciosMay;   // quedan para la vista de la distribuidora
+    const RUBRO_MAY = {};
+    [csvInfoMay, csvPreciosMay].forEach(csv => {
+      if (!csv) return;
+      const filas = leerCsv(csv);
+      if (!filas.length) return;
+      const cab = filas[0].map(x => String(x || '').trim().toLowerCase());
+      const iA = cab.findIndex(x => x === 'articulo' || x === 'artículo');
+      const iR = cab.indexOf('rubro');
+      if (iA < 0 || iR < 0) return;
+      filas.slice(1).forEach(c => {
+        if (c.length <= Math.max(iA, iR)) return;
+        const a = limpiaId(c[iA]), r = String(c[iR] || '').trim();
+        if (a && r && !RUBRO_MAY[a]) RUBRO_MAY[a] = r;
+      });
+    });
+    const pend = JSON.parse(jsonPend || '{}');
+
+    // fichas del Sheet: nombre,cantidades,info,sabores,imagen,mix,Artículo,oferta,...
+    FICHAS_CSV = {};
+    leerCsv(csvInfo).slice(1).forEach(c => {
+      if (c.length < 7) return;
+      const id = limpiaId(c[6]); if (!id) return;
+      FICHAS_CSV[id] = { nombre:c[0], cantidades:c[1], desc:c[2], sabores:c[3],
+                         imagen:c[4], oferta: parseInt(String(c[7]||'').replace('%',''),10) || 0,
+                         rubro: (c[9] || '').trim() };   // la hoja Info también trae el rubro
+    });
+    await cargarFichasGuardadas();
+    const fichas = {};
+    Object.keys(FICHAS_CSV).forEach(id => fichas[id] = fichaDe(id));
+    Object.keys(FICHAS_FB).forEach(id => fichas[id] = fichaDe(id));
+
+    const renom = {};
+    (pend.renombrados || []).forEach(r => renom[limpiaId(r.numero)] = r);
+    const malRubro = {};
+    (pend.rubro_invalido || []).forEach(r => malRubro[limpiaId(r.numero)] = r);
+
+    PRODUCTOS = [];
+    // publicados
+    leerCsv(csvPrecios).slice(1).forEach(c => {
+      if (c.length < 7) return;
+      const id = limpiaId(c[6]); if (!id) return;
+      const f = fichas[id] || {};
+      PRODUCTOS.push({
+        id, nombre: f.nombre || c[2], nombreCsv:c[2], rubro:c[5],
+        p1:aNum(c[3]), p2:aNum(c[4]),
+        ficha:!!(FICHAS_CSV[id] || FICHAS_FB[id]), desc:f.desc || '',
+        foto:!!(f.imagen && String(f.imagen).trim()),
+        cantidades:f.cantidades || '', sabores:f.sabores || '', oferta:f.oferta || 0,
+        mix:!!f.mix, granola:!!f.granola, blend:!!f.blend,
+        nombreEpyme:f.nombreEpyme || '', editada:!!f._fb, nuevo:false, renombre:renom[id] || null,
+        malRubro:!!malRubro[id],
+        oculto:f.oculto === true
+      });
+    });
+    // pendientes de alta: todavía NO están en el CSV publicado
+    (pend.nuevos || []).forEach(n => {
+      const id = limpiaId(n.numero);
+      const f = fichas[id] || {};
+      PRODUCTOS.push({
+        id, nombre: f.nombre || n.nombre, nombreCsv:n.nombre, rubro:n.rubro,
+        p1:n.precio || 0, p2:0,
+        ficha:!!(FICHAS_CSV[id] || FICHAS_FB[id]), desc:f.desc || '',
+        foto:!!(f.imagen && String(f.imagen).trim()),
+        cantidades:f.cantidades || '', sabores:f.sabores || '', oferta:f.oferta || 0,
+        mix:!!f.mix, granola:!!f.granola, blend:!!f.blend,
+        nombreEpyme:f.nombreEpyme || '', editada:!!f._fb, nuevo:true, renombre:null, malRubro:false,
+        altaOk: f.altaOk === true
+      });
+    });
+    // Están en Info (tienen ficha) pero no en la lista de precios: no se publican.
+    // Aparecen igual, marcados como fuera del catálogo, para poder trabajarlos.
+    const yaEstan = {};
+    PRODUCTOS.forEach(p => yaEstan[p.id] = true);
+    Object.keys(fichas).forEach(id => {
+      if (yaEstan[id]) return;
+      const f = fichas[id] || {};
+      if (!f.nombre) return;
+      PRODUCTOS.push({
+        id, nombre: f.nombre, nombreCsv: f.nombre,
+        rubro: f.rubro || RUBRO_MAY[id] || '',   // si Info no lo trae, se busca en la distribuidora
+        p1: 0, p2: 0,
+        ficha: true, desc: f.desc || '',
+        foto: !!(f.imagen && String(f.imagen).trim()) || !!FOTOS_FB[id],
+        cantidades: f.cantidades || '', sabores: f.sabores || '', oferta: f.oferta || 0,
+        mix: !!f.mix, granola: !!f.granola, blend: !!f.blend,
+        nombreEpyme: f.nombreEpyme || '', editada: !!f._fb, nuevo: false,
+        renombre: null, malRubro: false, sinPrecio: true
+      });
+    });
+
+    // los de rubro inválido tampoco están publicados
+    (pend.rubro_invalido || []).forEach(r => {
+      const id = limpiaId(r.numero);
+      if (PRODUCTOS.some(p => p.id === id)) return;
+      PRODUCTOS.push({ id, nombre:r.nombre, nombreCsv:r.nombre, rubro:r.rubro, p1:0, p2:0,
+                       ficha:false, desc:'', foto:false, cantidades:'', sabores:'',
+                       oferta:0, editada:false, nuevo:false, renombre:null,
+                       malRubro:true });
+    });
+
+    marcarCambiosDePrecio(PRODUCTOS);
+    avisoImportacion();
+    // Queda guardado el estado de la tienda minorista para poder volver sin recargar.
+    GUARDADO_MIN = { fichas: FICHAS_FB, fotos: FOTOS_FB, productos: PRODUCTOS };
+    pintarKpis(); pintar();
+  } catch (e) {
+    document.getElementById('salida').className = 'vacio';
+    document.getElementById('salida').textContent = 'No se pudieron cargar los datos: ' + e.message;
+  }
+}
+
+// ── IMPORTACION INICIAL ───────────────────────────────────────────────────────
+// Las fichas viven hoy en el Google Sheet. Para poder editarlas hay que copiarlas
+// una vez al repo. Se escriben todas juntas en una sola operacion.
+function avisoImportacion(){
+  const cont = document.getElementById('avisoImportar');
+  const enFb = Object.keys(FICHAS_FB).length;
+  const faltan = PRODUCTOS.filter(p => p.ficha && !FICHAS_FB[p.id]).length;
+  if (!faltan) {
+    cont.innerHTML = enFb
+      ? '<div class="importar"><p><b>' + enFb + ' fichas</b> guardadas en el repo. ' +
+        'Los cambios que hagas acá se guardan ahí, no en el Google Sheet.</p></div>'
+      : '';
+    return;
+  }
+  cont.innerHTML =
+    '<div class="importar">' +
+      '<p><b>Falta importar ' + faltan + ' fichas.</b> Hoy viven en el Google Sheet y son de ' +
+      'solo lectura. Al importarlas quedan en el repo y podés editarlas desde acá. ' +
+      'No se toca ni el Sheet ni la tienda.</p>' +
+      '<button class="btn" id="btnImportar">Importar ' + faltan + ' fichas</button>' +
+    '</div>';
+  document.getElementById('btnImportar').addEventListener('click', importar);
+}
+
+async function importar(){
+  const b = document.getElementById('btnImportar');
+  b.disabled = true; b.textContent = 'Importando...';
+  const lote = {};
+  PRODUCTOS.forEach(p => {
+    if (!p.ficha || FICHAS_FB[p.id]) return;
+    const f = FICHAS_CSV[p.id] || {};
+    lote[p.id] = {
+      nombre: f.nombre || p.nombreCsv || '',
+      cantidades: f.cantidades || '',
+      desc: f.desc || '',
+      sabores: f.sabores || '',
+      imagen: f.imagen || '',
+      oferta: f.oferta || 0,
+      origen: 'sheet',
+      actualizado: new Date().toISOString(),
+      por: 'panel'
+    };
+  });
+  try {
+    FICHAS_FB = Object.assign({}, FICHAS_FB, lote);
+    await guardarFichasEnRepo('Panel: importar ' + Object.keys(lote).length + ' fichas del Sheet');
+    await cargarFichasGuardadas();
+    arrancar._ya = false;
+    await arrancar();
+  } catch (e) {
+    b.disabled = false;
+    b.textContent = 'Reintentar importación';
+    alert('No se pudo importar: ' + (e.message || e));
+  }
+}
+
+// ── EDITOR ────────────────────────────────────────────────────────────────────
+let EDITANDO = null;
+const $ = id => document.getElementById(id);
+
+function abrirEditor(id){
+  const p = PRODUCTOS.find(x => x.id === id);
+  if (!p) return;
+  EDITANDO = p;
+  $('edTitulo').textContent = p.nombre;
+  $('edSub').textContent = 'Art. ' + p.id + ' · ' + p.rubro;
+  $('edPrecio').textContent = p.p1
+    ? pesos(p.p1) + (p.p2 ? '  ·  con descuento ' + pesos(p.p2) : '')
+    : 'sin precio publicado';
+  const cont = $('edFoto');
+  if (p.foto) {
+    cont.outerHTML = '<img id="edFoto" src="' + imgDe(p.id) + '" alt="">';
+  } else {
+    cont.outerHTML = '<div id="edFoto" class="sinf">sin foto</div>';
+  }
+  FOTO_NUEVA = null; FOTO_BORRAR = false;
+  pintarRubroEditor(p);
+  pintarMedidas(p.cantidades || '');
+  pintarEnCatalogo(p);
+  pintarFotoEditor(p);
+  $('edNombre').value = p.nombre || '';
+  $('edCant').value = p.cantidades || '';
+  $('edSabores').value = p.sabores || '';
+  $('edDesc').value = p.desc || '';
+  $('edOferta').value = p.oferta || 0;
+  ['edMix','edGranola','edBlend'].forEach((i, k) => {
+    const v = [p.mix, p.granola, p.blend][k];
+    $(i).checked = !!v;
+    $(i).closest('.bandera').classList.toggle('sel', !!v);
+  });
+  pintarRenombre(p);
+  $('edEstado').textContent = ''; $('edEstado').className = 'ed-estado';
+  $('edGuardar').disabled = false;
+  $('editor').classList.add('abierto');
+  // Como es una pantalla y no una ventanita, el botón "atrás" del teléfono la cierra.
+  if (!history.state || history.state.editor !== true) {
+    try { history.pushState({ editor: true }, ''); } catch(e) {}
+  }
+}
+
+window.addEventListener('popstate', function(){
+  if ($('editor').classList.contains('abierto')) cerrarEditor(true);
+});
+
+// Un producto se considera renombrado cuando E-Pyme trae un nombre distinto del
+// ultimo que se reviso desde el panel. Mientras no se decida, la tienda sigue
+// mostrando el nombre de la ficha.
+function hayRenombre(p){
+  if (!p.renombre) return null;
+  if (p.nombreEpyme && p.nombreEpyme === p.renombre.nombre_nuevo) return null;
+  return p.renombre;
+}
+
+function pintarRenombre(p){
+  const r = hayRenombre(p), cont = $('edRenombre');
+  if (!r) { cont.innerHTML = ''; return; }
+  cont.innerHTML =
+    '<div class="ed-renombre">' +
+      '<div class="t">Cambió el nombre en E-Pyme</div>' +
+      '<div class="par">El cliente ve hoy: <b>' + esc(p.nombre) + '</b></div>' +
+      '<div class="par">En E-Pyme ahora dice: <b>' + esc(r.nombre_nuevo) + '</b></div>' +
+      '<div class="acc">' +
+        '<button class="btn" id="rnAceptar">Usar el nombre nuevo</button>' +
+        '<button class="btn gris" id="rnCancelar">Mantener el actual</button>' +
+      '</div>' +
+    '</div>';
+  $('rnAceptar').addEventListener('click', () => decidirRenombre(p, true));
+  $('rnCancelar').addEventListener('click', () => decidirRenombre(p, false));
+}
+
+async function decidirRenombre(p, aceptar){
+  const r = p.renombre; if (!r) return;
+  const est = $('edEstado');
+  est.textContent = 'Guardando...'; est.className = 'ed-estado';
+  // En los dos casos se anota el nombre de E-Pyme como "ya revisado", asi la
+  // alerta no vuelve a aparecer por el mismo cambio.
+  const datos = { nombreEpyme: r.nombre_nuevo, actualizado: new Date().toISOString(),
+                  por: 'panel' };
+  if (aceptar) datos.nombre = r.nombre_nuevo;
+  try {
+    FICHAS_FB[p.id] = Object.assign({}, FICHAS_FB[p.id] || {}, datos);
+    await guardarFichasEnRepo('Panel: nombre de ' + (datos.nombre || p.id));
+    p.nombreEpyme = r.nombre_nuevo;
+    if (aceptar) { p.nombre = r.nombre_nuevo; $('edNombre').value = r.nombre_nuevo; $('edTitulo').textContent = r.nombre_nuevo; }
+    p.editada = true;
+    pintarRenombre(p); pintarKpis(); pintar();
+    est.textContent = aceptar ? 'Nombre actualizado' : 'Se mantiene el nombre actual';
+    est.className = 'ed-estado ok';
+  } catch (e) {
+    est.textContent = 'No se pudo guardar: ' + (e.message || e);
+    est.className = 'ed-estado mal';
+  }
+}
+
+function cerrarEditor(desdeAtras){
+  $('editor').classList.remove('abierto');
+  EDITANDO = null;
+  FOTO_NUEVA = null; FOTO_BORRAR = false;
+  // Si se cerró con el botón, sacar del historial la entrada que abrió la pantalla.
+  if (!desdeAtras && history.state && history.state.editor === true) {
+    try { history.back(); } catch(e) {}
+  }
+}
+
+let FOTO_NUEVA = null, FOTO_BORRAR = false, FOTO_PROCESANDO = false;
+
+/* Rubro: se elige entre los que ya existen, para no inventar nombres nuevos. */
+function pintarRubroEditor(p){
+  const sel = $('edRubro');
+  if (!sel) return;
+  const rubros = {};
+  PRODUCTOS.forEach(x => { const r = (x.rubro || '').trim(); if (r) rubros[r] = 1; });
+  const lista = Object.keys(rubros).sort((a, b) => a.localeCompare(b, 'es'));
+  const actual = (p.rubro || '').trim();
+  sel.innerHTML = '<option value="">- sin rubro -</option>' +
+    lista.map(r => '<option value="' + esc(r) + '"' + (r === actual ? ' selected' : '') + '>' + esc(r) + '</option>').join('');
+}
+
+/* Cantidades con botones en vez de texto libre: así no se cuelan errores de
+   tipeo (como el "1K" al que le faltaba la G). "1 unidad" es excluyente. */
+const MEDIDAS = ['50G', '100G', '250G', '500G', '1KG'];
+let MEDIDAS_SEL = [];
+
+function pintarMedidas(txt){
+  const partes = String(txt || '').split('/').map(x => x.trim()).filter(Boolean);
+  const esUnidad = partes.some(x => /unidad/i.test(x));
+  MEDIDAS_SEL = esUnidad ? ['1 UNIDAD'] : partes.map(x => x.toUpperCase().replace(/\s+/g, ''));
+  dibujarMedidas();
+}
+
+function dibujarMedidas(){
+  const cont = $('edMedidas');
+  if (!cont) return;
+  const unidad = MEDIDAS_SEL.indexOf('1 UNIDAD') > -1;
+  cont.innerHTML =
+    '<button type="button" class="medida' + (unidad ? ' on' : '') + '" data-m="1 UNIDAD">1 unidad</button>' +
+    '<span class="medidas-sep"></span>' +
+    MEDIDAS.map(m => '<button type="button" class="medida' +
+      (!unidad && MEDIDAS_SEL.indexOf(m) > -1 ? ' on' : '') +
+      (unidad ? ' apagada' : '') + '" data-m="' + m + '">' + m.toLowerCase() + '</button>').join('');
+  const raras = MEDIDAS_SEL.filter(m => m !== '1 UNIDAD' && MEDIDAS.indexOf(m) < 0);
+  const otro = $('edMedidasOtro');
+  if (otro) otro.innerHTML = raras.length ? 'Además tiene: <b>' + raras.map(esc).join(' / ') + '</b>' : '';
+  const inp = $('edCant');
+  if (inp) inp.value = textoMedidas();
+  cont.querySelectorAll('.medida').forEach(b => b.addEventListener('click', function(){
+    const m = this.dataset.m;
+    if (m === '1 UNIDAD') {
+      MEDIDAS_SEL = unidad ? [] : ['1 UNIDAD'];
+    } else {
+      MEDIDAS_SEL = MEDIDAS_SEL.filter(x => x !== '1 UNIDAD');
+      const i = MEDIDAS_SEL.indexOf(m);
+      if (i > -1) MEDIDAS_SEL.splice(i, 1); else MEDIDAS_SEL.push(m);
+    }
+    dibujarMedidas();
+  }));
+}
+
+/* Se guardan de la más chica a la más grande, con el formato de siempre. */
+function textoMedidas(){
+  if (MEDIDAS_SEL.indexOf('1 UNIDAD') > -1) return '1 UNIDAD';
+  const peso = m => { const n = parseFloat(m); return /KG/i.test(m) ? n * 1000 : n; };
+  return MEDIDAS_SEL.slice().sort((a, b) => peso(a) - peso(b)).join('/');
+}
+
+/* Muestra si el producto se ve o no en la tienda, y deja sacarlo o volverlo a poner. */
+function pintarEnCatalogo(p){
+  const c = $('edEnCatalogo');
+  if (!c) return;
+  if (p.sinPrecio) {
+    c.innerHTML = '<div class="estado-cat fuera">' +
+      '<b>No se puede poner en el catálogo</b>' +
+      '<span>No tiene precio en E-Pyme. Cargáselo allá y aparece en la tienda solo, ' +
+      'sin que tengas que hacer nada acá.</span></div>';
+    return;
+  }
+  if (p.nuevo) {
+    // Sí se puede dar de alta: ya tiene precio, le falta pasar a la tienda.
+    var falta = [];
+    if (!p.foto) falta.push('la foto');
+    if (!p.desc) falta.push('la descripción');
+    c.innerHTML = '<div class="estado-cat fuera"><b>Todavía no está en la tienda</b>' +
+      '<span>' + (falta.length
+        ? 'Completá ' + falta.join(' y ') + ', guardá, y después tocá el botón de abajo.'
+        : 'Ya tiene todo cargado: tocá el botón de abajo y sale publicado.') + '</span></div>' +
+      '<button type="button" class="btn" id="edAltaYa" style="width:100%;margin-top:8px">' +
+      'Agregar al catálogo (publicar precios)</button>';
+    var ba = $('edAltaYa');
+    if (ba) ba.addEventListener('click', function(){
+      if (typeof publicarPrecios === 'function') publicarPrecios();
+      $('edEstado').textContent = 'Pedido enviado. En unos minutos entra a la tienda.';
+      $('edEstado').className = 'ed-estado';
+    });
+    return;
+  }
+  if (p.malRubro) {
+    c.innerHTML = '<div class="estado-cat fuera"><b>No está en la tienda</b>' +
+      '<span>Tiene un rubro que la tienda no reconoce. Corregilo en la planilla y entra solo.</span></div>';
+    return;
+  }
+  const fuera = p.oculto === true;
+  c.innerHTML = '<div class="estado-cat ' + (fuera ? 'fuera' : 'dentro') + '">' +
+      '<b>' + (fuera ? 'Sacado del catálogo' : 'Se ve en la tienda') + '</b>' +
+      '<span>' + (fuera ? 'Los clientes no lo ven.' : 'Los clientes lo pueden comprar.') + '</span>' +
+    '</div>' +
+    '<button type="button" class="btn ' + (fuera ? '' : 'gris') + '" id="edToggleCat" style="width:100%;margin-top:8px">' +
+      (fuera ? 'Volver a ponerlo en el catálogo' : 'Sacar del catálogo') + '</button>';
+  const b = $('edToggleCat');
+  if (b) b.addEventListener('click', function(){
+    p.oculto = !fuera;
+    pintarEnCatalogo(p);
+    $('edEstado').textContent = 'Acordate de Guardar.';
+    $('edEstado').className = 'ed-estado';
+  });
+}
+
+function pintarFotoEditor(p){
+  const prev = $('edFotoPrev'), info = $('edFotoInfo'), quitar = $('edFotoQuitar');
+  const compartir = $('edFotoMay');
+  if (!prev) return;
+  const guardada = FOTOS_FB[p.id];
+  // La foto nueva viene en memoria; la ya guardada es un archivo del repo.
+  const src = FOTO_NUEVA ? FOTO_NUEVA.webp : (!FOTO_BORRAR && guardada ? urlFoto(p.id) : null);
+  const fondo = FOTO_NUEVA ? FOTO_NUEVA.fondo : (guardada && guardada.fondo);
+  if (src) {
+    prev.innerHTML = '<img src="' + src + '" alt="" onerror="this.style.display=\'none\'">';
+    prev.style.background = fondo || '#f2f5f8';
+    quitar.hidden = false;
+    if (compartir) compartir.hidden = false;
+  } else {
+    prev.innerHTML = '<span>sin foto</span>';
+    prev.style.background = '#f2f5f8';
+    quitar.hidden = true;
+    if (compartir) compartir.hidden = true;
+  }
+  if (FOTO_NUEVA) {
+    info.innerHTML = '<b>Lista para guardar.</b><br>' +
+      kb(FOTO_NUEVA.pesoOriginal) + ' &rarr; <b>' + kb(FOTO_NUEVA.peso) + '</b> en ' +
+      (FOTO_NUEVA.ext === 'jpg' ? 'JPG' : 'WebP') + ' &middot; ' +
+      FOTO_NUEVA.w + '&times;' + FOTO_NUEVA.h + '<br>' +
+      '<span class="foto-fondo" style="background:' + FOTO_NUEVA.fondo + '"></span>fondo ' + FOTO_NUEVA.fondo;
+  } else if (FOTO_BORRAR) {
+    info.innerHTML = 'Se quita al guardar.';
+  } else if (guardada) {
+    info.innerHTML = '<b>' + kb(guardada.peso || 0) + '</b> &middot; ' + (guardada.w||'?') + '&times;' + (guardada.h||'?') + '<br>' +
+      '<span class="foto-fondo" style="background:' + (guardada.fondo||'#fff') + '"></span>fondo ' + (guardada.fondo||'-');
+  } else {
+    info.innerHTML = p.foto ? 'Hoy usa la foto de Cloudinary.' : 'Sin foto propia.';
+  }
+}
+
+async function elegirFoto(file){
+  const info = $('edFotoInfo');
+  function decir(html){ if (info) info.innerHTML = html; }
+  if (!file) { decir('<span class="malo">No llegó ninguna foto del teléfono.</span>'); return; }
+  if (!EDITANDO) { decir('<span class="malo">Abrí primero un producto.</span>'); return; }
+  FOTO_PROCESANDO = true;
+  decir('Preparando la foto...');
+  try {
+    FOTO_NUEVA = await optimizarFoto(file);
+    FOTO_BORRAR = false;
+    pintarFotoEditor(EDITANDO);
+  } catch (e) {
+    FOTO_NUEVA = null;
+    decir('<span class="malo">' + (e.message || e) + '</span>');
+    // Si el editor estuviera cerrado, que igual se entere de que falló.
+    if (!info) alert('No se pudo usar esa foto: ' + (e.message || e));
+  } finally {
+    FOTO_PROCESANDO = false;
+  }
+}
+
+async function guardarFicha(){
+  if (!EDITANDO) return;
+  const p = EDITANDO, b = $('edGuardar'), est = $('edEstado');
+  const datos = {
+    nombre: $('edNombre').value.trim(),
+    cantidades: textoMedidas(),
+    rubro: $('edRubro') ? $('edRubro').value : '',
+    sabores: $('edSabores').value.trim(),
+    desc: $('edDesc').value.trim(),
+    oferta: Math.max(0, Math.min(90, parseInt($('edOferta').value, 10) || 0)),
+    mix: $('edMix').checked, granola: $('edGranola').checked, blend: $('edBlend').checked,
+    imagen: (FICHAS_FB[p.id] && FICHAS_FB[p.id].imagen) || (FICHAS_CSV[p.id] && FICHAS_CSV[p.id].imagen) || '',
+    oculto: p.oculto === true,
+    fotoPropia: FOTO_NUEVA ? true : (FOTO_BORRAR ? false : !!FOTOS_FB[p.id]),
+    fondo: FOTO_NUEVA ? FOTO_NUEVA.fondo : (FOTO_BORRAR ? '' : ((FOTOS_FB[p.id] && FOTOS_FB[p.id].fondo) || '')),
+    origen: 'panel',
+    actualizado: new Date().toISOString(),
+    por: 'panel'
+  };
+  if (!datos.nombre) { est.textContent = 'El nombre no puede quedar vacío.'; est.className = 'ed-estado mal'; return; }
+  // Si eligió una foto y todavía se está procesando, no dejarlo guardar sin ella.
+  if (FOTO_PROCESANDO) {
+    est.textContent = 'Esperá un segundo: la foto se está preparando.';
+    est.className = 'ed-estado mal'; return;
+  }
+  b.disabled = true; est.textContent = 'Guardando...'; est.className = 'ed-estado';
+  try {
+    // La foto se sube como archivo al repo; el JSON sólo guarda sus datos.
+    if (FOTO_NUEVA) {
+      est.textContent = 'Subiendo la foto...';
+      await guardarEnRepo(CARPETA_FOTOS + '/' + p.id + '.' + (FOTO_NUEVA.ext || 'webp'),
+        FOTO_NUEVA.webp.split(',')[1],
+        'Foto de ' + datos.nombre + ' (art. ' + p.id + ')', 0, repoActivo());
+      FOTOS_FB[p.id] = { fondo: FOTO_NUEVA.fondo, w: FOTO_NUEVA.w, h: FOTO_NUEVA.h,
+                         peso: FOTO_NUEVA.peso, ext: FOTO_NUEVA.ext || 'webp', v: Date.now() };
+      FOTOS_RECIEN[p.id] = FOTO_NUEVA.webp;   // se ve desde memoria hasta que el repo la publique
+    } else if (FOTO_BORRAR) {
+      delete FOTOS_FB[p.id];
+    }
+    FICHAS_FB[p.id] = Object.assign({}, FICHAS_FB[p.id] || {}, datos);
+    est.textContent = 'Guardando la ficha...';
+    await guardarFichasEnRepo('Panel: ' + datos.nombre + ' (art. ' + p.id + ')');
+    Object.assign(p, {
+      nombre: datos.nombre, cantidades: datos.cantidades, sabores: datos.sabores,
+      rubro: datos.rubro || p.rubro,
+      desc: datos.desc, oferta: datos.oferta, mix: datos.mix, granola: datos.granola,
+      blend: datos.blend, editada: true,
+      oculto: datos.oculto,
+      foto: datos.fotoPropia || p.foto
+    });
+    FOTO_NUEVA = null; FOTO_BORRAR = false;
+    est.textContent = 'Guardado'; est.className = 'ed-estado ok';
+    pintarKpis(); pintar();
+    setTimeout(cerrarEditor, 700);
+  } catch (e) {
+    b.disabled = false;
+    est.textContent = 'No se pudo guardar: ' + (e.message || e);
+    est.className = 'ed-estado mal';
+  }
+}
+
+// ── DESCUENTO POR RUBRO ───────────────────────────────────────────────────────
+// No existe un "descuento del rubro" guardado aparte: aplicar el rubro escribe el
+// porcentaje en cada producto elegido. Asi despues se quitan o cambian de a uno
+// sin reglas de precedencia que compliquen.
+let DC_ELEGIDOS = new Set();
+
+function abrirDescuentos(){
+  const rubros = Array.from(new Set(PRODUCTOS.map(p => p.rubro).filter(Boolean))).sort();
+  $('dcRubro').innerHTML = rubros.map(r =>
+    '<option value="' + esc(r) + '">' + esc(r) + ' (' +
+    PRODUCTOS.filter(p => p.rubro === r).length + ')</option>').join('');
+  $('dcEstado').textContent = ''; $('dcEstado').className = 'ed-estado';
+  $('dcAplicar').disabled = false;
+  dcPintarLista();
+  $('desc').classList.add('abierto');
+}
+function cerrarDescuentos(){ $('desc').classList.remove('abierto'); }
+
+function dcProductos(){
+  const r = $('dcRubro').value;
+  return PRODUCTOS.filter(p => p.rubro === r).sort((a,b) => a.nombre.localeCompare(b.nombre,'es'));
+}
+
+function dcPintarLista(reiniciar){
+  const lista = dcProductos();
+  if (reiniciar !== false) { DC_ELEGIDOS = new Set(lista.map(p => p.id)); }
+  $('dcLista').innerHTML = lista.map(p =>
+    '<label class="dc-item' + (DC_ELEGIDOS.has(p.id) ? '' : ' apagado') + '" data-id="' + esc(p.id) + '">' +
+      '<input type="checkbox" ' + (DC_ELEGIDOS.has(p.id) ? 'checked' : '') + '>' +
+      '<span class="n">' + esc(p.nombre) + '</span>' +
+      '<span class="act">' + pesos(p.p1) +
+        (p.oferta ? ' · hoy <b>' + p.oferta + '%</b>' : ' · sin oferta') + '</span>' +
+    '</label>').join('');
+  dcResumen();
+}
+
+function dcResumen(){
+  const lista = dcProductos();
+  const pct = Math.max(0, Math.min(90, parseInt($('dcPct').value, 10) || 0));
+  const n = lista.filter(p => DC_ELEGIDOS.has(p.id)).length;
+  $('dcResumen').textContent = n + ' de ' + lista.length + ' marcados ·';
+  const cambian = lista.filter(p => DC_ELEGIDOS.has(p.id) && (p.oferta || 0) !== pct);
+  $('dcPrevio').innerHTML = !n
+    ? 'No hay productos marcados.'
+    : 'Se les va a poner <b>' + pct + '%</b> a <b>' + n + '</b> producto(s). ' +
+      (cambian.length ? 'Cambian <b>' + cambian.length + '</b>; el resto ya tenía ese valor.'
+                      : 'Ninguno cambia: ya tienen ese porcentaje.') +
+      (pct === 0 ? ' <b>Poner 0 quita la oferta.</b>' : '');
+}
+
+$('dcRubro').addEventListener('change', () => dcPintarLista(true));
+$('dcPct').addEventListener('input', dcResumen);
+$('dcLista').addEventListener('change', e => {
+  const it = e.target.closest('.dc-item'); if (!it) return;
+  const id = it.dataset.id;
+  if (e.target.checked) { DC_ELEGIDOS.add(id); it.classList.remove('apagado'); }
+  else { DC_ELEGIDOS.delete(id); it.classList.add('apagado'); }
+  dcResumen();
+});
+$('dcTodos').addEventListener('click', () => { DC_ELEGIDOS = new Set(dcProductos().map(p => p.id)); dcPintarLista(false); });
+$('dcNinguno').addEventListener('click', () => { DC_ELEGIDOS = new Set(); dcPintarLista(false); });
+$('dcSinOferta').addEventListener('click', () => {
+  DC_ELEGIDOS = new Set(dcProductos().filter(p => !p.oferta).map(p => p.id));
+  dcPintarLista(false);
+});
+
+async function aplicarDescuento(){
+  const pct = Math.max(0, Math.min(90, parseInt($('dcPct').value, 10) || 0));
+  const lista = dcProductos().filter(p => DC_ELEGIDOS.has(p.id));
+  if (!lista.length) return;
+  const b = $('dcAplicar'), est = $('dcEstado');
+  b.disabled = true; est.textContent = 'Aplicando...'; est.className = 'ed-estado';
+  const lote = {}, cuando = new Date().toISOString(), quien = 'panel';
+  lista.forEach(p => {
+    lote[p.id + '/oferta'] = pct;
+    lote[p.id + '/actualizado'] = cuando;
+    lote[p.id + '/por'] = quien;
+  });
+  try {
+    Object.keys(lote).forEach(function(k){
+      const corte = k.indexOf('/');
+      const id = k.slice(0, corte), campo = k.slice(corte + 1);
+      FICHAS_FB[id] = Object.assign({}, FICHAS_FB[id] || {});
+      FICHAS_FB[id][campo] = lote[k];
+    });
+    await guardarFichasEnRepo('Panel: descuento por rubro (' + lista.length + ' productos)');
+    lista.forEach(p => {
+      p.oferta = pct; p.editada = true;
+      FICHAS_FB[p.id] = Object.assign({}, FICHAS_FB[p.id] || {}, {oferta:pct, actualizado:cuando, por:quien});
+    });
+    est.textContent = 'Aplicado a ' + lista.length + ' producto(s)';
+    est.className = 'ed-estado ok';
+    b.disabled = false;
+    dcPintarLista(false); pintarKpis(); pintar();
+  } catch (e) {
+    b.disabled = false;
+    est.textContent = 'No se pudo aplicar: ' + (e.message || e);
+    est.className = 'ed-estado mal';
+  }
+}
+
+$('btnDesc').addEventListener('click', abrirDescuentos);
+$('btnSync').addEventListener('click', traerDelSheet);
+
+// ── PUBLICAR PRECIOS EN LA TIENDA ─────────────────────────────────────────────
+// El panel no puede hablarle a la PC del negocio, asi que le deja el pedido en un
+// archivo del repositorio. La PC lo revisa cada pocos minutos, publica los precios
+// que tiene E-Pyme en ese momento y escribe la respuesta en el mismo archivo.
+// Nada llega a la tienda si nadie aprieta este boton.
+const ARCHIVO_COMANDO = 'comando-precios.json';
+let _vigilando = null;
+
+function estadoPublicar(html, tono){
+  const colores = {ok:['#dcfce7','#86efac','#15803d'], mal:['#fef2f2','#fca5a5','#b91c1c'],
+                   espera:['#eff6ff','#93c5fd','#1d4ed8']};
+  const c = colores[tono] || colores.espera;
+  $('estadoPublicar').innerHTML = html
+    ? '<div style="background:' + c[0] + ';border:1px solid ' + c[1] + ';color:' + c[2] +
+      ';border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13.5px">' + html + '</div>'
+    : '';
+}
+
+async function leerComando(){
+  try {
+    const r = await fetch(ARCHIVO_COMANDO + '?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+async function publicarPrecios(){
+  const b = $('btnPublicar');
+  if (!TOKEN) { estadoPublicar('Necesitás entrar con la clave para publicar.', 'mal'); return; }
+  b.disabled = true; b.textContent = 'Pidiendo...';
+  const pedido = { estado:'pendiente', solicitado: new Date().toISOString() };
+  try {
+    await guardarEnRepo(ARCHIVO_COMANDO, aB64(JSON.stringify(pedido, null, 2)),
+                        'Pedido: publicar precios en la tienda');
+  } catch(e) {
+    b.disabled = false; b.textContent = 'Publicar precios en la tienda';
+    estadoPublicar('No se pudo enviar el pedido: ' + (e.message || e), 'mal');
+    return;
+  }
+  b.textContent = 'Esperando a la PC...';
+  estadoPublicar('Pedido enviado. La PC del negocio lo toma en los próximos minutos. ' +
+                 'Podés cerrar esta página, el pedido queda igual.', 'espera');
+  vigilarComando(pedido.solicitado);
+}
+
+function vigilarComando(desde){
+  clearInterval(_vigilando);
+  let vueltas = 0;
+  _vigilando = setInterval(async () => {
+    vueltas++;
+    const c = await leerComando();
+    if (c && c.solicitado === desde && c.estado !== 'pendiente') {
+      clearInterval(_vigilando);
+      $('btnPublicar').disabled = false;
+      $('btnPublicar').textContent = 'Publicar precios en la tienda';
+      if (c.estado === 'hecho') {
+        estadoPublicar('<b>Precios publicados.</b> ' + (c.detalle || '') +
+                       '<br>La tienda tarda alrededor de un minuto en mostrarlos.', 'ok');
+      } else {
+        estadoPublicar('<b>La PC no pudo publicar.</b> ' + (c.detalle || ''), 'mal');
+      }
+      return;
+    }
+    if (vueltas > 60) {  // 10 minutos sin respuesta
+      clearInterval(_vigilando);
+      $('btnPublicar').disabled = false;
+      $('btnPublicar').textContent = 'Publicar precios en la tienda';
+      estadoPublicar('La PC no respondió en 10 minutos. Puede estar apagada o sin internet. ' +
+                     'El pedido sigue en pie: se va a ejecutar cuando vuelva.', 'mal');
+    }
+  }, 10000);
+}
+
+// Al abrir el panel, mostrar como termino el ultimo pedido.
+leerComando().then(c => {
+  if (!c) return;
+  if (c.estado === 'pendiente') {
+    estadoPublicar('Hay un pedido de publicación esperando a que la PC lo tome.', 'espera');
+    vigilarComando(c.solicitado);
+  } else if (c.estado === 'hecho' && c.terminado) {
+    const f = new Date(c.terminado).toLocaleString('es-AR');
+    estadoPublicar('Última publicación: ' + f + '. ' + (c.detalle || ''), 'ok');
+  } else if (c.estado === 'error') {
+    estadoPublicar('<b>El último pedido falló.</b> ' + (c.detalle || ''), 'mal');
+  }
+});
+
+$('btnPublicar').addEventListener('click', publicarPrecios);
+
+$('dcCerrar').addEventListener('click', cerrarDescuentos);
+$('dcCancelar').addEventListener('click', cerrarDescuentos);
+$('dcAplicar').addEventListener('click', aplicarDescuento);
+$('desc').addEventListener('click', e => { if (e.target.id === 'desc') cerrarDescuentos(); });
+
+document.querySelectorAll('.bandera input').forEach(i =>
+  i.addEventListener('change', () => i.closest('.bandera').classList.toggle('sel', i.checked)));
+
+$('edCerrar').addEventListener('click', cerrarEditor);
+$('edCancelar').addEventListener('click', cerrarEditor);
+$('edGuardar').addEventListener('click', guardarFicha);
+// El <label for="edFotoFile"> ya abre el selector solo: no hay que dispararlo por
+// código, porque se abría dos veces y en el celular terminaba no abriéndose.
+$('edFotoFile').addEventListener('change', function(e){
+  const f = e.target.files && e.target.files[0];
+  e.target.value = '';                   // permite volver a elegir la misma foto
+  if (f) elegirFoto(f);
+});
+$('edFotoQuitar').addEventListener('click', () => {
+  FOTO_NUEVA = null; FOTO_BORRAR = true; pintarFotoEditor(EDITANDO);
+});
+$('editor').addEventListener('click', e => { if (e.target.id === 'editor') cerrarEditor(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { cerrarEditor(); cerrarDescuentos(); } });
+
+/* Los recuadros SON los filtros: se tocan y filtran. Van en el orden en que
+   Juani los usa, no en el orden en que salieron. */
+function pintarKpis(){
+  const t = PRODUCTOS.length;
+  const cambios = PRODUCTOS.filter(p => p.cambioPrecio).length;
+  const nuevos  = PRODUCTOS.filter(p => p.nuevo).length;
+  const fuera   = PRODUCTOS.filter(p => !resuelto(p)).length;
+  const sinFoto = PRODUCTOS.filter(p => !p.foto).length;
+  const renoms  = PRODUCTOS.filter(p => hayRenombre(p)).length;
+  const sinDesc = PRODUCTOS.filter(p => !p.desc).length;
+  const malos   = PRODUCTOS.filter(p => p.malRubro).length;
+
+  const kpis = [
+    ['precio',  cambios, cambios === 1 ? 'espera tu OK' : 'esperan tu OK', 'k-precio'],
+    ['nuevos',  nuevos,  nuevos === 1 ? 'nuevo' : 'nuevos', 'k-nuevo'],
+    ['sinfoto', sinFoto, 'sin foto', 'k-foto'],
+    ['fuera',   fuera,   'fuera del catálogo', 'k-fuera'],
+    ['renom',   renoms,  renoms === 1 ? 'nombre cambiado' : 'nombres cambiados', 'k-renom'],
+    ['sindesc', sinDesc, 'sin descripción', 'k-desc']
+  ];
+  if (malos) kpis.push(['malrubro', malos, 'con rubro inválido', 'k-mal']);
+
+  try { avisarPublicar(); } catch(e) {}
+  const bv = document.getElementById('btnVistos');
+  if (bv) { bv.hidden = !cambios; bv.textContent = 'Dar el OK a los ' + cambios + ' precios'; }
+  document.getElementById('kpis').innerHTML =
+    '<button type="button" class="kpi k-todos' + (FILTRO === 'todos' ? ' on' : '') + '" data-f="todos">' +
+      '<b>' + t + '</b><span>en total</span></button>' +
+    kpis.map(k =>
+      '<button type="button" class="kpi ' + k[3] + (FILTRO === k[0] ? ' on' : '') + (k[1] ? '' : ' vacio') + '" data-f="' + k[0] + '">' +
+      '<b>' + k[1] + '</b><span>' + k[2] + '</span></button>').join('');
+}
+
+// tocar un recuadro = filtrar por eso
+document.addEventListener('click', function(ev){
+  const k = ev.target.closest && ev.target.closest('.kpi[data-f]');
+  if (!k) return;
+  elegirFiltro('kpi', k.dataset.f);
+  const cont = document.getElementById('salida');
+  if (cont) cont.scrollIntoView({block:'start', behavior:'smooth'});
+});
+
+/* Los filtros NO se acumulan: elegir uno apaga los otros dos. Sin esto pasaba
+   que buscabas un artículo, tocabas "nuevos" y no aparecía ninguno de los 15,
+   porque seguía filtrando además por el texto escrito. */
+function elegirFiltro(cual, valor){
+  if (cual !== 'kpi')   { FILTRO = 'todos'; document.querySelectorAll('.filtro').forEach(b => b.classList.remove('on')); }
+  if (cual !== 'rubro') { RUBRO = ''; var sr = document.getElementById('filtroRubro'); if (sr) sr.value = ''; }
+  if (cual !== 'busca') { limpiarBusqueda(); }
+
+  if (cual === 'kpi')   FILTRO = valor;
+  if (cual === 'rubro') RUBRO = valor;
+  if (cual === 'busca') BUSCA = valor;
+
+  document.body.classList.toggle('por-rubro', !!RUBRO);
+  document.body.classList.toggle('buscando', !!BUSCA);
+  var caja = document.querySelector('.busca-fija');
+  if (caja) caja.classList.toggle('con-texto', !!BUSCA);
+  document.querySelectorAll('.filtro').forEach(b => b.classList.toggle('on', b.dataset.f === FILTRO));
+  pintarKpis();
+  pintar();
+}
+
+/* Vaciar la búsqueda de verdad: la variable y la caja que se ve en pantalla. */
+function limpiarBusqueda(){
+  BUSCA = '';
+  var fijo = document.getElementById('buscarFijo');
+  if (fijo && fijo.value) fijo.value = '';
+  document.body.classList.remove('buscando');
+  var caja = document.querySelector('.busca-fija');
+  if (caja) caja.classList.remove('con-texto');
+}
+
+function esc(s){ return String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* Los rubros salen del propio catálogo, con la cuenta de productos de cada uno.
+   Se arma una sola vez: si no, se perdería lo elegido en cada repintado. */
+function llenarRubros(){
+  const sel = document.getElementById('filtroRubro');
+  if (!sel || sel.dataset.listo === '1' || !PRODUCTOS.length) return;
+  const cuenta = {};
+  let sinRubro = 0;
+  PRODUCTOS.forEach(p => {
+    const r = (p.rubro || '').trim();
+    if (r) cuenta[r] = (cuenta[r] || 0) + 1; else sinRubro++;
+  });
+  const rubros = Object.keys(cuenta).sort((a, b) => a.localeCompare(b, 'es'));
+  sel.innerHTML = '<option value="">Todos los rubros (' + PRODUCTOS.length + ')</option>' +
+    rubros.map(r => '<option value="' + esc(r) + '">' + esc(r) + ' (' + cuenta[r] + ')</option>').join('') +
+    // Los que no están en precios no tienen rubro cargado en el Sheet: si no
+    // estuviera esta opción, no habría forma de encontrarlos filtrando.
+    (sinRubro ? '<option value="__sin__">Sin rubro (' + sinRubro + ')</option>' : '');
+  sel.dataset.listo = '1';
+  sel.addEventListener('change', function(){
+    elegirFiltro('rubro', this.value);
+  });
+}
+
+/* Un producto se ve en la tienda si tiene precio y no fue sacado a mano. */
+function enCatalogo(p){ return !p.sinPrecio && !p.nuevo && !p.malRubro && !p.oculto; }
+
+/* Un producto nuevo con la banderilla puesta ya está aceptado, pero no se ve en
+   la tienda hasta que la PC vuelva a generar la lista de precios. Son dos cosas
+   distintas y la banderilla lo tiene que decir. */
+function esperandoAlta(p){ return !!(p.nuevo && p.altaOk && !p.sinPrecio && !p.malRubro); }
+
+/* Los que NO hay que ir a buscar: o ya están publicados, o están aceptados y
+   sólo falta que la PC genere la lista. */
+function resuelto(p){ return enCatalogo(p) || esperandoAlta(p); }
+
+function pintar(){
+  let lista = PRODUCTOS.slice();
+  if (FILTRO === 'pendientes') lista = lista.filter(p => p.nuevo || hayRenombre(p) || p.malRubro);
+  if (FILTRO === 'precio')     lista = lista.filter(p => p.cambioPrecio);
+  if (FILTRO === 'nuevos')     lista = lista.filter(p => p.nuevo);
+  if (FILTRO === 'renom')      lista = lista.filter(p => hayRenombre(p));
+  if (FILTRO === 'malrubro')   lista = lista.filter(p => p.malRubro);
+  if (FILTRO === 'sinfoto')    lista = lista.filter(p => !p.foto);
+  if (FILTRO === 'sindesc')    lista = lista.filter(p => !p.desc);
+  if (FILTRO === 'oferta')     lista = lista.filter(p => p.oferta > 0);
+  if (RUBRO === '__sin__')     lista = lista.filter(p => !(p.rubro || '').trim());
+  else if (RUBRO)              lista = lista.filter(p => (p.rubro || '').trim() === RUBRO);
+  if (FILTRO === 'fuera')      lista = lista.filter(p => !resuelto(p));
+  if (BUSCA) {
+    const q = BUSCA.toLowerCase();
+    lista = lista.filter(p => p.nombre.toLowerCase().includes(q) || p.id.includes(q));
+  }
+  // El orden lo elige Juani; por defecto, lo que hay que mirar primero.
+  const alfa = (a,b) => String(a.nombre).localeCompare(String(b.nombre), 'es');
+  if (ORDEN === 'alfa')        lista.sort(alfa);
+  else if (ORDEN === 'caro')   lista.sort((a,b) => (b.p1||0) - (a.p1||0) || alfa(a,b));
+  else if (ORDEN === 'barato') lista.sort((a,b) => (a.p1||0) - (b.p1||0) || alfa(a,b));
+  else if (ORDEN === 'rubro')  lista.sort((a,b) => String(a.rubro).localeCompare(String(b.rubro),'es') || alfa(a,b));
+  else lista.sort((a,b) => {
+    // Primero lo que espera tu OK, después el resto: dentro de cada grupo, lo
+    // que cambió de precio más recientemente. La fecha queda guardada para
+    // siempre, así que el orden no se pierde cuando das el visto.
+    const espera = p => p.cambioPrecio ? 0 : 1;
+    const ea = espera(a), eb = espera(b);
+    if (ea !== eb) return ea - eb;
+    const fa = a.fechaCambio || '', fb = b.fechaCambio || '';
+    if (fa !== fb) return fb.localeCompare(fa);   // más reciente primero
+    return alfa(a,b);
+  });
+
+  llenarRubros();
+  // Una línea de ayuda según lo que se esté mirando: el panel tiene varios
+  // flujos y no todos son evidentes.
+  const ayudas = {
+    nuevos: 'Aparecieron en E-Pyme y todavía no están en la tienda. Prendé la banderilla verde de la izquierda y entran al catálogo con el precio que traen: no hace falta un segundo OK.',
+    precio: 'Cambiaron de precio y la tienda sigue mostrando el anterior. Tocá <b>OK al precio</b> en cada uno, o el botón de arriba para todos. Los que dicen NUEVO entran al catálogo con la banderilla verde.',
+    sinfoto: 'Tocá un producto para subirle la foto. Dentro del editor, con la foto ya cargada, aparece el botón <b>Compartir con la distribuidora</b> para usar la misma imagen allá.',
+    fuera: 'La banderilla de la izquierda los mete o los saca de la tienda. Los que dicen <b>No se puede</b> es porque les falta precio o tienen mal el rubro: eso se arregla en E-Pyme.'
+  };
+  const cajaAyuda = document.getElementById('ayudaFiltro');
+  if (cajaAyuda) {
+    cajaAyuda.innerHTML = ayudas[FILTRO] ? '<div class="ayuda-filtro">' + ayudas[FILTRO] + '</div>' : '';
+  }
+  const cont = document.getElementById('salida');
+  if (!lista.length) {
+    cont.className = 'vacio';
+    cont.textContent = 'No hay productos que coincidan.';
+    return;
+  }
+  cont.className = 'grilla';
+  // Tres grupos, en el orden en que hay que mirarlos. Lo que espera una decisión
+  // va arriba de todo, mezclando cambios de precio y productos nuevos: si no, los
+  // nuevos caían en "fuera del catálogo" y quedaban al final de la página.
+  const esperan = lista.filter(p => p.cambioPrecio);
+  const resto   = lista.filter(p => !p.cambioPrecio);
+  const dentro  = resto.filter(resuelto);
+  const fuera   = resto.filter(p => !resuelto(p));
+  const tarjeta = p => {
+    const clase = (p.cambioPrecio ? 'es-precio' : p.nuevo ? 'es-nuevo' : p.malRubro ? 'es-mal' : hayRenombre(p) ? 'es-renom' : !p.foto ? 'es-sinfoto' : '') +
+                  (resuelto(p) ? ' en-catalogo' : ' fuera-catalogo');
+    const chips = [];
+    if (p.nuevo) chips.push('<span class="chip nuevo">NUEVO</span>');
+    if (p.cambioPrecio && !p.nuevo) chips.push('<span class="chip precio">' +
+      (p.subio ? 'SUBIÓ' : 'BAJÓ') + ' — antes $' + (p.precioAntes || 0).toLocaleString('es-AR') +
+      '</span>');
+    if (p.nuevo) {
+      const falta = [];
+      if (!p.foto) falta.push('foto');
+      if (!p.desc) falta.push('descripción');
+      if (!p.cantidades) falta.push('cantidades');
+      if (falta.length) chips.push('<span class="chip falta">falta ' + falta.join(' y ') + '</span>');
+    }
+    if (p.malRubro) chips.push('<span class="chip mal">Rubro inválido</span>');
+    if (hayRenombre(p)) chips.push('<span class="chip renom">Nombre cambiado</span>');
+    if (!p.ficha)   chips.push('<span class="chip falta">Sin ficha</span>');
+    else if (!p.nuevo) {   // en los nuevos ya lo dice el chip de arriba
+      if (!p.foto) chips.push('<span class="chip falta">Sin foto</span>');
+      if (!p.desc) chips.push('<span class="chip falta">Sin descripción</span>');
+    }
+    if (p.oferta)   chips.push('<span class="chip renom">' + p.oferta + '% OFF</span>');
+    if (p.editada)  chips.push('<span class="chip editada">Editada acá</span>');
+    const foto = p.foto
+      ? '<img class="foto" loading="lazy" src="' + imgDe(p.id) + '" alt="" ' +
+        'onerror="this.classList.add(\'rota\');this.removeAttribute(\'src\');' +
+        'this.replaceWith(Object.assign(document.createElement(\'div\'),' +
+        '{className:\'foto rota\',textContent:\'foto rota\'}))">'
+      : '<div class="foto rota">sin foto</div>';
+    const ren = hayRenombre(p)
+      ? '<div class="renombre">En la tienda dice <b>' + esc(p.renombre.nombre_publicado) +
+        '</b><br>En E-Pyme ahora es <b>' + esc(p.renombre.nombre_nuevo) + '</b></div>'
+      : '';
+    // Los dos precios importan: el de lista y el de +$80.000. Ninguno va tachado.
+    const precio = p.p1
+      ? '<div class="precio"><span class="p-uno">' + pesos(p.p1) + '</span>' +
+        (p.p2 ? '<span class="p-dos"><i>+$80.000</i>' + pesos(p.p2) + '</span>' : '') + '</div>'
+      : '';
+    // ── BANDERILLA DE CATÁLOGO (fuera de la tarjeta) ──
+    // Un solo gesto para sacar o poner un producto en la tienda. Si no se puede
+    // publicar, la banderilla queda trabada y dice por qué.
+    var traba = '';
+    if (p.sinPrecio) traba = 'No tiene precio en E-Pyme. Cargáselo allá.';
+    else if (p.malRubro) traba = 'Tiene un rubro que la tienda no reconoce. Corregilo en la planilla.';
+    var enCat = enCatalogo(p);
+    var esperaAlta = esperandoAlta(p);
+    var puesta = enCat || esperaAlta;
+    var bandCat = traba
+      ? '<button type="button" class="bander bander-cat trabada" disabled title="' + esc(traba) + '">' +
+          '<i></i><span>No se puede</span></button>'
+      : '<button type="button" class="bander bander-cat' + (puesta ? ' on' : '') + (esperaAlta ? ' alta' : '') +
+          '" data-cat="' + esc(p.id) + '" aria-pressed="' + (puesta ? 'true' : 'false') + '"' +
+          ' title="' + (puesta ? 'Sacar de la tienda' : 'Poner en la tienda') + '">' +
+          '<i></i><span>' + (esperaAlta ? 'Al publicar' : puesta ? 'En la tienda' : 'Fuera') + '</span></button>';
+
+    // ── BANDERILLA DE PRECIO (dentro de la mini tarjeta) ──
+    var bandPrecio = p.cambioPrecio
+      ? '<button type="button" class="bander bander-precio" data-ok="' + esc(p.id) + '"' +
+          ' title="Dar el OK a este precio"><i></i><span>' +
+          (p.nuevo ? 'OK al precio nuevo' : 'OK al precio') + '</span></button>'
+      : '<span class="bander bander-precio lista"><i></i><span>Precio al día</span></span>';
+
+    var aviso = '';
+    if (traba) aviso = '<div class="aviso-cat traba"><b>No se puede publicar</b><span>' + esc(traba) + '</span></div>';
+
+    return '<div class="prod ' + clase + '" data-id="' + esc(p.id) + '" title="Clic para editar la ficha">' +
+      '<div class="prod-flanco">' + foto + bandCat + '</div>' +
+      '<div class="datos">' + aviso +
+        '<div class="nom">' + esc(p.nombre) + '</div>' +
+        '<div class="meta">Art. ' + esc(p.id) + ' · ' + esc(p.rubro) +
+          (p.cantidades ? ' · ' + esc(p.cantidades) : '') + '</div>' +
+        precio +
+        bandPrecio +
+        (chips.length ? '<div class="chips">' + chips.join('') + '</div>' : '') +
+        ren +
+      '</div></div>';
+  };
+
+  var html = '';
+  if (esperan.length) {
+    html += '<h2 class="grupo-tit espera">Esperan tu OK <span>' + esperan.length + '</span></h2>' +
+            '<p class="grupo-ayuda">Cambiaron de precio o son nuevos. Hasta que les des el OK, la tienda muestra el precio anterior.</p>' +
+            '<div class="grupo">' + esperan.map(tarjeta).join('') + '</div>';
+  }
+  if (dentro.length) {
+    html += '<h2 class="grupo-tit dentro">En la tienda <span>' + dentro.length + '</span></h2>' +
+            '<div class="grupo">' + dentro.map(tarjeta).join('') + '</div>';
+  }
+  if (fuera.length) {
+    html += '<h2 class="grupo-tit fuera">Fuera del catálogo <span>' + fuera.length + '</span></h2>' +
+            '<p class="grupo-ayuda">No se ven en la tienda: o no tienen precio en E-Pyme, o les bajaste la banderilla.</p>' +
+            '<div class="grupo">' + fuera.map(tarjeta).join('') + '</div>';
+  }
+  cont.className = '';
+  cont.innerHTML = html;
+}
+
+// Clic en cualquier tarjeta abre el editor de esa ficha.
+document.getElementById('salida').addEventListener('click', e => {
+  const t = e.target.closest('.prod');
+  if (t && t.dataset.id) abrirEditor(t.dataset.id);
+});
+
+document.querySelectorAll('.filtro').forEach(b => b.addEventListener('click', () => {
+  elegirFiltro('kpi', b.dataset.f);
+}));
+/* Hay dos cajas de búsqueda: la fija de arriba (la que se usa desde el celular) y
+   la de los filtros. Escriben la misma búsqueda y se copian el texto entre ellas. */
+function buscarAhora(txt){
+  elegirFiltro('busca', (txt || '').trim());
+}
+
+(function(){
+  const fijo = document.getElementById('buscarFijo');
+  if (!fijo) return;
+  fijo.addEventListener('input', e => buscarAhora(e.target.value));
+  // Al tocar el buscador, la lista sube hasta debajo de la caja: así el teclado
+  // del teléfono no tapa los productos que van apareciendo.
+  fijo.addEventListener('focus', function(){
+    setTimeout(function(){
+      const caja = document.querySelector('.busca-fija');
+      if (!caja) return;
+      const hd = document.querySelector('header');
+      const y = caja.getBoundingClientRect().top + window.pageYOffset - (hd ? hd.offsetHeight : 0);
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    }, 260);
+  });
+  fijo.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') fijo.blur();   // cierra el teclado y deja ver la lista entera
+  });
+  const x = document.getElementById('buscarX');
+  if (x) x.addEventListener('click', function(){ buscarAhora(''); fijo.focus(); });
+})();
+
+/* ── SUBIR EL EXCEL DE PRECIOS ────────────────────────────────────────────────
+   Respaldo por si falla el pase automático de precios desde E-Pyme. Se sube el
+   MISMO Excel que va al Sheet: las columnas se reconocen por el nombre de la
+   primera fila, así no importa en qué orden estén ni si se agrega alguna.
+   Acepta lo mismo que el gestor de pedidos (.xlsx, .xls, .xlsm y .csv). */
+var EXCEL_FILAS = null;
+
+// Busca una columna por cualquiera de sus nombres posibles (sin acentos ni mayúsculas).
+function excelCol(hdr, alternativas){
+  var norm = hdr.map(function(h){
+    return String(h == null ? '' : h).toLowerCase().trim()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '');
+  });
+  for (var i = 0; i < alternativas.length; i++){
+    var buscado = alternativas[i].normalize('NFD').replace(/[̀-ͯ]/g, '');
+    var j = norm.indexOf(buscado);
+    if (j >= 0) return j;
+  }
+  // segunda vuelta: que lo contenga
+  for (var k = 0; k < alternativas.length; k++){
+    var b2 = alternativas[k].normalize('NFD').replace(/[̀-ͯ]/g, '');
+    var idx = norm.findIndex(function(h){ return h && h.indexOf(b2) >= 0; });
+    if (idx >= 0) return idx;
+  }
+  return -1;
+}
+
+function excelTexto(v){ return String(v == null ? '' : v).trim(); }
+function bytesDe(buf){ return new Uint8Array(buf); }
+
+// Deja el número como lo escribe el Excel argentino: 1.234,56
+function excelPrecio(v){
+  if (v == null || v === '') return '';
+  if (typeof v === 'number') return v.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  var t = String(v).trim().replace(/^\$\s*/, '');
+  // Viene como texto: se lleva al mismo formato que usa la lista (1.234,56).
+  var n = excelAPesos(t);
+  return n ? n.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2}) : t;
+}
+
+function excelCelda(t){
+  t = String(t == null ? '' : t);
+  return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+
+function excelLeer(file){
+  var caja = $('excelCaja');
+  caja.innerHTML = '<div class="excel-caja">Leyendo ' + esc(file.name) + '...</div>';
+  // Se valida acá y no con `accept`: iOS deja en gris los .xlsx si el input filtra por MIME.
+  if (!/\.(xlsx|xlsm|xls|csv)$/i.test(file.name || '')) {
+    caja.innerHTML = '<div class="excel-caja mal">Eso no es un Excel ni un CSV (' +
+      esc(file.name || 'sin nombre') + '). Elegí un archivo .xlsx, .xls o .csv.</div>';
+    var iX=$('fileExcel'); if(iX) iX.value=''; return;
+  }
+  var lector = new FileReader();
+  lector.onerror = function(){ caja.innerHTML = '<div class="excel-caja mal">No pude leer el archivo.</div>'; };
+  lector.onload = function(e){
+    try {
+      if (typeof XLSX === 'undefined') throw new Error('no cargó la librería para leer Excel');
+      // Un .xlsx viene con su propia codificación adentro y se lee como bytes.
+      // Un .csv no dice en qué está: el de E-Pyme sale en Windows/latin, y si se
+      // lo lee como UTF-8 la "í" de Artículo llega rota y esa columna se pierde.
+      var wb;
+      if (/\.csv$/i.test(file.name || '')) {
+        var bytes = new Uint8Array(e.target.result), texto;
+        try { texto = new TextDecoder('utf-8', {fatal:true}).decode(bytes); }
+        catch (e1) { texto = new TextDecoder('windows-1252').decode(bytes); }
+        // raw:true = no interpretar nada. Si no, "4.070,00" se lee como 4,07:
+        // toma el punto como decimal y el precio queda mil veces más barato.
+        wb = XLSX.read(texto, {type:'string', raw:true});
+      } else {
+        wb = XLSX.read(bytesDe(e.target.result), {type:'array', cellDates:false});
+      }
+      // Si el libro tiene varias hojas, se usa la que se llame "precios"; si no, la primera.
+      var nom = wb.SheetNames.find(function(n){ return /precio/i.test(n); }) || wb.SheetNames[0];
+      var filas = XLSX.utils.sheet_to_json(wb.Sheets[nom], {header:1, defval:''});
+      // La fila de títulos puede no ser la primera si el Excel trae filas en blanco arriba.
+      var iHdr = filas.findIndex(function(f){
+        return f.some(function(c){ return /articulo|artículo/i.test(String(c)); });
+      });
+      if (iHdr < 0) iHdr = 0;
+      var hdr = filas[iHdr];
+      var cId  = excelCol(hdr, ['articulo','codigo','cod','sku','id']);
+      var cNom = excelCol(hdr, ['nombre','producto','descripcion','detalle']);
+      var cP1  = excelCol(hdr, ['bt.lista 1','lista 1','precio 1','lista1','publico',
+                                'precios sin iva','precio sin iva','sin iva','precios','precio']);
+      var cP2  = excelCol(hdr, ['bt.lista 2','lista 2','precio 2','lista2','mayorista']);
+      var cRub = excelCol(hdr, ['rubro','categoria','familia','grupo']);
+      // Solo la lista mayorista trae el bulto ("Patente": 6 unid., 1 kg, etc.).
+      var cPat = excelCol(hdr, ['patente','cantidad por bulto','bulto','presentacion','presentación']);
+      if (cNom < 0 || cP1 < 0) throw new Error('no encontré las columnas de Nombre y de precio (Bt.LISTA 1)');
+
+      var datos = filas.slice(iHdr + 1).map(function(f){
+        return {
+          nombre: excelTexto(f[cNom]),
+          p1: excelPrecio(f[cP1]),
+          p2: cP2 >= 0 ? excelPrecio(f[cP2]) : '',
+          rubro: cRub >= 0 ? excelTexto(f[cRub]) : '',
+          id: cId >= 0 ? limpiaId(f[cId]) : '',
+          patente: cPat >= 0 ? excelTexto(f[cPat]) : ''
+        };
+      }).filter(function(x){ return x.nombre && x.p1; });
+
+      if (!datos.length) throw new Error('no encontré filas con nombre y precio');
+      EXCEL_FILAS = datos;
+
+      var cols = [];
+      if (cId>=0) cols.push('Artículo'); cols.push('Nombre'); cols.push('Bt.LISTA 1');
+      if (cP2>=0) cols.push('Bt.LISTA 2'); if (cRub>=0) cols.push('Rubro');
+      if (cPat>=0) cols.push('Patente');
+      // Que quede clarísimo a qué tienda van a parar estos precios.
+      var destino = nombreTienda(), archivo = archivoPrecios();
+      // La tienda mayorista todavía saca sus precios del Google Sheet, no de este
+      // archivo. Decirlo acá evita creer que el sitio ya quedó actualizado.
+      var nota = (TIENDA === 'may')
+        ? '<span>Se reescribe ' + esc(archivo) + ', que es lo que ves <b>en este panel</b>. ' +
+          'La web de la distribuidora sigue tomando sus precios del Google Sheet: para que los vea el cliente, ' +
+          'subí el Excel al Sheet como siempre.</span>'
+        : '<span>Se reescribe ' + esc(archivo) + ', que es de donde la tienda saca los precios.</span>';
+      var rev = excelRevisar(datos);
+      var resumen = '<div class="excel-cuentas">' +
+        '<span><b>' + rev.total + '</b> en el Excel</span>' +
+        '<span><b>' + rev.cruzan + '</b> ya estaban</span>' +
+        '<span><b>' + rev.nuevos + '</b> nuevos</span>' +
+        '<span class="' + (rev.faltan ? 'ojo' : '') + '"><b>' + rev.faltan + '</b> no vienen</span>' +
+        '</div>';
+      var aviso = '';
+      if (rev.alarmas.length) {
+        aviso = '<div class="excel-alarma"><b>Pará un momento, esto no cierra:</b><ul>' +
+          rev.alarmas.map(function(a){ return '<li>' + a + '</li>'; }).join('') + '</ul>';
+        if (rev.saltos.length) {
+          aviso += '<div class="excel-saltos">' + rev.saltos.slice(0,4).map(function(x){
+            return '<span>' + esc(String(x.nombre).slice(0,30)) + ': $' +
+              Math.round(x.antes).toLocaleString('es-AR') + ' &rarr; $' +
+              Math.round(x.ahora).toLocaleString('es-AR') + '</span>'; }).join('') +
+            (rev.saltos.length > 4 ? '<span>y ' + (rev.saltos.length - 4) + ' más</span>' : '') + '</div>';
+        }
+        aviso += '<span class="excel-alarma-pie">Si igual estás seguro, podés publicar. Si no, cancelá y revisá el Excel.</span></div>';
+      }
+      caja.innerHTML =
+        '<div class="excel-caja ' + (rev.alarmas.length ? 'ojo' : 'ok') + '">' +
+        '<b>' + datos.length + ' productos leídos</b> de la hoja "' + esc(nom) + '".<br>' +
+        'Columnas reconocidas: ' + esc(cols.join(' · ')) + '.<br>' +
+        '<span style="opacity:.75">Ejemplo: ' + esc(datos[0].nombre.slice(0,42)) + ' — $' + esc(datos[0].p1) + '</span>' +
+        resumen + aviso +
+        '<div class="excel-destino"><b>Destino: ' + esc(destino) + '</b>' + nota +
+        '<span>Si no es la que querés, cancelá y cambiá de tienda arriba.</span></div>' +
+        '<button class="btn' + (rev.alarmas.length ? ' peligro' : '') + '" onclick="excelPublicar()">' +
+        (rev.alarmas.length ? 'Publicar igual en ' : 'Publicar en ') + esc(nombreCorto()) + '</button> ' +
+        '<button class="btn gris" onclick="excelCancelar()">Cancelar</button></div>';
+    } catch (err) {
+      EXCEL_FILAS = null;
+      caja.innerHTML = '<div class="excel-caja mal">No pude usar el archivo: ' + esc(err.message) + '</div>';
+    }
+  };
+  // readAsBinaryString está obsoleto y en iOS devuelve basura con archivos grandes.
+  lector.readAsArrayBuffer(file);
+}
+
+/* ── CONTROL ANTES DE PUBLICAR ────────────────────────────────────────────────
+   Un Excel mal exportado puede traer los precios corridos, el punto decimal en
+   otro lado o media lista faltante. Antes de pisar nada se compara con lo que
+   hay hoy y se avisa si algo no cierra. */
+function excelAPesos(txt){
+  var t = String(txt == null ? '' : txt).replace(/[^\d.,-]/g, '');
+  if (!t) return 0;
+  // Formato argentino: el punto separa miles y la coma los centavos.
+  if (t.indexOf(',') >= 0) t = t.replace(/\./g, '').replace(',', '.');
+  else if ((t.match(/\./g) || []).length > 1) t = t.replace(/\./g, '');
+  var n = parseFloat(t);
+  return isNaN(n) ? 0 : n;
+}
+
+function excelRevisar(datos){
+  var actuales = {};
+  PRODUCTOS.forEach(function(p){ if (p.p1 > 0) actuales[p.id] = p.p1; });
+  var r = { total: datos.length, hoy: Object.keys(actuales).length, sinId: 0,
+            cruzan: 0, nuevos: 0, faltan: 0, saltos: [], iguales: 0 };
+  var vistos = {};
+  datos.forEach(function(d){
+    var id = limpiaId(d.id);
+    if (!id) { r.sinId++; return; }
+    vistos[id] = true;
+    var antes = actuales[id];
+    if (antes === undefined) { r.nuevos++; return; }
+    r.cruzan++;
+    var ahora = excelAPesos(d.p1);
+    if (!ahora || !antes) return;
+    var veces = ahora / antes;
+    if (Math.abs(ahora - antes) < 1) { r.iguales++; return; }
+    // Un precio que se multiplica o se divide por más de 3 casi siempre es un
+    // error de formato, no un cambio de precio real.
+    if (veces >= 3 || veces <= 0.34) r.saltos.push({ id: id, nombre: d.nombre, antes: antes, ahora: ahora, veces: veces });
+  });
+  Object.keys(actuales).forEach(function(id){ if (!vistos[id]) r.faltan++; });
+  r.alarmas = [];
+  if (r.sinId === datos.length && datos.length)
+    r.alarmas.push('Ninguna fila trae número de artículo. Revisá que el Excel tenga la columna <b>Artículo</b>.');
+  if (r.saltos.length)
+    r.alarmas.push('<b>' + r.saltos.length + ' precio' + (r.saltos.length===1?'':'s') + '</b> cambia' +
+      (r.saltos.length===1?'':'n') + ' más de 3 veces su valor. Suele ser el punto decimal mal puesto.');
+  if (r.hoy && r.faltan > r.hoy * 0.2)
+    r.alarmas.push('Faltan <b>' + r.faltan + '</b> productos que hoy sí están. El Excel podría estar incompleto.');
+  if (r.hoy && r.cruzan < r.hoy * 0.5 && r.total)
+    r.alarmas.push('Solo <b>' + r.cruzan + '</b> de los ' + r.hoy + ' productos actuales aparecen en el Excel.');
+  return r;
+}
+
+function excelCancelar(){ EXCEL_FILAS = null; $('excelCaja').innerHTML = ''; var i=$('fileExcel'); if(i) i.value=''; }
+
+async function excelPublicar(){
+  if (!EXCEL_FILAS || !EXCEL_FILAS.length) return;
+  var caja = $('excelCaja');
+  caja.innerHTML = '<div class="excel-caja">Publicando...</div>';
+  var esMay = TIENDA === 'may';
+  try {
+    // Se arma el mismo CSV que genera el pase automático, con sus dos columnas
+    // vacías al inicio. Cada tienda tiene su propio orden de columnas.
+    var lineas, csv;
+    if (esMay) {
+      lineas = [',,Rubro,Artículo,Nombre,Bt.LISTA 1,Patente'];
+      EXCEL_FILAS.forEach(function(p){
+        lineas.push(',,' + [p.rubro, p.id, p.nombre, p.p1, p.patente || ''].map(excelCelda).join(','));
+      });
+    } else {
+      lineas = [',,Nombre,Bt.LISTA 1,Bt.LISTA 2,Rubro,Artículo'];
+      EXCEL_FILAS.forEach(function(p){
+        lineas.push(',,' + [p.nombre, p.p1, p.p2, p.rubro, p.id].map(excelCelda).join(','));
+      });
+    }
+    csv = lineas.join('\n') + '\n';
+    await guardarEnRepo(archivoPrecios(), aB64(csv),
+      'Precios de ' + nombreTienda() + ' actualizados desde el Excel (' + EXCEL_FILAS.length + ' productos)');
+    caja.innerHTML = '<div class="excel-caja ok"><b>Listo.</b> Se publicaron ' + EXCEL_FILAS.length +
+      ' precios en <b>' + esc(nombreTienda()) + '</b>. ' +
+      (esMay ? 'Ya los ves acá en el panel; la web de la distribuidora sigue leyendo el Google Sheet.'
+             : 'La tienda los toma en unos minutos.') + '</div>';
+    EXCEL_FILAS = null;
+    var i=$('fileExcel'); if(i) i.value='';
+  } catch (err) {
+    caja.innerHTML = '<div class="excel-caja mal">No pude publicar: ' + esc(err.message) + '</div>';
+  }
+}
+
+document.addEventListener('change', function(ev){
+  if (ev.target && ev.target.id === 'fileExcel' && ev.target.files && ev.target.files[0]) {
+    excelLeer(ev.target.files[0]);
+  }
+});
+
+
+/* ── COMPARTIR LA FOTO CON LA DISTRIBUIDORA ───────────────────────────────────
+   Casi todos los productos usan el mismo número de artículo en las dos tiendas,
+   así que la misma foto sirve. Este botón copia la foto del producto abierto al
+   repo de la distribuidora, con el mismo nombre de archivo.
+   OJO: apunta a la TESTER de la distribuidora, no a la oficial. */
+const REPO_MAY_FOTOS = 'paladear/paladeardistribuidora-test';
+
+/* Un JPG de la tienda pesa ~120 KB; en WebP baja a ~40 KB. Convertimos antes de
+   copiarlo para que la distribuidora no arrastre ese peso. */
+function aWebpB64(b64, ext){
+  return new Promise(function(listo){
+    if (ext === 'webp') return listo({ b64: b64, ext: 'webp' });
+    var im = new Image();
+    im.onload = function(){
+      try {
+        var lado = 700, esc = Math.min(1, lado / Math.max(im.width, im.height));
+        var cv = document.createElement('canvas');
+        cv.width  = Math.round(im.width  * esc);
+        cv.height = Math.round(im.height * esc);
+        cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+        var d = cv.toDataURL('image/webp', 0.82);
+        if (d.indexOf('data:image/webp') !== 0) return listo({ b64: b64, ext: ext });
+        listo({ b64: d.split(',')[1], ext: 'webp' });
+      } catch(e){ listo({ b64: b64, ext: ext }); }
+    };
+    im.onerror = function(){ listo({ b64: b64, ext: ext }); };
+    im.src = 'data:image/' + (ext === 'jpg' ? 'jpeg' : ext) + ';base64,' + b64;
+  });
+}
+
+async function compartirFotoConMayorista(){
+  var info = $('edFotoInfo');
+  function avisar(html){ if (info) info.innerHTML = html; }
+  if (!EDITANDO) { avisar('<span class="malo">Abrí primero un producto.</span>'); return; }
+  var id = EDITANDO.id;
+  var b = $('edFotoMay');
+  if (b) { b.disabled = true; b.textContent = 'Compartiendo...'; }
+  try {
+    var b64, ext;
+    if (FOTO_NUEVA && FOTO_NUEVA.webp) {
+      // foto recién elegida: se usa la misma que se va a guardar acá
+      b64 = FOTO_NUEVA.webp.split(',')[1];
+      ext = FOTO_NUEVA.ext || 'webp';
+    } else {
+      // ya guardada: se lee del repo de la tienda y se copia tal cual
+      var hallada = null;
+      for (var i = 0; i < ['webp','jpg','png'].length; i++) {
+        var e = ['webp','jpg','png'][i];
+        try {
+          var arch = await gh('/contents/' + CARPETA_FOTOS + '/' + id + '.' + e + '?ref=main');
+          hallada = { b64: (arch.content || '').replace(/\n/g, ''), ext: e };
+          break;
+        } catch (err) { if (err.status !== 404) throw err; }
+      }
+      if (!hallada) { avisar('<span class="malo">Este producto todavía no tiene foto guardada.</span>'); return; }
+      b64 = hallada.b64; ext = hallada.ext;
+    }
+    var liviana = await aWebpB64(b64, ext);
+    b64 = liviana.b64; ext = liviana.ext;
+    await guardarEnRepo(CARPETA_FOTOS + '/' + id + '.' + ext, b64,
+      'Foto del artículo ' + id + ' compartida desde la tienda minorista', 0, REPO_MAY_FOTOS);
+    await anotarFotoPropia(id, ext);
+    avisar('<span class="ok">Listo: la distribuidora ya tiene esta foto (artículo ' + esc(id) + ').</span>');
+  } catch (err) {
+    avisar('<span class="malo">No pude compartirla: ' + esc(err.message) + '</span>');
+  } finally {
+    if (b) { b.disabled = false; b.textContent = 'Compartir con la distribuidora'; }
+  }
+}
+
+document.addEventListener('click', function(ev){
+  if (ev.target && ev.target.id === 'edFotoMay') compartirFotoConMayorista();
+});
+
+
+/* ── VISTA DE LA DISTRIBUIDORA ────────────────────────────────────────────────
+   Arma la lista de productos mayoristas con las mismas hojas que ya baja el
+   panel (info-may.csv y precios-may.csv). Las columnas se buscan por su nombre,
+   no por posición, porque las hojas mayoristas tienen otro orden que las
+   minoristas. Todo lo que se edita acá se guarda en el repo de la tester de la
+   distribuidora. */
+function colDe(cab, nombres){
+  var norm = cab.map(function(h){
+    return String(h == null ? '' : h).toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  });
+  for (var i = 0; i < nombres.length; i++){
+    var b = nombres[i].normalize('NFD').replace(/[̀-ͯ]/g,'');
+    var j = norm.indexOf(b);
+    if (j >= 0) return j;
+  }
+  return -1;
+}
+
+function armarProductosMay(){
+  var porId = {};
+  // Info Mayorista: Articulo, Nombre, Bulto, Sabores, Imagen, Estado, Rubro
+  if (CSV_MAY_INFO) {
+    var fi = leerCsv(CSV_MAY_INFO);
+    if (fi.length > 1) {
+      var ci = fi[0];
+      var iA = colDe(ci, ['articulo']), iN = colDe(ci, ['nombre']),
+          iB = colDe(ci, ['bulto','cantidades']), iS = colDe(ci, ['sabores']),
+          iR = colDe(ci, ['rubro']);
+      fi.slice(1).forEach(function(c){
+        if (iA < 0) return;
+        var id = limpiaId(c[iA]); if (!id) return;
+        porId[id] = {
+          id: id,
+          nombreCsv: iN >= 0 ? String(c[iN] || '').trim() : '',
+          cantidades: iB >= 0 ? String(c[iB] || '').trim() : '',
+          sabores: iS >= 0 ? String(c[iS] || '').trim() : '',
+          rubro: iR >= 0 ? String(c[iR] || '').trim() : '',
+          p1: 0
+        };
+      });
+    }
+  }
+  // Mayorista (precios): Rubro, Artículo, Nombre, Bt.LISTA 1, Patente
+  if (CSV_MAY_PRECIOS) {
+    var fp = leerCsv(CSV_MAY_PRECIOS);
+    if (fp.length > 1) {
+      var cp = fp[0];
+      var pA = colDe(cp, ['articulo']), pN = colDe(cp, ['nombre']),
+          pP = colDe(cp, ['bt.lista 1','lista 1','precio']), pR = colDe(cp, ['rubro']);
+      fp.slice(1).forEach(function(c){
+        if (pA < 0) return;
+        var id = limpiaId(c[pA]); if (!id) return;
+        var base = porId[id] || { id: id, nombreCsv: '', cantidades: '', sabores: '', rubro: '' };
+        if (pN >= 0 && c[pN]) base.nombreCsv = String(c[pN]).trim();
+        if (pR >= 0 && c[pR]) base.rubro = String(c[pR]).trim();
+        base.p1 = pP >= 0 ? aNum(c[pP]) : 0;
+        base.enPrecios = true;
+        porId[id] = base;
+      });
+    }
+  }
+  return Object.keys(porId).map(function(id){
+    var b = porId[id];
+    var f = FICHAS_FB[id] || {};
+    return {
+      id: id,
+      nombre: f.nombre || b.nombreCsv,
+      nombreCsv: b.nombreCsv,
+      rubro: b.rubro,
+      p1: b.p1 || 0, p2: 0,
+      ficha: !!FICHAS_FB[id],
+      desc: f.desc || '',
+      foto: !!(f.imagen && String(f.imagen).trim()),
+      cantidades: f.cantidades || b.cantidades || '',
+      sabores: f.sabores || b.sabores || '',
+      oferta: f.oferta || 0,
+      mix: false, granola: false, blend: false,
+      nombreEpyme: '', editada: !!FICHAS_FB[id], nuevo: false, renombre: null,
+      malRubro: false,
+      oculto: f.oculto === true || !b.enPrecios
+    };
+  }).sort(function(a,b){ return String(a.nombre).localeCompare(String(b.nombre), 'es'); });
+}
+
+async function cargarFichasMay(){
+  try {
+    var base = 'https://paladear.github.io/paladeardistribuidora-test/';
+    var r = await fetch(base + 'catalogo-panel.json?t=' + Date.now(), {cache:'no-store'});
+    var j = r.ok ? await r.json() : {};
+    var fotos = j.fotos || {};
+    // Las fotos compartidas viven como archivos sueltos; el índice dice cuáles hay.
+    try {
+      var ri = await fetch(base + 'fotos-propias.json?t=' + Date.now(), {cache:'no-store'});
+      if (ri.ok) {
+        var idx = await ri.json();
+        Object.keys(idx || {}).forEach(function(id){
+          if (!fotos[id]) fotos[id] = { ext: idx[id], v: 1 };
+        });
+      }
+    } catch(e) {}
+    return { fichas: j.fichas || {}, fotos: fotos };
+  } catch (e) {
+    console.warn('[panel] la distribuidora todavía no tiene fichas guardadas:', e && e.message);
+    return { fichas: {}, fotos: {} };
+  }
+}
+
+async function cambiarTienda(cual){
+  if (cual === TIENDA) return;
+  var caja = $('excelCaja'); if (caja) caja.innerHTML = '';
+  // guardar lo de la tienda que se deja
+  var estado = { fichas: FICHAS_FB, fotos: FOTOS_FB, productos: PRODUCTOS };
+  if (TIENDA === 'min') GUARDADO_MIN = estado; else GUARDADO_MAY = estado;
+
+  TIENDA = cual;
+  var salida = $('salida');
+  if (salida) salida.innerHTML = '<div class="cargando">Cargando ' + (cual === 'may' ? 'la distribuidora' : 'la tienda') + '...</div>';
+
+  if (cual === 'may') {
+    if (!GUARDADO_MAY) {
+      var d = await cargarFichasMay();
+      FICHAS_FB = d.fichas; FOTOS_FB = d.fotos;
+      PRODUCTOS = marcarCambiosDePrecio(armarProductosMay());
+      GUARDADO_MAY = { fichas: FICHAS_FB, fotos: FOTOS_FB, productos: PRODUCTOS };
+    } else {
+      FICHAS_FB = GUARDADO_MAY.fichas; FOTOS_FB = GUARDADO_MAY.fotos; PRODUCTOS = GUARDADO_MAY.productos;
+    }
+  } else {
+    FICHAS_FB = GUARDADO_MIN.fichas; FOTOS_FB = GUARDADO_MIN.fotos; PRODUCTOS = GUARDADO_MIN.productos;
+  }
+
+  document.querySelectorAll('.tienda-sel button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.t === TIENDA);
+  });
+  document.body.classList.toggle('es-mayorista', TIENDA === 'may');
+  pintarCartelTienda();
+  try { llenarRubros(); } catch(e) {}
+  try { pintarKpis(); } catch(e) {}
+  pintar();
+}
+window.cambiarTienda = cambiarTienda;
+
+/* El cartel de arriba dice siempre en cuál de las dos tiendas estás parado. */
+function pintarCartelTienda(){
+  var n = document.getElementById('ctNombre'), a = document.getElementById('ctArchivo');
+  if (n) n.textContent = nombreTienda();
+  if (a) a.textContent = repoActivo().split('/').pop();
+}
+pintarCartelTienda();
+
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest && ev.target.closest('.tienda-sel button');
+  if (b && b.dataset.t) cambiarTienda(b.dataset.t);
+});
+
+
+/* ── QUÉ CAMBIÓ DESDE LA ÚLTIMA VEZ ───────────────────────────────────────────
+   Se guarda el precio de cada producto tal como quedó la última vez que lo
+   revisaste (PRECIOS_VISTOS). Al abrir el panel se compara con el precio de
+   ahora: los que difieren van primero y con el borde marcado. */
+function marcarCambiosDePrecio(lista){
+  var primeraVez = !PRECIOS_VISTOS || !Object.keys(PRECIOS_VISTOS).length;
+  var hoy = new Date().toISOString();
+  lista.forEach(function(p){
+    var antes = PRECIOS_VISTOS ? PRECIOS_VISTOS[p.id] : undefined;
+    p.precioAntes = antes;
+    // La primera vez no se marca nada: no habría con qué comparar y saldría todo en rojo.
+    // Y se ignoran las diferencias de centavos: el sistema de precios redondea distinto
+    // según el día y marcaría decenas de cambios que no son cambios.
+    var dif = (antes === undefined) ? 0 : Math.abs(Number(antes) - Number(p.p1));
+    p.cambioPrecio = (!primeraVez && antes !== undefined && p.p1 > 0 && dif >= 1);
+    p.subio = p.cambioPrecio && Number(p.p1) > Number(antes);
+    // Un producto recién creado en E-Pyme con precio es, a los efectos de la
+    // revisión, un cambio de precio más: entra a la misma lista con su etiqueta.
+    if (p.nuevo && p.p1 > 0) { p.cambioPrecio = true; p.subio = false; }
+    // Queda anotado el día del cambio, y no se borra al revisarlo: es lo que
+    // permite que la lista siempre empiece por lo último que se movió.
+    if (p.cambioPrecio) {
+      var reg = CAMBIOS_FECHA[p.id];
+      if (!reg || Math.abs(Number(reg.p || 0) - Number(p.p1)) >= 1) {
+        CAMBIOS_FECHA[p.id] = { p: (antes === undefined ? null : antes), f: hoy, n: p.p1 };
+      }
+    }
+    var rg = CAMBIOS_FECHA[p.id];
+    p.fechaCambio = rg ? rg.f : '';
+  });
+  return lista;
+}
+
+/* El precio que hoy está publicado en la tienda para este producto: el aprobado
+   si ya lo revisaste alguna vez, o el de E-Pyme si todavía no. */
+function precioPublicado(p){
+  var a = PRECIOS_APROBADOS[p.id];
+  return a ? a[0] : p.p1;
+}
+
+/* Aprobar = dejar asentado que ESTE precio es el que puede ir a la tienda. */
+function aprobarPrecio(p){
+  PRECIOS_VISTOS[p.id] = p.p1;
+  if (p.p1 > 0) PRECIOS_APROBADOS[p.id] = [p.p1, p.p2 || 0];
+  p.cambioPrecio = false; p.precioAntes = p.p1;
+}
+
+function contarCambios(){ return PRODUCTOS.filter(function(p){ return p.cambioPrecio; }).length; }
+
+// Deja constancia de que ya los miraste: los precios de ahora pasan a ser los "vistos".
+async function marcarPreciosRevisados(){
+  if (GUARDANDO_VISTOS) return;
+  var n = contarCambios();
+  if (!n && Object.keys(PRECIOS_VISTOS || {}).length) { return; }
+  GUARDANDO_VISTOS = true;
+  var btn = $('btnVistos');
+  if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+  try {
+    PRECIOS_VISTOS = {};
+    PRODUCTOS.forEach(function(p){ if (p.p1 > 0) aprobarPrecio(p); });
+    await guardarFichasEnRepo('Precios aprobados' + (n ? ' (' + n + ' cambios)' : ''));
+    pintarKpis(); pintar();
+    // Aceptar todo implica que querés que eso llegue a la tienda: se publica solo.
+    if (n && TIENDA === 'min' && typeof publicarPrecios === 'function') {
+      try { await publicarPrecios(); } catch(e) {}
+    }
+  } catch (e) {
+    alert('No pude guardar la revisión: ' + e.message);
+  } finally {
+    GUARDANDO_VISTOS = false;
+    if (btn) { btn.disabled = false; btn.textContent = 'Dar el OK a todos los precios'; }
+  }
+}
+window.marcarPreciosRevisados = marcarPreciosRevisados;
+
+
+/* ── ACEPTAR LOS CAMBIOS DE PRECIO DE A UNO ───────────────────────────────────
+   El botón "Visto" de cada tarjeta da por revisado ese producto y nada más. Los
+   demás siguen marcados. Se guarda de a uno para no perder nada si se corta. */
+async function verPrecioVisto(id){
+  var p = PRODUCTOS.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var btn = document.querySelector('.bander-precio[data-ok="' + id + '"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+  try {
+    aprobarPrecio(p);
+    await guardarFichasEnRepo('Precio aprobado: ' + (p.nombre || id));
+    pintarKpis(); pintar();
+  } catch (e) {
+    alert('No pude guardarlo: ' + e.message);
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i></i><span>OK al precio</span>'; }
+  }
+}
+// En fase de CAPTURA: el listener de la tarjeta ya estaba registrado y, en
+// burbuja, corría primero y abría el editor igual.
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest && ev.target.closest('.bander-precio[data-ok]');
+  if (!b) return;
+  ev.stopPropagation();
+  ev.stopImmediatePropagation();
+  ev.preventDefault();
+  verPrecioVisto(b.dataset.ok);
+}, true);
+
+
+/* ── ORDEN DE LA LISTA ────────────────────────────────────────────────────── */
+document.addEventListener('change', function(ev){
+  if (ev.target && ev.target.id === 'selOrden') { ORDEN = ev.target.value; pintar(); }
+});
+
+/* ── PUBLICAR: el paso que hace que los precios lleguen de verdad a la web ───
+   Si no se aprieta, la tienda sigue con los precios viejos. Por eso el botón
+   está anclado arriba y, al aceptar todos los cambios de una, se dispara solo. */
+function avisarPublicar(){
+  var nota = document.getElementById('notaPublicar');
+  var barra = document.getElementById('barraFija');
+  if (!nota || !barra) return;
+  var n = PRODUCTOS.filter(function(p){ return p.cambioPrecio; }).length;
+  if (TIENDA === 'may') {
+    barra.hidden = true;   // en la distribuidora los precios no se automatizan
+    return;
+  }
+  barra.hidden = false;
+  nota.textContent = n
+    ? 'Tenés ' + n + ' precio' + (n === 1 ? '' : 's') + ' esperando tu OK: hasta entonces la tienda muestra el anterior'
+    : 'Todos los precios al día';
+}
+window.avisarPublicar = avisarPublicar;
+
+
+/* ── COMPARTIR FOTOS CON LA DISTRIBUIDORA, DE A MUCHAS ────────────────────────
+   Busca los productos que tienen el MISMO número de artículo en las dos tiendas
+   y que acá ya tienen foto. Vienen todos marcados, pero hay productos que
+   comparten número y no la misma imagen: por eso se pueden destildar, con un
+   buscador adentro para encontrarlos rápido. */
+var CMP_LISTA = [], CMP_MARCADOS = new Set(), CMP_FILTRO = '';
+
+function abrirCompartir(){
+  var capa = $('capaCompartir');
+  capa.classList.add('abierto');   // mismo mecanismo que el editor
+  document.body.style.overflow = 'hidden';
+  $('cmpLista').innerHTML = '<div class="cargando">Buscando productos compatibles...</div>';
+  cmpBuscarCompatibles();
+}
+function cerrarCompartir(){
+  $('capaCompartir').classList.remove('abierto');
+  document.body.style.overflow = '';
+}
+window.abrirCompartir = abrirCompartir; window.cerrarCompartir = cerrarCompartir;
+
+async function cmpBuscarCompatibles(){
+  // los artículos que existen en la distribuidora
+  var idsMay = {};
+  [CSV_MAY_INFO, CSV_MAY_PRECIOS].forEach(function(csv){
+    if (!csv) return;
+    var filas = leerCsv(csv);
+    if (filas.length < 2) return;
+    var cab = filas[0];
+    var iA = colDe(cab, ['articulo']);
+    if (iA < 0) return;
+    filas.slice(1).forEach(function(c){
+      var id = limpiaId(c[iA]);
+      if (id) idsMay[id] = true;
+    });
+  });
+  // de los de acá, los que tienen foto propia y existen allá
+  var base = (GUARDADO_MIN && GUARDADO_MIN.productos) ? GUARDADO_MIN.productos : PRODUCTOS;
+  var fotos = (GUARDADO_MIN && GUARDADO_MIN.fotos) ? GUARDADO_MIN.fotos : FOTOS_FB;
+  CMP_LISTA = base.filter(function(p){ return idsMay[p.id] && fotos[p.id]; })
+                  .sort(function(a,b){ return String(a.nombre).localeCompare(String(b.nombre),'es'); });
+  CMP_MARCADOS = new Set(CMP_LISTA.map(function(p){ return p.id; }));
+  cmpPintar();
+}
+
+function cmpPintar(){
+  var q = CMP_FILTRO.toLowerCase();
+  var vis = CMP_LISTA.filter(function(p){
+    return !q || String(p.nombre).toLowerCase().indexOf(q) >= 0 || p.id.indexOf(q) >= 0;
+  });
+  $('cmpResumen').textContent = CMP_MARCADOS.size + ' de ' + CMP_LISTA.length + ' marcadas';
+  if (!CMP_LISTA.length) {
+    $('cmpLista').innerHTML = '<div class="vacio">No encontré productos con el mismo número de artículo que ya tengan foto acá.</div>';
+    return;
+  }
+  if (typeof cmpVerFotos !== 'undefined') cmpVerFotos.desconectar();
+  $('cmpLista').innerHTML = vis.map(function(p){
+    return '<label class="cmp-item' + (CMP_MARCADOS.has(p.id) ? '' : ' off') + '" data-id="' + esc(p.id) + '">' +
+      '<input type="checkbox" ' + (CMP_MARCADOS.has(p.id) ? 'checked' : '') + '>' +
+      '<img loading="lazy" data-src="' + imgDe(p.id) + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+      '<span class="cmp-n"><b>' + esc(p.nombre) + '</b><i>Art. ' + esc(p.id) + '</i></span>' +
+    '</label>';
+  }).join('') || '<div class="vacio">Ninguno coincide con la búsqueda.</div>';
+  if (typeof cmpVerFotos !== 'undefined') cmpVerFotos.observar();
+}
+
+/* Las fotos se piden recién cuando el renglón se acerca a la pantalla. Con las
+   200 juntas el navegador se trababa, sobre todo en el celular con datos. */
+var cmpVerFotos = (function(){
+  var obs = null;
+  function crear(){
+    if (obs || !('IntersectionObserver' in window)) return;
+    if (!document.querySelector('#capaCompartir .ed-cuerpo')) return;
+    obs = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if (!e.isIntersecting) return;
+        var img = e.target;
+        if (img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+        obs.unobserve(img);
+      });
+    }, {
+      // El que scrollea es el cuerpo de la pantalla, no la lista: con el root
+      // equivocado el navegador considera visibles a los 200 y los pide todos.
+      root: document.querySelector('#capaCompartir .ed-cuerpo'),
+      rootMargin: '250px 0px'
+    });
+  }
+  return {
+    observar: function(){
+      crear();
+      var imgs = document.querySelectorAll('#cmpLista img[data-src]');
+      if (!obs) {   // navegador viejo: se cargan igual, pero de a poco
+        [].slice.call(imgs, 0, 30).forEach(function(i){ i.src = i.dataset.src; delete i.dataset.src; });
+        return;
+      }
+      [].forEach.call(imgs, function(i){ obs.observe(i); });
+    },
+    desconectar: function(){ if (obs) obs.disconnect(); }
+  };
+})();
+
+function cmpTodos(si){
+  var q = CMP_FILTRO.toLowerCase();
+  CMP_LISTA.forEach(function(p){
+    var entra = !q || String(p.nombre).toLowerCase().indexOf(q) >= 0 || p.id.indexOf(q) >= 0;
+    if (!entra) return;
+    if (si) CMP_MARCADOS.add(p.id); else CMP_MARCADOS.delete(p.id);
+  });
+  cmpPintar();
+}
+window.cmpTodos = cmpTodos;
+
+var _cmpTimer = 0;
+document.addEventListener('input', function(ev){
+  if (!ev.target || ev.target.id !== 'cmpBuscar') return;
+  CMP_FILTRO = ev.target.value || '';
+  clearTimeout(_cmpTimer);
+  _cmpTimer = setTimeout(cmpPintar, 160);   // no repintar en cada tecla
+});
+document.addEventListener('change', function(ev){
+  var it = ev.target.closest && ev.target.closest('.cmp-item[data-id]');
+  if (!it) return;
+  var id = it.dataset.id;
+  if (ev.target.checked) CMP_MARCADOS.add(id); else CMP_MARCADOS.delete(id);
+  it.classList.toggle('off', !ev.target.checked);
+  $('cmpResumen').textContent = CMP_MARCADOS.size + ' de ' + CMP_LISTA.length + ' marcadas';
+});
+
+async function cmpCompartir(){
+  var ids = CMP_LISTA.filter(function(p){ return CMP_MARCADOS.has(p.id); }).map(function(p){ return p.id; });
+  if (!ids.length) { $('cmpEstado').textContent = 'No hay ninguna marcada.'; return; }
+  if (!TOKEN) { $('cmpEstado').textContent = 'Entrá con la clave para poder compartir.'; return; }
+  var b = $('cmpEnviar');
+  b.disabled = true;
+  var fotos = (GUARDADO_MIN && GUARDADO_MIN.fotos) ? GUARDADO_MIN.fotos : FOTOS_FB;
+  var ok = 0, mal = 0, compartidas = {};
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i];
+    b.textContent = 'Compartiendo ' + (i + 1) + ' de ' + ids.length + '...';
+    try {
+      var ext = (fotos[id] && fotos[id].ext) || 'webp';
+      var arch = await gh('/contents/' + CARPETA_FOTOS + '/' + id + '.' + ext + '?ref=main');
+      var liviana = await aWebpB64((arch.content || '').replace(/\n/g, ''), ext);
+      await guardarEnRepo(CARPETA_FOTOS + '/' + id + '.' + liviana.ext, liviana.b64,
+        'Foto del artículo ' + id + ' compartida desde la tienda', 0, REPO_MAY);
+      compartidas[id] = liviana.ext;
+      ok++;
+    } catch (e) { mal++; }
+  }
+  await anotarFotoPropia(compartidas);
+  b.disabled = false; b.textContent = 'Compartir las marcadas';
+  $('cmpEstado').innerHTML = '<span class="ok">' + ok + ' compartidas</span>' +
+    (mal ? ' · <span class="malo">' + mal + ' fallaron</span>' : '');
+}
+window.cmpCompartir = cmpCompartir;
+
+/* La tienda mayorista no adivina qué fotos hay en su repo: lee este índice.
+   Sin esto la foto queda subida pero el sitio sigue mostrando la de Cloudinary. */
+async function anotarFotoPropia(id, ext){
+  var nuevas = (typeof id === 'object') ? id : (function(o){ o[id] = ext; return o; })({});
+  if (!Object.keys(nuevas).length) return;
+  try {
+    var indice = {};
+    try {
+      var prev = await gh('/contents/fotos-propias.json?ref=main', null, REPO_MAY);
+      indice = JSON.parse(decodeURIComponent(escape(atob((prev.content||'').replace(/\n/g,''))))) || {};
+    } catch(e) {}
+    Object.keys(nuevas).forEach(function(k){ indice[k] = nuevas[k]; });
+    await guardarEnRepo('fotos-propias.json', aB64(JSON.stringify(indice, null, 1)),
+      'Índice de fotos propias (' + Object.keys(indice).length + ')', 0, REPO_MAY);
+  } catch(e) {}
+}
+
+
+/* Volver a poner un producto en el catálogo desde la misma tarjeta. */
+async function volverAlCatalogo(id){
+  var p = PRODUCTOS.find(function(x){ return x.id === id; });
+  if (!p) return;
+  if (!TOKEN) { alert('Entrá con la clave para poder guardar.'); return; }
+  var b = document.querySelector('.bander-cat[data-cat="' + id + '"]');
+  if (b) { b.disabled = true; }
+  var estaba = { oculto: p.oculto, altaOk: p.altaOk };
+  var entra = !(enCatalogo(p) || esperandoAlta(p));   // si está afuera, lo mete
+  try {
+    p.oculto = !entra;
+    var ficha = { oculto: p.oculto, origen: 'panel' };
+    // Un producto nuevo no necesita un segundo OK: ponerle la banderilla YA vale
+    // como aprobación del precio con el que entra.
+    if (p.nuevo) {
+      p.altaOk = entra;
+      ficha.altaOk = entra;
+      if (entra) aprobarPrecio(p);
+    }
+    FICHAS_FB[id] = Object.assign({}, FICHAS_FB[id] || {}, ficha);
+    await guardarFichasEnRepo((entra ? 'Entra al catálogo: ' : 'Sale del catálogo: ') + (p.nombre || id));
+    pintarKpis(); pintar();
+  } catch (e) {
+    p.oculto = estaba.oculto; p.altaOk = estaba.altaOk;
+    alert('No pude guardarlo: ' + e.message);
+    pintar();
+  }
+}
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest && ev.target.closest('.bander-cat[data-cat]');
+  if (!b) return;
+  ev.stopPropagation(); ev.stopImmediatePropagation(); ev.preventDefault();
+  volverAlCatalogo(b.dataset.cat);
+}, true);
+
+
+/* ── ELEGIR QUÉ ENTRA AL CATÁLOGO ─────────────────────────────────────────────
+   Muestra solo los que se PUEDEN publicar: los nuevos de E-Pyme (ya tienen
+   precio) y los que ocultaste vos. Los que no tienen precio no aparecen porque
+   no hay forma de publicarlos desde acá.
+   Arrancan todos destildados: se marca lo que se quiere que se vea. */
+var ALT_LISTA = [], ALT_MARCADOS = new Set(), ALT_FILTRO = '';
+
+function abrirAltas(){
+  $('capaAltas').classList.add('abierto');
+  document.body.style.overflow = 'hidden';
+  ALT_LISTA = PRODUCTOS.filter(function(p){
+    return (p.nuevo || p.oculto === true) && !p.sinPrecio && !p.malRubro;
+  }).sort(function(a,b){ return String(a.nombre).localeCompare(String(b.nombre),'es'); });
+  ALT_MARCADOS = new Set();          // ninguno marcado al abrir
+  ALT_FILTRO = '';
+  var i = $('altBuscar'); if (i) i.value = '';
+  $('altEstado').textContent = '';
+  altPintar();
+}
+function cerrarAltas(){
+  $('capaAltas').classList.remove('abierto');
+  document.body.style.overflow = '';
+}
+window.abrirAltas = abrirAltas; window.cerrarAltas = cerrarAltas;
+
+function altPintar(){
+  var q = ALT_FILTRO.toLowerCase();
+  var vis = ALT_LISTA.filter(function(p){
+    return !q || String(p.nombre).toLowerCase().indexOf(q) >= 0 || p.id.indexOf(q) >= 0;
+  });
+  $('altResumen').textContent = ALT_MARCADOS.size + ' de ' + ALT_LISTA.length + ' marcados';
+  if (!ALT_LISTA.length) {
+    $('altLista').innerHTML = '<div class="vacio">No hay productos para agregar. ' +
+      'Los que están fuera del catálogo no tienen precio en E-Pyme: cargáselo allá y entran solos.</div>';
+    return;
+  }
+  $('altLista').innerHTML = vis.map(function(p){
+    var falta = [];
+    if (!p.foto) falta.push('foto');
+    if (!p.desc) falta.push('descripción');
+    return '<label class="cmp-item alt-item' + (ALT_MARCADOS.has(p.id) ? ' on' : ' off') + '" data-alt="' + esc(p.id) + '">' +
+      '<input type="checkbox" ' + (ALT_MARCADOS.has(p.id) ? 'checked' : '') + '>' +
+      '<span class="cmp-n"><b>' + esc(p.nombre) + '</b>' +
+        '<i>Art. ' + esc(p.id) + ' · ' + pesos(p.p1 || 0) +
+        (falta.length ? ' · <span class="alt-falta">falta ' + falta.join(' y ') + '</span>' : '') + '</i></span>' +
+    '</label>';
+  }).join('') || '<div class="vacio">Ninguno coincide con la búsqueda.</div>';
+}
+
+function altTodos(si){
+  var q = ALT_FILTRO.toLowerCase();
+  ALT_LISTA.forEach(function(p){
+    var entra = !q || String(p.nombre).toLowerCase().indexOf(q) >= 0 || p.id.indexOf(q) >= 0;
+    if (!entra) return;
+    if (si) ALT_MARCADOS.add(p.id); else ALT_MARCADOS.delete(p.id);
+  });
+  altPintar();
+}
+window.altTodos = altTodos;
+
+var _altTimer = 0;
+document.addEventListener('input', function(ev){
+  if (!ev.target || ev.target.id !== 'altBuscar') return;
+  ALT_FILTRO = ev.target.value || '';
+  clearTimeout(_altTimer);
+  _altTimer = setTimeout(altPintar, 160);
+});
+document.addEventListener('change', function(ev){
+  var it = ev.target.closest && ev.target.closest('.alt-item[data-alt]');
+  if (!it) return;
+  var id = it.dataset.alt;
+  if (ev.target.checked) ALT_MARCADOS.add(id); else ALT_MARCADOS.delete(id);
+  it.classList.toggle('on', ev.target.checked);
+  it.classList.toggle('off', !ev.target.checked);
+  $('altResumen').textContent = ALT_MARCADOS.size + ' de ' + ALT_LISTA.length + ' marcados';
+});
+
+async function altAgregar(){
+  var marcados = ALT_LISTA.filter(function(p){ return ALT_MARCADOS.has(p.id); });
+  if (!marcados.length) { $('altEstado').textContent = 'No marcaste ninguno.'; return; }
+  if (!TOKEN) { $('altEstado').textContent = 'Entrá con la clave para poder guardar.'; return; }
+  var b = $('altEnviar');
+  b.disabled = true; b.textContent = 'Agregando...';
+  try {
+    // Los marcados quedan visibles; los que no, guardados como ocultos.
+    ALT_LISTA.forEach(function(p){
+      var quiere = ALT_MARCADOS.has(p.id);
+      p.oculto = !quiere;
+      FICHAS_FB[p.id] = Object.assign({}, FICHAS_FB[p.id] || {}, { oculto: !quiere, origen: 'panel' });
+    });
+    await guardarFichasEnRepo('Al catálogo: ' + marcados.length + ' producto' + (marcados.length === 1 ? '' : 's'));
+    var hayNuevos = marcados.some(function(p){ return p.nuevo; });
+    $('altEstado').innerHTML = '<span class="ok">' + marcados.length + ' agregados.</span>' +
+      (hayNuevos ? ' Falta tocar <b>Publicar precios en la tienda</b> para que salgan.' : '');
+    pintarKpis(); pintar();
+  } catch (e) {
+    $('altEstado').innerHTML = '<span class="malo">No pude guardar: ' + esc(e.message) + '</span>';
+  } finally {
+    b.disabled = false; b.textContent = 'Agregar los marcados';
+  }
+}
+window.altAgregar = altAgregar;
+
+</script>
+<!-- Compartir fotos con la distribuidora, de a muchas -->
+<!-- Elegir qué productos entran al catálogo -->
+<div id="capaAltas">
+  <div class="ed-caja">
+    <div class="ed-top">
+      <b>Agregar productos al catálogo</b>
+      <button type="button" class="btn gris" onclick="cerrarAltas()">Cerrar</button>
+    </div>
+    <div class="ed-cuerpo">
+      <p class="cmp-intro">Estos son los que <b>se pueden</b> poner en la tienda. Vienen todos
+        destildados: marcá solo los que quieras que se vean. Los que dejes sin marcar quedan
+        guardados como ocultos y los podés agregar cuando quieras.</p>
+      <div class="cmp-busca">
+        <input id="altBuscar" type="search" placeholder="Buscar por nombre o artículo" autocomplete="off">
+      </div>
+      <div class="cmp-acc">
+        <button type="button" class="btn gris" onclick="altTodos(true)">Marcar todos</button>
+        <button type="button" class="btn gris" onclick="altTodos(false)">Desmarcar todos</button>
+        <span id="altResumen"></span>
+      </div>
+      <div id="altLista" class="cmp-lista"></div>
+    </div>
+    <div class="ed-pie">
+      <button type="button" class="btn primario" id="altEnviar" onclick="altAgregar()">Agregar los marcados</button>
+      <span id="altEstado"></span>
+    </div>
+  </div>
+</div>
+
+<div id="capaCompartir">
+  <div class="ed-caja">
+    <div class="ed-top">
+      <b>Compartir fotos con la distribuidora</b>
+      <button type="button" class="btn gris" onclick="cerrarCompartir()">Cerrar</button>
+    </div>
+    <div class="ed-cuerpo">
+      <p class="cmp-intro">Estos productos tienen el <b>mismo número de artículo</b> en las dos tiendas
+        y acá ya tienen foto. Destildá los que no compartan la misma imagen.</p>
+      <div class="cmp-busca">
+        <input id="cmpBuscar" type="search" placeholder="Buscar para destildar (nombre o artículo)" autocomplete="off">
+      </div>
+      <div class="cmp-acc">
+        <button type="button" class="btn gris" onclick="cmpTodos(true)">Marcar todos</button>
+        <button type="button" class="btn gris" onclick="cmpTodos(false)">Desmarcar todos</button>
+        <span id="cmpResumen"></span>
+      </div>
+      <div id="cmpLista" class="cmp-lista"></div>
+    </div>
+    <div class="ed-pie">
+      <button type="button" class="btn primario" id="cmpEnviar" onclick="cmpCompartir()">Compartir las marcadas</button>
+      <span id="cmpEstado"></span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
