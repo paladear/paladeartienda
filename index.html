@@ -6304,7 +6304,7 @@ function hvGoCatPage(index){
   var pages=Array.prototype.slice.call(track.querySelectorAll('.hv-cat-page'));if(!pages.length)return;
   var safe=Math.max(0,Math.min(pages.length-1,index));
   Array.prototype.slice.call(document.querySelectorAll('#hvCatsPagination button')).forEach(function(dot,dotIndex){if(dotIndex===safe)dot.setAttribute('aria-current','true');else dot.removeAttribute('aria-current');});
-  var start=track.scrollLeft;var target=pages[safe].offsetLeft;var duration=360;var begun=performance.now();
+  var start=track.scrollLeft;var target=pages[safe].offsetLeft;var duration=440;var begun=performance.now();
   if(_hvCatScrollFrame)cancelAnimationFrame(_hvCatScrollFrame);
   function step(now){var t=Math.min(1,(now-begun)/duration);var eased=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;track.scrollLeft=start+(target-start)*eased;if(t<1)_hvCatScrollFrame=requestAnimationFrame(step);else{_hvCatScrollFrame=0;hvUpdateCatPagination();}}
   _hvCatScrollFrame=requestAnimationFrame(step);
@@ -6329,9 +6329,7 @@ function hvSnapCatPage(){
   var pages=Array.prototype.slice.call(track.querySelectorAll('.hv-cat-page'));if(!pages.length)return;
   var current=0;
   pages.forEach(function(page,index){if(Math.abs(page.offsetLeft-track.scrollLeft)<Math.abs(pages[current].offsetLeft-track.scrollLeft))current=index;});
-  var target=pages[current].offsetLeft;
   hvUpdateCatPagination();
-  if(Math.abs(track.scrollLeft-target)>3)hvGoCatPage(current);
 }
 window.hvGoCatPage=hvGoCatPage;
 var _hvCatsBreakpoint=window.matchMedia('(max-width:767px)');
@@ -8263,6 +8261,22 @@ window.copiarLinkParaNavegador = function() {
   .hv-cat-flecha.der{right:6px}
 }
 @media(max-width:767px){ .hv-cat-flecha{display:none!important} }
+
+/* Mobile: mismo comportamiento del carrusel de categorías que la distribuidora.
+   El snap lo maneja el navegador; JS solo actualiza los puntos. */
+@media(max-width:767px){
+  .min-redesign .min-home-cats-carousel{overflow:hidden}
+  .min-redesign .hv-cats-scroller{
+    gap:14px!important;padding:0!important;scroll-behavior:auto!important;
+    scroll-snap-type:x mandatory!important;overscroll-behavior-inline:contain;
+    -webkit-overflow-scrolling:touch
+  }
+  .min-redesign .hv-cat-page{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:16px 12px!important;scroll-snap-align:start;scroll-snap-stop:always
+  }
+  .min-redesign .hv-cat{min-height:132px!important;gap:8px!important}
+}
 
 /* ── PANEL DE CATEGORIAS (hamburguesa) ──────────────────────────────
    Fondo alternado para no perder la fila que uno venia leyendo. */
