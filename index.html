@@ -6323,25 +6323,32 @@ window.hvGoCat=hvGoCat;
 function minRenderFeatured(){
   var grid=document.getElementById('minFeaturedGrid');
   if(!grid||typeof PRODS==='undefined'||!PRODS.length)return;
-  var preferidas=['frutos','deshidratados','semillas','aceitunas','cereales','granos'];
-  var elegidas=[];
-  preferidas.forEach(function(cid){
-    var p=PRODS.find(function(x){return x[1]===cid&&x[6]&&x[7]&&Object.keys(x[7]).length;});
-    if(p)elegidas.push(p);
+  // Uno por rubro, y se renuevan cada día: tanto el orden de los rubros como el
+  // producto elegido de cada uno se corren con el día corrido.
+  var cuantos=window.innerWidth<768?6:8;
+  var dia=Math.floor(Date.now()/86400000);
+  var porCat={};
+  PRODS.forEach(function(p){
+    if(!p[6]||!p[7]||!Object.keys(p[7]).length)return;
+    (porCat[p[1]]=porCat[p[1]]||[]).push(p);
   });
-  if(elegidas.length<8){
-    PRODS.some(function(p){
-      if(p[6]&&p[7]&&Object.keys(p[7]).length&&!elegidas.some(function(x){return x[1]===p[1];}))elegidas.push(p);
-      return elegidas.length>=8;
+  var cats=Object.keys(porCat).sort();
+  var elegidas=[];
+  if(cats.length){
+    var desde=dia%cats.length;
+    cats.slice(desde).concat(cats.slice(0,desde)).forEach(function(cid){
+      if(elegidas.length>=cuantos)return;
+      var lista=porCat[cid];
+      elegidas.push(lista[dia%lista.length]);
     });
   }
-  if(elegidas.length<8){
+  if(elegidas.length<cuantos){
     PRODS.some(function(p){
-      if(p[6]&&p[7]&&Object.keys(p[7]).length&&!elegidas.some(function(x){return x[0]===p[0];}))elegidas.push(p);
-      return elegidas.length>=8;
+      if(p[6]&&p[7]&&Object.keys(p[7]).length&&elegidas.indexOf(p)<0)elegidas.push(p);
+      return elegidas.length>=cuantos;
     });
   }
-  grid.innerHTML=elegidas.slice(0,8).map(function(p){
+  grid.innerHTML=elegidas.slice(0,cuantos).map(function(p){
     var cat=CATS.find(function(c){return c.id===p[1];});
     var opts=_sortOpts(Object.keys(p[7]));
     var precio=opts.length?p[7][opts[0]][0]:0;
