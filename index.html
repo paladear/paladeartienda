@@ -1917,6 +1917,9 @@ function _LS(k){ return _ES_PRUEBA ? k + '__test' : k; }
     <a class="social-btn" id="headerMapBtn" href="https://maps.app.goo.gl/5TtZMgtvq5XfycqG8" target="_blank" rel="noopener noreferrer" title="Cómo llegar (local minorista)">
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
     </a>
+    <button class="social-btn" id="btnCompartir" onclick="compartirTienda()" title="Compartir la tienda" aria-label="Compartir la tienda" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </button>
     <button class="social-btn" id="btnInstalarApp" onclick="abrirModalApp()" title="Instalar app" style="display:none">
       <svg viewBox="0 0 24 24"><path d="M17 12h-4V3h-2v9H7l5 5 5-5zM5 20v2h14v-2H5z"/></svg>
     </button>
@@ -1936,6 +1939,7 @@ function _LS(k){ return _ES_PRUEBA ? k + '__test' : k; }
         <div class="hdrop-row"><span class="ic">🏷️</span><div><strong>Condición de venta</strong>Sin mínimos de compra · Descuentos en compras mayores a $80.000</div></div>
         <div class="hdrop-row"><span class="ic">🚚</span><div><strong>Envíos</strong>Consultá por nuestros canales de venta al por menor</div></div>
         <button class="hdrop-cta min-cta" onclick="closeAllHdrops();window.open('https://wa.me/5492616512823','_blank')">💬 Contactar por WhatsApp</button>
+<button class="hdrop-cta" style="margin-top:8px;background:var(--muted);color:var(--fg)" onclick="closeAllHdrops();compartirTienda()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Compartir la tienda</button>
       </div>
     </div>
     <style>
@@ -8145,6 +8149,117 @@ body.es-pruebas #cartelPruebas{display:block}
 // ESTADO DE APP + BANNER ROTATIVO + MODAL
 // ═══════════════════════════════════════════
 
+/* ── COMPARTIR LA TIENDA ──────────────────────────────────────────────────────
+   Instalada como app no hay barra de direcciones: no había forma de copiar el link
+   ni de pasárselo a nadie. Se usa el compartir del teléfono (sale WhatsApp y todo
+   lo demás) y, si no está, se copia al portapapeles. */
+function _linkDeLaTienda(){
+  // Sin lo que venga después del ?: se comparte la tienda, no el filtro que tengas puesto.
+  return location.origin + location.pathname;
+}
+async function compartirTienda(){
+  const url = _linkDeLaTienda();
+  const datos = { title: document.title, text: 'Mirá el catálogo de Paladear Mercado de Sabores', url: url };
+  try {
+    if (navigator.share) { await navigator.share(datos); return; }
+  } catch(e) {
+    if (e && e.name === 'AbortError') return;   // lo cerró a propósito
+  }
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; }
+  catch(e) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.setAttribute('readonly','');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.select(); ta.setSelectionRange(0, url.length);
+      ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch(e2) { ok = false; }
+  }
+  _avisoCompartir(ok ? 'Link copiado' : url);
+}
+function _avisoCompartir(txt){
+  const t = document.createElement('div');
+  t.textContent = txt;
+  t.style.cssText = 'position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:99999;'+
+    'background:#1a3050;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;'+
+    'font-weight:600;max-width:88vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.3)';
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; }, 2200);
+  setTimeout(()=>{ t.remove(); }, 2600);
+}
+window.compartirTienda = compartirTienda;
+
+
+/* ── CARTEL DE TIENDA DE PRUEBAS ──────────────────────────────────────────────
+   El mismo archivo se publica en la tienda de verdad y en la de pruebas, así que
+   el cartel se decide en el momento, mirando la carpeta. Sin esto, abrir la tester
+   sin querer y creer que es la real terminaba en sustos: precios y productos que
+   no son los que ve el cliente.
+   Va como bloque normal, no fijo: una barra flotante taparía el header y el
+   carrito. Se ve al entrar, que es cuando hace falta, y el título de la pestaña lo
+   dice siempre. */
+(function _carteldePruebas(){
+  if (!/-test(\/|$)/.test(location.pathname)) return;
+  try { document.title = '[PRUEBAS] ' + document.title; } catch(e) {}
+  var real = location.origin + location.pathname.replace('-test/', '/');
+  function _poner(){
+    // En la minorista el cartel ya existía, pero escrito al FINAL del documento y
+    // con position:sticky: pegado ahí abajo, sólo aparecía al llegar al pie de la
+    // página, o sea nunca. Se reusa el que haya y se lo manda arriba de todo.
+    var d = document.getElementById('cartelPruebas');
+    if (!d) { d = document.createElement('div'); d.id = 'cartelPruebas'; }
+    d.innerHTML = '<b>TIENDA DE PRUEBAS</b> — no es la que ven los clientes. ' +
+      '<a href="' + real + '">Ir a la tienda de verdad &rsaquo;</a>';
+    if (d.parentElement !== document.body || document.body.firstChild !== d) {
+      document.body.insertBefore(d, document.body.firstChild);
+    }
+    // Todo con !important y por id: la página tiene reglas que le ganaban al estilo
+    // puesto a mano y el cartel terminaba perdido en el medio del largo de la página.
+    var st = document.createElement('style');
+    st.textContent =
+      '#cartelPruebas{position:fixed!important;top:0!important;left:0!important;right:0!important;' +
+      'width:auto!important;margin:0!important;transform:none!important;' +
+      'z-index:2147483647!important;background:#b3261e!important;color:#fff!important;' +
+      'font:700 13px/1.45 Montserrat,system-ui,sans-serif!important;text-align:center!important;' +
+      'padding:8px 14px!important;letter-spacing:.02em!important;display:block!important;' +
+      'text-transform:none!important;' +
+      'visibility:visible!important;opacity:1!important;pointer-events:auto!important}' +
+      '#cartelPruebas a{color:#fff!important;text-decoration:underline!important;' +
+      'font-weight:800!important;white-space:nowrap}' +
+      '';
+    document.head.appendChild(st);
+    // El header y los paneles que arrancan pegados arriba se bajan lo que mide el
+    // cartel; si no, quedan debajo y no se ve ni el logo. Se mide en vivo porque en
+    // el celular el texto se parte en dos renglones y el alto cambia.
+    function _correr(){
+      var h = Math.ceil(d.getBoundingClientRect().height) || 36;
+      // Sólo se bajan los que de verdad están clavados arriba. Bajar por las dudas a
+      // cualquier cosa que se llame "header" le abría un hueco a la mayorista, que lo
+      // tiene en el flujo normal y ya se corre solo con el padding del body.
+      var sel = ['.header','.compact-header','.cart-panel','.cats-dropdown-panel',
+                 '.may-header','.may-cats-panel'];
+      var mover = [];
+      sel.forEach(function(q){
+        document.querySelectorAll(q).forEach(function(e){
+          var s = getComputedStyle(e);
+          if ((s.position === 'fixed' || s.position === 'absolute') && s.top === '0px') mover.push(q);
+        });
+      });
+      st.textContent = st.textContent.replace(/\/\*empuje\*\/[\s\S]*$/, '') +
+        '/*empuje*/body{padding-top:' + h + 'px!important}' +
+        (mover.length ? [...new Set(mover)].join(',') + '{top:' + h + 'px!important}' : '');
+    }
+    _correr();
+    window.addEventListener('resize', _correr);
+    setTimeout(_correr, 600);
+  }
+  if (document.body) _poner();
+  else document.addEventListener('DOMContentLoaded', _poner);
+})();
+
 // Detectar si está corriendo como app instalada (standalone)
 var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
   || window.navigator.standalone === true; // iOS Safari
@@ -8154,6 +8269,19 @@ var _esAppInstalada = window.matchMedia('(display-mode: standalone)').matches
 // El envios-discount aparece con opacity 0→1 cuando el camión está off-screen
 
 // Mostrar ícono de instalar app en el header (solo si no está instalada)
+/* El de compartir aparece justo cuando el de instalar se va: es ahí, ya instalada,
+   cuando no tenés barra de direcciones para copiar el link. */
+(function _initShareHeaderBtn(){
+  var b = document.getElementById('btnCompartir');
+  if (!b) return;
+  function _ver(){ b.style.display = _esAppInstalada ? 'flex' : 'none'; }
+  setTimeout(_ver, 500);
+  window.addEventListener('appinstalled', function(){ _esAppInstalada = true; _ver(); });
+  window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e){
+    _esAppInstalada = e.matches; _ver();
+  });
+})();
+
 (function _initInstallHeaderBtn() {
   var btn = document.getElementById('btnInstalarApp');
   if (!btn) return;
