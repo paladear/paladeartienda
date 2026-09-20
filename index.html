@@ -1627,21 +1627,10 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 .search-suggestion-item.sug-marca .sug-icon{opacity:1;font-size:11px}
 .search-suggestion-item.sug-marca b{font-weight:800}
 
-/* ── La barra del filtro puesto ──
-   Va soldada al header y del mismo azul: se lee como una continuación de la barra de
-   arriba, no como una tarjeta suelta. Se va con el scroll igual que el header.
-   Por eso también se sacó el hamburguesa que estaba al lado del buscador: eran dos
-   iguales y le comía lugar al texto que escribís. */
-.filtro-activo{display:flex;align-items:center;gap:10px;
-  margin:-18px -20px 14px;padding:9px 16px;
-  background:#4c7592;color:#fff;border:0;border-radius:0;
-  border-bottom:1px solid rgba(255,255,255,.2)}
-@media(min-width:768px){
-  /* En escritorio no cruza toda la pantalla: una tira centrada, del mismo azul,
-     colgada del header. */
-  .filtro-activo{max-width:620px;margin:0 auto 16px;padding:9px 12px;
-    border-radius:0 0 14px 14px;border-bottom:0}
-}
+/* ── Indicador de categoría / marca / sello ──
+   En celular acompaña al header durante el scroll. En escritorio se convierte en un
+   título limpio, sin tarjeta ni fondo, para conservar el ancho y el aire del catálogo. */
+.filtro-activo{display:flex;align-items:center;gap:10px}
 .filtro-activo .fa-volver,.filtro-activo .fa-cats{flex:0 0 auto;width:38px;height:38px;
   border-radius:10px;border:0;background:var(--muted);color:var(--azul-dark);cursor:pointer;
   display:flex;align-items:center;justify-content:center;padding:0;transition:background .15s}
@@ -1669,9 +1658,42 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 .filtro-activo .fa-txt i{color:rgba(255,255,255,.72)!important}
 .filtro-activo .fa-txt b{color:#fff!important}
 .filtro-activo .fa-n{background:rgba(255,255,255,.18)!important;color:#fff!important}
+@media(min-width:768px){
+  .filtro-activo{margin:0 0 22px;padding:4px 0 13px;background:transparent;color:var(--azul-dark);
+    border:0;border-bottom:1px solid rgba(84,118,146,.22);border-radius:0;align-items:flex-end}
+  .filtro-activo .fa-cats{display:none!important}
+  .filtro-activo .fa-volver{width:32px;height:32px;margin-bottom:1px;background:transparent!important;
+    color:var(--azul-dark)!important;border:1px solid rgba(84,118,146,.3)!important;border-radius:9px}
+  .filtro-activo .fa-volver:hover{background:var(--azul-light)!important}
+  .filtro-activo .fa-volver svg{width:17px;height:17px}
+  .filtro-activo .fa-txt{gap:2px}
+  .filtro-activo .fa-txt i{color:var(--azul-mid)!important;font-size:10px;letter-spacing:.14em}
+  .filtro-activo .fa-txt b{color:var(--azul-dark)!important;font-size:25px;line-height:1.08;
+    letter-spacing:-.025em;white-space:normal;text-wrap:balance}
+  .filtro-activo .fa-n{margin-bottom:2px;background:var(--azul-light)!important;
+    color:var(--azul-dark)!important;padding:4px 9px}
+}
 @media(max-width:480px){
   .filtro-activo{gap:8px;padding:6px 7px}
   .filtro-activo .fa-txt b{font-size:15px}
+}
+@media(max-width:767px){
+  /* El header de Productos mide 68/70 px. La franja queda inmediatamente debajo y
+     permanece ahí; z-index menor para que nunca tape el logo ni los controles. */
+  body.min-redesign:not(.hv-home) .filtro-activo{position:sticky;top:70px;z-index:290;
+    margin:-18px -20px 14px;padding:7px 12px 8px;background:#cfe5f2;color:var(--azul-dark);
+    border:0;border-bottom:1px solid rgba(84,118,146,.22);border-radius:0;
+    box-shadow:0 7px 14px rgba(28,67,96,.09)}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-volver{width:34px;height:34px;margin-top:3px;
+    background:rgba(255,255,255,.68)!important;color:var(--azul-dark)!important;
+    border:1px solid rgba(84,118,146,.25)!important;border-radius:9px}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-volver svg{width:17px;height:17px}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-cats{background:rgba(255,255,255,.68)!important;
+    color:var(--azul-dark)!important;border:1px solid rgba(84,118,146,.25)!important}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-txt i{color:rgba(25,65,96,.64)!important}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-txt b{color:var(--azul-dark)!important}
+  body.min-redesign:not(.hv-home) .filtro-activo .fa-n{background:rgba(255,255,255,.7)!important;
+    color:var(--azul-dark)!important}
 }
 .search-suggestion-item:hover{background:var(--muted);color:var(--fg)}
 .search-suggestion-item .sug-icon{flex-shrink:0;opacity:.55;font-size:13px}
