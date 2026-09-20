@@ -3547,7 +3547,7 @@ function _pintarRelacionados(p){
   if (!lista.length) { caja.innerHTML = ''; return; }
   const marca = _marcaDe(p);
   const mismos = marca ? lista.filter(q => _norm(_marcaDe(q)||'') === _norm(marca)).length : 0;
-  const titulo = mismos >= 2 ? ('Más de ' + marca) : 'También te puede servir';
+  const titulo = 'Relacionados';
   caja.innerHTML = '<h3 class="pdrel-tit">' + titulo + '</h3>' +
     '<div class="pdrel-fila">' + lista.map(function(q){
       const opts = _sortOpts(Object.keys(q[7]));
@@ -9389,6 +9389,34 @@ window.pintarTableroCats=pintarTableroCats;
    el ancho. En el Home sí se deja, porque ahí no hay barra de filtro. */
 @media(max-width:767px){
   body.min-redesign:not(.hv-home) .header .min-header-menu{display:none!important}
+}
+</style>
+<style>
+/* ── TAMAÑOS EN ESCRITORIO ───────────────────────────────────────────────────
+   Toda la letra chica venía del mismo tamaño que en el celular: la marca en 10,5 px
+   y la etiqueta del precio en 11 px, que en una pantalla de 1440 px y a medio metro
+   de distancia no se leen. Y el menú de categorías ocupa 1250 px de ancho con los
+   rubros escritos en 12,5 px. Acá se suben sólo en pantallas grandes; el celular
+   queda exactamente como estaba. */
+@media(min-width:768px){
+  .pcard-name .nom-p{font-size:16px}
+  .pcard-name .nom-c{font-size:15.5px}
+  .pcard-name .nom-m{font-size:12.5px;letter-spacing:.07em}
+  .price-label{font-size:12.5px}
+  .price-may-label,.price-unit{font-size:12.5px}
+  .add-btn{font-size:16px}
+  .opt-btn{font-size:14px}
+  /* El menú de categorías: los rubros son lo que más se toca de toda la pantalla. */
+  .min-cat-menu-name{font-size:15px}
+  .cats-dropdown-title strong{font-size:19px}
+  .cats-dropdown-title small{font-size:13.5px}
+  .cdds-tit{font-size:12.5px}
+  .cdds-chip{font-size:14.5px}
+  .cdds-chip b{font-size:13.5px}
+  /* Y la letra chica que queda suelta por la página. */
+  .pdrel-nom{font-size:13.5px}
+  .pdrel-tit{font-size:17px}
+  .aviso-sello span{font-size:15px}
 }
 </style>
 </body>
