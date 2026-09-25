@@ -9469,5 +9469,34 @@ window.pintarTableroCats=pintarTableroCats;
    los dos dentro del header. Subir el del buscador es lo mínimo que lo arregla. */
 .header-inner{z-index:6}
 </style>
+<style>
+/* Sin promoción de instalación: la PWA queda disponible desde el navegador,
+   pero ya no se muestra popup, aviso ni botón para descargar la app. */
+#btnInstalarApp,
+#btnInstalarPWA,
+#modalInstalarApp,
+#iabWarning,
+#iosSafariHelper{display:none!important}
+</style>
+<script>
+/* Anular cualquier disparador viejo del popup de instalación. */
+(function(){
+  window.abrirModalApp=function(){};
+  window.cerrarModalApp=function(){
+    document.body.style.overflow='';
+    var modal=document.getElementById('modalInstalarApp');
+    if(modal) modal.classList.add('hidden');
+  };
+  window.mostrarPromptInstalacion=function(){};
+  window.dismissIAB=function(){
+    var el=document.getElementById('iabWarning');
+    if(el) el.classList.add('hidden');
+  };
+  window.dismissIOSHelper=function(){
+    var el=document.getElementById('iosSafariHelper');
+    if(el) el.classList.add('hidden');
+  };
+})();
+</script>
 </body>
 </html>
