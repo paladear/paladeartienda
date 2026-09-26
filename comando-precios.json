@@ -1,6 +1,4 @@
 {
-  "estado": "hecho",
-  "solicitado": "2026-09-22T15:42:40.766Z",
-  "terminado": "2026-09-22T12:44:27",
-  "detalle": "545 productos publicados. 30 producto(s) nuevo(s) esperando tu confirmacion. 4 cambio(s) de nombre a revisar."
+  "estado": "pendiente",
+  "solicitado": "2026-09-26T19:13:33.362Z"
 }
