@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-const BASE_URL = 'https://paladear.github.io/paladeartienda/';
+const BASE_URL = 'https://paladear.com.ar/';
 // Los datos ya no se bajan de Google: salen de los archivos del propio repo,
 // que son los que publica el panel. Este script SOLO regenera los sitemaps;
 // no toca precios-min.csv ni info-min.csv.
