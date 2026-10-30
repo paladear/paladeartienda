@@ -1942,6 +1942,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 }
 </style>
 
+
 </head>
 <body class="hv-home min-redesign">
 
@@ -9715,5 +9716,36 @@ window.pintarTableroCats=pintarTableroCats;
   };
 })();
 </script>
+<style id="logo-proporcional">
+/* ── EL LOGO ESCALA CON LA PANTALLA ──────────────────────────────────────────
+   El titulo de la portada viene dentro de la imagen del hero y se achica con la
+   ventana; el logo estaba en pixeles fijos, asi que al angostar la pantalla o al
+   poner zoom crecia en proporcion y se montaba sobre el texto.
+   Con clamp() los dos escalan igual y nunca se tocan. En 1280 px de ancho da los
+   mismos valores de siempre, asi que en monitor grande se ve igual que antes. */
+@media (min-width:768px){
+  body.min-redesign .header .logo,
+  body.min-redesign.hv-home .header .logo{
+    width:clamp(62px, 8.4vw, 108px);
+    height:clamp(62px, 8.4vw, 108px);
+  }
+  body.min-redesign .header .logo-wrap,
+  body.min-redesign.hv-home .header .logo-wrap{
+    left:clamp(10px, 1.9vw, 24px);
+    top:clamp(8px, .95vw, 12px);
+  }
+  body.min-redesign .header-inner,
+  body.min-redesign.hv-home .header-inner{
+    padding-left:clamp(84px, 11.8vw, 150px);
+  }
+}
+@media (max-width:767px){
+  body.min-redesign .header .logo{
+    width:clamp(44px, 18.4vw, 68px);
+    height:clamp(44px, 18.4vw, 68px);
+  }
+  body.min-redesign .header-inner{padding-left:clamp(54px, 21.7vw, 78px)}
+}
+</style>
 </body>
 </html>
