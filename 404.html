@@ -34,6 +34,11 @@
    donde corresponde, conservando lo que venía después y los parámetros. */
 (function(){
   try{
+    // Atajos a la distribuidora: /mayorista y /distribuidora, con o sin barra.
+    if (/^\/(mayorista|distribuidora)\/?$/i.test(location.pathname)) {
+      location.replace('https://mayorista.paladear.com.ar/' + location.search + location.hash);
+      return;
+    }
     var p = location.pathname.replace(/^\/(paladeartienda|paladeardistribuidora)(-test)?\/?/, '/');
     var destino = p + location.search + location.hash;
     if (destino === location.pathname + location.search + location.hash) destino = '/';
