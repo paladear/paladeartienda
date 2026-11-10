@@ -100,7 +100,9 @@ function buildProducts(pricesCsv, fichas){
       marca: String(fi.marca||'').trim(),
       envase: String(fi.envase||'').trim(),
       granel: !!(o&&o.granel), labels:(o&&o.labels)||[],
-      precioKg: p1, precioLista: p1,
+      gramos: (o&&o.granel) ? o.gramos : [],
+      precioKg: p1, precioLista: p1, precioMay: p2,
+      desdeMay: (o&&o.granel) ? Math.round(p2*(o.gramos.filter(x=>x>0).sort((a,b)=>a-b)[0]/1000)) : p2,
       gramoMin: (o&&o.granel) ? o.gramos.filter(x=>x>0).sort((a,b)=>a-b)[0] : 0,
       desde, hasta, ofertaPct,
       url: BASE+'p/'+sl+'/'
@@ -109,27 +111,47 @@ function buildProducts(pricesCsv, fichas){
   return [...porId.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,'es',{sensitivity:'base'}));
 }
 
-const CSS = `*{box-sizing:border-box}body{margin:0;font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;color:#17384f;background:#eef5fa;line-height:1.55}
-a{color:#1f5f8b}.wrap{max-width:1000px;margin:0 auto;padding:18px 18px 56px}
-header.top{background:#4c7592;padding:12px 18px}header.top a{color:#fff;text-decoration:none;font-weight:800;font-size:17px;letter-spacing:.01em}
-nav.mig{font-size:12.5px;color:#5a7f99;margin:16px 0 10px}nav.mig a{color:#5a7f99}
-.ficha{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start;background:#fff;border:1px solid #d8e5ee;border-radius:18px;padding:22px}
-@media(max-width:760px){.ficha{grid-template-columns:1fr;gap:18px;padding:16px}}
-.foto{aspect-ratio:1;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e6eef4}
-.foto img{max-width:100%;max-height:100%;object-fit:contain}
-h1{font-size:clamp(23px,3.4vw,33px);line-height:1.12;margin:0 0 8px;letter-spacing:-.02em}
-.marca{font-size:12.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#4e7898;margin:0 0 12px}
-.precio{font-size:27px;font-weight:800;color:#123f67;margin:14px 0 2px}
-.precio s{color:#8aa4b8;font-weight:700;font-size:19px;margin-right:6px}
-.precio small{display:block;font-size:12.5px;font-weight:700;color:#5a7f99;letter-spacing:.02em}
-.medidas{margin:12px 0;display:flex;flex-wrap:wrap;gap:6px}
-.medidas span{border:1px solid #d7e5ed;background:#edf4f8;border-radius:8px;padding:5px 11px;font-size:13px;font-weight:700}
-.desc{font-size:14.5px;color:#46637a;margin:14px 0 0}
-.cta{display:inline-block;margin-top:20px;background:#2f6896;color:#fff;text-decoration:none;font-weight:800;padding:14px 26px;border-radius:12px;font-size:15.5px}
-.rel{margin-top:40px}.rel h2{font-size:17px;margin:0 0 14px}
-.rel ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
-.rel li a{display:block;background:#fff;border:1px solid #dde8f0;border-radius:11px;padding:11px 13px;text-decoration:none;font-size:13.5px;font-weight:700;color:#1f5f8b}
-footer{margin-top:44px;font-size:12.5px;color:#6b8aa1;text-align:center}`;
+/* El estilo NO se escribe acá: se saca del propio index.html, de las mismas
+   reglas que pinta la ficha abierta de la tienda. Así la página del producto
+   se ve igual que la tienda y no se desincroniza cuando cambie el diseño. */
+const PREFIJOS = ['.product-detail','.pdrel-','.opt-btn','.prices','.price-min','.price-may',
+  '.price-label','.price-unit','.add-btn','.add-cart-icon','.nom-p','.nom-c','.nom-m','.nom-meta',
+  '.precio-oferta','.precio-tachado','.product-image-placeholder','.opt-btns','.sello-d'];
+function cssDeLaTienda(html){
+  const bloques=[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m=>m[1]).join('\n');
+  const raiz=(bloques.match(/:root\{[^}]*\}/)||[''])[0];
+  const reglas=[];
+  const re=/@media[^{]*\{(?:[^{}]|\{[^{}]*\})*\}|[^{}]+\{[^{}]*\}/g;
+  let m;
+  while((m=re.exec(bloques))){
+    const t=m[0];
+    const sel=t.trimStart().startsWith('@media') ? t : t.split('{')[0];
+    if(PREFIJOS.some(p=>sel.includes(p))) reglas.push(t);
+  }
+  if(reglas.length<40) throw new Error('Sólo se extrajeron '+reglas.length+' reglas de index.html; se cancela para no publicar páginas sin estilo');
+  return raiz + '\n' + reglas.join('\n') + `
+/* Reset base de la tienda. Sin esto el padding se suma al 100% del ancho y la
+   foto del producto queda más grande que su caja y se recorta. */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
+button{cursor:pointer;border:none;font-family:inherit}
+img{max-width:100%}
+/* Ajustes para que la misma ficha funcione como página suelta y no como capa. */
+html,body{margin:0;background:#f8f5ef}
+body{font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--fg);line-height:1.5}
+.product-detail{position:static!important;inset:auto!important;z-index:auto!important;min-height:100vh;animation:none}
+.product-detail-bar{position:sticky;top:0}
+.product-detail-bar a{text-decoration:none}
+.product-detail-title{margin-top:0}
+.product-detail-buy .add-btn{text-decoration:none;margin-top:4px}
+.pdrel-card{text-decoration:none}
+.pdrel-img img{max-width:100%;max-height:100%;object-fit:contain}
+.pd-pie{margin:34px 0 0;padding:18px 0 40px;text-align:center;font-size:12.5px;color:#6b8aa1}
+.pd-rubro-intro{margin:0 0 18px;color:#496579;font-size:14.5px}
+`;
+}
+
+const ICONO_CARRITO = '<span class="add-cart-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l2.4 10.3a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none"/></svg></span>';
+const FLECHA = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
 
 function pagina({title, desc, canonical, image, body, schema}){
   return `<!DOCTYPE html>
@@ -153,37 +175,64 @@ ${image?`<meta property="og:image" content="${esc(image)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
-<style>${CSS}</style>
+<link rel="stylesheet" href="${BASE}ficha-producto.css">
 <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
-<body>
-<header class="top"><a href="${BASE}">Paladear Mercado de Sabores</a></header>
-<div class="wrap">
+<body class="min-redesign">
 ${body}
-<footer>Paladear Mercado de Sabores · Pueyrredón 588, Mendoza · <a href="${BASE}">Ver toda la tienda</a></footer>
-</div>
 </body>
 </html>
 `;
+}
+
+// Barra de arriba: la misma de la ficha abierta, pero con links de verdad.
+function barra(volverA){
+  return `<div class="product-detail-bar">
+    <a class="product-detail-back" href="${esc(volverA)}" aria-label="Volver">${FLECHA}</a>
+    <strong>Detalle del producto</strong>
+    <a class="product-detail-close" href="${BASE}" aria-label="Ir a la tienda">×</a>
+  </div>`;
+}
+
+function miniCard(q){
+  const img = q.tieneFoto ? BASE+'fotos/'+q.id+'.webp' : '';
+  return `<a class="pdrel-card" href="${BASE}p/${esc(q.slug)}/">`
+    + `<span class="pdrel-img">${img?`<img src="${esc(img)}" alt="${esc(q.nombre)}" loading="lazy" decoding="async" width="200" height="200">`:'<span class="product-image-placeholder" aria-hidden="true"></span>'}</span>`
+    + `<span class="pdrel-nom"><b class="nom-p">${esc(q.nombre)}</b>${q.marca?`<span class="nom-meta"><em class="nom-m">${esc(q.marca)}</em></span>`:''}</span>`
+    + `<span class="pdrel-precio">${q.granel?'desde ':''}$${fmt(q.desde)}</span>`
+    + `</a>`;
 }
 
 function paginaProducto(p, hermanos, hayFoto){
   const img = hayFoto ? BASE+'fotos/'+p.id+'.webp' : '';
   const titulo = p.nombre + (p.marca?' '+p.marca:'') + ' | Paladear Mendoza';
   const descMeta = recorte(p.desc || (p.nombre+(p.marca?' de '+p.marca:'')+'. Comprá online en Paladear, dietética en Mendoza con envíos a todo el país.'), 158);
-  // Con oferta se muestran los dos precios, igual que en la tienda.
-  const listaKg = p.granel ? p.precioKg : p.precioLista;
-  const tachado = p.ofertaPct>0
-    ? `<s>$${fmt(p.granel ? Math.round(p.precioKg*(p.gramoMin/1000)) : p.precioLista)}</s> ` : '';
-  const precioTxt = p.granel
-    ? `${tachado}$${fmt(p.desde)} <small>desde ${esc(medida(p.labels[0]))} · $${fmt(listaKg)} el kilo${p.ofertaPct>0?' · Oferta -'+p.ofertaPct+'%':''}</small>`
-    : `${tachado}$${fmt(p.desde)}${(p.envase||p.ofertaPct>0)?` <small>${esc(p.envase||'')}${p.envase&&p.ofertaPct>0?' · ':''}${p.ofertaPct>0?'Oferta -'+p.ofertaPct+'%':''}</small>`:''}`;
+  // Las medidas se pintan como en la tienda: de menor a mayor y con la mayor
+  // elegida, que es la que la tienda trae puesta.
+  const vis = p.labels.slice();
+  const act = vis.length-1;
+  const precioDe = i => {
+    if(!p.granel) return {min:p.desde, may:p.desdeMay};
+    const g = p.gramos[i]||0;
+    const f = g/1000;
+    const ap = v => p.ofertaPct>0 ? Math.round(v*(1-p.ofertaPct/100)) : v;
+    return {min: ap(Math.round(p.precioLista*f)), may: Math.round(p.precioMay*f)};
+  };
+  const pr = precioDe(act);
+  const opciones = vis.length>1 ? `<h3>Elegí la presentación</h3><div class="product-detail-options opt-btns${vis.length>=4?' opt-btns-4':''}">`
+      + vis.map((l,i)=>{const q=precioDe(i); return `<button type="button" class="opt-btn${i===act?' active':''}" data-min="${q.min}" data-may="${q.may}">${esc(medida(l))}</button>`;}).join('')
+      + `</div>` : '';
+  const metaFila = (p.marca || (p.envase && !p.granel))
+    ? `<div class="product-detail-meta">${(p.envase&&!p.granel)?`<span class="nom-c">${esc(p.envase)}</span>`:''}${p.marca?`<em class="nom-m">${esc(p.marca)}</em>`:''}</div>` : '';
+  const precioMinHTML = p.ofertaPct>0
+    ? `<span class="precio-tachado">$${fmt(p.granel?Math.round(p.precioLista*((p.gramos[act]||1000)/1000)):p.precioLista)}</span> <span class="precio-oferta">$${fmt(pr.min)}</span>`
+    : `$${fmt(pr.min)}`;
+
   const offers = p.granel
     ? {"@type":"AggregateOffer","priceCurrency":"ARS","lowPrice":p.desde,"highPrice":p.hasta,
        "offerCount":p.labels.length,"availability":"https://schema.org/InStock","url":p.url}
     : {"@type":"Offer","priceCurrency":"ARS","price":p.desde,
-       "availability":"https://schema.org/InStock","url":p.url,
-       "priceValidUntil":new Date(Date.now()+1000*60*60*24*30).toISOString().slice(0,10)};
+       "availability":"https://schema.org/InStock","url":p.url};
   const schema = {"@context":"https://schema.org","@graph":[
     {"@type":"Product","name":p.nombre,
      ...(p.desc?{"description":p.desc}:{}),
@@ -195,19 +244,43 @@ function paginaProducto(p, hermanos, hayFoto){
       {"@type":"ListItem","position":1,"name":"Inicio","item":BASE},
       {"@type":"ListItem","position":2,"name":p.rubro,"item":BASE+'c/'+p.rubroSlug+'/'},
       {"@type":"ListItem","position":3,"name":p.nombre,"item":p.url}]}]};
-  const body = `<nav class="mig"><a href="${BASE}">Inicio</a> › <a href="${BASE}c/${p.rubroSlug}/">${esc(p.rubro)}</a> › ${esc(p.nombre)}</nav>
-<article class="ficha">
-  <div class="foto">${img?`<img src="${esc(img)}" alt="${esc(p.nombre)}${p.marca?' '+esc(p.marca):''}" width="600" height="600">`:''}</div>
-  <div>
-    ${p.marca?`<p class="marca">${esc(p.marca)}</p>`:''}
-    <h1>${esc(p.nombre)}</h1>
-    <p class="precio" data-art="${esc(p.id)}">${precioTxt}</p>
-    ${p.labels.length>1?`<div class="medidas">${p.labels.map(l=>`<span>${esc(medida(l))}</span>`).join('')}</div>`:''}
-    ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <a class="cta" href="${BASE}?producto=${esc(p.slug)}">Ver y agregar al carrito</a>
+
+  const body = `<section class="product-detail">
+${barra(BASE+'c/'+p.rubroSlug+'/')}
+<div class="product-detail-shell"><div class="product-detail-main">
+  <div class="product-detail-image">${img?`<img src="${esc(img)}" alt="${esc(p.nombre)}${p.marca?' '+esc(p.marca):''}" width="900" height="900" decoding="async">`:'<span class="product-image-placeholder" aria-hidden="true"></span>'}</div>
+  <div class="product-detail-copy">
+    <div class="product-detail-category">${esc(p.rubro)}</div>
+    <h1 class="product-detail-title">${esc(p.nombre)}</h1>
+    ${metaFila}
+    ${p.desc?`<div class="product-detail-info">${esc(p.desc)}</div>`:''}
+    <div class="product-detail-buy">
+      ${opciones}
+      <div class="prices">
+        <div><span class="price-label">Precio${p.ofertaPct>0?' (Oferta)':''}</span><div class="price-min" id="pMin">${precioMinHTML}</div></div>
+        <div><span class="price-label">+$80.000</span><div class="price-may" id="pMay">$${fmt(pr.may)}</div></div>
+      </div>
+      <a class="add-btn" href="${BASE}?producto=${esc(p.slug)}">${ICONO_CARRITO} Ver en la tienda</a>
+    </div>
   </div>
-</article>
-${hermanos.length?`<section class="rel"><h2>Más de ${esc(p.rubro)}</h2><ul>${hermanos.map(h=>`<li><a href="${BASE}p/${esc(h.slug)}/">${esc(h.nombre)}</a></li>`).join('')}</ul></section>`:''}`;
+  ${hermanos.length?`<div class="product-detail-rel"><h3 class="pdrel-tit">Relacionados</h3><div class="pdrel-fila">${hermanos.map(miniCard).join('')}</div></div>`:''}
+</div></div>
+<p class="pd-pie">Paladear Mercado de Sabores · Pueyrredón 588, Mendoza · <a href="${BASE}">Ver toda la tienda</a></p>
+</section>
+<script>
+/* Las medidas cambian el precio en pantalla, igual que en la tienda. */
+(function(){
+  var fmt=function(n){return new Intl.NumberFormat('es-AR').format(n);};
+  var btns=document.querySelectorAll('.product-detail-options .opt-btn');
+  var mn=document.getElementById('pMin'), my=document.getElementById('pMay');
+  for(var i=0;i<btns.length;i++) btns[i].addEventListener('click',function(){
+    for(var j=0;j<btns.length;j++) btns[j].classList.remove('active');
+    this.classList.add('active');
+    if(mn) mn.textContent='$'+fmt(Number(this.dataset.min||0));
+    if(my) my.textContent='$'+fmt(Number(this.dataset.may||0));
+  });
+})();
+</script>`;
   return pagina({title:titulo, desc:descMeta, canonical:p.url, image:img, body, schema});
 }
 
@@ -222,22 +295,31 @@ function paginaRubro(rubro, rubroSlug, prods){
     {"@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Inicio","item":BASE},
       {"@type":"ListItem","position":2,"name":rubro,"item":url}]}]};
-  const body = `<nav class="mig"><a href="${BASE}">Inicio</a> › ${esc(rubro)}</nav>
-<h1>${esc(rubro)}</h1>
-<p class="desc">${prods.length} productos de ${esc(rubro.toLowerCase())} en Paladear, dietética en Mendoza. Entrá a cada uno para ver medidas y precios.</p>
-<a class="cta" href="${BASE}?categoria=${esc(rubroSlug)}">Ver ${esc(rubro)} en la tienda</a>
-<section class="rel"><h2>Todos los productos</h2><ul>${prods.map(p=>`<li><a href="${BASE}p/${esc(p.slug)}/">${esc(p.nombre)}</a></li>`).join('')}</ul></section>`;
+  const body = `<section class="product-detail">
+${barra(BASE)}
+<div class="product-detail-shell">
+  <div class="product-detail-category">Categoría</div>
+  <h1 class="product-detail-title">${esc(rubro)}</h1>
+  <p class="pd-rubro-intro">${prods.length} productos de ${esc(rubro.toLowerCase())} en Paladear, dietética en Mendoza. Entrá a cada uno para ver medidas y precios.</p>
+  <div class="product-detail-rel"><h3 class="pdrel-tit">Todos los productos</h3><div class="pdrel-fila">${prods.map(miniCard).join('')}</div></div>
+</div>
+<p class="pd-pie">Paladear Mercado de Sabores · Pueyrredón 588, Mendoza · <a href="${BASE}">Ver toda la tienda</a></p>
+</section>`;
   return pagina({title:titulo, desc:descMeta, canonical:url, image:BASE+'og-image.jpg', body, schema});
 }
 
 // ───────────────────────────────────────────────────────────────
-const [pricesRaw, panelRaw] = await Promise.all([
-  readFile('precios-min.csv','utf8'), readFile('catalogo-panel.json','utf8')
+const [pricesRaw, panelRaw, indexRaw] = await Promise.all([
+  readFile('precios-min.csv','utf8'), readFile('catalogo-panel.json','utf8'), readFile('index.html','utf8')
 ]);
+const CSS = cssDeLaTienda(indexRaw);
 const fichas=(JSON.parse(panelRaw)||{}).fichas||{};
 if(!Object.keys(fichas).length) throw new Error('catalogo-panel.json no trae fichas');
 const productos=buildProducts(pricesRaw.replace(/\r\n?/g,'\n'), fichas);
 if(productos.length<50) throw new Error('Solo '+productos.length+' productos; se cancela para no romper lo publicado');
+
+// Se marca una sola vez quien tiene foto, para poder armar las minicards.
+for(const p of productos) p.tieneFoto = existsSync(path.join(SALIDA,'fotos',p.id+'.webp'));
 
 const porRubro=new Map();
 for(const p of productos){ if(!porRubro.has(p.rubro)) porRubro.set(p.rubro,[]); porRubro.get(p.rubro).push(p); }
@@ -247,7 +329,7 @@ await rm(path.join(SALIDA,'c'),{recursive:true,force:true});
 
 let nFotos=0;
 for(const p of productos){
-  const hayFoto=existsSync(path.join(SALIDA,'fotos',p.id+'.webp'));
+  const hayFoto=p.tieneFoto;
   if(hayFoto) nFotos++;
   const hermanos=(porRubro.get(p.rubro)||[]).filter(h=>h.id!==p.id).slice(0,8);
   const dir=path.join(SALIDA,'p',p.slug);
@@ -277,6 +359,7 @@ const sitemap = [
   '</urlset>',
   ''
 ].join('\n');
+await writeFile(path.join(SALIDA,'ficha-producto.css'), CSS);
 await writeFile(path.join(SALIDA,'sitemap.xml'), sitemap);
 await writeFile(path.join(SALIDA,'sitemap.txt'), urls.join('\n') + '\n');
 
