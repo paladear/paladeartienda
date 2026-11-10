@@ -5742,8 +5742,64 @@ window.addEventListener('beforeunload',function(){_writeAppState(true);});
 window.addEventListener('pagehide',function(){_writeAppState(true);});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')_writeAppState(false);});
 
+/* ── ENLACES DIRECTOS: ?producto= y ?categoria= ──────────────────────────────
+   El sitemap publica 602 direcciones de producto y 24 de rubro, pero la tienda
+   nunca las leía: Google entraba a cualquiera de ellas y siempre recibía el
+   home, así que para el buscador eran 627 copias de la misma página. Y los
+   links de la ficha de Google caían todos en la portada en vez del producto.
+
+   Nada de esto corre si la dirección no trae el parámetro: una visita normal a
+   paladear.com.ar sigue exactamente el mismo camino de antes. */
+function _slugPal(v){
+  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').replace(/-{2,}/g,'-');
+}
+function _linkDirecto(){
+  try{
+    var q=new URLSearchParams(location.search);
+    var prod=q.get('producto'), cat=q.get('categoria');
+    if(!prod && !cat) return null;
+    return {producto:prod||'', categoria:cat||''};
+  }catch(e){ return null; }
+}
+function _abrirDesdeURL(){
+  var pedido=_linkDirecto();
+  if(!pedido) return;
+  // El catálogo se baja de los CSV, así que hay que esperarlo. Es el mismo
+  // criterio que usa el botón "atrás" para reabrir un rubro.
+  var intentos=0;
+  var esperar=setInterval(function(){
+    intentos++;
+    var listo=(typeof PRODS!=='undefined' && PRODS.length);
+    if(!listo && intentos<=80) return;          // hasta 8 segundos
+    clearInterval(esperar);
+    if(!listo) return;
+    try{
+      if(pedido.producto){
+        // El slug del sitemap termina en el número de artículo: ...-2265.
+        // Se busca por ese número y no por la posición en la lista, que se
+        // corre sola cada vez que entra o sale un producto.
+        var art=(pedido.producto.match(/-(\d+)$/)||[])[1];
+        var pr=art?_getMinForArtId(art):null;
+        if(pr){ window.switchTab('minorista'); openProductDetail(pr[0]); return; }
+      }
+      if(pedido.categoria){
+        var c=(typeof CATS!=='undefined'?CATS:[]).filter(function(x){
+          return _slugPal(x.n)===pedido.categoria;
+        })[0];
+        if(c){ window.switchTab('minorista'); selectCat(c.id); return; }
+      }
+      // Si el producto ya no está en el catálogo no se rompe nada: queda la
+      // tienda abierta como en una visita normal.
+    }catch(e){ console.warn('[enlace directo]', e); }
+  },100);
+}
+
 function _restoreAppState() {
   _palHistoryApplying=true;
+  // Un enlace directo manda sobre la sesión anterior: si la dirección pide un
+  // producto o un rubro, es eso lo que el visitante quiere ver, no dónde estaba.
+  if (_linkDirecto()) { _palHistoryApplying=false; _palReplacePageState(); return; }
   let state;
   try {
     const raw = sessionStorage.getItem(_LS('paladear_view_state'));
@@ -5802,6 +5858,13 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _restoreAppState);
 } else {
   setTimeout(_restoreAppState, 100);
+}
+
+// Y abrir lo que pida la dirección, si pide algo.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _abrirDesdeURL);
+} else {
+  setTimeout(_abrirDesdeURL, 100);
 }
 
 /* ── MIX BUILDER ── */
