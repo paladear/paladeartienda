@@ -1,6 +1,7 @@
-# Solo regenera los sitemaps para Google, leyendo los archivos del propio repo.
+# Regenera las páginas de producto y de rubro (/p/ y /c/) y los sitemaps,
+# leyendo los archivos del propio repo.
 # Los precios y las fichas los maneja el panel: este workflow NO los toca.
-name: Actualizar sitemap de productos
+name: Actualizar páginas de producto y sitemap
 
 on:
   schedule:
@@ -8,6 +9,11 @@ on:
     # 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00 ART
     - cron: '0 11,13,15,17,19,21,23 * * 1-6'
   workflow_dispatch: # también se puede disparar manualmente desde GitHub
+
+# Si ya hay una corrida en curso, se espera: así nunca se pisan dos commits.
+concurrency:
+  group: paginas-producto
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -22,17 +28,23 @@ jobs:
         with:
           node-version: 20
 
-      - name: Regenerar el sitemap de productos
-        run: node scripts/generate-product-sitemap.mjs
+      - name: Regenerar páginas y sitemap
+        run: node scripts/generate-product-pages.mjs
 
       - name: Commit si hubo cambios
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add sitemap.xml sitemap.txt
+          git add -A p c sitemap.xml sitemap.txt
           if git diff --staged --quiet; then
-            echo "El sitemap ya estaba al día, nada que commitear."
+            echo "Ya estaba todo al día, nada que commitear."
           else
-            git commit -m "🗺️ Sitemap de productos actualizado"
-            git push
+            git commit -m "Páginas de producto y sitemap actualizados"
+            # Si el panel publicó mientras corría esto, se reintenta sobre lo nuevo.
+            for i in 1 2 3; do
+              git push && exit 0
+              echo "Push rechazado, reintento $i"
+              git pull --rebase --autostash && sleep 3
+            done
+            exit 1
           fi
