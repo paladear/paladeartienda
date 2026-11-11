@@ -220,7 +220,7 @@ function paginaProducto(p, hermanos, hayFoto){
   };
   const pr = precioDe(act);
   const opciones = vis.length>1 ? `<h3>Elegí la presentación</h3><div class="product-detail-options opt-btns${vis.length>=4?' opt-btns-4':''}">`
-      + vis.map((l,i)=>{const q=precioDe(i); return `<button type="button" class="opt-btn${i===act?' active':''}" data-min="${q.min}" data-may="${q.may}">${esc(medida(l))}</button>`;}).join('')
+      + vis.map((l,i)=>{const q=precioDe(i); return `<button type="button" class="opt-btn${i===act?' active':''}" data-min="${q.min}" data-may="${q.may}" data-medida="${esc(l)}">${esc(medida(l))}</button>`;}).join('')
       + `</div>` : '';
   const metaFila = (p.marca || (p.envase && !p.granel))
     ? `<div class="product-detail-meta">${(p.envase&&!p.granel)?`<span class="nom-c">${esc(p.envase)}</span>`:''}${p.marca?`<em class="nom-m">${esc(p.marca)}</em>`:''}</div>` : '';
@@ -260,7 +260,7 @@ ${barra(BASE+'c/'+p.rubroSlug+'/')}
         <div><span class="price-label">Precio${p.ofertaPct>0?' (Oferta)':''}</span><div class="price-min" id="pMin">${precioMinHTML}</div></div>
         <div><span class="price-label">+$80.000</span><div class="price-may" id="pMay">$${fmt(pr.may)}</div></div>
       </div>
-      <a class="add-btn" href="${BASE}?producto=${esc(p.slug)}">${ICONO_CARRITO} Ver en la tienda</a>
+      <a class="add-btn" id="btnAgregar" href="${BASE}?producto=${esc(p.slug)}&amp;agregar=${esc(vis[act]||'')}">${ICONO_CARRITO} Agregar al carrito</a>
     </div>
   </div>
   ${hermanos.length?`<div class="product-detail-rel"><h3 class="pdrel-tit">Relacionados</h3><div class="pdrel-fila">${hermanos.map(miniCard).join('')}</div></div>`:''}
@@ -278,6 +278,9 @@ ${barra(BASE+'c/'+p.rubroSlug+'/')}
     this.classList.add('active');
     if(mn) mn.textContent='$'+fmt(Number(this.dataset.min||0));
     if(my) my.textContent='$'+fmt(Number(this.dataset.may||0));
+    /* El botón se lleva la medida elegida, para que la tienda agregue esa. */
+    var b=document.getElementById('btnAgregar');
+    if(b) b.href=b.href.replace(/([?&]agregar=)[^&]*/, '$1'+encodeURIComponent(this.dataset.medida||''));
   });
 })();
 </script>`;
