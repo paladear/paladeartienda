@@ -18,8 +18,8 @@ https://paladear.com.ar/c/granos-y-legumbres/
 https://paladear.com.ar/c/snacks/
 https://paladear.com.ar/c/infusiones-y-hierbas/
 https://paladear.com.ar/c/vinos-y-licores/
-https://paladear.com.ar/c/linea-gourmet/
 https://paladear.com.ar/c/semillas/
+https://paladear.com.ar/c/linea-gourmet/
 https://paladear.com.ar/c/bebidas/
 https://paladear.com.ar/c/productos-de-frio/
 https://paladear.com.ar/c/mantecas-y-pastas/
@@ -94,6 +94,7 @@ https://paladear.com.ar/p/anis-estrellado-1124/
 https://paladear.com.ar/p/arandanos-con-chocolate-2002/
 https://paladear.com.ar/p/arandanos-congelados-1126/
 https://paladear.com.ar/p/arandanos-deshidratados-1127/
+https://paladear.com.ar/p/arroz-basmati-5089/
 https://paladear.com.ar/p/arroz-integral-1131/
 https://paladear.com.ar/p/arroz-yamani-1133/
 https://paladear.com.ar/p/ashwagandha-2073/
@@ -146,6 +147,7 @@ https://paladear.com.ar/p/canela-en-rama-1167/
 https://paladear.com.ar/p/canela-molida-1168/
 https://paladear.com.ar/p/cardamomo-1176/
 https://paladear.com.ar/p/cardo-mariano-1110/
+https://paladear.com.ar/p/cardo-mariano-semilla-5090/
 https://paladear.com.ar/p/cardomariano-2080/
 https://paladear.com.ar/p/carqueja-2351/
 https://paladear.com.ar/p/carqueja-5071/
@@ -345,6 +347,7 @@ https://paladear.com.ar/p/manzanilla-importada-5044/
 https://paladear.com.ar/p/maple-jarabe-de-arce-syrup-2096/
 https://paladear.com.ar/p/maracuya-congelado-2186/
 https://paladear.com.ar/p/matcha-2179/
+https://paladear.com.ar/p/matico-5091/
 https://paladear.com.ar/p/mayonesa-2515/
 https://paladear.com.ar/p/medallones-de-durazno-1394/
 https://paladear.com.ar/p/medallones-vegetarianos-2057/
