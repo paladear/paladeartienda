@@ -2711,12 +2711,8 @@ body.min-redesign.hv-home .may-tab:hover{background:rgba(255,255,255,.9)!importa
   .min-redesign .min-home-cats{padding:21px 14px 18px}.min-redesign .min-home-categories-head{margin-bottom:14px}.min-redesign .min-home-categories-head .min-section-kicker{font-size:12px}
   /* Cuatro en fila: al deslizar entran cuatro categorías nuevas de una, en vez
      de un bloque de 2x2 donde se ven dos al lado del otro. */
-  .min-redesign .hv-cat-page{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 6px}
-  .min-redesign .hv-cat{min-height:128px}
-  /* La burbuja se ajusta a su columna. Con 4 en fila la columna mide ~89px y el
-     102px fijo de antes hacía que la primera y la última se cortaran contra el
-     borde de la pantalla. */
-  .min-redesign .hv-cat .bub{width:100%;height:auto;aspect-ratio:1}
+  .min-redesign .hv-cat-page{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px}
+  .min-redesign .hv-cat{min-height:128px}.min-redesign .hv-cat .bub{width:102px;height:102px}
 .hv-cat{gap:0}
 
   .min-redesign .hv-cats-pagination{margin-top:5px}
@@ -9844,11 +9840,9 @@ window.copiarLinkParaNavegador = function() {
     scroll-snap-type:x mandatory!important;overscroll-behavior-inline:contain;
     -webkit-overflow-scrolling:touch
   }
-  /* Cuatro en fila: al deslizar entran cuatro categorías nuevas de una, en vez
-     de un bloque de 2x2 donde se ven dos al lado del otro. */
   .min-redesign .hv-cat-page{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    gap:0 7px!important;scroll-snap-align:start;scroll-snap-stop:always
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:16px 12px!important;scroll-snap-align:start;scroll-snap-stop:always
   }
   .min-redesign .hv-cat{min-height:132px!important;gap:8px!important}
 }
