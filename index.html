@@ -9840,9 +9840,11 @@ window.copiarLinkParaNavegador = function() {
     scroll-snap-type:x mandatory!important;overscroll-behavior-inline:contain;
     -webkit-overflow-scrolling:touch
   }
+  /* Cuatro en fila: al deslizar entran cuatro categorías nuevas de una, en vez
+     de un bloque de 2x2 donde se ven dos al lado del otro. */
   .min-redesign .hv-cat-page{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:16px 12px!important;scroll-snap-align:start;scroll-snap-stop:always
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:0 7px!important;scroll-snap-align:start;scroll-snap-stop:always
   }
   .min-redesign .hv-cat{min-height:132px!important;gap:8px!important}
 }
