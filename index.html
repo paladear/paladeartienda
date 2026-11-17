@@ -9845,6 +9845,11 @@ window.copiarLinkParaNavegador = function() {
     gap:16px 12px!important;scroll-snap-align:start;scroll-snap-stop:always
   }
   .min-redesign .hv-cat{min-height:132px!important;gap:8px!important}
+  /* Sólo la PÁGINA es punto de anclaje. Cada categoría también lo era, así que
+     al deslizar el dedo el carrusel se frenaba en la columna del medio: las dos
+     de la derecha volvían a aparecer en el slide siguiente. Con tres clases
+     gana sobre las dos reglas que lo ponían, sin depender del orden. */
+  .min-redesign .hv-cats-scroller .hv-cat{scroll-snap-align:none}
 }
 
 /* ── PANEL DE CATEGORIAS (hamburguesa) ──────────────────────────────
