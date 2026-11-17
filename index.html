@@ -2712,7 +2712,11 @@ body.min-redesign.hv-home .may-tab:hover{background:rgba(255,255,255,.9)!importa
   /* Cuatro en fila: al deslizar entran cuatro categorías nuevas de una, en vez
      de un bloque de 2x2 donde se ven dos al lado del otro. */
   .min-redesign .hv-cat-page{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 6px}
-  .min-redesign .hv-cat{min-height:128px}.min-redesign .hv-cat .bub{width:102px;height:102px}
+  .min-redesign .hv-cat{min-height:128px}
+  /* La burbuja se ajusta a su columna. Con 4 en fila la columna mide ~89px y el
+     102px fijo de antes hacía que la primera y la última se cortaran contra el
+     borde de la pantalla. */
+  .min-redesign .hv-cat .bub{width:100%;height:auto;aspect-ratio:1}
 .hv-cat{gap:0}
 
   .min-redesign .hv-cats-pagination{margin-top:5px}
