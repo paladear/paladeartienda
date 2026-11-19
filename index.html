@@ -2315,9 +2315,9 @@ body.hv-ofertas .bnav a,.bnav button.active,body.hv-ofertas .bnav a,.bnav button
 #ofertasView .pcard-body{background:#e6f1f9}
 .ofview-hero{margin:0 0 14px;border-radius:16px;overflow:hidden;background:#cfe0ee;box-shadow:0 6px 18px rgba(20,58,87,.12)}
 .ofview-hero img{display:block;width:100%;height:auto;aspect-ratio:1672/941;object-fit:cover;object-position:center bottom}
-/* En escritorio se reduce el alto sin cortar la parte superior de los productos:
-   el sobrante se recorta desde abajo. Mobile conserva su encuadre actual. */
-@media(min-width:721px){.ofview-hero img{aspect-ratio:1672/720;object-position:center top}}
+/* En escritorio se reduce el alto con un recorte equilibrado arriba y abajo.
+   Mobile conserva su encuadre actual. */
+@media(min-width:721px){.ofview-hero img{aspect-ratio:1672/720;object-position:center center}}
 .ofview-h1-oculto{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 @media(max-width:620px){
   .ofview-hero{border-radius:12px;margin-bottom:11px}
