@@ -31,7 +31,7 @@
 // de la de pruebas y su propia página nunca entraba por la regla de red primero.
 const BASE = new URL('./', self.location).pathname;
 const CACHE_PREFIX = 'paladear-min-';
-const CACHE_VERSION = CACHE_PREFIX + BASE.replace(/\//g, '') + '-v29';
+const CACHE_VERSION = CACHE_PREFIX + BASE.replace(/\//g, '') + '-v30';
 
 const SHELL_FILES = [
   'android-chrome-192x192.png',
@@ -39,7 +39,7 @@ const SHELL_FILES = [
   'apple-touch-icon.png',
   'favicon-32x32.png',
   'og-image.jpg',
-  'paladear-wordmark.png',
+  'paladear-wordmark-v2.png',
   'home-hero-minorista-mobile-v12.webp',
   'home-hero-minorista-desktop-v6.webp',
   'home-discount-strip-v3.webp',
