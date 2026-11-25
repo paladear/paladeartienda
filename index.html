@@ -4771,7 +4771,7 @@ function addToCart(pid,elId){
 
   if(p[4]==='kg'){
     const addedG=_optToG(opt)*qty;
-    const key=pid+(sabor?'-'+sabor:'');
+    const key=_claveItem(p,'',sabor);
     const ex=cart.find(i=>i.key===key);
     // Calcular precio POR KG para guardar en l1/l2 (para que _itemMin sea correcto)
     const refOpt=opts.find(o=>_optToG(o)===1000)||opts[0];
@@ -4783,7 +4783,7 @@ function addToCart(pid,elId){
     const it=cart.find(i=>i.key===key);
     it.l1=l1kg;it.l2=l2kg;
   } else {
-    const key=pid+'-'+opt+(sabor?'-'+sabor:'');
+    const key=_claveItem(p,opt,sabor);
     const ex=cart.find(i=>i.key===key);
     if(ex)ex.c+=qty;else cart.push({key,pid,epid:_epidDe(p),n:nombreConSabor,o:opt,c:qty,l1:p[7][opt][0],l2:p[7][opt][1],unidad:'und',sabor,mar:_marcaDe(p),env:_envaseDe(p)});
   }
@@ -5197,6 +5197,53 @@ function _prodDeItem(it){
   }
   return null;
 }
+/* ── LA CLAVE DE CADA LINEA DEL CARRITO ──────────────────────────────────
+   Va el CODIGO del articulo (epid), que no cambia nunca. Antes iba el numero de
+   orden del producto dentro de la lista armada (pid), y ese numero se corre solo
+   cada vez que se da de alta algo mas arriba en precios-min.csv: las pasas con
+   chocolate pasaron de la linea 415 a la 418 en una semana. El carrito vive en
+   el telefono del cliente, asi que al volver otro dia la linea guardada ya no
+   coincidia con el numero nuevo y se agregaba una SEGUNDA linea del mismo
+   producto (llego un pedido con "200 gr Pasas de uva con chocolate" dos veces).
+   La ficha del producto tampoco mostraba lo que ya habia en el carrito, porque
+   filtra por ese mismo numero. */
+function _claveItem(p,opt,sabor){
+  const base=_epidDe(p)||('p'+p[0]);
+  return base+(p[4]==='kg'?'':'-'+(opt||''))+(sabor?'-'+sabor:'');
+}
+function _claveDeItem(it,p){
+  const base=_epidDe(p)||('p'+p[0]);
+  return base+(it.unidad==='kg'?'':'-'+(it.o||''))+(it.sabor?'-'+it.sabor:'');
+}
+/* Carrito viejo guardado en el telefono: se le vuelve a poner el numero de orden
+   que el producto tiene HOY, se le pasa la clave nueva y, si quedaron dos lineas
+   del mismo producto de antes del arreglo, se funden en una sola. Lo elegido y
+   las cantidades no se pierden: se suman. */
+function _sanearCarrito(){
+  if(!Array.isArray(cart)||!cart.length||typeof PRODS==='undefined'||!PRODS.length)return false;
+  var toco=false,vistos={},out=[];
+  cart.forEach(function(it){
+    if(!it)return;
+    if(it.unidad==='mix'){out.push(it);return;}   // mix, granola y blend tienen su propia clave
+    var p=_prodDeItem(it);
+    if(!p){out.push(it);return;}                  // producto que ya no esta: se deja como estaba
+    if(it.pid!==p[0]){it.pid=p[0];toco=true;}
+    if(!it.epid&&_epidDe(p)){it.epid=_epidDe(p);toco=true;}
+    var k=_claveDeItem(it,p);
+    if(it.key!==k){it.key=k;toco=true;}
+    var ya=vistos[k];
+    if(ya){
+      if(it.unidad==='kg')ya.totalG=(ya.totalG||0)+(it.totalG||0);
+      else ya.c=(ya.c||0)+(it.c||0);
+      toco=true;
+      return;
+    }
+    vistos[k]=it;out.push(it);
+  });
+  if(toco){cart=out;try{_saveCart();}catch(e){}}
+  return toco;
+}
+
 function _ofertaDeItem(it){
   const p=_prodDeItem(it);
   return (p&&p[12]&&p[12].oferta)?p[12].oferta:0;
@@ -5211,7 +5258,7 @@ function _ofertaDeItem(it){
    Los mix, granolas y blends se arman con su propio precio y quedan como estan. */
 function _refrescarPreciosCarrito(){
   if(!Array.isArray(cart)||!cart.length||typeof PRODS==='undefined'||!PRODS.length)return false;
-  var toco=false;
+  var toco=_sanearCarrito();
   cart.forEach(function(it){
     if(!it||it.unidad==='mix')return;
     var p=_prodDeItem(it);
@@ -6021,6 +6068,9 @@ function sincronizarDesdeSheets(){
         CATS = data.cats;
         PRODS = data.prods;
         _MIN_BY_ID = null;
+        // Antes de que el cliente pueda tocar nada: el carrito guardado se
+        // sanea contra el catalogo recien hidratado.
+        try{ if(_sanearCarrito()) updateCartCount(); }catch(e){}
         renderCatsUI();
         renderCarruseles();
         hideLoader();
