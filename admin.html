@@ -3206,6 +3206,14 @@ async function guardarFicha(){
       FOTOS_FB[p.id] = { fondo: FOTO_NUEVA.fondo, w: FOTO_NUEVA.w, h: FOTO_NUEVA.h,
                          peso: FOTO_NUEVA.peso, ext: FOTO_NUEVA.ext || 'webp', v: Date.now() };
       FOTOS_RECIEN[p.id] = FOTO_NUEVA.webp;   // se ve desde memoria hasta que el repo la publique
+      // La distribuidora no busca las fotos en su carpeta: lee fotos-propias.json.
+      // Sin anotarla ahi, la foto quedaba subida pero el sitio seguia mostrando la
+      // vieja (la nuez cuartos tenia la del tazon en .jpg y salia la .webp de antes)
+      // o la de Cloudinary, que en varios productos no existe y salia rota.
+      if (TIENDA === 'may') {
+        est.textContent = 'Anotando la foto en la distribuidora...';
+        await anotarFotoPropia(String(p.id), FOTO_NUEVA.ext || 'webp');
+      }
     } else if (FOTO_BORRAR) {
       delete FOTOS_FB[p.id];
     }
