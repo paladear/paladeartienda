@@ -282,14 +282,27 @@ const SEC_NOMBRE = {et: 'etiquetas', of: 'ofertas', li: 'lista'};
 function avisar(txt, mal) { const e = $('estado'); e.textContent = txt; e.title = txt; e.className = 'estado' + (mal ? ' mal' : ''); }
 
 // ── nombres y tamaños
-const CHICAS = new Set(['de', 'del', 'con', 'sin', 'y', 'en', 'la', 'el', 'a', 'al', 'x']);
-function prolijo(n) {
-  n = n.replace(/\s+X\s*\d*\s*(KG|KILO)S?\.?\s*$/i, '').replace(/\s+XKG\.?$/i, '').replace(/\.+\s*$/, '')
-       .replace(/"+/g, '').replace(/\s+/g, ' ').trim();
-  return n.toLowerCase().split(' ').map((w, i) => (i && CHICAS.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+const CHICAS = new Set(['de', 'del', 'con', 'sin', 'y', 'e', 'o', 'u', 'en', 'la', 'las', 'el', 'los', 'a', 'al',
+                        'x', 'para', 'por']);
+// Todos los nombres salen igual: minuscula con la primera letra de cada palabra
+// en mayuscula ("JABON GLICERINA" -> "Jabon Glicerina"). Las palabras cortas de
+// enlace van en minuscula y algunas siglas quedan como siglas.
+const SIGLAS = new Set(['TACC', 'DHA', 'EPA', 'MCT', 'B12', 'B6', 'D3', 'K2', 'ADN', 'AFG', 'SRL', 'SA']);
+function titulo(n) {
+  return String(n).replace(/\s+/g, ' ').trim().split(' ').map((w, i) => {
+    const limpia = w.replace(/[^\p{L}\p{N}]/gu, '');
+    if (SIGLAS.has(limpia.toUpperCase()) && limpia === limpia.toUpperCase()) return w;
+    const l = w.toLowerCase();
+    if (i && CHICAS.has(l)) return l;
+    return l.replace(/\p{L}/u, c => c.toUpperCase());
+  }).join(' ');
 }
-const nombreAuto = p => (FICHAS[p.cod] && FICHAS[p.cod].nombre) || prolijo(p.nom);
-const nombreDe = p => ESTADO.nombres[p.cod] || nombreAuto(p);
+function prolijo(n) {
+  return titulo(n.replace(/\s+X\s*\d*\s*(KG|KILO)S?\.?\s*$/i, '').replace(/\s+XKG\.?$/i, '').replace(/\.+\s*$/, '')
+                 .replace(/"+/g, ''));
+}
+const nombreAuto = p => titulo((FICHAS[p.cod] && FICHAS[p.cod].nombre) || prolijo(p.nom));
+const nombreDe = p => titulo(ESTADO.nombres[p.cod] || nombreAuto(p));
 function unidadLinda(u) {
   u = u.toLowerCase();
   if (/^k/.test(u)) return 'kg'; if (/^g/.test(u)) return 'g';
