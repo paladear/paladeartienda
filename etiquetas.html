@@ -56,10 +56,6 @@ button{cursor:pointer}
 .lista{flex:1;overflow:auto;min-height:0}
 .busca{width:100%;padding:8px 10px;border:2px solid var(--banda);border-radius:8px;font-weight:600}
 .busca.nada{border-color:var(--mal);background:#fdf3f2}
-.letras{display:flex;flex-wrap:wrap;gap:2px}
-.letras button{border:1px solid var(--linea);background:#fff;color:var(--azul);font-weight:800;font-size:11px;
-  min-width:19px;padding:2px 0;border-radius:4px;line-height:1.2}
-.letras button:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
 .prod.foco{outline:2px solid var(--azul);outline-offset:-2px;background:#dbe9f5}
 .ayuda-b{font-size:11px;color:var(--tenue)}
 .prod{display:grid;grid-template-columns:20px 1fr auto;gap:2px 8px;align-items:center;padding:6px 12px;border-bottom:1px solid #edf1f4;cursor:pointer}
@@ -171,7 +167,6 @@ dialog p{margin:0 0 6px}
         <input type="search" class="busca" id="q" placeholder="Escribí el nombre o el código…" autocomplete="off"
           title="Escribí y la lista salta al producto. Enter lo marca, flechas para moverte.">
         <div class="ayuda-b">Escribí y salta al producto · <b>Enter</b> lo marca · <b>↑ ↓</b> para moverte</div>
-        <div class="letras" id="letras"></div>
         <div class="fila" id="filaDesde"><span style="font-size:12px;color:var(--tenue)">Que cambiaron desde</span>
           <input type="date" id="desde"></div>
         <div class="acc"><select id="rubro" style="padding:4px 6px;border:1px solid var(--linea);border-radius:6px;max-width:46%">
@@ -258,9 +253,12 @@ let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct
               presets: {}, ultimas: {}};
 let SHA = null;
 let SEC = 'et';
-const FUENTES = {et: [['todos', 'Todos'], ['cambios', 'Cambiaron']], of: [['todos', 'Todos'], ['ofertas', 'En oferta']],
-                 li: [['todos', 'Todos'], ['ofertas', 'En oferta']]};
-let FUENTE = {et: 'todos', of: 'todos', li: 'todos'};
+// Etiquetas abre en los ultimos productos que cambiaron de precio; Ofertas en los que estan en oferta.
+// El listado entero ('todos') aparece recien al tocar el buscador, como en E-Codbar.
+const FUENTES = {et: [['cambios', 'Cambiaron'], ['todos', 'Todos']], of: [['ofertas', 'En oferta'], ['todos', 'Todos']],
+                 li: [['ofertas', 'En oferta'], ['todos', 'Todos']]};
+const FUENTE_INICIAL = {et: 'cambios', of: 'ofertas', li: 'inicio'};
+let FUENTE = Object.assign({}, FUENTE_INICIAL);
 let COLA = {et: [], of: [], li: []};
 try { COLA = Object.assign(COLA, JSON.parse(localStorage.getItem('etiquetas_colas') || '{}')); } catch (e) {}
 const guardarColas = () => { try { localStorage.setItem('etiquetas_colas', JSON.stringify(COLA)); } catch (e) {} };
@@ -434,6 +432,7 @@ function filasIzq() {
   const r = $('rubro').value;
   const pasa = p => !r || p.rubro === r;
   const f = FUENTE[SEC];
+  if (f === 'inicio') return [];
   if (f === 'cambios') return listaCambios().filter(c => pasa(c.p));
   const base = f === 'ofertas' ? listaOfertas() : PRODS.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
   return base.filter(pasa).map(p => ({p}));
@@ -452,7 +451,8 @@ function pintarIzq() {
   caja.textContent = '';
   $('cuenta').textContent = filas.length + ' productos · ' + filas.filter(x => cola.has(x.p.cod)).length + ' marcados';
   if (!filas.length) {
-    caja.innerHTML = '<div class="vacio">' + (FUENTE[SEC] === 'cambios' ? 'No hay precios nuevos para imprimir.' : 'No encontré nada.') + '</div>';
+    caja.innerHTML = '<div class="vacio">' + (FUENTE[SEC] === 'inicio' ? 'Tocá el buscador para ver todos los productos.'
+      : FUENTE[SEC] === 'cambios' ? 'No hay precios nuevos para imprimir.' : 'No encontré nada.') + '</div>';
     return;
   }
   const frag = document.createDocumentFragment();
@@ -503,10 +503,16 @@ function saltar(txt) {
   if (/^\d+$/.test(t)) i = ORDEN_IZQ.findIndex(p => p.cod === t);
   if (i < 0) i = ORDEN_IZQ.findIndex(p => normal(nombreDe(p)).startsWith(t));
   if (i < 0) i = ORDEN_IZQ.findIndex(p => normal(nombreDe(p) + ' ' + p.nom + ' ' + p.cod).includes(t));
+  if (i < 0 && FUENTE[SEC] !== 'todos') {
+    FUENTE[SEC] = 'todos'; pintarTodo();
+    return saltar(txt);
+  }
   if (i < 0) { $('q').classList.add('nada'); return; }
   FOCO = ORDEN_IZQ[i].cod; marcarFoco(true);
 }
 $('q').addEventListener('input', () => saltar($('q').value));
+const abrirListado = () => { if (FUENTE[SEC] !== 'todos') { FUENTE[SEC] = 'todos'; pintarTodo(); } };
+['focus', 'mousedown', 'click'].forEach(ev => $('q').addEventListener(ev, abrirListado));
 $('q').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); if (FOCO) { alternar(FOCO); marcarFoco(); } return; }
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -516,14 +522,7 @@ $('q').addEventListener('keydown', e => {
     if (ORDEN_IZQ[i]) { FOCO = ORDEN_IZQ[i].cod; marcarFoco(true); }
   }
 });
-'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').forEach(l => {
-  const b = document.createElement('button'); b.type = 'button'; b.textContent = l;
-  b.addEventListener('click', () => {
-    if (FUENTE[SEC] !== 'todos') { FUENTE[SEC] = 'todos'; pintarTodo(); }
-    $('q').value = ''; saltar(l); $('q').focus();
-  });
-  $('letras').append(b);
-});
+
 $('rubro').addEventListener('change', () => pintarIzq());
 $('desde').addEventListener('change', () => pintarTodo(true));
 
@@ -542,7 +541,7 @@ function pintarTodo(conservarScroll) {
 // Al cambiar de seccion la busqueda arranca limpia: si no, el rubro elegido en
 // una lista dejaba vacia la de cambios de la otra.
 document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('click', () => {
-  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; FOCO = null; }
+  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; FOCO = null; FUENTE[b.dataset.sec] = FUENTE_INICIAL[b.dataset.sec]; }
   SEC = b.dataset.sec; pintarTodo();
 }));
 
