@@ -83,7 +83,7 @@ small.gris{color:#8a9aa8}
 .et-precio{display:flex;align-items:flex-start;justify-content:center;line-height:.95;white-space:nowrap}
 .et-signo{font-size:13pt;font-weight:700;margin:1.3mm .7mm 0 0}
 .et-num{font-size:32pt;font-weight:800;letter-spacing:-.02em}
-.et-uni{font-size:6.3pt;font-weight:700;text-transform:uppercase;letter-spacing:.1em;min-height:1em}
+.et-uni{font-size:7.5pt;font-weight:700;letter-spacing:.04em;min-height:1em}
 /* oferta */
 .of-antes{display:flex;align-items:center;justify-content:center;gap:1.6mm;font-size:8.5pt;font-weight:600;white-space:nowrap}
 .of-ant{font-weight:700}
@@ -100,6 +100,7 @@ small.gris{color:#8a9aa8}
 .li-nom{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .li-pun{flex:1;border-bottom:.3mm dotted #000;transform:translateY(-1.2mm);min-width:4mm}
 .li-pre{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.li-tam{font-weight:500;font-size:8.5pt}
 .li-pre .li-ant{font-weight:600;font-size:8.5pt;margin-right:2mm}
 .li-pre small{font-weight:600;font-size:7.5pt}
 .li-pie{font-size:7.5pt;margin-top:2mm}
@@ -175,6 +176,7 @@ small.gris{color:#8a9aa8}
       <button type="button" class="btn prim" id="imprimir">Imprimir</button>
       <button type="button" class="btn" id="vaciar">Vaciar la lista</button>
       <label><input type="checkbox" id="porKilo" checked> Poner «por kilo» en los productos a granel</label>
+      <label><input type="checkbox" id="peso" checked> Poner el tamaño en los envasados (gramos, cc)</label>
     </div>
     <div class="fila-ctl" id="ctlLista" hidden>
       <label>Título: <input type="text" id="liTitulo" placeholder="Lista de precios"></label>
@@ -240,6 +242,29 @@ function prolijo(n) {
 }
 const nombreAuto = p => (FICHAS[p.cod] && FICHAS[p.cod].nombre) || prolijo(p.nom);
 const nombreDe = p => ESTADO.nombres[p.cod] || nombreAuto(p);
+
+// ── tamaño de los envasados: el "envase" del panel; si no esta, el del nombre de E-Pyme
+function unidadLinda(u) {
+  u = u.toLowerCase();
+  if (/^k/.test(u)) return 'kg';
+  if (/^g/.test(u)) return 'g';
+  if (u === 'cc') return 'cc';
+  if (u === 'ml') return 'ml';
+  return 'L';
+}
+function presentacion(p) {
+  const f = FICHAS[p.cod] || {};
+  if (f.envase) return String(f.envase).replace(/\s+/g, ' ').trim();
+  const U = '(kg|kilos?|grs?|g|ml|cc|lts?|litros?|l)\\b';
+  const m = p.nom.match(new RegExp('x\\s*(\\d+(?:[.,]\\d+)?)\\s*' + U, 'i')) ||
+            p.nom.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*' + U + '\\.?\\s*$', 'i'));
+  return m ? m[1].replace('.', ',') + ' ' + unidadLinda(m[2]) : '';
+}
+// Renglon de abajo de la etiqueta: "por kilo" en granel, el tamaño en los envasados.
+function uniDe(p) {
+  if (esKg(p.nom)) return $('porKilo').checked ? 'POR KILO' : '';
+  return $('peso').checked ? presentacion(p) : '';
+}
 
 // ── ofertas
 const enOfertaPanel = cod => !!(FICHAS[cod] && FICHAS[cod].oferta > 0);
@@ -511,8 +536,7 @@ function pintarHojas() {
   caja.style.display = VISTA === 'cola' ? '' : 'none';
   if (VISTA !== 'cola') return;
   const items = COLA[SEC].map(c => PORCOD[c]).filter(Boolean);
-  const kilo = p => ($('porKilo').checked && esKg(p.nom)) ? 'por kilo' : '';
-  if (SEC === 'li') return pintarListas(items, kilo);
+  if (SEC === 'li') return pintarListas(items);
   for (let i = 0; i < items.length; i += 36) {
     const hoja = document.createElement('div'); hoja.className = 'hoja et-hoja';
     items.slice(i, i + 36).forEach(p => {
@@ -532,14 +556,14 @@ function pintarHojas() {
         et.querySelector('.et-num').textContent = pl(p.p);
       }
       et.querySelector('.et-nom').textContent = nombreDe(p);
-      et.querySelector('.et-uni').textContent = kilo(p);
+      et.querySelector('.et-uni').textContent = uniDe(p);
       hoja.append(et);
     });
     caja.append(hoja);
   }
   ajustarPrecios();
 }
-function pintarListas(items, kilo) {
+function pintarListas(items) {
   const cols = Number($('liCols').value) || 1, porCol = 32, porHoja = porCol * cols;
   if ($('liOrden').checked) items = items.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
   const titulo = $('liTitulo').value.trim() || 'Lista de precios';
@@ -556,9 +580,11 @@ function pintarListas(items, kilo) {
     items.slice(i, i + porHoja).forEach(p => {
       const f = document.createElement('div'); f.className = 'li-fila';
       const nom = document.createElement('span'); nom.className = 'li-nom'; nom.textContent = nombreDe(p);
+      const tam = !esKg(p.nom) && $('peso').checked ? presentacion(p) : '';
+      if (tam) { const t = document.createElement('small'); t.className = 'li-tam'; t.textContent = ' ' + tam; nom.append(t); }
       const pun = document.createElement('span'); pun.className = 'li-pun';
       const pre = document.createElement('span'); pre.className = 'li-pre';
-      const u = kilo(p) ? ' <small>kg</small>' : '';
+      const u = (esKg(p.nom) && $('porKilo').checked) ? ' <small>kg</small>' : '';
       pre.innerHTML = enOfertaPanel(p.cod) ? '<span class="li-ant">antes $' + pl(p.p) + '</span>$' + pl(precioOferta(p)) + u : '$' + pl(p.p) + u;
       f.append(nom, pun, pre); cuerpo.append(f);
     });
@@ -575,7 +601,7 @@ async function ajustarPrecios() {
     while (pr.scrollWidth > max && s > 14) { s -= 1; n.style.fontSize = s + 'pt'; }
   });
 }
-['porKilo', 'liCols', 'liOrden'].forEach(id => $(id).addEventListener('change', pintarHojas));
+['porKilo', 'peso', 'liCols', 'liOrden'].forEach(id => $(id).addEventListener('change', pintarHojas));
 $('liTitulo').addEventListener('input', () => { try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {} pintarHojas(); });
 $('vaciar').addEventListener('click', () => { COLA[SEC] = []; guardarColas(); pintarTodo(); });
 $('imprimir').addEventListener('click', async () => {
