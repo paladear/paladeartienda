@@ -57,7 +57,9 @@ button{cursor:pointer}
 .busca{width:100%;padding:8px 10px;border:2px solid var(--banda);border-radius:8px;font-weight:600}
 .busca.nada{border-color:var(--mal);background:#fdf3f2}
 .prod.foco{outline:2px solid var(--azul);outline-offset:-2px;background:#dbe9f5}
-.ayuda-b{font-size:11px;color:var(--tenue)}
+.ayuda-b{font-size:11px;color:var(--tenue);min-height:1.4em}
+.ayuda-b.ok{color:var(--ok);font-weight:700;font-size:12px}
+.ayuda-b.ya{color:var(--banda);font-weight:700;font-size:12px}
 .prod{display:grid;grid-template-columns:20px 1fr auto;gap:2px 8px;align-items:center;padding:6px 12px;border-bottom:1px solid #edf1f4;cursor:pointer}
 .prod:hover{background:#f6f9fb}
 .prod.en{background:#eef5fa}
@@ -166,7 +168,7 @@ dialog p{margin:0 0 6px}
         <div class="fuentes" id="fuentes"></div>
         <input type="search" class="busca" id="q" placeholder="Escribí el nombre o el código…" autocomplete="off"
           title="Escribí y la lista salta al producto. Enter lo marca, flechas para moverte.">
-        <div class="ayuda-b">Escribí y salta al producto · <b>Enter</b> lo marca · <b>↑ ↓</b> para moverte</div>
+        <div class="ayuda-b" id="okBusca">Escribí y salta al producto · <b>Enter</b> lo agrega a la hoja · <b>↑ ↓</b> para moverte</div>
         <div class="fila" id="filaDesde"><span style="font-size:12px;color:var(--tenue)">Que cambiaron desde</span>
           <input type="date" id="desde"></div>
         <div class="acc"><select id="rubro" style="padding:4px 6px;border:1px solid var(--linea);border-radius:6px;max-width:46%">
@@ -514,7 +516,22 @@ $('q').addEventListener('input', () => saltar($('q').value));
 const abrirListado = () => { if (FUENTE[SEC] !== 'todos') { FUENTE[SEC] = 'todos'; pintarTodo(); } };
 ['focus', 'mousedown', 'click'].forEach(ev => $('q').addEventListener(ev, abrirListado));
 $('q').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); if (FOCO) { alternar(FOCO); marcarFoco(); } return; }
+  // Enter agrega el producto resaltado a la hoja ("OK") y deja el buscador
+  // limpio para escribir el siguiente, sin tocar el mouse.
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (!FOCO) return;
+    const p = PORCOD[FOCO], ok = $('okBusca');
+    if (COLA[SEC].includes(FOCO)) {
+      ok.className = 'ayuda-b ya'; ok.textContent = 'Ya estaba en la hoja: ' + nombreDe(p);
+    } else {
+      COLA[SEC].push(FOCO); guardarColas(); pintarTodo(true);
+      ok.className = 'ayuda-b ok';
+      ok.textContent = '✓ OK: ' + nombreDe(p) + ' — ' + COLA[SEC].length + ' en la hoja';
+    }
+    $('q').value = ''; $('q').classList.remove('nada'); marcarFoco();
+    return;
+  }
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     e.preventDefault();
     let i = ORDEN_IZQ.findIndex(p => p.cod === FOCO);
