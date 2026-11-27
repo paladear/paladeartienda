@@ -86,7 +86,7 @@ small.gris{color:#8a9aa8}
 .et-uni{font-size:6.3pt;font-weight:700;text-transform:uppercase;letter-spacing:.1em;min-height:1em}
 /* oferta */
 .of-antes{display:flex;align-items:center;justify-content:center;gap:1.6mm;font-size:8.5pt;font-weight:600;white-space:nowrap}
-.of-antes s{text-decoration-thickness:.35mm}
+.of-ant{font-weight:700}
 .of-pct{background:#000;color:#fff;font-weight:800;font-size:7.5pt;padding:.4mm 1.4mm;border-radius:.8mm;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .of .et-num{font-size:28pt}
@@ -100,7 +100,7 @@ small.gris{color:#8a9aa8}
 .li-nom{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .li-pun{flex:1;border-bottom:.3mm dotted #000;transform:translateY(-1.2mm);min-width:4mm}
 .li-pre{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
-.li-pre s{font-weight:600;font-size:9pt;margin-right:1.5mm}
+.li-pre .li-ant{font-weight:600;font-size:8.5pt;margin-right:2mm}
 .li-pre small{font-weight:600;font-size:7.5pt}
 .li-pie{font-size:7.5pt;margin-top:2mm}
 
@@ -488,7 +488,7 @@ function pintarCola() {
     (SEC === 'of' ? '<th class="num">Precio</th><th class="num">Descuento</th><th class="num">Oferta</th>' : '<th class="num">Precio</th>') + '<th></th></tr>';
   $('notaCola').textContent = SEC === 'et' ? 'Cada hoja A4 lleva 36 etiquetas de 5 × 3 cm (4 × 9). Imprimí al 100 %, sin «ajustar a la página».'
     : SEC === 'of' ? 'Cada hoja A4 lleva 36 etiquetas de oferta de 5 × 3 cm. El precio de oferta es el de lista con el descuento, redondeado igual que en la página web.'
-    : 'Los productos en oferta en el panel salen con el precio anterior tachado y el de oferta. Imprimí al 100 %.';
+    : 'Los productos en oferta en el panel salen con «antes $…» y el precio de oferta. Imprimí al 100 %.';
   if (!cola.length) tb.innerHTML = '<tr><td colspan="5" class="vacio">La lista está vacía. Agregá productos desde las otras pestañas.</td></tr>';
   cola.forEach(cod => {
     const p = PORCOD[cod]; if (!p) return;
@@ -519,9 +519,10 @@ function pintarHojas() {
       const et = document.createElement('div');
       if (SEC === 'of') {
         et.className = 'et of';
-        et.innerHTML = '<div class="et-nom"></div><div class="of-antes"><span>Antes <s></s></span><span class="of-pct"></span></div>' +
+        // El precio anterior va sin tachar: tachado se leia mal en la impresora.
+        et.innerHTML = '<div class="et-nom"></div><div class="of-antes"><span>Antes <span class="of-ant"></span></span><span class="of-pct"></span></div>' +
           '<div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
-        et.querySelector('s').textContent = '$' + pl(p.p);
+        et.querySelector('.of-ant').textContent = '$' + pl(p.p);
         et.querySelector('.of-pct').textContent = '-' + pctDe(p.cod) + '%';
         et.querySelector('.et-num').textContent = pl(precioOferta(p));
       } else {
@@ -558,7 +559,7 @@ function pintarListas(items, kilo) {
       const pun = document.createElement('span'); pun.className = 'li-pun';
       const pre = document.createElement('span'); pre.className = 'li-pre';
       const u = kilo(p) ? ' <small>kg</small>' : '';
-      pre.innerHTML = enOfertaPanel(p.cod) ? '<s>$' + pl(p.p) + '</s>$' + pl(precioOferta(p)) + u : '$' + pl(p.p) + u;
+      pre.innerHTML = enOfertaPanel(p.cod) ? '<span class="li-ant">antes $' + pl(p.p) + '</span>$' + pl(precioOferta(p)) + u : '$' + pl(p.p) + u;
       f.append(nom, pun, pre); cuerpo.append(f);
     });
     $('hojas').append(hoja);
