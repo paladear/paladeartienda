@@ -191,6 +191,8 @@ dialog p{margin:0 0 6px}
         <label class="grupo"><input type="checkbox" id="porKilo" checked> «por kilo» en granel</label>
         <label class="grupo"><input type="checkbox" id="peso" checked> tamaño en envasados</label>
         <label class="grupo"><input type="checkbox" id="marca" checked> marca</label>
+        <label class="grupo" title="Todos los productos a granel de esta hoja con precio por 100 g">
+          <input type="checkbox" id="todo100"> granel por 100 g</label>
         <label class="grupo" id="ctlPct">Descuento general <input type="number" class="pct" id="pctGlobal" min="1" max="90" step="1"> %</label>
         <span class="grupo" id="ctlLista">
           <select id="liFormato" title="Formato de la lista"></select>
@@ -218,6 +220,11 @@ dialog p{margin:0 0 6px}
   <p id="edInfo" style="color:var(--tenue)"></p>
   <label for="edNom">Nombre en la etiqueta</label>
   <input type="text" id="edNom">
+  <div id="edTamCaja"><label for="edTam">Tamaño (gramaje) en la etiqueta</label>
+    <input type="text" id="edTam" placeholder="por ejemplo 120 g"></div>
+  <div id="edCienCaja"><label for="edCien">Precio en la etiqueta</label>
+    <select id="edCien" style="width:100%;padding:7px 9px;border:1px solid var(--linea);border-radius:7px">
+      <option value="kg">Por kilo</option><option value="100">Por 100 g</option></select></div>
   <div id="edPctCaja"><label for="edPct">Descuento de este producto (%)</label>
     <input type="number" id="edPct" min="1" max="90" step="1"></div>
   <div class="bots">
@@ -254,7 +261,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', 
 let PRODS = [], PORCOD = {}, CAMBIOS = {}, FICHAS = {};
 // presets: {seccion: {nombre: {cods, titulo, cols, f}}}; ultimas: {seccion: {cods, titulo, cols, f}}
 let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct: {}, ofertasImpresas: {},
-              presets: {}, ultimas: {}};
+              presets: {}, ultimas: {}, tamanos: {}, por100: {}};
 let SHA = null;
 let SEC = 'et';
 // Etiquetas abre en los ultimos productos que cambiaron de precio; Ofertas en los que estan en oferta.
@@ -322,6 +329,10 @@ function unidadLinda(u) {
   if (u === 'cc') return 'cc'; if (u === 'ml') return 'ml'; return 'L';
 }
 function presentacion(p) {
+  if (ESTADO.tamanos && ESTADO.tamanos[p.cod]) return ESTADO.tamanos[p.cod];
+  return presentacionAuto(p);
+}
+function presentacionAuto(p) {
   const f = FICHAS[p.cod] || {};
   if (f.envase) return String(f.envase).replace(/\s+/g, ' ').trim();
   const U = '(kg|kilos?|grs?|g|ml|cc|lts?|litros?|l)\\b';
@@ -329,13 +340,18 @@ function presentacion(p) {
             p.nom.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*' + U + '\\.?\\s*$', 'i'));
   return m ? m[1].replace('.', ',') + ' ' + unidadLinda(m[2]) : '';
 }
+// Granel por 100 g: por producto (ESTADO.por100) o toda la hoja (casilla «granel por 100 g»).
+const cien = p => esKg(p.nom) && ($('todo100').checked || !!(ESTADO.por100 && ESTADO.por100[p.cod]));
+const enCien = (p, precio) => cien(p) ? Math.round(precio / 10) : precio;
 // Renglon de abajo de la etiqueta: marca y tamaño ("Risky · 150 gr"), o POR KILO en granel.
 const marcaDe = p => ($('marca').checked && FICHAS[p.cod] && FICHAS[p.cod].marca) ? String(FICHAS[p.cod].marca).trim() : '';
 function uniDe(p) {
-  const tam = esKg(p.nom) ? ($('porKilo').checked ? 'POR KILO' : '') : ($('peso').checked ? presentacion(p) : '');
+  const tam = esKg(p.nom) ? (cien(p) ? 'POR 100 G' : $('porKilo').checked ? 'POR KILO' : '')
+                         : ($('peso').checked ? presentacion(p) : '');
   return [marcaDe(p), tam].filter(Boolean).join(' · ');
 }
-const tamTxt = p => { const t = esKg(p.nom) ? 'por kilo' : presentacion(p); return t ? ' <small class="tam">' + esc(t) + '</small>' : ''; };
+const tamTxt = p => { const t = esKg(p.nom) ? (cien(p) ? 'por 100 g' : 'por kilo') : presentacion(p);
+  return t ? ' <small class="tam">' + esc(t) + '</small>' : ''; };
 
 // ── ofertas
 const enOfertaPanel = cod => !!(FICHAS[cod] && FICHAS[cod].oferta > 0);
@@ -410,6 +426,7 @@ async function cargar() {
     FICHAS = panel.fichas || {};
   } catch (e) { avisar('No pude leer los precios: ' + e.message, true); return; }
   ESTADO.presets = ESTADO.presets || {}; ESTADO.ultimas = ESTADO.ultimas || {};
+  ESTADO.tamanos = ESTADO.tamanos || {}; ESTADO.por100 = ESTADO.por100 || {};
   const d = ESTADO.base ? new Date(ESTADO.base) : new Date(Date.now() - 7 * 864e5);
   $('desde').value = d.toISOString().slice(0, 10);
   $('pctGlobal').value = ESTADO.ofertaGlobal || 15;
@@ -590,13 +607,13 @@ function pintarHojas() {
         et.className = 'et of';
         et.innerHTML = '<div class="et-nom"></div><div class="of-antes"><span>Antes <span class="of-ant"></span></span><span class="of-pct"></span></div>' +
           '<div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
-        et.querySelector('.of-ant').textContent = '$' + pl(p.p);
+        et.querySelector('.of-ant').textContent = '$' + pl(enCien(p, p.p));
         et.querySelector('.of-pct').textContent = '-' + pctDe(p.cod) + '%';
-        et.querySelector('.et-num').textContent = pl(precioOferta(p));
+        et.querySelector('.et-num').textContent = pl(enCien(p, precioOferta(p)));
       } else {
         et.className = 'et';
         et.innerHTML = '<div class="et-nom"></div><div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
-        et.querySelector('.et-num').textContent = pl(p.p);
+        et.querySelector('.et-num').textContent = pl(enCien(p, p.p));
       }
       et.querySelector('.et-nom').textContent = nombreDe(p);
       et.querySelector('.et-uni').textContent = uniDe(p);
@@ -645,12 +662,14 @@ function pintarListas(items) {
         const marca = marcaDe(p);
         const tam = esKg(p.nom) ? '' : ($('peso').checked ? presentacion(p) : '');
         const det = [marca, tam].filter(Boolean);
-        if (enOfertaPanel(p.cod)) det.push('oferta, antes $' + pl(p.p));
+        if (enOfertaPanel(p.cod)) det.push('oferta, antes $' + pl(enCien(p, p.p)));
         const d = document.createElement('div'); d.className = 'li-det'; d.textContent = det.join(' · ');
         d.style.fontSize = L.d + 'pt';
         const pre = document.createElement('div'); pre.className = 'li-pre'; pre.style.fontSize = (L.n + 1) + 'pt';
-        pre.textContent = '$' + pl(enOfertaPanel(p.cod) ? precioOferta(p) : p.p);
-        if (esKg(p.nom) && $('porKilo').checked) { const u = document.createElement('small'); u.textContent = 'kg'; pre.append(u); }
+        pre.textContent = '$' + pl(enCien(p, enOfertaPanel(p.cod) ? precioOferta(p) : p.p));
+        if (esKg(p.nom) && (cien(p) || $('porKilo').checked)) {
+          const u = document.createElement('small'); u.textContent = cien(p) ? ' /100 g' : 'kg'; pre.append(u);
+        }
         fila.append(nom, pre, d);
         fila.addEventListener('click', () => editar(p));
         pan.append(fila);
@@ -689,6 +708,12 @@ function editar(p) {
   $('edNom').value = nombreDe(p);
   $('edPctCaja').hidden = SEC !== 'of';
   $('edPct').value = pctDe(p.cod);
+  const kg = esKg(p.nom);
+  $('edTamCaja').hidden = kg; $('edCienCaja').hidden = !kg;
+  $('edTam').value = kg ? '' : presentacion(p);
+  $('edCien').value = cien(p) ? '100' : 'kg';
+  $('edCien').disabled = kg && $('todo100').checked;
+  $('edCien').title = $('edCien').disabled ? 'Está tildado «granel por 100 g» para toda la hoja' : '';
   $('dlgEditar').showModal(); $('edNom').select();
 }
 $('edCancelar').addEventListener('click', () => $('dlgEditar').close());
@@ -699,6 +724,16 @@ $('edGuardar').addEventListener('click', () => {
   const p = EDITANDO, t = $('edNom').value.replace(/\s+/g, ' ').trim();
   let cambio = false;
   if (t && t !== nombreDe(p)) { if (t === nombreAuto(p)) delete ESTADO.nombres[p.cod]; else ESTADO.nombres[p.cod] = t; cambio = true; }
+  if (!esKg(p.nom)) {
+    const tm = $('edTam').value.replace(/\s+/g, ' ').trim();
+    if (tm !== presentacion(p)) {
+      if (!tm || tm === presentacionAuto(p)) delete ESTADO.tamanos[p.cod]; else ESTADO.tamanos[p.cod] = tm;
+      cambio = true;
+    }
+  } else if (!$('edCien').disabled) {
+    const quiere = $('edCien').value === '100';
+    if (quiere !== !!ESTADO.por100[p.cod]) { if (quiere) ESTADO.por100[p.cod] = true; else delete ESTADO.por100[p.cod]; cambio = true; }
+  }
   if (SEC === 'of') {
     const v = Math.round(Number($('edPct').value));
     if (v > 0 && v < 91 && v !== pctDe(p.cod)) {
@@ -711,7 +746,8 @@ $('edGuardar').addEventListener('click', () => {
     pintarTodo(true);
   }
 });
-$('edNom').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('edGuardar').click(); } });
+['edNom', 'edTam', 'edPct'].forEach(id => $(id).addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); $('edGuardar').click(); } }));
 $('pctGlobal').addEventListener('change', () => {
   const v = Math.round(Number($('pctGlobal').value));
   if (!(v > 0 && v < 91)) { $('pctGlobal').value = ESTADO.ofertaGlobal; return; }
@@ -776,6 +812,11 @@ $('ultimaCargar').addEventListener('click', () => {
 
 // ── opciones, imprimir y anotar
 ['porKilo', 'peso', 'marca'].forEach(id => $(id).addEventListener('change', pintarHojas));
+try { $('todo100').checked = localStorage.getItem('etiquetas_todo100') === '1'; } catch (e) {}
+$('todo100').addEventListener('change', () => {
+  try { localStorage.setItem('etiquetas_todo100', $('todo100').checked ? '1' : '0'); } catch (e) {}
+  pintarTodo(true);
+});
 ['liFormato', 'liAncho', 'liAlto', 'liCols', 'liLetra', 'liOrden'].forEach(id => ['input', 'change'].forEach(ev =>
   $(id).addEventListener(ev, () => {
     $('liMedida').hidden = $('liFormato').value !== 'med';
