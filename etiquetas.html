@@ -58,6 +58,7 @@ td{border-bottom:1px solid var(--linea);padding:7px 8px;vertical-align:middle}
 td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 tr:hover td{background:#fafcfd}
 small.gris{color:#8a9aa8}
+small.tam{color:var(--banda);font-weight:700;margin-left:4px;white-space:nowrap}
 .chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;
   background:var(--cielo);color:var(--banda);text-transform:uppercase;letter-spacing:.04em}
 .chip.sube{background:#fdecea;color:var(--mal)} .chip.baja{background:#e6f4ea;color:var(--ok)}
@@ -275,6 +276,13 @@ function uniDe(p) {
   return $('peso').checked ? presentacion(p) : '';
 }
 
+// En las tablas de la pantalla el tamaño va al lado del nombre, para distinguir
+// presentaciones que se llaman igual (miel de 250 g, de 500 g y por kilo).
+function tamTxt(p) {
+  const t = esKg(p.nom) ? 'por kilo' : presentacion(p);
+  return t ? ' <small class="tam">' + esc(t) + '</small>' : '';
+}
+
 // ── ofertas
 const enOfertaPanel = cod => !!(FICHAS[cod] && FICHAS[cod].oferta > 0);
 const pctDe = cod => ESTADO.ofertaPct[cod] || ESTADO.ofertaGlobal || 15;
@@ -426,7 +434,7 @@ function pintarCambios() {
   l.forEach(c => {
     const tr = document.createElement('tr'); tr.append(filaMarcable('et-cambios', c.p.cod));
     const dif = c.antes ? (c.p.p > c.antes ? '<span class="chip sube">sube</span>' : '<span class="chip baja">baja</span>') : '<span class="chip">nuevo</span>';
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(c.p)) + '</td><td>' + esc(c.p.rubro.toLowerCase()) +
+    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(c.p)) + tamTxt(c.p) + '</td><td>' + esc(c.p.rubro.toLowerCase()) +
       '</td><td class="num">' + (c.antes ? '$' + pl(c.antes) : '—') + (c.imp ? ' <small class="gris">(' + fecha(c.imp) + ')</small>' : '') +
       '</td><td class="num"><b>$' + pl(c.p.p) + '</b></td><td>' + dif + ' ' + fecha(c.cuando) + '</td>');
     tb.append(tr);
@@ -453,7 +461,7 @@ function pintarOfertas() {
   if (!l.length) { tb.innerHTML = '<tr><td colspan="6" class="vacio">No hay productos con oferta en el panel.</td></tr>'; return; }
   l.forEach(p => {
     const tr = document.createElement('tr'); tr.append(filaMarcable('of-lista', p.cod));
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + '</td><td class="num">$' + pl(p.p) + '</td>');
+    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + tamTxt(p) + '</td><td class="num">$' + pl(p.p) + '</td>');
     const td = document.createElement('td'); td.className = 'num'; td.append(inputPct(p.cod), ' %'); tr.append(td);
     const imp = ESTADO.ofertasImpresas[p.cod];
     tr.insertAdjacentHTML('beforeend', '<td class="num"><b>$' + pl(precioOferta(p)) + '</b></td><td>' +
@@ -492,7 +500,7 @@ function pintarBuscar() {
     const imp = SEC === 'of' ? ESTADO.ofertasImpresas[p.cod] : ESTADO.impresas[p.cod];
     const precio = SEC === 'of' ? '<span class="tachado">$' + pl(p.p) + '</span> <b>$' + pl(precioOferta(p)) + '</b>'
       : '<b>$' + pl(p.p) + '</b>' + (enOfertaPanel(p.cod) ? ' <span class="chip">oferta</span>' : '');
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + ' <small class="gris">' + p.cod +
+    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + tamTxt(p) + ' <small class="gris">' + p.cod +
       '</small></td><td>' + esc(p.rubro.toLowerCase()) + '</td><td class="num">' + precio + '</td><td>' +
       (SEC === 'li' ? '' : imp ? '$' + pl(SEC === 'of' ? imp.o : imp.p) + ' el ' + fecha(imp.f) : '—') + '</td>');
     tb.append(tr);
@@ -526,7 +534,8 @@ function pintarCola() {
   if (!cola.length) tb.innerHTML = '<tr><td colspan="5" class="vacio">La lista está vacía. Agregá productos desde las otras pestañas.</td></tr>';
   cola.forEach(cod => {
     const p = PORCOD[cod]; if (!p) return;
-    const tr = document.createElement('tr'), td = document.createElement('td'); td.append(nombreEditable(p)); tr.append(td);
+    const tr = document.createElement('tr'), td = document.createElement('td'); td.append(nombreEditable(p));
+    td.insertAdjacentHTML('beforeend', tamTxt(p)); tr.append(td);
     if (SEC === 'of') {
       tr.insertAdjacentHTML('beforeend', '<td class="num">$' + pl(p.p) + '</td>');
       const tp = document.createElement('td'); tp.className = 'num'; tp.append(inputPct(cod), ' %'); tr.append(tp);
