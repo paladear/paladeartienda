@@ -51,9 +51,17 @@ button{cursor:pointer}
 .fila{display:flex;gap:6px;align-items:center}
 .fila input[type=search]{flex:1;min-width:0;padding:6px 9px;border:1px solid var(--linea);border-radius:7px}
 .fila select,.fila input[type=date]{padding:5px 7px;border:1px solid var(--linea);border-radius:7px;max-width:52%}
-.acc{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--tenue)}
-.acc span{flex:1}
+.acc{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--tenue);flex-wrap:wrap}
+.acc span{flex:1 1 100%;order:3}
 .lista{flex:1;overflow:auto;min-height:0}
+.busca{width:100%;padding:8px 10px;border:2px solid var(--banda);border-radius:8px;font-weight:600}
+.busca.nada{border-color:var(--mal);background:#fdf3f2}
+.letras{display:flex;flex-wrap:wrap;gap:2px}
+.letras button{border:1px solid var(--linea);background:#fff;color:var(--azul);font-weight:800;font-size:11px;
+  min-width:19px;padding:2px 0;border-radius:4px;line-height:1.2}
+.letras button:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
+.prod.foco{outline:2px solid var(--azul);outline-offset:-2px;background:#dbe9f5}
+.ayuda-b{font-size:11px;color:var(--tenue)}
 .prod{display:grid;grid-template-columns:20px 1fr auto;gap:2px 8px;align-items:center;padding:6px 12px;border-bottom:1px solid #edf1f4;cursor:pointer}
 .prod:hover{background:#f6f9fb}
 .prod.en{background:#eef5fa}
@@ -160,13 +168,14 @@ dialog p{margin:0 0 6px}
     <section class="izq">
       <div class="filtros">
         <div class="fuentes" id="fuentes"></div>
-        <div class="fila">
-          <input type="search" id="q" placeholder="Buscar por nombre o código…" autocomplete="off">
-          <select id="rubro"><option value="">Todos los rubros</option></select>
-        </div>
+        <input type="search" class="busca" id="q" placeholder="Escribí el nombre o el código…" autocomplete="off"
+          title="Escribí y la lista salta al producto. Enter lo marca, flechas para moverte.">
+        <div class="ayuda-b">Escribí y salta al producto · <b>Enter</b> lo marca · <b>↑ ↓</b> para moverte</div>
+        <div class="letras" id="letras"></div>
         <div class="fila" id="filaDesde"><span style="font-size:12px;color:var(--tenue)">Que cambiaron desde</span>
           <input type="date" id="desde"></div>
-        <div class="acc"><span id="cuenta"></span>
+        <div class="acc"><select id="rubro" style="padding:4px 6px;border:1px solid var(--linea);border-radius:6px;max-width:46%">
+            <option value="">Todos los rubros</option></select><span id="cuenta"></span>
           <button type="button" class="btn" id="marcarTodos">Marcar todos</button>
           <button type="button" class="btn" id="desmarcarTodos">Desmarcar</button></div>
       </div>
@@ -249,9 +258,9 @@ let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct
               presets: {}, ultimas: {}};
 let SHA = null;
 let SEC = 'et';
-const FUENTES = {et: [['cambios', 'Cambiaron'], ['todos', 'Todos']], of: [['ofertas', 'En oferta'], ['todos', 'Todos']],
+const FUENTES = {et: [['todos', 'Todos'], ['cambios', 'Cambiaron']], of: [['todos', 'Todos'], ['ofertas', 'En oferta']],
                  li: [['todos', 'Todos'], ['ofertas', 'En oferta']]};
-let FUENTE = {et: 'cambios', of: 'ofertas', li: 'todos'};
+let FUENTE = {et: 'todos', of: 'todos', li: 'todos'};
 let COLA = {et: [], of: [], li: []};
 try { COLA = Object.assign(COLA, JSON.parse(localStorage.getItem('etiquetas_colas') || '{}')); } catch (e) {}
 const guardarColas = () => { try { localStorage.setItem('etiquetas_colas', JSON.stringify(COLA)); } catch (e) {} };
@@ -260,7 +269,9 @@ const FORMATOS = [
   ['t6', 'Tira angosta 6 × 28 cm', 60, 280], ['t8', 'Tira 8 × 28 cm', 80, 280],
   ['m10', 'Media hoja 10 × 28 cm', 100, 280], ['h19', 'Hoja entera 19 × 28 cm', 190, 280],
   ['f19', 'Franja ancha 19 × 9 cm', 190, 90], ['med', 'A medida…', 0, 0]];
-const LETRAS = {ch: {n: 9, d: 6.8, fila: 8}, me: {n: 11, d: 7.8, fila: 9.6}, gr: {n: 13.5, d: 9, fila: 11.6}};
+// col: ancho minimo de cada columna en modo automatico, para que el nombre entre entero
+const LETRAS = {ch: {n: 9, d: 6.8, fila: 8, col: 58}, me: {n: 11, d: 7.8, fila: 9.6, col: 78},
+                gr: {n: 13.5, d: 9, fila: 11.6, col: 98}};
 FORMATOS.forEach(f => $('liFormato').append(new Option(f[1], f[0])));
 function leerFmtLista() {
   let o = {};
@@ -420,8 +431,8 @@ function listaCambios() {
 }
 const listaOfertas = () => PRODS.filter(p => enOfertaPanel(p.cod));
 function filasIzq() {
-  const q = $('q').value.trim().toLowerCase(), r = $('rubro').value;
-  const pasa = p => (!r || p.rubro === r) && (!q || p.cod === q || (p.nom + ' ' + nombreDe(p)).toLowerCase().includes(q));
+  const r = $('rubro').value;
+  const pasa = p => !r || p.rubro === r;
   const f = FUENTE[SEC];
   if (f === 'cambios') return listaCambios().filter(c => pasa(c.p));
   const base = f === 'ofertas' ? listaOfertas() : PRODS.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
@@ -437,6 +448,7 @@ function pintarIzq() {
   });
   $('filaDesde').hidden = FUENTE[SEC] !== 'cambios';
   const filas = filasIzq(), caja = $('lista'), cola = new Set(COLA[SEC]);
+  ORDEN_IZQ = filas.map(c => c.p);
   caja.textContent = '';
   $('cuenta').textContent = filas.length + ' productos · ' + filas.filter(x => cola.has(x.p.cod)).length + ' marcados';
   if (!filas.length) {
@@ -446,7 +458,8 @@ function pintarIzq() {
   const frag = document.createDocumentFragment();
   filas.slice(0, 700).forEach(c => {
     const p = c.p, en = cola.has(p.cod);
-    const d = document.createElement('div'); d.className = 'prod' + (en ? ' en' : '');
+    const d = document.createElement('div'); d.className = 'prod' + (en ? ' en' : '') + (p.cod === FOCO ? ' foco' : '');
+    d.dataset.cod = p.cod;
     const ch = document.createElement('input'); ch.type = 'checkbox'; ch.checked = en; ch.tabIndex = -1;
     let det = esc(p.rubro.toLowerCase()) + ' · ' + p.cod;
     if (c.cuando !== undefined || c.antes !== undefined) {
@@ -458,10 +471,7 @@ function pintarIzq() {
     d.innerHTML = '<span></span><span class="n">' + esc(nombreDe(p)) + tamTxt(p) + '</span><span class="pr">$' + pl(precio) +
       '</span><span class="d">' + det + '</span>';
     d.firstChild.replaceWith(ch);
-    d.addEventListener('click', () => {
-      if (cola.has(p.cod)) COLA[SEC] = COLA[SEC].filter(x => x !== p.cod); else COLA[SEC].push(p.cod);
-      guardarColas(); pintarTodo(true);
-    });
+    d.addEventListener('click', () => { FOCO = p.cod; alternar(p.cod); });
     frag.append(d);
   });
   caja.append(frag);
@@ -472,7 +482,48 @@ $('marcarTodos').addEventListener('click', () => {
 $('desmarcarTodos').addEventListener('click', () => {
   const fuera = new Set(filasIzq().map(c => c.p.cod)); COLA[SEC] = COLA[SEC].filter(c => !fuera.has(c)); guardarColas(); pintarTodo(true);
 });
-$('q').addEventListener('input', () => pintarIzq());
+// ── buscador como E-Codbar: escribir salta al producto, Enter lo marca
+let ORDEN_IZQ = [], FOCO = null;
+const normal = t => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function alternar(cod) {
+  if (COLA[SEC].includes(cod)) COLA[SEC] = COLA[SEC].filter(x => x !== cod); else COLA[SEC].push(cod);
+  guardarColas(); pintarTodo(true);
+}
+function marcarFoco(centrar) {
+  document.querySelectorAll('#lista .prod.foco').forEach(e => e.classList.remove('foco'));
+  if (!FOCO) return;
+  const el = document.querySelector('#lista .prod[data-cod="' + FOCO + '"]');
+  if (el) { el.classList.add('foco'); if (centrar) el.scrollIntoView({block: 'center'}); }
+}
+function saltar(txt) {
+  const t = normal(txt.trim());
+  $('q').classList.remove('nada');
+  if (!t) { FOCO = null; marcarFoco(); return; }
+  let i = -1;
+  if (/^\d+$/.test(t)) i = ORDEN_IZQ.findIndex(p => p.cod === t);
+  if (i < 0) i = ORDEN_IZQ.findIndex(p => normal(nombreDe(p)).startsWith(t));
+  if (i < 0) i = ORDEN_IZQ.findIndex(p => normal(nombreDe(p) + ' ' + p.nom + ' ' + p.cod).includes(t));
+  if (i < 0) { $('q').classList.add('nada'); return; }
+  FOCO = ORDEN_IZQ[i].cod; marcarFoco(true);
+}
+$('q').addEventListener('input', () => saltar($('q').value));
+$('q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); if (FOCO) { alternar(FOCO); marcarFoco(); } return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    let i = ORDEN_IZQ.findIndex(p => p.cod === FOCO);
+    i = Math.min(ORDEN_IZQ.length - 1, Math.max(0, i + (e.key === 'ArrowDown' ? 1 : -1)));
+    if (ORDEN_IZQ[i]) { FOCO = ORDEN_IZQ[i].cod; marcarFoco(true); }
+  }
+});
+'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').forEach(l => {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = l;
+  b.addEventListener('click', () => {
+    if (FUENTE[SEC] !== 'todos') { FUENTE[SEC] = 'todos'; pintarTodo(); }
+    $('q').value = ''; saltar(l); $('q').focus();
+  });
+  $('letras').append(b);
+});
 $('rubro').addEventListener('change', () => pintarIzq());
 $('desde').addEventListener('change', () => pintarTodo(true));
 
@@ -484,13 +535,14 @@ function pintarTodo(conservarScroll) {
   $('ctlLista').hidden = SEC !== 'li';
   pintarIzq();
   if (conservarScroll) $('lista').scrollTop = sc;
+  marcarFoco();
   pintarPresets();
   pintarHojas();
 }
 // Al cambiar de seccion la busqueda arranca limpia: si no, el rubro elegido en
 // una lista dejaba vacia la de cambios de la otra.
 document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('click', () => {
-  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; }
+  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; FOCO = null; }
   SEC = b.dataset.sec; pintarTodo();
 }));
 
@@ -546,7 +598,7 @@ function pintarListas(items) {
   let w = base[2] || f.ancho * 10, h = base[3] || f.alto * 10;
   w = Math.min(200, Math.max(30, w)); h = Math.min(287, Math.max(30, h));
   const L = LETRAS[f.letra] || LETRAS.me;
-  const cols = f.cols === 'auto' ? Math.max(1, Math.floor(w / 62)) : Number(f.cols);
+  const cols = f.cols === 'auto' ? Math.max(1, Math.floor((w - 5) / L.col)) : Number(f.cols);
   const filasCol = Math.max(1, Math.floor((h - 5) / L.fila));
   const porPanel = filasCol * cols;
   const enFila = Math.max(1, Math.floor(200 / w)), enCol = Math.max(1, Math.floor(287 / h)), porHoja = enFila * enCol;
@@ -703,11 +755,12 @@ $('ultimaCargar').addEventListener('click', () => {
 
 // ── opciones, imprimir y anotar
 ['porKilo', 'peso'].forEach(id => $(id).addEventListener('change', pintarHojas));
-['liFormato', 'liAncho', 'liAlto', 'liCols', 'liLetra', 'liOrden'].forEach(id => $(id).addEventListener('change', () => {
-  $('liMedida').hidden = $('liFormato').value !== 'med';
-  try { localStorage.setItem('etiquetas_li_fmt', JSON.stringify(fmtLista())); } catch (e) {}
-  pintarHojas();
-}));
+['liFormato', 'liAncho', 'liAlto', 'liCols', 'liLetra', 'liOrden'].forEach(id => ['input', 'change'].forEach(ev =>
+  $(id).addEventListener(ev, () => {
+    $('liMedida').hidden = $('liFormato').value !== 'med';
+    try { localStorage.setItem('etiquetas_li_fmt', JSON.stringify(fmtLista())); } catch (e) {}
+    pintarHojas();
+  })));
 $('vaciar').addEventListener('click', () => {
   if (!confirm('¿Saco todos los productos de la hoja?')) return;
   COLA[SEC] = []; guardarColas(); pintarTodo(true);
