@@ -63,6 +63,7 @@ https://paladear.com.ar/p/aceto-balsamico-2416/
 https://paladear.com.ar/p/aceto-reduccion-1066/
 https://paladear.com.ar/p/acido-ascorbico-2346/
 https://paladear.com.ar/p/acondicionador-de-romero-y-aloe-vera-5006/
+https://paladear.com.ar/p/acondicionador-solido-5026/
 https://paladear.com.ar/p/adobo-para-pizza-1068/
 https://paladear.com.ar/p/agar-agar-2205/
 https://paladear.com.ar/p/aji-molido-fino-1079/
@@ -137,7 +138,6 @@ https://paladear.com.ar/p/brut-rose-1107/
 https://paladear.com.ar/p/cacao-amargo-de-brasil-1163/
 https://paladear.com.ar/p/cafe-de-brasil-2381/
 https://paladear.com.ar/p/cafe-de-colombia-huila-2382/
-https://paladear.com.ar/p/cafe-descafeinado-exotico-colombia-2383/
 https://paladear.com.ar/p/cafe-verde-2216/
 https://paladear.com.ar/p/caldo-de-hueso-2278/
 https://paladear.com.ar/p/caldo-de-verdura-sin-sal-2154/
@@ -341,6 +341,7 @@ https://paladear.com.ar/p/mani-saborizado-1379/
 https://paladear.com.ar/p/mani-tostado-salado-1380/
 https://paladear.com.ar/p/mani-tostado-sin-sal-1381/
 https://paladear.com.ar/p/manteca-clarificada-5021/
+https://paladear.com.ar/p/manteca-clarificada-ghee-2269/
 https://paladear.com.ar/p/mantelitos-artesanales-2307/
 https://paladear.com.ar/p/mantequilla-de-mani-1383/
 https://paladear.com.ar/p/mantequilla-de-mani-con-stevia-5030/
