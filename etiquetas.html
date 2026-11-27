@@ -103,7 +103,8 @@ input.pct{width:50px;padding:3px 5px;border:1px solid var(--linea);border-radius
 .et-precio{display:flex;align-items:flex-start;justify-content:center;line-height:.95;white-space:nowrap}
 .et-signo{font-size:13pt;font-weight:700;margin:1.3mm .7mm 0 0}
 .et-num{font-size:32pt;font-weight:800;letter-spacing:-.02em}
-.et-uni{font-size:7.5pt;font-weight:700;letter-spacing:.04em;min-height:1em}
+.et-uni{font-size:7.5pt;font-weight:700;letter-spacing:.04em;min-height:1em;max-width:100%;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
 .of-antes{display:flex;align-items:center;justify-content:center;gap:1.6mm;font-size:8.5pt;font-weight:600;white-space:nowrap}
 .of-ant{font-weight:700}
 .of-pct{background:#000;color:#fff;font-weight:800;font-size:7.5pt;padding:.4mm 1.4mm;border-radius:.8mm;
@@ -189,6 +190,7 @@ dialog p{margin:0 0 6px}
         <button type="button" class="btn" id="ultimaCargar" hidden></button>
         <label class="grupo"><input type="checkbox" id="porKilo" checked> «por kilo» en granel</label>
         <label class="grupo"><input type="checkbox" id="peso" checked> tamaño en envasados</label>
+        <label class="grupo"><input type="checkbox" id="marca" checked> marca</label>
         <label class="grupo" id="ctlPct">Descuento general <input type="number" class="pct" id="pctGlobal" min="1" max="90" step="1"> %</label>
         <span class="grupo" id="ctlLista">
           <select id="liFormato" title="Formato de la lista"></select>
@@ -327,9 +329,11 @@ function presentacion(p) {
             p.nom.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*' + U + '\\.?\\s*$', 'i'));
   return m ? m[1].replace('.', ',') + ' ' + unidadLinda(m[2]) : '';
 }
+// Renglon de abajo de la etiqueta: marca y tamaño ("Risky · 150 gr"), o POR KILO en granel.
+const marcaDe = p => ($('marca').checked && FICHAS[p.cod] && FICHAS[p.cod].marca) ? String(FICHAS[p.cod].marca).trim() : '';
 function uniDe(p) {
-  if (esKg(p.nom)) return $('porKilo').checked ? 'POR KILO' : '';
-  return $('peso').checked ? presentacion(p) : '';
+  const tam = esKg(p.nom) ? ($('porKilo').checked ? 'POR KILO' : '') : ($('peso').checked ? presentacion(p) : '');
+  return [marcaDe(p), tam].filter(Boolean).join(' · ');
 }
 const tamTxt = p => { const t = esKg(p.nom) ? 'por kilo' : presentacion(p); return t ? ' <small class="tam">' + esc(t) + '</small>' : ''; };
 
@@ -463,7 +467,8 @@ function pintarIzq() {
     const d = document.createElement('div'); d.className = 'prod' + (en ? ' en' : '') + (p.cod === FOCO ? ' foco' : '');
     d.dataset.cod = p.cod;
     const ch = document.createElement('input'); ch.type = 'checkbox'; ch.checked = en; ch.tabIndex = -1;
-    let det = esc(p.rubro.toLowerCase()) + ' · ' + p.cod;
+    const mar = FICHAS[p.cod] && FICHAS[p.cod].marca ? '<b>' + esc(FICHAS[p.cod].marca) + '</b> · ' : '';
+    let det = mar + esc(p.rubro.toLowerCase()) + ' · ' + p.cod;
     if (c.cuando !== undefined || c.antes !== undefined) {
       const dif = c.antes ? (p.p > c.antes ? '<span class="chip sube">sube</span>' : '<span class="chip baja">baja</span>') : '<span class="chip">nuevo</span>';
       det = dif + ' ' + (c.antes ? 'antes $' + pl(c.antes) + ' · ' : '') + fecha(c.cuando) + (c.imp ? ' · impresa ' + fecha(c.imp) : '');
@@ -637,7 +642,7 @@ function pintarListas(items) {
         fila.title = 'Tocá para corregir';
         const nom = document.createElement('div'); nom.className = 'li-nom'; nom.textContent = nombreDe(p);
         nom.style.fontSize = L.n + 'pt';
-        const marca = (FICHAS[p.cod] && FICHAS[p.cod].marca) || '';
+        const marca = marcaDe(p);
         const tam = esKg(p.nom) ? '' : ($('peso').checked ? presentacion(p) : '');
         const det = [marca, tam].filter(Boolean);
         if (enOfertaPanel(p.cod)) det.push('oferta, antes $' + pl(p.p));
@@ -770,7 +775,7 @@ $('ultimaCargar').addEventListener('click', () => {
 });
 
 // ── opciones, imprimir y anotar
-['porKilo', 'peso'].forEach(id => $(id).addEventListener('change', pintarHojas));
+['porKilo', 'peso', 'marca'].forEach(id => $(id).addEventListener('change', pintarHojas));
 ['liFormato', 'liAncho', 'liAlto', 'liCols', 'liLetra', 'liOrden'].forEach(id => ['input', 'change'].forEach(ev =>
   $(id).addEventListener(ev, () => {
     $('liMedida').hidden = $('liFormato').value !== 'med';
