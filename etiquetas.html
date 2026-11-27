@@ -178,6 +178,13 @@ small.gris{color:#8a9aa8}
       <label><input type="checkbox" id="porKilo" checked> Poner «por kilo» en los productos a granel</label>
       <label><input type="checkbox" id="peso" checked> Poner el tamaño en los envasados (gramos, cc)</label>
     </div>
+    <div class="fila-ctl presets">
+      <label>Listas guardadas: <select id="presetSel"></select></label>
+      <button type="button" class="btn" id="presetCargar">Cargar</button>
+      <button type="button" class="btn" id="presetBorrar">Borrar</button>
+      <button type="button" class="btn" id="presetGuardar">Guardar esta lista con un nombre…</button>
+      <button type="button" class="btn" id="ultimaCargar" hidden></button>
+    </div>
     <div class="fila-ctl" id="ctlLista" hidden>
       <label>Título: <input type="text" id="liTitulo" placeholder="Lista de precios"></label>
       <label>Columnas: <select id="liCols"><option value="1">1</option><option value="2" selected>2</option></select></label>
@@ -215,7 +222,9 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', 
 
 let PRODS = [], PORCOD = {};
 let CAMBIOS = {}, FICHAS = {};
-let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct: {}, ofertasImpresas: {}};
+// presets: {seccion: {nombre: {cods, titulo, cols, f}}}; ultimas: {seccion: {cods, titulo, cols, f}}
+let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct: {}, ofertasImpresas: {},
+              presets: {}, ultimas: {}};
 let SHA = null;
 let SEC = 'et', VISTA = 'cambios';
 const VISTAS = {
@@ -529,7 +538,69 @@ function pintarCola() {
     tq.append(bq); tr.append(tq); tb.append(tr);
   });
   $('imprimir').disabled = !cola.length;
+  pintarPresets();
 }
+
+// ── listas guardadas y la ultima impresa
+const SEC_NOMBRE = {et: 'etiquetas', of: 'ofertas', li: 'lista'};
+function fotoDeLista() {
+  return {cods: COLA[SEC].slice(), titulo: $('liTitulo').value.trim(), cols: $('liCols').value, f: hoyISO()};
+}
+function aplicarLista(l) {
+  COLA[SEC] = (l.cods || []).filter(c => PORCOD[c]);
+  if (SEC === 'li') {
+    $('liTitulo').value = l.titulo || '';
+    if (l.cols) $('liCols').value = l.cols;
+    try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {}
+  }
+  guardarColas(); pintarTodo();
+}
+function pintarPresets() {
+  const ps = (ESTADO.presets || {})[SEC] || {}, sel = $('presetSel'), antes = sel.value;
+  sel.textContent = '';
+  const nombres = Object.keys(ps).sort((a, b) => a.localeCompare(b, 'es'));
+  if (!nombres.length) sel.append(new Option('(ninguna todavía)', ''));
+  nombres.forEach(n => sel.append(new Option(n + ' (' + ps[n].cods.length + ')', n)));
+  if (antes && ps[antes]) sel.value = antes;
+  $('presetCargar').disabled = $('presetBorrar').disabled = !nombres.length;
+  $('presetGuardar').disabled = !COLA[SEC].length;
+  const u = (ESTADO.ultimas || {})[SEC];
+  $('ultimaCargar').hidden = !(u && u.cods && u.cods.length);
+  if (u) $('ultimaCargar').textContent = 'Volver a cargar la última impresa (' + fecha(u.f) +
+    (u.titulo ? ', ' + u.titulo : '') + ', ' + u.cods.length + ')';
+}
+$('presetGuardar').addEventListener('click', () => {
+  const sug = SEC === 'li' ? $('liTitulo').value.trim() : '';
+  const n = (prompt('¿Con qué nombre guardo esta lista de ' + SEC_NOMBRE[SEC] + '?\n' +
+                    'Por ejemplo: Estantería productos de higiene personal', sug) || '').trim();
+  if (!n) return;
+  ESTADO.presets = ESTADO.presets || {};
+  ESTADO.presets[SEC] = ESTADO.presets[SEC] || {};
+  if (ESTADO.presets[SEC][n] && !confirm('Ya hay una lista guardada como «' + n + '». ¿La reemplazo?')) return;
+  ESTADO.presets[SEC][n] = fotoDeLista();
+  guardarEstado('Etiquetas: lista guardada «' + n + '»')
+    .then(() => avisar('Lista «' + n + '» guardada.'))
+    .catch(e => avisar('No pude guardar la lista: ' + e.message, true));
+  pintarPresets(); $('presetSel').value = n;
+});
+$('presetCargar').addEventListener('click', () => {
+  const n = $('presetSel').value, l = ((ESTADO.presets || {})[SEC] || {})[n];
+  if (!l) return;
+  if (COLA[SEC].length && !confirm('Se reemplaza lo que tenés para imprimir por la lista «' + n + '». ¿Sigo?')) return;
+  aplicarLista(l); $('presetSel').value = n;
+});
+$('presetBorrar').addEventListener('click', () => {
+  const n = $('presetSel').value;
+  if (!n || !confirm('¿Borro la lista guardada «' + n + '»? Los productos no se tocan.')) return;
+  delete ESTADO.presets[SEC][n];
+  guardarEstado('Etiquetas: lista borrada «' + n + '»').catch(e => avisar('No pude borrar la lista: ' + e.message, true));
+  pintarPresets();
+});
+$('ultimaCargar').addEventListener('click', () => {
+  const u = (ESTADO.ultimas || {})[SEC]; if (!u) return;
+  if (COLA[SEC].length && !confirm('Se reemplaza lo que tenés para imprimir por la última impresa. ¿Sigo?')) return;
+  aplicarLista(u);
+});
 
 function pintarHojas() {
   const caja = $('hojas'); caja.textContent = '';
@@ -606,7 +677,13 @@ $('liTitulo').addEventListener('input', () => { try { localStorage.setItem('etiq
 $('vaciar').addEventListener('click', () => { COLA[SEC] = []; guardarColas(); pintarTodo(); });
 $('imprimir').addEventListener('click', async () => {
   pintarHojas(); await ajustarPrecios();
+  // se guarda lo que se imprime, para poder volver a cargarlo otro dia
+  ESTADO.ultimas = ESTADO.ultimas || {};
+  ESTADO.ultimas[SEC] = fotoDeLista();
+  guardarEstado('Etiquetas: última ' + SEC_NOMBRE[SEC] + ' impresa (' + COLA[SEC].length + ')')
+    .catch(e => avisar('No pude guardar la última impresa: ' + e.message, true));
   window.print();
+  pintarPresets();
   if (SEC !== 'li') $('avisoImp').hidden = false;
 });
 $('noAnotar').addEventListener('click', () => { $('avisoImp').hidden = true; });

@@ -31,7 +31,7 @@
 // de la de pruebas y su propia página nunca entraba por la regla de red primero.
 const BASE = new URL('./', self.location).pathname;
 const CACHE_PREFIX = 'paladear-min-';
-const CACHE_VERSION = CACHE_PREFIX + BASE.replace(/\//g, '') + '-v30';
+const CACHE_VERSION = CACHE_PREFIX + BASE.replace(/\//g, '') + '-v31';
 
 const SHELL_FILES = [
   'android-chrome-192x192.png',
@@ -120,7 +120,11 @@ self.addEventListener('fetch', event => {
   const _path = url.pathname;
   const _esPagina = _path === BASE ||
                     _path === BASE + 'index.html' ||
-                    _path === BASE + 'admin.html';
+                    _path === BASE + 'admin.html' ||
+                    // etiquetas.html tambien: con stale-while-revalidate mostraba la
+                    // version vieja (sin los tamanos de los envasados) hasta la
+                    // segunda vez que se abria.
+                    _path === BASE + 'etiquetas.html';
 
   // DATOS DE PRECIOS Y STOCK: tambien NETWORK-FIRST.
   // Antes los precios venian del Apps Script de Google (otro origen), asi que
