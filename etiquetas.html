@@ -103,20 +103,17 @@ input.pct{width:50px;padding:3px 5px;border:1px solid var(--linea);border-radius
 .of-pct{background:#000;color:#fff;font-weight:800;font-size:7.5pt;padding:.4mm 1.4mm;border-radius:.8mm;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .of .et-num{font-size:28pt}
-.hoja.li-hoja{padding:14mm 13mm 12mm;display:flex;flex-direction:column}
-.li-cab{display:flex;justify-content:space-between;align-items:baseline;border-bottom:.6mm solid #000;padding-bottom:2mm;margin-bottom:3mm}
-.li-tit{font-size:20pt;font-weight:800;letter-spacing:-.01em}
-.li-fecha{font-size:8.5pt;font-weight:600}
-.li-cuerpo{display:grid;column-gap:10mm;flex:1;align-content:start}
-.li-fila{display:flex;align-items:baseline;gap:2mm;height:7.6mm;border-bottom:.2mm solid #bdbdbd;font-size:11.5pt;cursor:pointer}
-.li-fila:hover{background:#f1f6fa}
-.li-nom{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.li-tam{font-weight:500;font-size:8.5pt}
-.li-pun{flex:1;border-bottom:.3mm dotted #000;transform:translateY(-1.2mm);min-width:4mm}
-.li-pre{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
-.li-pre .li-ant{font-weight:600;font-size:8.5pt;margin-right:2mm}
-.li-pre small{font-weight:600;font-size:7.5pt}
-.li-pie{font-size:7.5pt;margin-top:2mm}
+.hoja.li-hoja{padding:5mm;display:grid;align-content:start;justify-content:start}
+.li-panel{border:.2mm dashed #9a9a9a;padding:2.5mm;display:grid;column-gap:4mm;overflow:hidden;color:#000}
+.li-fila{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:2mm;align-content:center;
+  padding:0 1.6mm;cursor:pointer;min-width:0;border-bottom:.15mm solid #c8c8c8}
+.li-fila.par{background:#ebebeb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.li-fila:hover{outline:1px solid var(--banda)}
+.li-nom{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+.li-det{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1;grid-column:1}
+.li-pre{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;grid-column:2;grid-row:1 / span 2;
+  align-self:center;text-align:right;line-height:1}
+.li-pre small{font-weight:700;font-size:.62em;margin-left:.4mm}
 .sin-hojas{color:var(--tenue);text-align:center;padding:60px 20px;font-size:14px}
 
 /* dialogos */
@@ -188,8 +185,13 @@ dialog p{margin:0 0 6px}
         <label class="grupo"><input type="checkbox" id="peso" checked> tamaño en envasados</label>
         <label class="grupo" id="ctlPct">Descuento general <input type="number" class="pct" id="pctGlobal" min="1" max="90" step="1"> %</label>
         <span class="grupo" id="ctlLista">
-          <input type="text" id="liTitulo" placeholder="Título de la lista">
-          <select id="liCols" title="Columnas"><option value="1">1 columna</option><option value="2" selected>2 columnas</option></select>
+          <select id="liFormato" title="Formato de la lista"></select>
+          <span class="grupo" id="liMedida">ancho <input type="number" class="pct" id="liAncho" min="3" max="20" step="0.5"> ×
+            alto <input type="number" class="pct" id="liAlto" min="3" max="28.7" step="0.5"> cm</span>
+          <select id="liCols" title="Columnas"><option value="auto">Columnas: auto</option><option value="1">1 columna</option>
+            <option value="2">2 columnas</option><option value="3">3 columnas</option></select>
+          <select id="liLetra" title="Tamaño de letra"><option value="ch">Letra chica</option><option value="me" selected>Letra mediana</option>
+            <option value="gr">Letra grande</option></select>
           <label class="grupo"><input type="checkbox" id="liOrden" checked> A-Z</label>
         </span>
       </div>
@@ -253,7 +255,28 @@ let FUENTE = {et: 'cambios', of: 'ofertas', li: 'todos'};
 let COLA = {et: [], of: [], li: []};
 try { COLA = Object.assign(COLA, JSON.parse(localStorage.getItem('etiquetas_colas') || '{}')); } catch (e) {}
 const guardarColas = () => { try { localStorage.setItem('etiquetas_colas', JSON.stringify(COLA)); } catch (e) {} };
-try { $('liTitulo').value = localStorage.getItem('etiquetas_li_titulo') || ''; } catch (e) {}
+// ── formatos de lista: ancho y alto en mm de cada recorte; varios entran en una A4
+const FORMATOS = [
+  ['t6', 'Tira angosta 6 × 28 cm', 60, 280], ['t8', 'Tira 8 × 28 cm', 80, 280],
+  ['m10', 'Media hoja 10 × 28 cm', 100, 280], ['h19', 'Hoja entera 19 × 28 cm', 190, 280],
+  ['f19', 'Franja ancha 19 × 9 cm', 190, 90], ['med', 'A medida…', 0, 0]];
+const LETRAS = {ch: {n: 9, d: 6.8, fila: 8}, me: {n: 11, d: 7.8, fila: 9.6}, gr: {n: 13.5, d: 9, fila: 11.6}};
+FORMATOS.forEach(f => $('liFormato').append(new Option(f[1], f[0])));
+function leerFmtLista() {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem('etiquetas_li_fmt') || '{}'); } catch (e) {}
+  return Object.assign({formato: 't8', ancho: 8, alto: 28, cols: 'auto', letra: 'me', orden: true}, o);
+}
+function ponerFmtLista(o) {
+  $('liFormato').value = o.formato; $('liAncho').value = o.ancho; $('liAlto').value = o.alto;
+  $('liCols').value = o.cols; $('liLetra').value = o.letra; $('liOrden').checked = o.orden !== false;
+  $('liMedida').hidden = o.formato !== 'med';
+}
+function fmtLista() {
+  return {formato: $('liFormato').value, ancho: Number($('liAncho').value) || 8, alto: Number($('liAlto').value) || 28,
+          cols: $('liCols').value, letra: $('liLetra').value, orden: $('liOrden').checked};
+}
+ponerFmtLista(leerFmtLista());
 const SEC_NOMBRE = {et: 'etiquetas', of: 'ofertas', li: 'lista'};
 
 function avisar(txt, mal) { const e = $('estado'); e.textContent = txt; e.title = txt; e.className = 'estado' + (mal ? ' mal' : ''); }
@@ -462,15 +485,17 @@ document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('
 function pintarHojas() {
   const caja = $('hojas'); caja.textContent = '';
   const items = COLA[SEC].map(c => PORCOD[c]).filter(Boolean);
-  const porHoja = SEC === 'li' ? 32 * (Number($('liCols').value) || 1) : 36;
-  const hojas = Math.ceil(items.length / porHoja);
-  $('resumen').innerHTML = items.length
-    ? '<b>' + items.length + (SEC === 'li' ? ' productos' : SEC === 'of' ? ' ofertas' : ' etiquetas') + '</b> · ' +
-      hojas + (hojas === 1 ? ' hoja' : ' hojas') + ' A4 vertical · tocá una ' + (SEC === 'li' ? 'línea' : 'etiqueta') + ' para corregirla'
-    : 'Marcá productos a la izquierda para armar la hoja.';
+  const resumen = extra => {
+    const hojas = caja.querySelectorAll('.hoja').length;
+    $('resumen').innerHTML = items.length
+      ? '<b>' + items.length + (SEC === 'li' ? ' productos' : SEC === 'of' ? ' ofertas' : ' etiquetas') + '</b> · ' +
+        hojas + (hojas === 1 ? ' hoja' : ' hojas') + ' A4 vertical' + (extra || '') + ' · tocá una ' +
+        (SEC === 'li' ? 'línea' : 'etiqueta') + ' para corregirla'
+      : 'Marcá productos a la izquierda para armar la hoja.';
+  };
   $('imprimir').disabled = $('vaciar').disabled = !items.length;
-  if (!items.length) { caja.innerHTML = '<div class="sin-hojas">La hoja está vacía.</div>'; ajustarZoom(); return; }
-  if (SEC === 'li') pintarListas(items);
+  if (!items.length) { caja.innerHTML = '<div class="sin-hojas">La hoja está vacía.</div>'; resumen(); ajustarZoom(); return; }
+  if (SEC === 'li') { const r = pintarListas(items); resumen(r); ajustarZoom(); return; }
   else for (let i = 0; i < items.length; i += 36) {
     const hoja = document.createElement('div'); hoja.className = 'hoja et-hoja';
     items.slice(i, i + 36).forEach(p => {
@@ -495,38 +520,61 @@ function pintarHojas() {
     });
     caja.append(hoja);
   }
+  resumen();
   ajustarZoom();
   ajustarPrecios();
 }
+/* Lista sin titulos: cada renglon lleva el nombre, debajo la marca y el tamaño
+   (en renglon aparte para que nunca se corten) y el precio a la derecha.
+   El recorte tiene el ancho y alto elegidos y entran varios por A4. */
 function pintarListas(items) {
-  const cols = Number($('liCols').value) || 1, porCol = 32, porHoja = porCol * cols;
-  if ($('liOrden').checked) items = items.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
-  const titulo = $('liTitulo').value.trim() || 'Lista de precios';
-  const hoy = new Date().toLocaleDateString('es-AR');
-  for (let i = 0; i < items.length; i += porHoja) {
+  const f = fmtLista();
+  const base = FORMATOS.find(x => x[0] === f.formato) || FORMATOS[1];
+  let w = base[2] || f.ancho * 10, h = base[3] || f.alto * 10;
+  w = Math.min(200, Math.max(30, w)); h = Math.min(287, Math.max(30, h));
+  const L = LETRAS[f.letra] || LETRAS.me;
+  const cols = f.cols === 'auto' ? Math.max(1, Math.floor(w / 62)) : Number(f.cols);
+  const filasCol = Math.max(1, Math.floor((h - 5) / L.fila));
+  const porPanel = filasCol * cols;
+  const enFila = Math.max(1, Math.floor(200 / w)), enCol = Math.max(1, Math.floor(287 / h)), porHoja = enFila * enCol;
+  if (f.orden) items = items.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
+  const paneles = [];
+  for (let i = 0; i < items.length; i += porPanel) paneles.push(items.slice(i, i + porPanel));
+  for (let k = 0; k < paneles.length; k += porHoja) {
     const hoja = document.createElement('div'); hoja.className = 'hoja li-hoja';
-    hoja.innerHTML = '<div class="li-cab"><div class="li-tit"></div><div class="li-fecha">Precios al ' + hoy + '</div></div>' +
-      '<div class="li-cuerpo"></div><div class="li-pie">Precios por kilo en los productos a granel. Pueden cambiar sin previo aviso.</div>';
-    hoja.querySelector('.li-tit').textContent = titulo;
-    const cuerpo = hoja.querySelector('.li-cuerpo');
-    cuerpo.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
-    cuerpo.style.gridTemplateRows = 'repeat(' + porCol + ', 7.6mm)';
-    cuerpo.style.gridAutoFlow = 'column';
-    items.slice(i, i + porHoja).forEach(p => {
-      const f = document.createElement('div'); f.className = 'li-fila'; f.title = 'Tocá para corregir';
-      const nom = document.createElement('span'); nom.className = 'li-nom'; nom.textContent = nombreDe(p);
-      const tam = !esKg(p.nom) && $('peso').checked ? presentacion(p) : '';
-      if (tam) { const t = document.createElement('small'); t.className = 'li-tam'; t.textContent = ' ' + tam; nom.append(t); }
-      const pun = document.createElement('span'); pun.className = 'li-pun';
-      const pre = document.createElement('span'); pre.className = 'li-pre';
-      const u = (esKg(p.nom) && $('porKilo').checked) ? ' <small>kg</small>' : '';
-      pre.innerHTML = enOfertaPanel(p.cod) ? '<span class="li-ant">antes $' + pl(p.p) + '</span>$' + pl(precioOferta(p)) + u : '$' + pl(p.p) + u;
-      f.append(nom, pun, pre);
-      f.addEventListener('click', () => editar(p));
-      cuerpo.append(f);
+    hoja.style.gridTemplateColumns = 'repeat(' + enFila + ', ' + w + 'mm)';
+    hoja.style.gridAutoRows = h + 'mm';
+    paneles.slice(k, k + porHoja).forEach(grupo => {
+      const pan = document.createElement('div'); pan.className = 'li-panel';
+      pan.style.width = w + 'mm'; pan.style.height = h + 'mm';
+      pan.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
+      pan.style.gridTemplateRows = 'repeat(' + filasCol + ', ' + L.fila + 'mm)';
+      pan.style.gridAutoFlow = 'column';
+      grupo.forEach((p, idx) => {
+        const fila = document.createElement('div');
+        fila.className = 'li-fila' + ((idx % filasCol) % 2 ? ' par' : '');
+        fila.title = 'Tocá para corregir';
+        const nom = document.createElement('div'); nom.className = 'li-nom'; nom.textContent = nombreDe(p);
+        nom.style.fontSize = L.n + 'pt';
+        const marca = (FICHAS[p.cod] && FICHAS[p.cod].marca) || '';
+        const tam = esKg(p.nom) ? '' : ($('peso').checked ? presentacion(p) : '');
+        const det = [marca, tam].filter(Boolean);
+        if (enOfertaPanel(p.cod)) det.push('oferta, antes $' + pl(p.p));
+        const d = document.createElement('div'); d.className = 'li-det'; d.textContent = det.join(' · ');
+        d.style.fontSize = L.d + 'pt';
+        const pre = document.createElement('div'); pre.className = 'li-pre'; pre.style.fontSize = (L.n + 1) + 'pt';
+        pre.textContent = '$' + pl(enOfertaPanel(p.cod) ? precioOferta(p) : p.p);
+        if (esKg(p.nom) && $('porKilo').checked) { const u = document.createElement('small'); u.textContent = 'kg'; pre.append(u); }
+        fila.append(nom, pre, d);
+        fila.addEventListener('click', () => editar(p));
+        pan.append(fila);
+      });
+      hoja.append(pan);
     });
     $('hojas').append(hoja);
   }
+  return ' · recortes de ' + (w / 10).toString().replace('.', ',') + ' × ' + (h / 10).toString().replace('.', ',') +
+    ' cm, ' + porPanel + ' productos cada uno';
 }
 // La hoja se achica para que entre entera a lo ancho de la vista previa.
 function ajustarZoom() {
@@ -588,12 +636,12 @@ $('pctGlobal').addEventListener('change', () => {
 });
 
 // ── listas guardadas y la ultima impresa
-function fotoDeLista() { return {cods: COLA[SEC].slice(), titulo: $('liTitulo').value.trim(), cols: $('liCols').value, f: hoyISO()}; }
+function fotoDeLista() { return {cods: COLA[SEC].slice(), fmt: SEC === 'li' ? fmtLista() : null, f: hoyISO()}; }
 function aplicarLista(l) {
   COLA[SEC] = (l.cods || []).filter(c => PORCOD[c]);
-  if (SEC === 'li') {
-    $('liTitulo').value = l.titulo || ''; if (l.cols) $('liCols').value = l.cols;
-    try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {}
+  if (SEC === 'li' && l.fmt) {
+    ponerFmtLista(Object.assign(leerFmtLista(), l.fmt));
+    try { localStorage.setItem('etiquetas_li_fmt', JSON.stringify(fmtLista())); } catch (e) {}
   }
   guardarColas(); pintarTodo();
 }
@@ -608,11 +656,11 @@ function pintarPresets() {
   $('presetGuardar').disabled = !COLA[SEC].length;
   const u = ESTADO.ultimas[SEC];
   $('ultimaCargar').hidden = !(u && u.cods && u.cods.length);
-  if (u) $('ultimaCargar').textContent = 'Última impresa (' + fecha(u.f) + (u.titulo ? ', ' + u.titulo : '') + ', ' + u.cods.length + ')';
+  if (u) $('ultimaCargar').textContent = 'Última impresa (' + fecha(u.f) + ', ' + u.cods.length + ')';
 }
 $('presetGuardar').addEventListener('click', () => {
   const n = (prompt('¿Con qué nombre guardo esta lista de ' + SEC_NOMBRE[SEC] + '?\nPor ejemplo: Estantería productos de higiene personal',
-                    SEC === 'li' ? $('liTitulo').value.trim() : '') || '').trim();
+                    '') || '').trim();
   if (!n) return;
   ESTADO.presets[SEC] = ESTADO.presets[SEC] || {};
   if (ESTADO.presets[SEC][n] && !confirm('Ya hay una lista guardada como «' + n + '». ¿La reemplazo?')) return;
@@ -641,8 +689,12 @@ $('ultimaCargar').addEventListener('click', () => {
 });
 
 // ── opciones, imprimir y anotar
-['porKilo', 'peso', 'liCols', 'liOrden'].forEach(id => $(id).addEventListener('change', pintarHojas));
-$('liTitulo').addEventListener('input', () => { try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {} pintarHojas(); });
+['porKilo', 'peso'].forEach(id => $(id).addEventListener('change', pintarHojas));
+['liFormato', 'liAncho', 'liAlto', 'liCols', 'liLetra', 'liOrden'].forEach(id => $(id).addEventListener('change', () => {
+  $('liMedida').hidden = $('liFormato').value !== 'med';
+  try { localStorage.setItem('etiquetas_li_fmt', JSON.stringify(fmtLista())); } catch (e) {}
+  pintarHojas();
+}));
 $('vaciar').addEventListener('click', () => {
   if (!confirm('¿Saco todos los productos de la hoja?')) return;
   COLA[SEC] = []; guardarColas(); pintarTodo(true);
