@@ -11,200 +11,220 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* Etiquetas, ofertas y listas de precios para imprimir en blanco y negro.
+   Pantalla como E-Codbar: productos a la izquierda, hoja a la derecha, todo
+   en la primera pantalla.
    Precios: lista 1 de E-Pyme (precios-min.csv, que actualiza el robot).
    Cambios y ofertas: los del panel (catalogo-panel.json).
-   Lo impreso, los nombres corregidos y los % de oferta: etiquetas-impresas.json
+   Lo impreso, nombres, % de oferta y listas guardadas: etiquetas-impresas.json
    en este mismo repo, guardado con la clave del panel. */
 :root{
   --azul:#123f67; --banda:#4c7192; --cielo:#e3edf2; --tinta:#1d2b38;
-  --tenue:#5f7284; --linea:#dbe3e9; --papel:#f6f8fa; --ok:#2f7a45; --mal:#b3261e;
+  --tenue:#5f7284; --linea:#dbe3e9; --papel:#eef2f5; --ok:#2f7a45; --mal:#b3261e;
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
+html,body{height:100%}
 body{margin:0;background:var(--papel);color:var(--tinta);
-  font-family:'Montserrat',system-ui,sans-serif;font-size:14px;line-height:1.45}
+  font-family:'Montserrat',system-ui,sans-serif;font-size:13px;line-height:1.35}
 button,input,select{font:inherit}
 button{cursor:pointer}
-.pantalla{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
-h1{font-size:22px;margin:0;color:var(--azul);font-weight:800}
-.sub{color:var(--tenue);margin:4px 0 0;font-size:13px}
-.estado{margin-top:12px;font-size:12.5px;padding:8px 12px;border-radius:8px;background:var(--cielo)}
-.estado.mal{background:#fbe9e7;color:var(--mal)}
-.secciones{display:flex;gap:0;margin:20px 0 0;border-bottom:2px solid var(--linea);flex-wrap:wrap}
-.secciones button{border:none;background:none;color:var(--tenue);padding:10px 18px;font-weight:800;font-size:15px;
-  border-bottom:3px solid transparent;margin-bottom:-2px}
-.secciones button[aria-selected="true"]{color:var(--azul);border-bottom-color:var(--azul)}
-.vistas{display:flex;gap:6px;margin:14px 0 0;flex-wrap:wrap}
-.vistas button{border:1px solid var(--linea);background:#fff;color:var(--banda);
-  padding:8px 13px;border-radius:8px;font-weight:700;font-size:13px}
-.vistas button[aria-selected="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
-.caja{background:#fff;border:1px solid var(--linea);border-radius:10px;margin-top:12px;padding:14px}
-.fila-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px}
-.fila-ctl input[type=date],.fila-ctl input[type=search],.fila-ctl input[type=text],.fila-ctl select{padding:7px 10px;
-  border:1px solid var(--linea);border-radius:7px}
-.fila-ctl input[type=search]{flex:1 1 260px}
-.fila-ctl input[type=text]{flex:1 1 220px}
-input.pct{width:62px;padding:5px 6px;border:1px solid var(--linea);border-radius:6px;text-align:right}
-.btn{border:1px solid var(--linea);background:#fff;color:var(--tinta);padding:7px 12px;border-radius:7px;
-  font-weight:600;font-size:13px}
+.app{height:100vh;display:grid;grid-template-rows:auto 1fr;overflow:hidden}
+
+/* cabecera en una linea */
+.cab{display:flex;align-items:center;gap:14px;padding:8px 14px;background:#fff;border-bottom:1px solid var(--linea);min-width:0}
+.cab h1{font-size:16px;margin:0;color:var(--azul);font-weight:800;white-space:nowrap}
+.secciones{display:flex;gap:4px}
+.secciones button{border:1px solid var(--linea);background:#fff;color:var(--banda);padding:6px 14px;border-radius:7px;
+  font-weight:800;font-size:13px}
+.secciones button[aria-selected="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.estado{flex:1;min-width:0;font-size:11.5px;color:var(--tenue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.estado.mal{color:var(--mal);font-weight:700}
+
+.cuerpo{display:grid;grid-template-columns:minmax(330px,34%) 1fr;min-height:0}
+
+/* izquierda: selector */
+.izq{display:flex;flex-direction:column;min-height:0;background:#fff;border-right:1px solid var(--linea)}
+.filtros{padding:10px 12px 8px;border-bottom:1px solid var(--linea);display:flex;flex-direction:column;gap:7px}
+.fuentes{display:flex;gap:4px;flex-wrap:wrap}
+.fuentes button{border:1px solid var(--linea);background:#fff;color:var(--banda);padding:4px 10px;border-radius:20px;font-weight:700;font-size:12px}
+.fuentes button[aria-pressed="true"]{background:var(--cielo);border-color:var(--banda);color:var(--azul)}
+.fila{display:flex;gap:6px;align-items:center}
+.fila input[type=search]{flex:1;min-width:0;padding:6px 9px;border:1px solid var(--linea);border-radius:7px}
+.fila select,.fila input[type=date]{padding:5px 7px;border:1px solid var(--linea);border-radius:7px;max-width:52%}
+.acc{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--tenue)}
+.acc span{flex:1}
+.lista{flex:1;overflow:auto;min-height:0}
+.prod{display:grid;grid-template-columns:20px 1fr auto;gap:2px 8px;align-items:center;padding:6px 12px;border-bottom:1px solid #edf1f4;cursor:pointer}
+.prod:hover{background:#f6f9fb}
+.prod.en{background:#eef5fa}
+.prod input{margin:0;accent-color:var(--azul);width:15px;height:15px}
+.prod .n{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod .pr{font-weight:800;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.prod .d{grid-column:2 / -1;font-size:11px;color:var(--tenue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+small.tam{color:var(--banda);font-weight:700;margin-left:4px}
+.chip{display:inline-block;font-size:9.5px;font-weight:800;padding:1px 5px;border-radius:4px;background:var(--cielo);
+  color:var(--banda);text-transform:uppercase;letter-spacing:.03em}
+.chip.sube{background:#fdecea;color:var(--mal)} .chip.baja{background:#e6f4ea;color:var(--ok)}
+.vacio{color:var(--tenue);padding:24px 14px;text-align:center}
+
+/* derecha: opciones, vista previa e imprimir */
+.der{display:grid;grid-template-rows:auto 1fr auto;min-height:0;min-width:0}
+.opc{padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;background:#fff;border-bottom:1px solid var(--linea);font-size:12px}
+.opc select,.opc input[type=text]{padding:4px 7px;border:1px solid var(--linea);border-radius:6px}
+.opc input[type=text]{width:220px}
+.opc .grupo{display:flex;gap:5px;align-items:center}
+input.pct{width:50px;padding:3px 5px;border:1px solid var(--linea);border-radius:6px;text-align:right}
+.btn{border:1px solid var(--linea);background:#fff;color:var(--tinta);padding:5px 10px;border-radius:7px;font-weight:600;font-size:12px}
 .btn:hover{border-color:var(--banda);color:var(--banda)}
 .btn.prim{background:var(--azul);border-color:var(--azul);color:#fff}
 .btn.prim:hover{background:#0d3053;color:#fff}
-.btn:disabled{opacity:.5;cursor:default}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tenue);
-  border-bottom:2px solid var(--linea);padding:6px 8px;font-weight:700}
-td{border-bottom:1px solid var(--linea);padding:7px 8px;vertical-align:middle}
-td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-tr:hover td{background:#fafcfd}
-small.gris{color:#8a9aa8}
-small.tam{color:var(--banda);font-weight:700;margin-left:4px;white-space:nowrap}
-.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;
-  background:var(--cielo);color:var(--banda);text-transform:uppercase;letter-spacing:.04em}
-.chip.sube{background:#fdecea;color:var(--mal)} .chip.baja{background:#e6f4ea;color:var(--ok)}
-.vacio{color:var(--tenue);padding:18px 4px;text-align:center}
-.cola-nom{border:1px dashed transparent;border-radius:4px;padding:2px 4px;min-width:180px;display:inline-block}
-.cola-nom:hover,.cola-nom:focus{border-color:var(--banda);outline:none;background:#fff}
-.aviso{position:sticky;bottom:12px;margin-top:14px;background:var(--azul);color:#fff;border-radius:10px;
-  padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 18px rgba(18,63,103,.25)}
-.aviso .btn{border-color:#fff}
-.aviso span{flex:1 1 260px}
-.nota{font-size:12px;color:var(--tenue);margin-top:10px}
-.vista-tit{font-weight:700;margin:22px 0 8px;color:var(--azul)}
-.tachado{text-decoration:line-through;color:var(--tenue)}
+.btn.grande{font-size:15px;font-weight:800;padding:10px 26px}
+.btn:disabled{opacity:.45;cursor:default}
+.vista{overflow:auto;min-height:0;padding:14px}
+.pie{display:flex;align-items:center;gap:10px;padding:9px 14px;background:#fff;border-top:1px solid var(--linea)}
+.pie .res{flex:1;font-size:12.5px;color:var(--tenue)}
+.pie .res b{color:var(--tinta)}
 
-/* ── hojas A4: todo en negro, para impresora blanco y negro ── */
-.hojas{display:flex;flex-direction:column;align-items:center;gap:16px;padding-bottom:40px}
-.hoja{width:210mm;height:297mm;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.12);overflow:hidden;color:#000}
+/* ── hojas A4: todo en negro ── */
+.hojas{display:flex;flex-direction:column;align-items:center;gap:14px;zoom:var(--zoom,1)}
+.hoja{width:210mm;height:297mm;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.15);overflow:hidden;color:#000;flex:0 0 auto}
 .hoja.et-hoja{padding:13.5mm 5mm;display:grid;grid-template-columns:repeat(4,50mm);grid-auto-rows:30mm;align-content:start}
 .et{width:50mm;height:30mm;border:.2mm dashed #9a9a9a;padding:2.2mm 2.6mm 1.8mm;display:flex;
-  flex-direction:column;align-items:center;justify-content:space-between;text-align:center;overflow:hidden;color:#000}
+  flex-direction:column;align-items:center;justify-content:space-between;text-align:center;overflow:hidden;color:#000;cursor:pointer}
+.et:hover{outline:2px solid var(--banda);outline-offset:-2px}
 .et-nom{font-weight:700;font-size:8.5pt;line-height:1.15;max-height:2.35em;overflow:hidden;width:100%;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .et-precio{display:flex;align-items:flex-start;justify-content:center;line-height:.95;white-space:nowrap}
 .et-signo{font-size:13pt;font-weight:700;margin:1.3mm .7mm 0 0}
 .et-num{font-size:32pt;font-weight:800;letter-spacing:-.02em}
 .et-uni{font-size:7.5pt;font-weight:700;letter-spacing:.04em;min-height:1em}
-/* oferta */
 .of-antes{display:flex;align-items:center;justify-content:center;gap:1.6mm;font-size:8.5pt;font-weight:600;white-space:nowrap}
 .of-ant{font-weight:700}
 .of-pct{background:#000;color:#fff;font-weight:800;font-size:7.5pt;padding:.4mm 1.4mm;border-radius:.8mm;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .of .et-num{font-size:28pt}
-/* lista */
 .hoja.li-hoja{padding:14mm 13mm 12mm;display:flex;flex-direction:column}
 .li-cab{display:flex;justify-content:space-between;align-items:baseline;border-bottom:.6mm solid #000;padding-bottom:2mm;margin-bottom:3mm}
 .li-tit{font-size:20pt;font-weight:800;letter-spacing:-.01em}
 .li-fecha{font-size:8.5pt;font-weight:600}
 .li-cuerpo{display:grid;column-gap:10mm;flex:1;align-content:start}
-.li-fila{display:flex;align-items:baseline;gap:2mm;height:7.6mm;border-bottom:.2mm solid #bdbdbd;font-size:11.5pt}
+.li-fila{display:flex;align-items:baseline;gap:2mm;height:7.6mm;border-bottom:.2mm solid #bdbdbd;font-size:11.5pt;cursor:pointer}
+.li-fila:hover{background:#f1f6fa}
 .li-nom{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.li-tam{font-weight:500;font-size:8.5pt}
 .li-pun{flex:1;border-bottom:.3mm dotted #000;transform:translateY(-1.2mm);min-width:4mm}
 .li-pre{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
-.li-tam{font-weight:500;font-size:8.5pt}
 .li-pre .li-ant{font-weight:600;font-size:8.5pt;margin-right:2mm}
 .li-pre small{font-weight:600;font-size:7.5pt}
 .li-pie{font-size:7.5pt;margin-top:2mm}
+.sin-hojas{color:var(--tenue);text-align:center;padding:60px 20px;font-size:14px}
 
-@page{size:A4;margin:0}
+/* dialogos */
+dialog{border:none;border-radius:12px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.25);width:min(440px,92vw);font-size:13px}
+dialog::backdrop{background:rgba(18,30,45,.35)}
+dialog h3{margin:0 0 10px;color:var(--azul);font-size:15px}
+dialog label{display:block;margin:8px 0 3px;font-weight:700;font-size:12px;color:var(--tenue)}
+dialog input[type=text],dialog input[type=number]{width:100%;padding:7px 9px;border:1px solid var(--linea);border-radius:7px}
+dialog .bots{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+dialog .bots .izq-b{margin-right:auto}
+dialog p{margin:0 0 6px}
+
+@media (max-width:820px){
+  .app{height:auto;overflow:visible}
+  .cuerpo{grid-template-columns:1fr}
+  .izq{max-height:55vh}
+}
+@page{size:A4 portrait;margin:0}
 @media print{
-  body{background:#fff}
-  .pantalla{display:none !important}
-  .hojas{display:block !important;padding:0}
+  html,body{height:auto;background:#fff}
+  .cab,.izq,.opc,.pie,dialog{display:none !important}
+  .app,.cuerpo,.der,.vista{display:block !important;height:auto !important;overflow:visible !important;padding:0 !important;border:0 !important}
+  .hojas{display:block !important;zoom:1 !important}
   .hoja{box-shadow:none;page-break-after:always;break-after:page}
   .hoja:last-child{page-break-after:auto;break-after:auto}
+  .et,.li-fila{cursor:default;outline:none !important;background:none !important}
 }
 </style>
 </head>
 <body>
-<div class="pantalla">
-  <h1>Etiquetas y listas de precios</h1>
-  <p class="sub">Precios de la lista 1 de E-Pyme, los mismos que actualiza el robot de precios. Todo sale
-    en blanco y negro.</p>
-  <div class="estado" id="estado">Leyendo precios…</div>
-
-  <div class="secciones" role="tablist" id="secciones">
-    <button type="button" data-sec="et" aria-selected="true">Etiquetas</button>
-    <button type="button" data-sec="of" aria-selected="false">Ofertas</button>
-    <button type="button" data-sec="li" aria-selected="false">Listas</button>
-  </div>
-  <div class="vistas" role="tablist" id="vistas"></div>
-
-  <!-- etiquetas: cambiaron -->
-  <div class="caja" id="v-et-cambios">
-    <div class="fila-ctl">
-      <label>Mostrar también los que cambiaron desde <input type="date" id="desde"></label>
-      <button type="button" class="btn" data-marcar="et-cambios">Marcar todos</button>
-      <button type="button" class="btn" data-desmarcar="et-cambios">Desmarcar todos</button>
-      <button type="button" class="btn prim" data-sumar="et-cambios">Agregar los marcados para imprimir</button>
+<div class="app">
+  <header class="cab">
+    <h1>Etiquetas</h1>
+    <div class="secciones" role="tablist" id="secciones">
+      <button type="button" data-sec="et" aria-selected="true">Etiquetas 5×3</button>
+      <button type="button" data-sec="of" aria-selected="false">Ofertas 5×3</button>
+      <button type="button" data-sec="li" aria-selected="false">Listas A4</button>
     </div>
-    <table><thead><tr><th></th><th>Producto</th><th>Rubro</th><th class="num">Etiqueta actual</th>
-      <th class="num">Precio nuevo</th><th>Cambió</th></tr></thead><tbody id="t-et-cambios"></tbody></table>
-    <p class="nota">Aparece un producto si su precio de hoy es distinto al de la última etiqueta que
-      imprimiste. Los que nunca imprimiste desde esta página aparecen si cambiaron de precio después
-      de la fecha de arriba.</p>
-  </div>
+    <div class="estado" id="estado">Leyendo precios…</div>
+  </header>
 
-  <!-- ofertas: en oferta -->
-  <div class="caja" id="v-of-lista" hidden>
-    <div class="fila-ctl">
-      <label>Descuento para todas: <input type="number" class="pct" id="pctGlobal" min="1" max="90" step="1"> %</label>
-      <button type="button" class="btn" data-marcar="of-lista">Marcar todos</button>
-      <button type="button" class="btn" data-desmarcar="of-lista">Desmarcar todos</button>
-      <button type="button" class="btn prim" data-sumar="of-lista">Agregar los marcados para imprimir</button>
-    </div>
-    <table><thead><tr><th></th><th>Producto</th><th class="num">Precio</th><th class="num">Descuento</th>
-      <th class="num">Precio oferta</th><th>Última etiqueta</th></tr></thead><tbody id="t-of-lista"></tbody></table>
-    <p class="nota">Son los productos que tienen oferta cargada en el panel. Para poner otro en oferta solo en la
-      etiqueta, buscalo en «Buscar». El descuento de un producto se cambia en su casilla; el general cambia
-      todos los que no tengan uno propio. Esto no cambia el precio de la página web.</p>
-  </div>
+  <div class="cuerpo">
+    <!-- izquierda: elegir productos -->
+    <section class="izq">
+      <div class="filtros">
+        <div class="fuentes" id="fuentes"></div>
+        <div class="fila">
+          <input type="search" id="q" placeholder="Buscar por nombre o código…" autocomplete="off">
+          <select id="rubro"><option value="">Todos los rubros</option></select>
+        </div>
+        <div class="fila" id="filaDesde"><span style="font-size:12px;color:var(--tenue)">Que cambiaron desde</span>
+          <input type="date" id="desde"></div>
+        <div class="acc"><span id="cuenta"></span>
+          <button type="button" class="btn" id="marcarTodos">Marcar todos</button>
+          <button type="button" class="btn" id="desmarcarTodos">Desmarcar</button></div>
+      </div>
+      <div class="lista" id="lista"></div>
+    </section>
 
-  <!-- buscar (sirve para las tres secciones) -->
-  <div class="caja" id="v-buscar" hidden>
-    <div class="fila-ctl">
-      <input type="search" id="q" placeholder="Escribí parte del nombre o el código…" autocomplete="off">
-      <select id="rubro"><option value="">Todos los rubros</option></select>
-      <button type="button" class="btn" id="sumarTodos">Agregar todos los que aparecen</button>
-    </div>
-    <table><thead><tr><th></th><th>Producto</th><th>Rubro</th><th class="num">Precio</th>
-      <th id="thUlt">Última etiqueta</th></tr></thead><tbody id="t-buscar"></tbody></table>
-  </div>
-
-  <!-- para imprimir (sirve para las tres secciones) -->
-  <div class="caja" id="v-cola" hidden>
-    <div class="fila-ctl">
-      <button type="button" class="btn prim" id="imprimir">Imprimir</button>
-      <button type="button" class="btn" id="vaciar">Vaciar la lista</button>
-      <label><input type="checkbox" id="porKilo" checked> Poner «por kilo» en los productos a granel</label>
-      <label><input type="checkbox" id="peso" checked> Poner el tamaño en los envasados (gramos, cc)</label>
-    </div>
-    <div class="fila-ctl presets">
-      <label>Listas guardadas: <select id="presetSel"></select></label>
-      <button type="button" class="btn" id="presetCargar">Cargar</button>
-      <button type="button" class="btn" id="presetBorrar">Borrar</button>
-      <button type="button" class="btn" id="presetGuardar">Guardar esta lista con un nombre…</button>
-      <button type="button" class="btn" id="ultimaCargar" hidden></button>
-    </div>
-    <div class="fila-ctl" id="ctlLista" hidden>
-      <label>Título: <input type="text" id="liTitulo" placeholder="Lista de precios"></label>
-      <label>Columnas: <select id="liCols"><option value="1">1</option><option value="2" selected>2</option></select></label>
-      <label><input type="checkbox" id="liOrden" checked> Ordenar alfabéticamente</label>
-    </div>
-    <table><thead id="hCola"></thead><tbody id="t-cola"></tbody></table>
-    <p class="nota" id="notaCola"></p>
-    <div class="vista-tit">Así va a salir</div>
-  </div>
-
-  <div class="aviso" id="avisoImp" hidden>
-    <span>¿Salieron bien? Si confirmás, quedan anotadas con su precio y no vuelven a aparecer como
-      cambiadas hasta que el precio cambie otra vez.</span>
-    <button type="button" class="btn prim" id="anotar">Sí, anotarlas</button>
-    <button type="button" class="btn" id="noAnotar">No, todavía no</button>
+    <!-- derecha: opciones, vista previa e imprimir -->
+    <section class="der">
+      <div class="opc">
+        <div class="grupo">Guardadas: <select id="presetSel"></select>
+          <button type="button" class="btn" id="presetCargar">Cargar</button>
+          <button type="button" class="btn" id="presetGuardar">Guardar…</button>
+          <button type="button" class="btn" id="presetBorrar">Borrar</button></div>
+        <button type="button" class="btn" id="ultimaCargar" hidden></button>
+        <label class="grupo"><input type="checkbox" id="porKilo" checked> «por kilo» en granel</label>
+        <label class="grupo"><input type="checkbox" id="peso" checked> tamaño en envasados</label>
+        <label class="grupo" id="ctlPct">Descuento general <input type="number" class="pct" id="pctGlobal" min="1" max="90" step="1"> %</label>
+        <span class="grupo" id="ctlLista">
+          <input type="text" id="liTitulo" placeholder="Título de la lista">
+          <select id="liCols" title="Columnas"><option value="1">1 columna</option><option value="2" selected>2 columnas</option></select>
+          <label class="grupo"><input type="checkbox" id="liOrden" checked> A-Z</label>
+        </span>
+      </div>
+      <div class="vista" id="vista"><div class="hojas" id="hojas"></div></div>
+      <div class="pie">
+        <div class="res" id="resumen"></div>
+        <button type="button" class="btn" id="vaciar">Vaciar</button>
+        <button type="button" class="btn prim grande" id="imprimir">Imprimir</button>
+      </div>
+    </section>
   </div>
 </div>
 
-<div class="hojas" id="hojas"></div>
+<dialog id="dlgEditar">
+  <h3 id="edTit">Etiqueta</h3>
+  <p id="edInfo" style="color:var(--tenue)"></p>
+  <label for="edNom">Nombre en la etiqueta</label>
+  <input type="text" id="edNom">
+  <div id="edPctCaja"><label for="edPct">Descuento de este producto (%)</label>
+    <input type="number" id="edPct" min="1" max="90" step="1"></div>
+  <div class="bots">
+    <button type="button" class="btn izq-b" id="edSacar">Sacar de la hoja</button>
+    <button type="button" class="btn" id="edCancelar">Cancelar</button>
+    <button type="button" class="btn prim" id="edGuardar">Guardar</button>
+  </div>
+</dialog>
+<dialog id="dlgImpreso">
+  <h3>¿Salieron bien?</h3>
+  <p>Si confirmás, quedan anotadas con su precio y no vuelven a aparecer en «Cambiaron» hasta que el precio
+    cambie otra vez.</p>
+  <div class="bots">
+    <button type="button" class="btn" id="noAnotar">No, todavía no</button>
+    <button type="button" class="btn prim" id="anotar">Sí, anotarlas</button>
+  </div>
+</dialog>
 
 <script>
 const ES_OFICIAL = location.hostname === 'paladear.com.ar' ||
@@ -221,46 +241,36 @@ const fecha = iso => iso ? new Date(iso).toLocaleDateString('es-AR', {day: '2-di
 const esKg = nom => /X\s*KG|XKG|X\s*KILO|X\s*1\s*KG/i.test(nom);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 
-let PRODS = [], PORCOD = {};
-let CAMBIOS = {}, FICHAS = {};
+let PRODS = [], PORCOD = {}, CAMBIOS = {}, FICHAS = {};
 // presets: {seccion: {nombre: {cods, titulo, cols, f}}}; ultimas: {seccion: {cods, titulo, cols, f}}
 let ESTADO = {base: null, impresas: {}, nombres: {}, ofertaGlobal: 15, ofertaPct: {}, ofertasImpresas: {},
               presets: {}, ultimas: {}};
 let SHA = null;
-let SEC = 'et', VISTA = 'cambios';
-const VISTAS = {
-  et: [['cambios', 'Cambiaron'], ['buscar', 'Buscar'], ['cola', 'Para imprimir']],
-  of: [['lista', 'En oferta'], ['buscar', 'Buscar'], ['cola', 'Para imprimir']],
-  li: [['buscar', 'Buscar'], ['cola', 'Para imprimir']]
-};
-const marcados = {'et-cambios': new Set(), 'of-lista': new Set()};
+let SEC = 'et';
+const FUENTES = {et: [['cambios', 'Cambiaron'], ['todos', 'Todos']], of: [['ofertas', 'En oferta'], ['todos', 'Todos']],
+                 li: [['todos', 'Todos'], ['ofertas', 'En oferta']]};
+let FUENTE = {et: 'cambios', of: 'ofertas', li: 'todos'};
 let COLA = {et: [], of: [], li: []};
 try { COLA = Object.assign(COLA, JSON.parse(localStorage.getItem('etiquetas_colas') || '{}')); } catch (e) {}
-try { const vieja = JSON.parse(localStorage.getItem('etiquetas_cola') || 'null'); if (vieja && !COLA.et.length) COLA.et = vieja; } catch (e) {}
 const guardarColas = () => { try { localStorage.setItem('etiquetas_colas', JSON.stringify(COLA)); } catch (e) {} };
 try { $('liTitulo').value = localStorage.getItem('etiquetas_li_titulo') || ''; } catch (e) {}
+const SEC_NOMBRE = {et: 'etiquetas', of: 'ofertas', li: 'lista'};
 
-function avisar(txt, mal) { const e = $('estado'); e.textContent = txt; e.className = 'estado' + (mal ? ' mal' : ''); }
+function avisar(txt, mal) { const e = $('estado'); e.textContent = txt; e.title = txt; e.className = 'estado' + (mal ? ' mal' : ''); }
 
-// ── nombres
+// ── nombres y tamaños
 const CHICAS = new Set(['de', 'del', 'con', 'sin', 'y', 'en', 'la', 'el', 'a', 'al', 'x']);
 function prolijo(n) {
   n = n.replace(/\s+X\s*\d*\s*(KG|KILO)S?\.?\s*$/i, '').replace(/\s+XKG\.?$/i, '').replace(/\.+\s*$/, '')
        .replace(/"+/g, '').replace(/\s+/g, ' ').trim();
-  return n.toLowerCase().split(' ').map((w, i) => (i && CHICAS.has(w)) ? w
-    : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return n.toLowerCase().split(' ').map((w, i) => (i && CHICAS.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 const nombreAuto = p => (FICHAS[p.cod] && FICHAS[p.cod].nombre) || prolijo(p.nom);
 const nombreDe = p => ESTADO.nombres[p.cod] || nombreAuto(p);
-
-// ── tamaño de los envasados: el "envase" del panel; si no esta, el del nombre de E-Pyme
 function unidadLinda(u) {
   u = u.toLowerCase();
-  if (/^k/.test(u)) return 'kg';
-  if (/^g/.test(u)) return 'g';
-  if (u === 'cc') return 'cc';
-  if (u === 'ml') return 'ml';
-  return 'L';
+  if (/^k/.test(u)) return 'kg'; if (/^g/.test(u)) return 'g';
+  if (u === 'cc') return 'cc'; if (u === 'ml') return 'ml'; return 'L';
 }
 function presentacion(p) {
   const f = FICHAS[p.cod] || {};
@@ -270,18 +280,11 @@ function presentacion(p) {
             p.nom.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*' + U + '\\.?\\s*$', 'i'));
   return m ? m[1].replace('.', ',') + ' ' + unidadLinda(m[2]) : '';
 }
-// Renglon de abajo de la etiqueta: "por kilo" en granel, el tamaño en los envasados.
 function uniDe(p) {
   if (esKg(p.nom)) return $('porKilo').checked ? 'POR KILO' : '';
   return $('peso').checked ? presentacion(p) : '';
 }
-
-// En las tablas de la pantalla el tamaño va al lado del nombre, para distinguir
-// presentaciones que se llaman igual (miel de 250 g, de 500 g y por kilo).
-function tamTxt(p) {
-  const t = esKg(p.nom) ? 'por kilo' : presentacion(p);
-  return t ? ' <small class="tam">' + esc(t) + '</small>' : '';
-}
+const tamTxt = p => { const t = esKg(p.nom) ? 'por kilo' : presentacion(p); return t ? ' <small class="tam">' + esc(t) + '</small>' : ''; };
 
 // ── ofertas
 const enOfertaPanel = cod => !!(FICHAS[cod] && FICHAS[cod].oferta > 0);
@@ -317,16 +320,12 @@ async function leerEstado() {
   if (!TOKEN) { try { const l = JSON.parse(localStorage.getItem('etiquetas_estado') || 'null'); if (l) ESTADO = Object.assign(ESTADO, l); } catch (e) {} }
 }
 let guardando = Promise.resolve();
-function guardarEstado(msg) {
-  guardando = guardando.catch(() => {}).then(() => _guardar(msg));
-  return guardando;
-}
+function guardarEstado(msg) { guardando = guardando.catch(() => {}).then(() => _guardar(msg)); return guardando; }
 async function _guardar(msg) {
   const texto = JSON.stringify(ESTADO, null, 1);
   try { localStorage.setItem('etiquetas_estado', texto); } catch (e) {}
   if (!TOKEN) {
-    avisar('Guardado solo en esta compu. Para que quede en todas, abrí esta página desde el botón del panel, ' +
-           'en la compu donde entrás al panel con tu clave.', true);
+    avisar('Guardado solo en esta compu. Para que quede en todas, abrí esta página desde el botón del panel.', true);
     return;
   }
   const subir = async () => {
@@ -359,65 +358,20 @@ async function cargar() {
     CAMBIOS = panel.cambiosPrecio || {};
     FICHAS = panel.fichas || {};
   } catch (e) { avisar('No pude leer los precios: ' + e.message, true); return; }
-
+  ESTADO.presets = ESTADO.presets || {}; ESTADO.ultimas = ESTADO.ultimas || {};
   const d = ESTADO.base ? new Date(ESTADO.base) : new Date(Date.now() - 7 * 864e5);
   $('desde').value = d.toISOString().slice(0, 10);
   $('pctGlobal').value = ESTADO.ofertaGlobal || 15;
   [...new Set(PRODS.map(p => p.rubro))].sort()
     .forEach(r => $('rubro').append(new Option(r.charAt(0) + r.slice(1).toLowerCase(), r)));
-  Object.keys(COLA).forEach(k => { COLA[k] = COLA[k].filter(c => PORCOD[c]); });
-  const n = Object.keys(ESTADO.impresas).length;
-  avisar(PRODS.length + ' productos con precio, ' + PRODS.filter(p => enOfertaPanel(p.cod)).length +
-    ' en oferta. ' + (n ? n + ' etiquetas anotadas.' : 'Todavía no anotaste ninguna etiqueta desde esta página.') +
-    (TOKEN ? '' : ' (Sin la clave del panel en esta compu: lo que anotes queda solo acá.)'));
+  Object.keys(COLA).forEach(k => { COLA[k] = (COLA[k] || []).filter(c => PORCOD[c]); });
+  avisar(PRODS.length + ' productos · ' + PRODS.filter(p => enOfertaPanel(p.cod)).length + ' en oferta · ' +
+    Object.keys(ESTADO.impresas).length + ' etiquetas anotadas' +
+    (TOKEN ? '' : ' · sin la clave del panel: lo que anotes queda solo en esta compu'));
   pintarTodo();
 }
 
-// ── navegacion
-function pintarTodo() {
-  document.querySelectorAll('#secciones button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.sec === SEC)));
-  const v = $('vistas'); v.textContent = '';
-  VISTAS[SEC].forEach(([id, et]) => {
-    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-selected', String(id === VISTA));
-    let n = '';
-    if (id === 'cola') n = ' (' + COLA[SEC].length + ')';
-    if (id === 'cambios') n = ' (' + listaCambios().length + ')';
-    if (id === 'lista') n = ' (' + listaOfertas().length + ')';
-    b.textContent = et + n;
-    b.addEventListener('click', () => { VISTA = id; pintarTodo(); });
-    v.append(b);
-  });
-  $('v-et-cambios').hidden = !(SEC === 'et' && VISTA === 'cambios');
-  $('v-of-lista').hidden = !(SEC === 'of' && VISTA === 'lista');
-  $('v-buscar').hidden = VISTA !== 'buscar';
-  $('v-cola').hidden = VISTA !== 'cola';
-  $('avisoImp').hidden = true;
-  if (SEC === 'et' && VISTA === 'cambios') pintarCambios();
-  if (SEC === 'of' && VISTA === 'lista') pintarOfertas();
-  if (VISTA === 'buscar') pintarBuscar();
-  if (VISTA === 'cola') pintarCola();
-  pintarHojas();
-}
-document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('click', () => {
-  SEC = b.dataset.sec; VISTA = VISTAS[SEC][0][0]; pintarTodo();
-}));
-
-function agregar(sec, cods) { cods.forEach(c => { if (!COLA[sec].includes(c)) COLA[sec].push(c); }); guardarColas(); }
-function filaMarcable(grupo, cod) {
-  const ch = document.createElement('input'); ch.type = 'checkbox'; ch.checked = marcados[grupo].has(cod);
-  ch.addEventListener('change', () => { ch.checked ? marcados[grupo].add(cod) : marcados[grupo].delete(cod); });
-  const td = document.createElement('td'); td.append(ch); return td;
-}
-document.querySelectorAll('[data-marcar]').forEach(b => b.addEventListener('click', () => {
-  const g = b.dataset.marcar; (g === 'et-cambios' ? listaCambios().map(c => c.p.cod) : listaOfertas().map(p => p.cod))
-    .forEach(c => marcados[g].add(c)); pintarTodo();
-}));
-document.querySelectorAll('[data-desmarcar]').forEach(b => b.addEventListener('click', () => { marcados[b.dataset.desmarcar].clear(); pintarTodo(); }));
-document.querySelectorAll('[data-sumar]').forEach(b => b.addEventListener('click', () => {
-  const g = b.dataset.sumar; agregar(SEC, [...marcados[g]]); marcados[g].clear(); VISTA = 'cola'; pintarTodo();
-}));
-
-// ── etiquetas: cambiaron
+// ── listas de la izquierda
 function listaCambios() {
   const desde = new Date(($('desde').value || '2000-01-01') + 'T00:00:00');
   const out = [];
@@ -428,202 +382,101 @@ function listaCambios() {
   });
   return out.sort((a, b) => String(b.cuando || '').localeCompare(String(a.cuando || '')));
 }
-function pintarCambios() {
-  const l = listaCambios(), tb = $('t-et-cambios'); tb.textContent = '';
-  if (!l.length) { tb.innerHTML = '<tr><td colspan="6" class="vacio">No hay precios nuevos para imprimir.</td></tr>'; return; }
-  l.forEach(c => {
-    const tr = document.createElement('tr'); tr.append(filaMarcable('et-cambios', c.p.cod));
-    const dif = c.antes ? (c.p.p > c.antes ? '<span class="chip sube">sube</span>' : '<span class="chip baja">baja</span>') : '<span class="chip">nuevo</span>';
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(c.p)) + tamTxt(c.p) + '</td><td>' + esc(c.p.rubro.toLowerCase()) +
-      '</td><td class="num">' + (c.antes ? '$' + pl(c.antes) : '—') + (c.imp ? ' <small class="gris">(' + fecha(c.imp) + ')</small>' : '') +
-      '</td><td class="num"><b>$' + pl(c.p.p) + '</b></td><td>' + dif + ' ' + fecha(c.cuando) + '</td>');
-    tb.append(tr);
-  });
-}
-$('desde').addEventListener('change', pintarTodo);
-
-// ── ofertas: en oferta
 const listaOfertas = () => PRODS.filter(p => enOfertaPanel(p.cod));
-function inputPct(cod) {
-  const i = document.createElement('input'); i.type = 'number'; i.className = 'pct'; i.min = 1; i.max = 90; i.step = 1;
-  i.value = pctDe(cod); i.title = 'Descuento de este producto';
-  i.addEventListener('change', () => {
-    const v = Math.round(Number(i.value));
-    if (!(v > 0 && v < 91)) { i.value = pctDe(cod); return; }
-    if (v === (ESTADO.ofertaGlobal || 15)) delete ESTADO.ofertaPct[cod]; else ESTADO.ofertaPct[cod] = v;
-    guardarEstado('Etiquetas: descuento de ' + cod).catch(e => avisar('No pude guardar el descuento: ' + e.message, true));
-    pintarTodo();
-  });
-  return i;
-}
-function pintarOfertas() {
-  const l = listaOfertas(), tb = $('t-of-lista'); tb.textContent = '';
-  if (!l.length) { tb.innerHTML = '<tr><td colspan="6" class="vacio">No hay productos con oferta en el panel.</td></tr>'; return; }
-  l.forEach(p => {
-    const tr = document.createElement('tr'); tr.append(filaMarcable('of-lista', p.cod));
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + tamTxt(p) + '</td><td class="num">$' + pl(p.p) + '</td>');
-    const td = document.createElement('td'); td.className = 'num'; td.append(inputPct(p.cod), ' %'); tr.append(td);
-    const imp = ESTADO.ofertasImpresas[p.cod];
-    tr.insertAdjacentHTML('beforeend', '<td class="num"><b>$' + pl(precioOferta(p)) + '</b></td><td>' +
-      (imp ? '$' + pl(imp.o) + ' el ' + fecha(imp.f) + (imp.o !== precioOferta(p) ? ' <span class="chip sube">cambió</span>' : '') : '—') + '</td>');
-    tb.append(tr);
-  });
-}
-$('pctGlobal').addEventListener('change', () => {
-  const v = Math.round(Number($('pctGlobal').value));
-  if (!(v > 0 && v < 91)) { $('pctGlobal').value = ESTADO.ofertaGlobal; return; }
-  ESTADO.ofertaGlobal = v;
-  Object.keys(ESTADO.ofertaPct).forEach(c => { if (ESTADO.ofertaPct[c] === v) delete ESTADO.ofertaPct[c]; });
-  guardarEstado('Etiquetas: descuento general ' + v + '%').catch(e => avisar('No pude guardar el descuento: ' + e.message, true));
-  pintarTodo();
-});
-
-// ── buscar
-function resultados() {
+function filasIzq() {
   const q = $('q').value.trim().toLowerCase(), r = $('rubro').value;
-  if (!q && !r) return [];
-  return PRODS.filter(p => (!r || p.rubro === r) && (!q || p.cod === q || (p.nom + ' ' + nombreDe(p)).toLowerCase().includes(q)));
+  const pasa = p => (!r || p.rubro === r) && (!q || p.cod === q || (p.nom + ' ' + nombreDe(p)).toLowerCase().includes(q));
+  const f = FUENTE[SEC];
+  if (f === 'cambios') return listaCambios().filter(c => pasa(c.p));
+  const base = f === 'ofertas' ? listaOfertas() : PRODS.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
+  return base.filter(pasa).map(p => ({p}));
 }
-function pintarBuscar() {
-  const tb = $('t-buscar'); tb.textContent = '';
-  $('thUlt').textContent = SEC === 'li' ? '' : 'Última etiqueta';
-  const l = resultados();
-  $('sumarTodos').disabled = !l.length;
-  if (!$('q').value.trim() && !$('rubro').value) { tb.innerHTML = '<tr><td colspan="5" class="vacio">Escribí un nombre o elegí un rubro.</td></tr>'; return; }
-  if (!l.length) { tb.innerHTML = '<tr><td colspan="5" class="vacio">No encontré nada.</td></tr>'; return; }
-  l.slice(0, 200).forEach(p => {
-    const tr = document.createElement('tr'), td = document.createElement('td');
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn';
-    const ya = COLA[SEC].includes(p.cod); b.textContent = ya ? 'En la lista' : 'Agregar'; b.disabled = ya;
-    b.addEventListener('click', () => { agregar(SEC, [p.cod]); pintarTodo(); });
-    td.append(b); tr.append(td);
-    const imp = SEC === 'of' ? ESTADO.ofertasImpresas[p.cod] : ESTADO.impresas[p.cod];
-    const precio = SEC === 'of' ? '<span class="tachado">$' + pl(p.p) + '</span> <b>$' + pl(precioOferta(p)) + '</b>'
-      : '<b>$' + pl(p.p) + '</b>' + (enOfertaPanel(p.cod) ? ' <span class="chip">oferta</span>' : '');
-    tr.insertAdjacentHTML('beforeend', '<td>' + esc(nombreDe(p)) + tamTxt(p) + ' <small class="gris">' + p.cod +
-      '</small></td><td>' + esc(p.rubro.toLowerCase()) + '</td><td class="num">' + precio + '</td><td>' +
-      (SEC === 'li' ? '' : imp ? '$' + pl(SEC === 'of' ? imp.o : imp.p) + ' el ' + fecha(imp.f) : '—') + '</td>');
-    tb.append(tr);
+function pintarIzq() {
+  const fu = $('fuentes'); fu.textContent = '';
+  FUENTES[SEC].forEach(([id, et]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(FUENTE[SEC] === id));
+    b.textContent = et + (id === 'cambios' ? ' (' + listaCambios().length + ')' : id === 'ofertas' ? ' (' + listaOfertas().length + ')' : '');
+    b.addEventListener('click', () => { FUENTE[SEC] = id; pintarTodo(); });
+    fu.append(b);
   });
-}
-$('q').addEventListener('input', pintarBuscar);
-$('rubro').addEventListener('change', pintarBuscar);
-$('sumarTodos').addEventListener('click', () => { agregar(SEC, resultados().map(p => p.cod)); pintarTodo(); });
-
-// ── para imprimir
-function nombreEditable(p) {
-  const ed = document.createElement('span'); ed.className = 'cola-nom'; ed.contentEditable = 'true'; ed.textContent = nombreDe(p);
-  ed.addEventListener('blur', () => {
-    const t = ed.textContent.replace(/\s+/g, ' ').trim();
-    if (!t || t === nombreDe(p)) return;
-    if (t === nombreAuto(p)) delete ESTADO.nombres[p.cod]; else ESTADO.nombres[p.cod] = t;
-    guardarEstado('Etiquetas: nombre de ' + p.cod).catch(e => avisar('No pude guardar el nombre: ' + e.message, true));
-    pintarHojas();
-  });
-  ed.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ed.blur(); } });
-  return ed;
-}
-function pintarCola() {
-  const cola = COLA[SEC], tb = $('t-cola'); tb.textContent = '';
-  $('ctlLista').hidden = SEC !== 'li';
-  $('hCola').innerHTML = '<tr><th>Producto <span class="chip">tocá el nombre para cambiarlo</span></th>' +
-    (SEC === 'of' ? '<th class="num">Precio</th><th class="num">Descuento</th><th class="num">Oferta</th>' : '<th class="num">Precio</th>') + '<th></th></tr>';
-  $('notaCola').textContent = SEC === 'et' ? 'Cada hoja A4 lleva 36 etiquetas de 5 × 3 cm (4 × 9). Imprimí al 100 %, sin «ajustar a la página».'
-    : SEC === 'of' ? 'Cada hoja A4 lleva 36 etiquetas de oferta de 5 × 3 cm. El precio de oferta es el de lista con el descuento, redondeado igual que en la página web.'
-    : 'Los productos en oferta en el panel salen con «antes $…» y el precio de oferta. Imprimí al 100 %.';
-  if (!cola.length) tb.innerHTML = '<tr><td colspan="5" class="vacio">La lista está vacía. Agregá productos desde las otras pestañas.</td></tr>';
-  cola.forEach(cod => {
-    const p = PORCOD[cod]; if (!p) return;
-    const tr = document.createElement('tr'), td = document.createElement('td'); td.append(nombreEditable(p));
-    td.insertAdjacentHTML('beforeend', tamTxt(p)); tr.append(td);
-    if (SEC === 'of') {
-      tr.insertAdjacentHTML('beforeend', '<td class="num">$' + pl(p.p) + '</td>');
-      const tp = document.createElement('td'); tp.className = 'num'; tp.append(inputPct(cod), ' %'); tr.append(tp);
-      tr.insertAdjacentHTML('beforeend', '<td class="num"><b>$' + pl(precioOferta(p)) + '</b></td>');
-    } else tr.insertAdjacentHTML('beforeend', '<td class="num"><b>$' + pl(p.p) + '</b></td>');
-    const tq = document.createElement('td'), bq = document.createElement('button');
-    bq.type = 'button'; bq.className = 'btn'; bq.textContent = 'Sacar';
-    bq.addEventListener('click', () => { COLA[SEC] = COLA[SEC].filter(c => c !== cod); guardarColas(); pintarTodo(); });
-    tq.append(bq); tr.append(tq); tb.append(tr);
-  });
-  $('imprimir').disabled = !cola.length;
-  pintarPresets();
-}
-
-// ── listas guardadas y la ultima impresa
-const SEC_NOMBRE = {et: 'etiquetas', of: 'ofertas', li: 'lista'};
-function fotoDeLista() {
-  return {cods: COLA[SEC].slice(), titulo: $('liTitulo').value.trim(), cols: $('liCols').value, f: hoyISO()};
-}
-function aplicarLista(l) {
-  COLA[SEC] = (l.cods || []).filter(c => PORCOD[c]);
-  if (SEC === 'li') {
-    $('liTitulo').value = l.titulo || '';
-    if (l.cols) $('liCols').value = l.cols;
-    try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {}
+  $('filaDesde').hidden = FUENTE[SEC] !== 'cambios';
+  const filas = filasIzq(), caja = $('lista'), cola = new Set(COLA[SEC]);
+  caja.textContent = '';
+  $('cuenta').textContent = filas.length + ' productos · ' + filas.filter(x => cola.has(x.p.cod)).length + ' marcados';
+  if (!filas.length) {
+    caja.innerHTML = '<div class="vacio">' + (FUENTE[SEC] === 'cambios' ? 'No hay precios nuevos para imprimir.' : 'No encontré nada.') + '</div>';
+    return;
   }
-  guardarColas(); pintarTodo();
+  const frag = document.createDocumentFragment();
+  filas.slice(0, 700).forEach(c => {
+    const p = c.p, en = cola.has(p.cod);
+    const d = document.createElement('div'); d.className = 'prod' + (en ? ' en' : '');
+    const ch = document.createElement('input'); ch.type = 'checkbox'; ch.checked = en; ch.tabIndex = -1;
+    let det = esc(p.rubro.toLowerCase()) + ' · ' + p.cod;
+    if (c.cuando !== undefined || c.antes !== undefined) {
+      const dif = c.antes ? (p.p > c.antes ? '<span class="chip sube">sube</span>' : '<span class="chip baja">baja</span>') : '<span class="chip">nuevo</span>';
+      det = dif + ' ' + (c.antes ? 'antes $' + pl(c.antes) + ' · ' : '') + fecha(c.cuando) + (c.imp ? ' · impresa ' + fecha(c.imp) : '');
+    } else if (SEC === 'of') det = 'antes $' + pl(p.p) + ' · ' + pctDe(p.cod) + '% · ' + det;
+    else if (enOfertaPanel(p.cod)) det = '<span class="chip">oferta</span> ' + det;
+    const precio = SEC === 'of' ? precioOferta(p) : p.p;
+    d.innerHTML = '<span></span><span class="n">' + esc(nombreDe(p)) + tamTxt(p) + '</span><span class="pr">$' + pl(precio) +
+      '</span><span class="d">' + det + '</span>';
+    d.firstChild.replaceWith(ch);
+    d.addEventListener('click', () => {
+      if (cola.has(p.cod)) COLA[SEC] = COLA[SEC].filter(x => x !== p.cod); else COLA[SEC].push(p.cod);
+      guardarColas(); pintarTodo(true);
+    });
+    frag.append(d);
+  });
+  caja.append(frag);
 }
-function pintarPresets() {
-  const ps = (ESTADO.presets || {})[SEC] || {}, sel = $('presetSel'), antes = sel.value;
-  sel.textContent = '';
-  const nombres = Object.keys(ps).sort((a, b) => a.localeCompare(b, 'es'));
-  if (!nombres.length) sel.append(new Option('(ninguna todavía)', ''));
-  nombres.forEach(n => sel.append(new Option(n + ' (' + ps[n].cods.length + ')', n)));
-  if (antes && ps[antes]) sel.value = antes;
-  $('presetCargar').disabled = $('presetBorrar').disabled = !nombres.length;
-  $('presetGuardar').disabled = !COLA[SEC].length;
-  const u = (ESTADO.ultimas || {})[SEC];
-  $('ultimaCargar').hidden = !(u && u.cods && u.cods.length);
-  if (u) $('ultimaCargar').textContent = 'Volver a cargar la última impresa (' + fecha(u.f) +
-    (u.titulo ? ', ' + u.titulo : '') + ', ' + u.cods.length + ')';
-}
-$('presetGuardar').addEventListener('click', () => {
-  const sug = SEC === 'li' ? $('liTitulo').value.trim() : '';
-  const n = (prompt('¿Con qué nombre guardo esta lista de ' + SEC_NOMBRE[SEC] + '?\n' +
-                    'Por ejemplo: Estantería productos de higiene personal', sug) || '').trim();
-  if (!n) return;
-  ESTADO.presets = ESTADO.presets || {};
-  ESTADO.presets[SEC] = ESTADO.presets[SEC] || {};
-  if (ESTADO.presets[SEC][n] && !confirm('Ya hay una lista guardada como «' + n + '». ¿La reemplazo?')) return;
-  ESTADO.presets[SEC][n] = fotoDeLista();
-  guardarEstado('Etiquetas: lista guardada «' + n + '»')
-    .then(() => avisar('Lista «' + n + '» guardada.'))
-    .catch(e => avisar('No pude guardar la lista: ' + e.message, true));
-  pintarPresets(); $('presetSel').value = n;
+$('marcarTodos').addEventListener('click', () => {
+  filasIzq().forEach(c => { if (!COLA[SEC].includes(c.p.cod)) COLA[SEC].push(c.p.cod); }); guardarColas(); pintarTodo(true);
 });
-$('presetCargar').addEventListener('click', () => {
-  const n = $('presetSel').value, l = ((ESTADO.presets || {})[SEC] || {})[n];
-  if (!l) return;
-  if (COLA[SEC].length && !confirm('Se reemplaza lo que tenés para imprimir por la lista «' + n + '». ¿Sigo?')) return;
-  aplicarLista(l); $('presetSel').value = n;
+$('desmarcarTodos').addEventListener('click', () => {
+  const fuera = new Set(filasIzq().map(c => c.p.cod)); COLA[SEC] = COLA[SEC].filter(c => !fuera.has(c)); guardarColas(); pintarTodo(true);
 });
-$('presetBorrar').addEventListener('click', () => {
-  const n = $('presetSel').value;
-  if (!n || !confirm('¿Borro la lista guardada «' + n + '»? Los productos no se tocan.')) return;
-  delete ESTADO.presets[SEC][n];
-  guardarEstado('Etiquetas: lista borrada «' + n + '»').catch(e => avisar('No pude borrar la lista: ' + e.message, true));
-  pintarPresets();
-});
-$('ultimaCargar').addEventListener('click', () => {
-  const u = (ESTADO.ultimas || {})[SEC]; if (!u) return;
-  if (COLA[SEC].length && !confirm('Se reemplaza lo que tenés para imprimir por la última impresa. ¿Sigo?')) return;
-  aplicarLista(u);
-});
+$('q').addEventListener('input', () => pintarIzq());
+$('rubro').addEventListener('change', () => pintarIzq());
+$('desde').addEventListener('change', () => pintarTodo(true));
 
+// ── todo
+function pintarTodo(conservarScroll) {
+  const sc = $('lista').scrollTop;
+  document.querySelectorAll('#secciones button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.sec === SEC)));
+  $('ctlPct').hidden = SEC !== 'of';
+  $('ctlLista').hidden = SEC !== 'li';
+  pintarIzq();
+  if (conservarScroll) $('lista').scrollTop = sc;
+  pintarPresets();
+  pintarHojas();
+}
+// Al cambiar de seccion la busqueda arranca limpia: si no, el rubro elegido en
+// una lista dejaba vacia la de cambios de la otra.
+document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('click', () => {
+  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; }
+  SEC = b.dataset.sec; pintarTodo();
+}));
+
+// ── vista previa
 function pintarHojas() {
   const caja = $('hojas'); caja.textContent = '';
-  caja.style.display = VISTA === 'cola' ? '' : 'none';
-  if (VISTA !== 'cola') return;
   const items = COLA[SEC].map(c => PORCOD[c]).filter(Boolean);
-  if (SEC === 'li') return pintarListas(items);
-  for (let i = 0; i < items.length; i += 36) {
+  const porHoja = SEC === 'li' ? 32 * (Number($('liCols').value) || 1) : 36;
+  const hojas = Math.ceil(items.length / porHoja);
+  $('resumen').innerHTML = items.length
+    ? '<b>' + items.length + (SEC === 'li' ? ' productos' : SEC === 'of' ? ' ofertas' : ' etiquetas') + '</b> · ' +
+      hojas + (hojas === 1 ? ' hoja' : ' hojas') + ' A4 vertical · tocá una ' + (SEC === 'li' ? 'línea' : 'etiqueta') + ' para corregirla'
+    : 'Marcá productos a la izquierda para armar la hoja.';
+  $('imprimir').disabled = $('vaciar').disabled = !items.length;
+  if (!items.length) { caja.innerHTML = '<div class="sin-hojas">La hoja está vacía.</div>'; ajustarZoom(); return; }
+  if (SEC === 'li') pintarListas(items);
+  else for (let i = 0; i < items.length; i += 36) {
     const hoja = document.createElement('div'); hoja.className = 'hoja et-hoja';
     items.slice(i, i + 36).forEach(p => {
       const et = document.createElement('div');
       if (SEC === 'of') {
         et.className = 'et of';
-        // El precio anterior va sin tachar: tachado se leia mal en la impresora.
         et.innerHTML = '<div class="et-nom"></div><div class="of-antes"><span>Antes <span class="of-ant"></span></span><span class="of-pct"></span></div>' +
           '<div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
         et.querySelector('.of-ant').textContent = '$' + pl(p.p);
@@ -631,16 +484,18 @@ function pintarHojas() {
         et.querySelector('.et-num').textContent = pl(precioOferta(p));
       } else {
         et.className = 'et';
-        et.innerHTML = '<div class="et-nom"></div><div class="et-precio"><span class="et-signo">$</span>' +
-          '<span class="et-num"></span></div><div class="et-uni"></div>';
+        et.innerHTML = '<div class="et-nom"></div><div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
         et.querySelector('.et-num').textContent = pl(p.p);
       }
       et.querySelector('.et-nom').textContent = nombreDe(p);
       et.querySelector('.et-uni').textContent = uniDe(p);
+      et.title = 'Tocá para corregir';
+      et.addEventListener('click', () => editar(p));
       hoja.append(et);
     });
     caja.append(hoja);
   }
+  ajustarZoom();
   ajustarPrecios();
 }
 function pintarListas(items) {
@@ -658,7 +513,7 @@ function pintarListas(items) {
     cuerpo.style.gridTemplateRows = 'repeat(' + porCol + ', 7.6mm)';
     cuerpo.style.gridAutoFlow = 'column';
     items.slice(i, i + porHoja).forEach(p => {
-      const f = document.createElement('div'); f.className = 'li-fila';
+      const f = document.createElement('div'); f.className = 'li-fila'; f.title = 'Tocá para corregir';
       const nom = document.createElement('span'); nom.className = 'li-nom'; nom.textContent = nombreDe(p);
       const tam = !esKg(p.nom) && $('peso').checked ? presentacion(p) : '';
       if (tam) { const t = document.createElement('small'); t.className = 'li-tam'; t.textContent = ' ' + tam; nom.append(t); }
@@ -666,36 +521,142 @@ function pintarListas(items) {
       const pre = document.createElement('span'); pre.className = 'li-pre';
       const u = (esKg(p.nom) && $('porKilo').checked) ? ' <small>kg</small>' : '';
       pre.innerHTML = enOfertaPanel(p.cod) ? '<span class="li-ant">antes $' + pl(p.p) + '</span>$' + pl(precioOferta(p)) + u : '$' + pl(p.p) + u;
-      f.append(nom, pun, pre); cuerpo.append(f);
+      f.append(nom, pun, pre);
+      f.addEventListener('click', () => editar(p));
+      cuerpo.append(f);
     });
     $('hojas').append(hoja);
   }
 }
+// La hoja se achica para que entre entera a lo ancho de la vista previa.
+function ajustarZoom() {
+  const anchoHoja = 210 * 96 / 25.4 + 4;
+  const disp = $('vista').clientWidth - 28;
+  $('hojas').style.setProperty('--zoom', Math.min(1, Math.max(.35, disp / anchoHoja)).toFixed(3));
+}
+window.addEventListener('resize', ajustarZoom);
 // El precio va lo mas grande posible sin pasarse del ancho de la etiqueta.
 async function ajustarPrecios() {
   try { await document.fonts.ready; } catch (e) {}
   document.querySelectorAll('.et').forEach(et => {
     const pr = et.querySelector('.et-precio'), n = et.querySelector('.et-num');
     let s = et.classList.contains('of') ? 28 : 32; n.style.fontSize = s + 'pt';
-    const max = et.clientWidth - 12;
+    const max = et.clientWidth * .93;
     while (pr.scrollWidth > max && s > 14) { s -= 1; n.style.fontSize = s + 'pt'; }
   });
 }
+
+// ── corregir una etiqueta (tocandola en la vista previa)
+let EDITANDO = null;
+function editar(p) {
+  EDITANDO = p;
+  $('edTit').textContent = nombreDe(p);
+  $('edInfo').innerHTML = esc(p.nom) + ' · código ' + p.cod + ' · $' + pl(p.p);
+  $('edNom').value = nombreDe(p);
+  $('edPctCaja').hidden = SEC !== 'of';
+  $('edPct').value = pctDe(p.cod);
+  $('dlgEditar').showModal(); $('edNom').select();
+}
+$('edCancelar').addEventListener('click', () => $('dlgEditar').close());
+$('edSacar').addEventListener('click', () => {
+  COLA[SEC] = COLA[SEC].filter(c => c !== EDITANDO.cod); guardarColas(); $('dlgEditar').close(); pintarTodo(true);
+});
+$('edGuardar').addEventListener('click', () => {
+  const p = EDITANDO, t = $('edNom').value.replace(/\s+/g, ' ').trim();
+  let cambio = false;
+  if (t && t !== nombreDe(p)) { if (t === nombreAuto(p)) delete ESTADO.nombres[p.cod]; else ESTADO.nombres[p.cod] = t; cambio = true; }
+  if (SEC === 'of') {
+    const v = Math.round(Number($('edPct').value));
+    if (v > 0 && v < 91 && v !== pctDe(p.cod)) {
+      if (v === (ESTADO.ofertaGlobal || 15)) delete ESTADO.ofertaPct[p.cod]; else ESTADO.ofertaPct[p.cod] = v; cambio = true;
+    }
+  }
+  $('dlgEditar').close();
+  if (cambio) {
+    guardarEstado('Etiquetas: cambios en ' + p.cod).catch(e => avisar('No pude guardar: ' + e.message, true));
+    pintarTodo(true);
+  }
+});
+$('edNom').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('edGuardar').click(); } });
+$('pctGlobal').addEventListener('change', () => {
+  const v = Math.round(Number($('pctGlobal').value));
+  if (!(v > 0 && v < 91)) { $('pctGlobal').value = ESTADO.ofertaGlobal; return; }
+  ESTADO.ofertaGlobal = v;
+  Object.keys(ESTADO.ofertaPct).forEach(c => { if (ESTADO.ofertaPct[c] === v) delete ESTADO.ofertaPct[c]; });
+  guardarEstado('Etiquetas: descuento general ' + v + '%').catch(e => avisar('No pude guardar el descuento: ' + e.message, true));
+  pintarTodo(true);
+});
+
+// ── listas guardadas y la ultima impresa
+function fotoDeLista() { return {cods: COLA[SEC].slice(), titulo: $('liTitulo').value.trim(), cols: $('liCols').value, f: hoyISO()}; }
+function aplicarLista(l) {
+  COLA[SEC] = (l.cods || []).filter(c => PORCOD[c]);
+  if (SEC === 'li') {
+    $('liTitulo').value = l.titulo || ''; if (l.cols) $('liCols').value = l.cols;
+    try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {}
+  }
+  guardarColas(); pintarTodo();
+}
+function pintarPresets() {
+  const ps = ESTADO.presets[SEC] || {}, sel = $('presetSel'), antes = sel.value;
+  sel.textContent = '';
+  const nombres = Object.keys(ps).sort((a, b) => a.localeCompare(b, 'es'));
+  if (!nombres.length) sel.append(new Option('(ninguna)', ''));
+  nombres.forEach(n => sel.append(new Option(n + ' (' + ps[n].cods.length + ')', n)));
+  if (antes && ps[antes]) sel.value = antes;
+  $('presetCargar').disabled = $('presetBorrar').disabled = !nombres.length;
+  $('presetGuardar').disabled = !COLA[SEC].length;
+  const u = ESTADO.ultimas[SEC];
+  $('ultimaCargar').hidden = !(u && u.cods && u.cods.length);
+  if (u) $('ultimaCargar').textContent = 'Última impresa (' + fecha(u.f) + (u.titulo ? ', ' + u.titulo : '') + ', ' + u.cods.length + ')';
+}
+$('presetGuardar').addEventListener('click', () => {
+  const n = (prompt('¿Con qué nombre guardo esta lista de ' + SEC_NOMBRE[SEC] + '?\nPor ejemplo: Estantería productos de higiene personal',
+                    SEC === 'li' ? $('liTitulo').value.trim() : '') || '').trim();
+  if (!n) return;
+  ESTADO.presets[SEC] = ESTADO.presets[SEC] || {};
+  if (ESTADO.presets[SEC][n] && !confirm('Ya hay una lista guardada como «' + n + '». ¿La reemplazo?')) return;
+  ESTADO.presets[SEC][n] = fotoDeLista();
+  guardarEstado('Etiquetas: lista guardada «' + n + '»').then(() => avisar('Lista «' + n + '» guardada.'))
+    .catch(e => avisar('No pude guardar la lista: ' + e.message, true));
+  pintarPresets(); $('presetSel').value = n;
+});
+$('presetCargar').addEventListener('click', () => {
+  const n = $('presetSel').value, l = (ESTADO.presets[SEC] || {})[n];
+  if (!l) return;
+  if (COLA[SEC].length && !confirm('Se reemplaza la hoja actual por la lista «' + n + '». ¿Sigo?')) return;
+  aplicarLista(l); $('presetSel').value = n;
+});
+$('presetBorrar').addEventListener('click', () => {
+  const n = $('presetSel').value;
+  if (!n || !confirm('¿Borro la lista guardada «' + n + '»? Los productos no se tocan.')) return;
+  delete ESTADO.presets[SEC][n];
+  guardarEstado('Etiquetas: lista borrada «' + n + '»').catch(e => avisar('No pude borrar la lista: ' + e.message, true));
+  pintarPresets();
+});
+$('ultimaCargar').addEventListener('click', () => {
+  const u = ESTADO.ultimas[SEC]; if (!u) return;
+  if (COLA[SEC].length && !confirm('Se reemplaza la hoja actual por la última impresa. ¿Sigo?')) return;
+  aplicarLista(u);
+});
+
+// ── opciones, imprimir y anotar
 ['porKilo', 'peso', 'liCols', 'liOrden'].forEach(id => $(id).addEventListener('change', pintarHojas));
 $('liTitulo').addEventListener('input', () => { try { localStorage.setItem('etiquetas_li_titulo', $('liTitulo').value); } catch (e) {} pintarHojas(); });
-$('vaciar').addEventListener('click', () => { COLA[SEC] = []; guardarColas(); pintarTodo(); });
+$('vaciar').addEventListener('click', () => {
+  if (!confirm('¿Saco todos los productos de la hoja?')) return;
+  COLA[SEC] = []; guardarColas(); pintarTodo(true);
+});
 $('imprimir').addEventListener('click', async () => {
-  pintarHojas(); await ajustarPrecios();
-  // se guarda lo que se imprime, para poder volver a cargarlo otro dia
-  ESTADO.ultimas = ESTADO.ultimas || {};
+  await ajustarPrecios();
   ESTADO.ultimas[SEC] = fotoDeLista();
   guardarEstado('Etiquetas: última ' + SEC_NOMBRE[SEC] + ' impresa (' + COLA[SEC].length + ')')
     .catch(e => avisar('No pude guardar la última impresa: ' + e.message, true));
   window.print();
   pintarPresets();
-  if (SEC !== 'li') $('avisoImp').hidden = false;
+  if (SEC !== 'li') $('dlgImpreso').showModal();
 });
-$('noAnotar').addEventListener('click', () => { $('avisoImp').hidden = true; });
+$('noAnotar').addEventListener('click', () => $('dlgImpreso').close());
 $('anotar').addEventListener('click', async () => {
   const ahora = hoyISO(), sec = SEC, cods = COLA[sec].slice();
   cods.forEach(cod => {
@@ -708,6 +669,7 @@ $('anotar').addEventListener('click', async () => {
   try {
     await guardarEstado((sec === 'et' ? 'Etiquetas' : 'Ofertas') + ' impresas (' + cods.length + ')');
     COLA[sec] = []; guardarColas();
+    $('dlgImpreso').close();
     avisar(cods.length + (sec === 'et' ? ' etiquetas' : ' ofertas') + ' anotadas.');
     pintarTodo();
   } catch (e) {
