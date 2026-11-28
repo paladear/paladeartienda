@@ -201,7 +201,8 @@ dialog p{margin:0 0 6px}
           <select id="liCols" title="Columnas"><option value="auto">Columnas: auto</option><option value="1">1 columna</option>
             <option value="2">2 columnas</option><option value="3">3 columnas</option></select>
           <select id="liLetra" title="Tamaño de letra"><option value="ch">Letra chica</option><option value="me" selected>Letra mediana</option>
-            <option value="gr">Letra grande</option></select>
+            <option value="gr">Letra grande</option><option value="mi">Letra muy chica</option>
+            <option value="auto">Que entre en 1 hoja</option></select>
           <label class="grupo"><input type="checkbox" id="liOrden" checked> A-Z</label>
         </span>
       </div>
@@ -279,8 +280,8 @@ const FORMATOS = [
   ['m10', 'Media hoja 10 × 28 cm', 100, 280], ['h19', 'Hoja entera 19 × 28 cm', 190, 280],
   ['f19', 'Franja ancha 19 × 9 cm', 190, 90], ['med', 'A medida…', 0, 0]];
 // col: ancho minimo de cada columna en modo automatico, para que el nombre entre entero
-const LETRAS = {ch: {n: 9, d: 6.8, fila: 8, col: 58}, me: {n: 11, d: 7.8, fila: 9.6, col: 78},
-                gr: {n: 13.5, d: 9, fila: 11.6, col: 98}};
+const LETRAS = {mi: {n: 8, d: 6, fila: 7, col: 52}, ch: {n: 9, d: 6.8, fila: 8, col: 58},
+                me: {n: 11, d: 7.8, fila: 9.6, col: 78}, gr: {n: 13.5, d: 9, fila: 11.6, col: 98}};
 FORMATOS.forEach(f => $('liFormato').append(new Option(f[1], f[0])));
 function leerFmtLista() {
   let o = {};
@@ -562,11 +563,21 @@ $('q').addEventListener('keydown', e => {
   }
 });
 
-$('rubro').addEventListener('change', () => pintarIzq());
+$('rubro').addEventListener('change', () => {
+  if ($('rubro').value && FUENTE[SEC] === 'inicio') { FUENTE[SEC] = 'todos'; pintarTodo(); } else pintarIzq();
+});
 $('desde').addEventListener('change', () => pintarTodo(true));
 
 // ── todo
+// La hoja de Ofertas siempre trae todos los productos con descuento del panel.
+// Los que se saquen a mano no vuelven a entrar mientras la pagina siga abierta.
+const OF_SACADOS = new Set();
+function completarOfertas() {
+  listaOfertas().forEach(p => { if (!COLA.of.includes(p.cod) && !OF_SACADOS.has(p.cod)) COLA.of.push(p.cod); });
+  guardarColas();
+}
 function pintarTodo(conservarScroll) {
+  if (SEC === 'of') completarOfertas();
   const sc = $('lista').scrollTop;
   document.querySelectorAll('#secciones button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.sec === SEC)));
   $('ctlPct').hidden = SEC !== 'of';
@@ -580,7 +591,11 @@ function pintarTodo(conservarScroll) {
 // Al cambiar de seccion la busqueda arranca limpia: si no, el rubro elegido en
 // una lista dejaba vacia la de cambios de la otra.
 document.querySelectorAll('#secciones button').forEach(b => b.addEventListener('click', () => {
-  if (SEC !== b.dataset.sec) { $('q').value = ''; $('rubro').value = ''; FOCO = null; FUENTE[b.dataset.sec] = FUENTE_INICIAL[b.dataset.sec]; }
+  if (SEC !== b.dataset.sec) {
+    $('q').value = ''; $('rubro').value = ''; FOCO = null; FUENTE[b.dataset.sec] = FUENTE_INICIAL[b.dataset.sec];
+    $('okBusca').className = 'ayuda-b';
+    $('okBusca').innerHTML = 'Escribí y salta al producto · <b>Enter</b> lo agrega a la hoja · <b>↑ ↓</b> para moverte';
+  }
   SEC = b.dataset.sec; pintarTodo();
 }));
 
@@ -603,7 +618,7 @@ function pintarHojas() {
     const hoja = document.createElement('div'); hoja.className = 'hoja et-hoja';
     items.slice(i, i + 36).forEach(p => {
       const et = document.createElement('div');
-      if (SEC === 'of') {
+      if (SEC === 'of' || enOfertaPanel(p.cod)) {
         et.className = 'et of';
         et.innerHTML = '<div class="et-nom"></div><div class="of-antes"><span>Antes <span class="of-ant"></span></span><span class="of-pct"></span></div>' +
           '<div class="et-precio"><span class="et-signo">$</span><span class="et-num"></span></div><div class="et-uni"></div>';
@@ -635,11 +650,17 @@ function pintarListas(items) {
   const base = FORMATOS.find(x => x[0] === f.formato) || FORMATOS[1];
   let w = base[2] || f.ancho * 10, h = base[3] || f.alto * 10;
   w = Math.min(200, Math.max(30, w)); h = Math.min(287, Math.max(30, h));
-  const L = LETRAS[f.letra] || LETRAS.me;
-  const cols = f.cols === 'auto' ? Math.max(1, Math.floor((w - 5) / L.col)) : Number(f.cols);
-  const filasCol = Math.max(1, Math.floor((h - 5) / L.fila));
-  const porPanel = filasCol * cols;
   const enFila = Math.max(1, Math.floor(200 / w)), enCol = Math.max(1, Math.floor(287 / h)), porHoja = enFila * enCol;
+  const medida = k => {
+    const L = LETRAS[k], c = f.cols === 'auto' ? Math.max(1, Math.floor((w - 5) / L.col)) : Number(f.cols);
+    return {k, L, cols: c, filasCol: Math.max(1, Math.floor((h - 5) / L.fila))};
+  };
+  // "Que entre en 1 hoja": la letra mas grande con la que entra todo en una A4
+  const m = f.letra === 'auto'
+    ? (['gr', 'me', 'ch', 'mi'].map(medida).find(x => x.cols * x.filasCol * porHoja >= items.length) || medida('mi'))
+    : medida(LETRAS[f.letra] ? f.letra : 'me');
+  const L = m.L, cols = m.cols, filasCol = m.filasCol;
+  const porPanel = filasCol * cols;
   if (f.orden) items = items.slice().sort((a, b) => nombreDe(a).localeCompare(nombreDe(b), 'es'));
   const paneles = [];
   for (let i = 0; i < items.length; i += porPanel) paneles.push(items.slice(i, i + porPanel));
@@ -678,8 +699,9 @@ function pintarListas(items) {
     });
     $('hojas').append(hoja);
   }
+  const NOMLETRA = {mi: 'muy chica', ch: 'chica', me: 'mediana', gr: 'grande'};
   return ' · recortes de ' + (w / 10).toString().replace('.', ',') + ' × ' + (h / 10).toString().replace('.', ',') +
-    ' cm, ' + porPanel + ' productos cada uno';
+    ' cm, ' + porPanel + ' productos cada uno' + (f.letra === 'auto' ? ' · letra ' + NOMLETRA[m.k] : '');
 }
 // La hoja se achica para que entre entera a lo ancho de la vista previa.
 function ajustarZoom() {
@@ -718,6 +740,7 @@ function editar(p) {
 }
 $('edCancelar').addEventListener('click', () => $('dlgEditar').close());
 $('edSacar').addEventListener('click', () => {
+  if (SEC === 'of') OF_SACADOS.add(EDITANDO.cod);
   COLA[SEC] = COLA[SEC].filter(c => c !== EDITANDO.cod); guardarColas(); $('dlgEditar').close(); pintarTodo(true);
 });
 $('edGuardar').addEventListener('click', () => {
@@ -825,6 +848,7 @@ $('todo100').addEventListener('change', () => {
   })));
 $('vaciar').addEventListener('click', () => {
   if (!confirm('¿Saco todos los productos de la hoja?')) return;
+  if (SEC === 'of') COLA.of.forEach(c => OF_SACADOS.add(c));
   COLA[SEC] = []; guardarColas(); pintarTodo(true);
 });
 $('imprimir').addEventListener('click', async () => {
